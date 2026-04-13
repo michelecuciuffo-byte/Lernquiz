@@ -661,6 +661,64 @@
       return cleaned.startsWith("/") ? cleaned : `/${cleaned}`;
     }
 
+    const lowercaseTitleWords = new Set([
+      "am", "an", "aus", "bei", "das", "dem", "den", "der", "des", "die",
+      "im", "in", "mit", "ohne", "und", "von", "vom", "vor", "zu", "zum", "zur"
+    ]);
+
+    function formatQuizWord(word, index) {
+      const lower = String(word || "").toLowerCase();
+      if (!lower) return "";
+
+      const restored = lower
+        .replace(/ae/g, "ä")
+        .replace(/oe/g, "ö")
+        .replace(/ue/g, "ü");
+
+      if (/^olm\d*$/.test(restored)) {
+        return restored.toUpperCase();
+      }
+
+      if (restored === "pse") {
+        return "PSE";
+      }
+
+      if (restored === "naoh") {
+        return "NaOH";
+      }
+
+      if (/^html$/.test(restored)) {
+        return restored.toUpperCase();
+      }
+
+      if (/^v\d+$/.test(restored)) {
+        return restored.toUpperCase();
+      }
+
+      if (index > 0 && lowercaseTitleWords.has(restored)) {
+        return restored;
+      }
+
+      return restored.charAt(0).toUpperCase() + restored.slice(1);
+    }
+
+    function formatQuizTitle(value) {
+      const source = String(value || "")
+        .replace(/\.html$/i, "")
+        .replace(/[-_]+/g, " ")
+        .replace(/\s+/g, " ")
+        .trim();
+
+      if (!source) {
+        return "Quiz";
+      }
+
+      return source
+        .split(" ")
+        .map((word, index) => formatQuizWord(word, index))
+        .join(" ");
+    }
+
     function setStatus(message, type = "") {
       copyStatus.textContent = message || "";
       copyStatus.className = "status-text";
@@ -727,7 +785,7 @@
     function getVisibleQuizzes() {
       return state.manifest
         .filter((quiz) => quiz.grade === state.selectedGrade && quiz.subject === state.selectedSubject)
-        .sort((left, right) => left.title.localeCompare(right.title, "de"));
+        .sort((left, right) => left.displayTitle.localeCompare(right.displayTitle, "de"));
     }
 
     function createOptionButton(label, detail, onClick) {
@@ -803,7 +861,7 @@
 
       quizzes.forEach((quiz) => {
         const button = createOptionButton(
-          quiz.title,
+          quiz.displayTitle,
           quiz.slug === state.selectedQuizSlug ? "Aktiv ausgewählt" : "Einzelnes Quiz öffnen",
           () => {
             state.selectedQuizSlug = quiz.slug;
@@ -862,7 +920,7 @@
       const indexUrl = getIndexShareUrl();
 
       quizTag.classList.remove("hidden");
-      contentTitle.textContent = selectedQuiz.title;
+      contentTitle.textContent = selectedQuiz.displayTitle;
       contentParagraph1.textContent = `${formatGrade(state.selectedGrade)} · ${subject.label}`;
       contentParagraph2.textContent = "Dieses einzelne Quiz kann direkt geteilt werden. Beim Öffnen landet man sofort auf der Quiz-Seite.";
       contentParagraph3.textContent = `Dateipfad im Projekt: ${selectedQuiz.relativePath}`;
@@ -1005,6 +1063,7 @@
               .filter((quiz) => quiz && quiz.grade && quiz.subject && quiz.slug)
               .map((quiz) => ({
                 ...quiz,
+                displayTitle: formatQuizTitle(quiz.slug || quiz.title || ""),
                 url: normalizeUrlPath(quiz.url || quiz.relativePath || ""),
                 relativePath: normalizePath(quiz.relativePath || quiz.url || "")
               }))
