@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warum eine NaOH-Lösung Strom leitet</title>
+<style>
+:root{
+  --bg-a:#e7fbf4;
+  --bg-b:#eef5ff;
+  --panel:rgba(255,255,255,0.9);
+  --ink:#0f172a;
+  --muted:#475569;
+  --line:#cbd5e1;
+  --na-fill:#dbeafe;
+  --na-stroke:#2563eb;
+  --oh-fill:#dcfce7;
+  --oh-stroke:#16a34a;
+  --minus:#16a34a;
+  --minus-soft:rgba(22,163,74,0.14);
+  --plus:#dc2626;
+  --plus-soft:rgba(220,38,38,0.14);
+  --water-o:#fecaca;
+  --water-o-stroke:#ef4444;
+  --water-h:#dbeafe;
+  --water-h-stroke:#60a5fa;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:"Trebuchet MS","Segoe UI",sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 12% 12%, #dcfff1 0, rgba(220,255,241,0) 36%),
+    radial-gradient(circle at 88% 8%, #dbeafe 0, rgba(219,234,254,0) 38%),
+    linear-gradient(135deg, var(--bg-a), var(--bg-b));
+}
+
+.wrap{
+  max-width:1240px;
+  margin:0 auto;
+  padding:26px 18px 40px;
+}
+
+.hero{
+  display:grid;
+  grid-template-columns:1.5fr 0.9fr;
+  gap:18px;
+  align-items:stretch;
+}
+
+.hero-card,
+.formula-card,
+.stage-card{
+  background:var(--panel);
+  border:1px solid rgba(148,163,184,0.35);
+  box-shadow:0 18px 45px rgba(15,23,42,0.08);
+  backdrop-filter:blur(14px);
+}
+
+.hero-card,
+.formula-card{
+  border-radius:24px;
+  padding:20px 22px;
+}
+
+h1{
+  margin:0 0 10px;
+  font-size:clamp(1.95rem, 4vw, 2.9rem);
+  line-height:1.05;
+}
+
+.intro{
+  margin:0;
+  color:var(--muted);
+  line-height:1.6;
+  font-size:1.02rem;
+}
+
+.formula-card{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  gap:10px;
+  text-align:center;
+}
+
+.formula-card .label{
+  font-size:0.88rem;
+  text-transform:uppercase;
+  letter-spacing:0.14em;
+  color:#2563eb;
+  font-weight:800;
+}
+
+.formula-card .formula{
+  font-size:clamp(1.45rem, 3vw, 2rem);
+  font-weight:800;
+}
+
+.formula-card .hint{
+  color:var(--muted);
+  line-height:1.5;
+}
+
+.stage-card{
+  margin-top:18px;
+  border-radius:30px;
+  padding:16px;
+}
+
+.controls{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+}
+
+button{
+  border:1px solid rgba(148,163,184,0.55);
+  background:rgba(255,255,255,0.88);
+  color:var(--ink);
+  font:inherit;
+  font-weight:800;
+  padding:10px 14px;
+  border-radius:999px;
+  cursor:pointer;
+  transition:transform 0.18s ease, box-shadow 0.18s ease, background 0.18s ease, border-color 0.18s ease;
+}
+
+button:hover{
+  transform:translateY(-1px);
+  box-shadow:0 10px 20px rgba(37,99,235,0.12);
+}
+
+button.primary{
+  background:linear-gradient(135deg, #dff7ff, #e7fff4);
+  border-color:#7dd3fc;
+}
+
+button:disabled{
+  opacity:0.5;
+  cursor:default;
+  transform:none;
+  box-shadow:none;
+}
+
+.step-status{
+  min-width:154px;
+  padding:10px 14px;
+  border-radius:999px;
+  background:linear-gradient(135deg, rgba(224,239,255,0.95), rgba(236,253,245,0.95));
+  border:1px solid rgba(125,211,252,0.9);
+  color:#1e3a8a;
+  font-weight:800;
+  text-align:center;
+  box-shadow:0 8px 20px rgba(37,99,235,0.1);
+}
+
+.legend{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:14px 0 12px;
+}
+
+.legend span{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(248,250,252,0.92);
+  border:1px solid rgba(203,213,225,0.9);
+  color:var(--muted);
+  font-size:0.95rem;
+}
+
+.swatch{
+  width:16px;
+  height:16px;
+  border-radius:50%;
+  display:inline-block;
+  flex:0 0 auto;
+}
+
+.swatch.na{
+  background:var(--na-fill);
+  border:2px solid var(--na-stroke);
+}
+
+.swatch.oh{
+  background:var(--oh-fill);
+  border:2px solid var(--oh-stroke);
+}
+
+.swatch.minus{
+  border-radius:6px;
+  background:linear-gradient(180deg, #86efac, #16a34a);
+}
+
+.swatch.plus{
+  border-radius:6px;
+  background:linear-gradient(180deg, #fca5a5, #dc2626);
+}
+
+.swatch.water{
+  background:linear-gradient(135deg, #fecaca 0 48%, #dbeafe 52% 100%);
+  border:1px solid #cbd5e1;
+}
+
+.stage{
+  border-radius:24px;
+  overflow:hidden;
+  border:1px solid rgba(203,213,225,0.9);
+  background:linear-gradient(180deg, #fbfeff 0%, #edf6ff 100%);
+}
+
+svg{
+  display:block;
+  width:100%;
+  height:auto;
+}
+
+.note-panel{
+  position:relative;
+  display:flex;
+  align-items:flex-start;
+  gap:16px;
+  margin-top:14px;
+  padding:16px 18px;
+  border-radius:24px;
+  background:linear-gradient(135deg, rgba(239,246,255,0.97), rgba(240,253,244,0.97));
+  border:1px solid rgba(191,219,254,0.95);
+  box-shadow:0 14px 28px rgba(37,99,235,0.08);
+  overflow:hidden;
+}
+
+.note-panel::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width:6px;
+  background:linear-gradient(180deg, #60a5fa, #34d399);
+}
+
+.note-panel.reveal{
+  animation:noteReveal 0.45s ease;
+}
+
+.note-icon{
+  position:relative;
+  z-index:1;
+  width:58px;
+  height:58px;
+  border-radius:18px;
+  flex:0 0 auto;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(135deg, rgba(219,234,254,0.98), rgba(220,252,231,0.98));
+  border:1px solid rgba(147,197,253,0.95);
+  box-shadow:0 10px 24px rgba(96,165,250,0.18);
+}
+
+.note-icon svg{
+  width:30px;
+  height:30px;
+  overflow:visible;
+}
+
+.note-copy{
+  position:relative;
+  z-index:1;
+  flex:1;
+}
+
+.note-kicker{
+  margin-bottom:4px;
+  color:#2563eb;
+  font-size:0.83rem;
+  font-weight:900;
+  letter-spacing:0.12em;
+  text-transform:uppercase;
+}
+
+.note-panel strong{
+  display:block;
+  margin-bottom:5px;
+  font-size:1.06rem;
+  line-height:1.35;
+}
+
+.note-panel span{
+  display:block;
+  color:var(--muted);
+  line-height:1.55;
+}
+
+@keyframes noteReveal{
+  from{
+    opacity:0;
+    transform:translateY(10px) scale(0.985);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+svg text{
+  font-weight:800;
+  text-anchor:middle;
+  dominant-baseline:middle;
+}
+
+.tank-outline{
+  fill:url(#tankFill);
+  stroke:#ffffff;
+  stroke-width:3;
+}
+
+.pole-chip{
+  stroke-width:1.4;
+}
+
+.pole-chip.minus{
+  fill:var(--minus-soft);
+  stroke:#86efac;
+}
+
+.pole-chip.plus{
+  fill:var(--plus-soft);
+  stroke:#fca5a5;
+}
+
+.pole-label{
+  font-size:18px;
+}
+
+.pole-label.minus{fill:var(--minus)}
+.pole-label.plus{fill:var(--plus)}
+
+.electrode{
+  stroke-width:2;
+}
+
+.electrode.minus{
+  fill:url(#minusElectrode);
+  stroke:#15803d;
+  filter:url(#minusGlow);
+}
+
+.electrode.plus{
+  fill:url(#plusElectrode);
+  stroke:#b91c1c;
+  filter:url(#plusGlow);
+}
+
+.water-bond{
+  stroke:#64748b;
+  stroke-width:1.5;
+}
+
+.water-o{
+  fill:var(--water-o);
+  stroke:var(--water-o-stroke);
+  stroke-width:1.3;
+}
+
+.water-h{
+  fill:var(--water-h);
+  stroke:var(--water-h-stroke);
+  stroke-width:1.1;
+}
+
+.delta-plus,
+.delta-minus{
+  font-size:8.5px;
+  font-weight:800;
+}
+
+.delta-plus{fill:#2563eb}
+.delta-minus{fill:#ef4444}
+
+.water-ambient{
+  opacity:0.9;
+}
+
+.water-focus{
+  opacity:1;
+}
+
+.water-rise{
+  animation:waterRise 0.7s ease both;
+}
+
+@keyframes waterRise{
+  from{
+    opacity:0;
+  }
+  to{
+    opacity:1;
+  }
+}
+
+.crystal-link{
+  stroke:#bfdbfe;
+  stroke-width:2.4;
+  opacity:0.75;
+}
+
+.crystal-link.soft{
+  stroke:#cbd5e1;
+  opacity:0.55;
+}
+
+.hydration-ring{
+  stroke-width:1.3;
+}
+
+.hydration-ring.na{
+  fill:rgba(147,197,253,0.18);
+  stroke:rgba(59,130,246,0.38);
+}
+
+.hydration-ring.oh{
+  fill:rgba(134,239,172,0.18);
+  stroke:rgba(34,197,94,0.38);
+}
+
+.na-ion{
+  fill:var(--na-fill);
+  stroke:var(--na-stroke);
+  stroke-width:2.1;
+}
+
+.oh-ion{
+  fill:var(--oh-fill);
+  stroke:var(--oh-stroke);
+  stroke-width:2.1;
+}
+
+.ion-label{
+  font-size:16px;
+  fill:#0f172a;
+}
+
+.sparkle{
+  fill:rgba(255,255,255,0.48);
+}
+
+@media (max-width:960px){
+  .hero{
+    grid-template-columns:1fr;
+  }
+}
+
+@media (max-width:700px){
+  .wrap{
+    padding:16px 12px 28px;
+  }
+
+  .hero-card,
+  .formula-card{
+    border-radius:20px;
+    padding:18px;
+  }
+
+  button{
+    flex:1 1 46%;
+    justify-content:center;
+  }
+
+  .legend span{
+    width:100%;
+    justify-content:flex-start;
+  }
+
+  .note-panel{
+    flex-direction:column;
+  }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="hero-card">
+      <h1>Warum eine NaOH-Lösung Strom leitet</h1>
+      <p class="intro">
+        Die Animation erklärt, warum festes NaOH keinen elektrischen Strom leitet,
+        eine NaOH-Lösung aber schon: Im festen Kristall sind die Ionen gebunden,
+        in Wasser werden sie frei beweglich und können sich gerichtet bewegen.
+      </p>
+    </div>
+
+    <div class="formula-card">
+      <div class="label">Dissoziation in Wasser</div>
+      <div class="formula">NaOH (s) → Na<sup>+</sup> (aq) + OH<sup>−</sup> (aq)</div>
+      <div class="hint">
+        Pluspol rechts in Rot, Minuspol links in Grün. So wird sichtbar, wie die Ionen bei angelegter Spannung den Stromtransport übernehmen.
+      </div>
+    </div>
+  </section>
+
+  <section class="stage-card">
+    <div class="controls">
+      <button id="prevBtn" onclick="goPrev()">Zurück</button>
+      <div class="step-status" id="stepStatus">Schritt 1 von 5</div>
+      <button id="nextBtn" class="primary" onclick="goNext()">Weiter</button>
+      <button onclick="resetAll()">Neu starten</button>
+    </div>
+
+    <div class="legend">
+      <span><i class="swatch na"></i> Na<sup>+</sup>-Ionen</span>
+      <span><i class="swatch oh"></i> OH<sup>−</sup>-Ionen</span>
+      <span><i class="swatch water"></i> Wassermoleküle mit O(δ−) und H(δ+)</span>
+      <span><i class="swatch minus"></i> Minuspol</span>
+      <span><i class="swatch plus"></i> Pluspol</span>
+    </div>
+
+    <div class="stage">
+      <svg id="scene" viewBox="0 0 1080 620" width="100%" height="100%" aria-label="Modell zur Leitfähigkeit von Natriumhydroxid in Wasser">
+        <defs>
+          <linearGradient id="tankFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fafdff"></stop>
+            <stop offset="100%" stop-color="#dceeff"></stop>
+          </linearGradient>
+          <linearGradient id="minusElectrode" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#86efac"></stop>
+            <stop offset="100%" stop-color="#15803d"></stop>
+          </linearGradient>
+          <linearGradient id="plusElectrode" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fca5a5"></stop>
+            <stop offset="100%" stop-color="#b91c1c"></stop>
+          </linearGradient>
+          <filter id="minusGlow" x="-40%" y="-10%" width="180%" height="120%">
+            <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#22c55e" flood-opacity="0.36"></feDropShadow>
+          </filter>
+          <filter id="plusGlow" x="-40%" y="-10%" width="180%" height="120%">
+            <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#ef4444" flood-opacity="0.36"></feDropShadow>
+          </filter>
+          <filter id="softShadow" x="-40%" y="-40%" width="180%" height="180%">
+            <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#94a3b8" flood-opacity="0.22"></feDropShadow>
+          </filter>
+        </defs>
+
+        <rect x="34" y="24" width="1012" height="572" rx="34" fill="rgba(255,255,255,0.55)"></rect>
+        <rect x="62" y="78" width="956" height="474" rx="30" class="tank-outline" filter="url(#softShadow)"></rect>
+        <path d="M108 118 C 260 90, 820 90, 972 118" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="3"></path>
+
+        <g id="sparkleLayer">
+          <circle cx="190" cy="182" r="5" class="sparkle"></circle>
+          <circle cx="286" cy="430" r="4" class="sparkle"></circle>
+          <circle cx="520" cy="132" r="6" class="sparkle"></circle>
+          <circle cx="772" cy="442" r="5" class="sparkle"></circle>
+          <circle cx="872" cy="210" r="4" class="sparkle"></circle>
+          <circle cx="930" cy="380" r="3.5" class="sparkle"></circle>
+        </g>
+
+        <g id="fieldGroup" style="display:none"></g>
+
+        <g id="ambientWaterLayer"></g>
+        <g id="particleLayer"></g>
+
+        <g id="electrodeLayer">
+          <rect x="92" y="108" width="34" height="414" rx="10" class="electrode minus"></rect>
+          <rect x="954" y="108" width="34" height="414" rx="10" class="electrode plus"></rect>
+
+          <rect x="70" y="48" width="76" height="34" rx="17" class="pole-chip minus"></rect>
+          <rect x="932" y="48" width="76" height="34" rx="17" class="pole-chip plus"></rect>
+          <text x="108" y="65" class="pole-label minus">− Pol</text>
+          <text x="970" y="65" class="pole-label plus">+ Pol</text>
+        </g>
+      </svg>
+    </div>
+
+    <div class="note-panel" id="notePanel">
+      <div class="note-icon" aria-hidden="true">
+        <svg viewBox="0 0 32 32" role="img" aria-hidden="true">
+          <circle cx="16" cy="16" r="15" fill="rgba(255,255,255,0.45)"></circle>
+          <path d="M11.5 13.5a4.5 4.5 0 1 1 9 0c0 1.7-.76 2.75-1.88 3.88-.86.86-1.32 1.55-1.32 2.62h-2.6c0-1.08-.47-1.77-1.32-2.62-1.12-1.13-1.88-2.18-1.88-3.88Z" fill="#facc15" stroke="#eab308" stroke-width="1.3"></path>
+          <path d="M13.4 22.1h5.2" stroke="#334155" stroke-width="1.6" stroke-linecap="round"></path>
+          <path d="M14 24.7h4" stroke="#334155" stroke-width="1.6" stroke-linecap="round"></path>
+          <path d="M16 4.2v2.6M7.9 8.1l1.8 1.8M24.1 8.1l-1.8 1.8" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"></path>
+        </svg>
+      </div>
+      <div class="note-copy">
+        <div class="note-kicker">Erklärung</div>
+        <strong id="mainText"></strong>
+        <span id="subText"></span>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+const svgNs = 'http://www.w3.org/2000/svg';
+const particleLayer = document.getElementById('particleLayer');
+const ambientWaterLayer = document.getElementById('ambientWaterLayer');
+const notePanel = document.getElementById('notePanel');
+const mainText = document.getElementById('mainText');
+const subText = document.getElementById('subText');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const stepStatus = document.getElementById('stepStatus');
+const TOTAL_STEPS = 5;
+const ION_RADIUS = 26;
+
+const ions = [
+  { id:'na1', type:'na' }, { id:'oh1', type:'oh' },
+  { id:'na2', type:'na' }, { id:'oh2', type:'oh' },
+  { id:'na3', type:'na' }, { id:'oh3', type:'oh' }
+];
+
+const crystalLayout = {
+  na1:{x:488,y:238}, oh1:{x:540,y:238}, na2:{x:592,y:238},
+  oh2:{x:488,y:290}, na3:{x:540,y:290}, oh3:{x:592,y:290}
+};
+
+const hydratedLayout = {
+  na1:{x:410,y:190}, oh1:{x:670,y:190},
+  na2:{x:410,y:310}, oh2:{x:670,y:310},
+  na3:{x:410,y:430}, oh3:{x:670,y:430}
+};
+
+const solutionLayout = {
+  na1:{x:410,y:190}, oh1:{x:670,y:190},
+  na2:{x:410,y:310}, oh2:{x:670,y:310},
+  na3:{x:410,y:430}, oh3:{x:670,y:430}
+};
+
+const targetLayout = {
+  na1:{x:166,y:190}, oh1:{x:914,y:190},
+  na2:{x:166,y:310}, oh2:{x:914,y:310},
+  na3:{x:166,y:430}, oh3:{x:914,y:430}
+};
+
+const approachWaters = [
+  {fromX:352,fromY:92,toX:430,toY:170,angle:28,charges:true,scale:0.94,begin:'0s'},
+  {fromX:540,fromY:78,toX:540,toY:154,angle:0,charges:true,scale:0.98,begin:'0.06s'},
+  {fromX:728,fromY:92,toX:650,toY:170,angle:-28,charges:true,scale:0.94,begin:'0.12s'},
+  {fromX:300,fromY:250,toX:416,toY:254,angle:92,charges:false,scale:0.9,begin:'0.08s'},
+  {fromX:780,fromY:250,toX:664,toY:254,angle:-92,charges:false,scale:0.9,begin:'0.14s'},
+  {fromX:362,fromY:470,toX:430,toY:358,angle:152,charges:true,scale:0.94,begin:'0.18s'},
+  {fromX:540,fromY:494,toX:540,toY:374,angle:180,charges:true,scale:0.98,begin:'0.24s'},
+  {fromX:718,fromY:470,toX:650,toY:358,angle:-152,charges:true,scale:0.94,begin:'0.3s'}
+];
+
+let currentStep = 1;
+let activeAnimationFrame = null;
+
+function svgEl(tag, attrs = {}){
+  const el = document.createElementNS(svgNs, tag);
+  for(const [key, value] of Object.entries(attrs)){
+    el.setAttribute(key, value);
+  }
+  return el;
+}
+
+function setTexts(main, sub){
+  mainText.textContent = main;
+  subText.textContent = sub;
+  notePanel.classList.remove('reveal');
+  void notePanel.offsetWidth;
+  notePanel.classList.add('reveal');
+}
+
+function stopAnimation(){
+  if(activeAnimationFrame !== null){
+    cancelAnimationFrame(activeAnimationFrame);
+    activeAnimationFrame = null;
+  }
+}
+
+function updateNavigation(){
+  const shownStep = Math.min(currentStep, TOTAL_STEPS);
+  stepStatus.textContent = `Schritt ${shownStep} von ${TOTAL_STEPS}`;
+  prevBtn.disabled = currentStep <= 1;
+
+  if(currentStep <= 3){
+    nextBtn.textContent = 'Weiter';
+  }else if(currentStep === 4){
+    nextBtn.textContent = 'Wanderung starten';
+  }else{
+    nextBtn.textContent = 'Noch einmal';
+  }
+}
+
+function goPrev(){
+  if(currentStep === 5){
+    showStep(4);
+    return;
+  }
+
+  if(currentStep > 1){
+    showStep(currentStep - 1);
+  }
+}
+
+function goNext(){
+  if(currentStep <= 3){
+    showStep(currentStep + 1);
+    return;
+  }
+
+  if(currentStep === 4){
+    startMovement();
+    return;
+  }
+
+  showStep(1);
+}
+
+function clearLayers(){
+  stopAnimation();
+  particleLayer.innerHTML = '';
+  ambientWaterLayer.innerHTML = '';
+}
+
+function renderWaterSet(waters, options = {}){
+  ambientWaterLayer.innerHTML = '';
+  const baseClasses = options.classes || ['water-ambient'];
+  const animated = Boolean(options.animated);
+
+  waters.forEach((water, index) => {
+    const molecule = createFreeWater(
+      water.x,
+      water.y,
+      water.angle,
+      water.charges,
+      water.scale || 1
+    );
+    const classes = [...baseClasses];
+    if(animated) classes.push('water-rise');
+    molecule.setAttribute('class', classes.join(' '));
+    molecule.style.animationDelay = animated ? `${index * 0.06}s` : '0s';
+    ambientWaterLayer.appendChild(molecule);
+  });
+}
+
+function renderAmbientWater(animated){
+  ambientWaterLayer.innerHTML = '';
+
+  approachWaters.forEach(water => {
+    const wrapper = svgEl('g');
+    wrapper.setAttribute('class', 'water-ambient water-focus');
+
+    if(animated){
+      wrapper.appendChild(svgEl('animateTransform', {
+        attributeName:'transform',
+        type:'translate',
+        from:`${water.fromX} ${water.fromY}`,
+        to:`${water.toX} ${water.toY}`,
+        dur:'0.95s',
+        begin:water.begin || '0s',
+        fill:'freeze',
+        calcMode:'spline',
+        keyTimes:'0;1',
+        keySplines:'0.22 1 0.36 1'
+      }));
+    }else{
+      wrapper.setAttribute('transform', `translate(${water.toX} ${water.toY})`);
+    }
+
+    wrapper.appendChild(createFreeWater(0, 0, water.angle, water.charges, water.scale || 1));
+    ambientWaterLayer.appendChild(wrapper);
+  });
+}
+
+function renderDockedWatersFade(){
+  ambientWaterLayer.innerHTML = '';
+
+  approachWaters.forEach(water => {
+    const wrapper = svgEl('g', {
+      class:'water-ambient water-focus',
+      transform:`translate(${water.toX} ${water.toY})`
+    });
+
+    wrapper.appendChild(svgEl('animate', {
+      attributeName:'opacity',
+      from:'1',
+      to:'0',
+      dur:'1.05s',
+      begin:'0.18s',
+      fill:'freeze'
+    }));
+
+    wrapper.appendChild(createFreeWater(0, 0, water.angle, water.charges, water.scale || 1));
+    ambientWaterLayer.appendChild(wrapper);
+  });
+}
+
+function createFreeWater(x, y, angle, showCharges, scale = 1){
+  const group = svgEl('g', { transform:`translate(${x} ${y}) rotate(${angle}) scale(${scale})` });
+  group.appendChild(svgEl('line', { x1:'0', y1:'0', x2:'-15', y2:'-12', class:'water-bond' }));
+  group.appendChild(svgEl('line', { x1:'0', y1:'0', x2:'15', y2:'-12', class:'water-bond' }));
+  group.appendChild(svgEl('circle', { cx:'0', cy:'0', r:'11', class:'water-o' }));
+  group.appendChild(svgEl('circle', { cx:'-15', cy:'-12', r:'5.5', class:'water-h' }));
+  group.appendChild(svgEl('circle', { cx:'15', cy:'-12', r:'5.5', class:'water-h' }));
+
+  if(showCharges){
+    const dm = svgEl('text', { x:'0', y:'0', class:'delta-minus' });
+    dm.textContent = 'δ−';
+    const dp1 = svgEl('text', { x:'-15', y:'-12', class:'delta-plus' });
+    dp1.textContent = 'δ+';
+    const dp2 = svgEl('text', { x:'15', y:'-12', class:'delta-plus' });
+    dp2.textContent = 'δ+';
+    group.appendChild(dm);
+    group.appendChild(dp1);
+    group.appendChild(dp2);
+  }
+
+  return group;
+}
+
+function drawHydrationShell(group, type, options = {}){
+  const shellConfigs = type === 'na'
+    ? [
+        { x:0, y:-40, angle:0 },
+        { x:40, y:0, angle:90 },
+        { x:0, y:40, angle:180 },
+        { x:-40, y:0, angle:-90 }
+      ]
+    : [
+        { x:0, y:-48, angle:180 },
+        { x:48, y:0, angle:-90 },
+        { x:0, y:48, angle:0 },
+        { x:-48, y:0, angle:90 }
+      ];
+
+  const startConfigs = type === 'na'
+    ? [
+        { x:18, y:-18 },
+        { x:20, y:-6 },
+        { x:20, y:6 },
+        { x:18, y:18 }
+      ]
+    : [
+        { x:-18, y:-18 },
+        { x:-20, y:-6 },
+        { x:-20, y:6 },
+        { x:-18, y:18 }
+      ];
+
+  shellConfigs.forEach((config, index) => {
+    if(options.transition){
+      const waterGroup = svgEl('g');
+      waterGroup.appendChild(svgEl('animateTransform', {
+        attributeName:'transform',
+        type:'translate',
+        from:`${startConfigs[index].x} ${startConfigs[index].y}`,
+        to:`${config.x} ${config.y}`,
+        dur:'1.2s',
+        begin:'0.12s',
+        fill:'freeze',
+        calcMode:'spline',
+        keyTimes:'0;1',
+        keySplines:'0.22 1 0.36 1'
+      }));
+      waterGroup.appendChild(svgEl('animate', {
+        attributeName:'opacity',
+        from:'0.25',
+        to:'1',
+        dur:'0.8s',
+        begin:'0.12s',
+        fill:'freeze'
+      }));
+      waterGroup.appendChild(createFreeWater(0, 0, config.angle, false, 0.72));
+      group.appendChild(waterGroup);
+      return;
+    }
+
+    group.appendChild(createFreeWater(config.x, config.y, config.angle, false, 0.72));
+  });
+}
+
+function createIonGroup(ion, position, options = {}){
+  const group = svgEl('g', { filter:'url(#softShadow)' });
+  group.setAttribute('transform', `translate(${position.x} ${position.y})`);
+
+  if(options.hydrated){
+    drawHydrationShell(group, ion.type, {
+      transition:options.hydrationTransition
+    });
+  }
+
+  group.appendChild(svgEl('circle', {
+    cx:'0',
+    cy:'0',
+    r:String(ION_RADIUS),
+    class: ion.type === 'na' ? 'na-ion' : 'oh-ion'
+  }));
+
+  const label = svgEl('text', { x:'0', y:'1', class:'ion-label' });
+  label.textContent = ion.type === 'na' ? 'Na⁺' : 'OH⁻';
+  group.appendChild(label);
+  return group;
+}
+
+function renderCrystal(){
+  particleLayer.innerHTML = '';
+
+  ions.forEach(ion => {
+    const position = crystalLayout[ion.id];
+    particleLayer.appendChild(createIonGroup(ion, position));
+  });
+}
+
+function easeOutCubic(t){
+  return 1 - Math.pow(1 - t, 3);
+}
+
+function animateIonGroups(groups, fromLayout, toLayout, duration){
+  const durationMs = typeof duration === 'number' ? duration : 2600;
+  const start = performance.now();
+
+  function frame(now){
+    const raw = Math.min((now - start) / durationMs, 1);
+    const eased = easeOutCubic(raw);
+
+    ions.forEach(ion => {
+      const from = fromLayout[ion.id];
+      const to = toLayout[ion.id];
+      const x = from.x + (to.x - from.x) * eased;
+      const y = from.y + (to.y - from.y) * eased;
+      groups[ion.id].setAttribute('transform', `translate(${x} ${y})`);
+    });
+
+    if(raw < 1){
+      activeAnimationFrame = requestAnimationFrame(frame);
+    }else{
+      activeAnimationFrame = null;
+    }
+  }
+
+  activeAnimationFrame = requestAnimationFrame(frame);
+}
+
+function renderIons(layout, options = {}){
+  particleLayer.innerHTML = '';
+  const groups = {};
+
+  ions.forEach(ion => {
+    const group = createIonGroup(ion, layout[ion.id], {
+      hydrated:options.hydrated,
+      hydrationTransition:options.hydrationTransition
+    });
+    particleLayer.appendChild(group);
+    groups[ion.id] = group;
+  });
+
+  if(options.animateTo){
+    animateIonGroups(groups, layout, options.animateTo, options.duration);
+  }
+}
+
+function showField(){
+}
+
+function showStep(step){
+  currentStep = step;
+  updateNavigation();
+  clearLayers();
+
+  if(step === 1){
+    showField(false);
+    renderCrystal();
+    setTexts(
+      'Festes NaOH besteht aus einem starren Ionenkristall.',
+      'Die Na⁺- und OH⁻-Ionen sind an feste Plätze gebunden und können sich deshalb nicht frei bewegen. Ohne bewegliche Ladungsträger kann kein Strom fließen.'
+    );
+    return;
+  }
+
+  if(step === 2){
+    showField(false);
+    renderAmbientWater(true);
+    renderCrystal();
+    setTexts(
+      'Wassermoleküle nähern sich dem Ionenkristall an.',
+      'Das Wasser ist polar. Deshalb können sich die Wassermoleküle an den Ionen ausrichten und beginnen, den Kristall aufzulösen.'
+    );
+    return;
+  }
+
+  if(step === 3){
+    showField(false);
+    renderDockedWatersFade();
+    renderIons(crystalLayout, {
+      hydrated:true,
+      hydrationTransition:true,
+      animateTo:hydratedLayout,
+      duration:1650
+    });
+    setTexts(
+      'Wassermoleküle docken an den Ionen an und ziehen sie aus dem Kristall heraus.',
+      'Während sich die Ionen lösen, ordnen sich die Wassermoleküle zu Hydrathüllen: Bei Na⁺ zeigt die Sauerstoffseite nach innen, bei OH⁻ die Wasserstoffseite.'
+    );
+    return;
+  }
+
+  if(step === 4){
+    showField(false);
+    renderIons(solutionLayout);
+    setTexts(
+      'Jetzt wird eine Spannung zwischen den Elektroden angelegt.',
+      'Die Wassermoleküle werden jetzt ausgeblendet. Die Ionen bleiben frei beweglich und können sich bei angelegter Spannung gerichtet bewegen.'
+    );
+    return;
+  }
+}
+
+function startMovement(){
+  currentStep = 5;
+  updateNavigation();
+  clearLayers();
+  showField(false);
+  renderIons(solutionLayout, {
+    animateTo:targetLayout,
+    duration:2800
+  });
+  setTexts(
+    'Die Ionen bewegen sich gerichtet zu den entgegengesetzt geladenen Elektroden.',
+    'Diese gerichtete Bewegung geladener Teilchen ist elektrischer Strom. Deshalb leitet die NaOH-Lösung Strom, während festes NaOH wegen der fest gebundenen Ionen nicht leitet.'
+  );
+}
+
+function resetAll(){
+  showStep(1);
+}
+
+showStep(1);
+</script>
+</body>
+</html>

@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Interaktives Quiz – Alkoholische Gärung</title>
+  <style>
+    :root{
+      --bg:#f4f8fc;
+      --card:#ffffff;
+      --ink:#203040;
+      --muted:#5f6f7f;
+      --line:#d9e3ee;
+      --blue:#2f6fed;
+      --blue-soft:#eaf2ff;
+      --green:#18864b;
+      --green-soft:#e9f8ee;
+      --red:#b42318;
+      --red-soft:#fff0ee;
+      --yellow:#fff7e8;
+      --yellow-line:#ecd9a8;
+      --shadow:0 10px 26px rgba(32,48,64,.08);
+      --radius:20px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:var(--bg);
+      color:var(--ink);
+      line-height:1.55;
+      padding:24px;
+    }
+
+    .wrap{
+      max-width:1020px;
+      margin:0 auto;
+    }
+
+    .hero{
+      background:linear-gradient(135deg, #eef5ff 0%, #fafdff 100%);
+      border:1px solid var(--line);
+      border-radius:26px;
+      padding:28px;
+      box-shadow:var(--shadow);
+      margin-bottom:22px;
+    }
+
+    .hero h1{
+      margin:0 0 10px 0;
+      font-size:2rem;
+    }
+
+    .hero p{
+      margin:0 0 10px 0;
+      color:var(--muted);
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:22px;
+      margin-bottom:20px;
+      box-shadow:var(--shadow);
+    }
+
+    h2{
+      margin:0 0 12px 0;
+      font-size:1.3rem;
+    }
+
+    h3{
+      margin:0 0 10px 0;
+      font-size:1.08rem;
+    }
+
+    .video-box{
+      margin-top:16px;
+      background:var(--blue-soft);
+      border:1px solid #cfe0ff;
+      border-radius:16px;
+      padding:18px;
+    }
+
+    .btn-link,
+    .step-btn,
+    .finish-btn,
+    .restart-btn{
+      display:inline-block;
+      border:none;
+      background:var(--blue);
+      color:#fff;
+      padding:11px 16px;
+      border-radius:12px;
+      cursor:pointer;
+      text-decoration:none;
+      font-size:1rem;
+      font-weight:bold;
+      transition:0.18s;
+    }
+
+    .btn-link:hover,
+    .step-btn:hover,
+    .finish-btn:hover,
+    .restart-btn:hover{
+      transform:translateY(-1px);
+    }
+
+    .progress-card{
+      position:sticky;
+      top:12px;
+      z-index:5;
+      background:#ffffffee;
+      backdrop-filter:blur(4px);
+    }
+
+    .progress-row{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:14px;
+    }
+
+    .progress-track{
+      flex:1 1 280px;
+      height:16px;
+      background:#edf2f7;
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid var(--line);
+    }
+
+    .progress-bar{
+      height:100%;
+      width:0%;
+      background:var(--blue);
+      transition:width .3s ease;
+    }
+
+    .score-box{
+      font-weight:bold;
+      white-space:nowrap;
+    }
+
+    .question{
+      margin-top:18px;
+      padding-top:18px;
+      border-top:1px solid var(--line);
+    }
+
+    .question:first-of-type{
+      margin-top:0;
+      padding-top:0;
+      border-top:none;
+    }
+
+    .answers{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .answers button{
+      text-align:left;
+      border:1px solid var(--line);
+      background:#fff;
+      padding:13px 14px;
+      border-radius:14px;
+      cursor:pointer;
+      font-size:1rem;
+      transition:0.18s;
+    }
+
+    .answers button:hover{
+      transform:translateY(-1px);
+      border-color:#b8cadc;
+    }
+
+    .answers button.correct{
+      background:var(--green-soft);
+      border-color:#b8dfc4;
+      color:var(--green);
+      font-weight:bold;
+    }
+
+    .answers button.wrong{
+      background:var(--red-soft);
+      border-color:#efc0ba;
+      color:var(--red);
+      font-weight:bold;
+    }
+
+    .answers button.disabled{
+      pointer-events:none;
+      opacity:.96;
+    }
+
+    .feedback{
+      display:none;
+      margin-top:10px;
+      padding:12px 14px;
+      border-radius:12px;
+      font-weight:bold;
+    }
+
+    .feedback.good{
+      display:block;
+      background:var(--green-soft);
+      color:var(--green);
+      border:1px solid #b8dfc4;
+    }
+
+    .feedback.bad{
+      display:block;
+      background:var(--red-soft);
+      color:var(--red);
+      border:1px solid #efc0ba;
+    }
+
+    .step-area{
+      display:grid;
+      gap:12px;
+      margin-top:16px;
+    }
+
+    .step{
+      display:none;
+      background:var(--yellow);
+      border:1px solid var(--yellow-line);
+      color:#825800;
+      padding:14px 16px;
+      border-radius:14px;
+      font-weight:bold;
+    }
+
+    .step.show{
+      display:block;
+    }
+
+    .note{
+      margin-top:14px;
+      background:#f9fbfd;
+      border:1px dashed #c7d4e0;
+      border-radius:14px;
+      padding:15px;
+    }
+
+    textarea{
+      width:100%;
+      min-height:110px;
+      resize:vertical;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px;
+      font:inherit;
+      margin-top:10px;
+    }
+
+    .hint{
+      color:var(--muted);
+      font-size:0.95rem;
+      margin-top:8px;
+    }
+
+    .pill-wrap{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .pill{
+      display:inline-block;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#eef3f8;
+      border:1px solid var(--line);
+      font-size:0.95rem;
+    }
+
+    .result{
+      display:none;
+      margin-top:16px;
+      padding:18px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:#f9fcff;
+    }
+
+    .result.show{
+      display:block;
+    }
+
+    .big-score{
+      font-size:1.6rem;
+      font-weight:bold;
+      margin-bottom:8px;
+    }
+
+    .badge{
+      display:inline-block;
+      margin-top:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      font-weight:bold;
+      background:var(--blue-soft);
+      border:1px solid #cfe0ff;
+    }
+
+    .button-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:16px;
+    }
+
+    @media (max-width:700px){
+      body{padding:14px;}
+      .hero,.card{padding:18px;}
+      .hero h1{font-size:1.6rem;}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <section class="hero">
+      <h1>🧪 Interaktives Quiz: Alkoholische Gärung</h1>
+      <p>
+        In diesem Quiz geht es um die Herstellung von <strong>Ethanol</strong> aus <strong>Haushaltszucker</strong> mit <strong>Hefe</strong>.
+      </p>
+      <p>
+        Schau dir zuerst das Video an und bearbeite danach die Aufgaben.
+      </p>
+
+      <div class="video-box">
+        <h2>🎥 Video:</h2>
+        <p>Hier findest du das passende Experiment zur alkoholischen Gärung:</p>
+        <a class="btn-link" href="https://www.youtube.com/watch?v=G-sDvTIWnXg" target="_blank" rel="noopener noreferrer">
+          Video zur alkoholischen Gärung öffnen
+        </a>
+      </div>
+    </section>
+
+    <section class="card progress-card">
+      <div class="progress-row">
+        <div class="progress-track">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="score-box">Punkte: <span id="scoreNow">0</span> / <span id="maxScore">4</span></div>
+        <div class="score-box">Bearbeitet: <span id="doneNow">0</span> / 4</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>👀 1. Beobachtungen im Experiment:</h2>
+
+      <div class="question" data-question="q1">
+        <h3>Frage 1:</h3>
+        <p>Welche wichtige Beobachtung macht man bei der alkoholischen Gärung mit Hefe?</p>
+        <div class="answers">
+          <button data-correct="true">Es entstehen Bläschen.</button>
+          <button data-correct="false">Die Flüssigkeit friert ein.</button>
+          <button data-correct="false">Es bildet sich ein Metall.</button>
+          <button data-correct="false">Die Lösung wird fest wie Stein.</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+
+      <div class="question" data-question="q2">
+        <h3>Frage 2:</h3>
+        <p>Wodurch wurde das entstehende Gas im Experiment nachgewiesen?</p>
+        <div class="answers">
+          <button data-correct="false">Mit einem Thermometer</button>
+          <button data-correct="true">Mit der Kalkwasserprobe</button>
+          <button data-correct="false">Mit einem Magneten</button>
+          <button data-correct="false">Mit Lackmuspapier</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>🫧 2. Schrittweise Erklärung zur Kalkwasserprobe:</h2>
+      <p>
+        Klicke nacheinander auf den Button. So wird die Erklärung Schritt für Schritt eingeblendet.
+      </p>
+
+      <button class="step-btn" onclick="showNextStep()">Nächsten Schritt einblenden</button>
+
+  
+
+<div class="step-area">
+  <div class="step">Schritt 1: Bei der alkoholischen Gärung entsteht Kohlenstoffdioxid (CO₂).</div>
+  <div class="step">Schritt 2: Dieses Gas wird in Kalkwasser geleitet.</div>
+  <div class="step">Schritt 3: Das Kalkwasser wird milchig oder trüb.</div>
+  <div class="step">Schritt 4: Grund dafür ist die Bildung von Calciumcarbonat (CaCO₃).</div>
+  <div class="step">Schritt 5: Calciumcarbonat ist Kalk und sorgt für die milchig-trübe Färbung.</div>
+  <div class="step">Schritt 6: Reaktion: CO₂ + Ca(OH)₂ → CaCO₃ + H₂O</div>
+</div>
+
+      <div class="note">
+        <strong>Merke:</strong> Bei der alkoholischen Gärung fällt <strong>CO₂</strong> an. Das kann man mit der <strong>Kalkwasserprobe</strong> nachweisen.
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>🔥 3. Nachweis von Ethanol:</h2>
+
+      <div class="question" data-question="q3">
+        <h3>Frage 3:</h3>
+        <p>Wie wurde Ethanol im Experiment nachgewiesen?</p>
+        <div class="answers">
+          <button data-correct="false">Durch Abkühlen im Kühlschrank</button>
+          <button data-correct="true">Durch Entzünden</button>
+          <button data-correct="false">Durch einen Magnettest</button>
+          <button data-correct="false">Durch eine pH-Messung</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+
+      <div class="question" data-question="q4">
+        <h3>Frage 4:</h3>
+        <p>Was musste vorher passieren, damit man Ethanol überhaupt prüfen konnte?</p>
+        <div class="answers">
+          <button data-correct="false">Man musste Eisen dazugeben.</button>
+          <button data-correct="true">Der Alkohol musste zuerst abgetrennt werden.</button>
+          <button data-correct="false">Die Flüssigkeit musste eingefroren werden.</button>
+          <button data-correct="false">Man musste Salz hineinrühren.</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+
+      <div class="note">
+        <strong>Wichtig:</strong> Ethanol wurde nicht direkt in der gärenden Mischung angezündet. Es musste vorher abgetrennt werden, zum Beispiel durch <strong>Destillation</strong> oder mithilfe eines <strong>sehr langen Steigrohrs</strong>.
+      </div>
+    </section>
+
+    <section class="card">
+  <h2>✍️ 4. Schreibaufgabe:</h2>
+  <p>
+    Erkläre in 2–4 Sätzen, was man bei der alkoholischen Gärung beobachten konnte und wie CO₂ sowie Ethanol nachgewiesen wurden.
+  </p>
+
+  <textarea id="studentAnswer" placeholder="Schreibe hier deine Antwort auf..."></textarea>
+
+  <button class="step-btn" onclick="showSolution()">Musterlösung anzeigen</button>
+
+  <div class="note" id="solutionBox" style="display:none;">
+    <strong>Musterlösung:</strong><br><br>
+    Bei der alkoholischen Gärung entstehen Bläschen, da Kohlenstoffdioxid (CO₂) gebildet wird.
+    Dieses Gas kann mit der Kalkwasserprobe nachgewiesen werden, da sich das Kalkwasser milchig-trüb färbt.
+    Außerdem entsteht Ethanol, das vorher vom Gemisch getrennt werden muss (z. B. durch Destillation),
+    und anschließend durch Entzünden nachgewiesen werden kann.
+  </div>
+
+  <div class="hint">
+    Tipp: Denke an Bläschenbildung, Kalkwasserprobe, CO₂, Abtrennung des Ethanols und Entzünden.
+  </div>
+</section>
+
+   
+
+    <section class="card">
+      <h2>🏁 Quiz auswerten:</h2>
+      <p>Klicke auf den Button, um dein Ergebnis anzuzeigen.</p>
+
+      <div class="button-row">
+        <button class="finish-btn" onclick="finishQuiz()">Ergebnis anzeigen</button>
+        <button class="restart-btn" onclick="restartQuiz()">Neu starten</button>
+      </div>
+
+      <div class="result" id="resultBox">
+        <div class="big-score">Dein Ergebnis: <span id="finalScore">0</span> / 4 Punkte</div>
+        <div id="finalText"></div>
+        <div class="badge" id="badgeText"></div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    const feedbackTexts = {
+      q1: {
+        correct: "Richtig! Man beobachtet eine Bläschenbildung.",
+        wrong: "Nicht ganz. Typisch ist die Bläschenbildung."
+      },
+      q2: {
+        correct: "Richtig! Das Gas wurde mit der Kalkwasserprobe nachgewiesen.",
+        wrong: "Nicht ganz. Im Versuch wurde die Kalkwasserprobe verwendet."
+      },
+      q3: {
+        correct: "Richtig! Ethanol wurde durch Entzünden nachgewiesen.",
+        wrong: "Nicht ganz. Ethanol wurde durch Entzünden nachgewiesen."
+      },
+      q4: {
+        correct: "Richtig! Der Alkohol musste zuerst abgetrennt werden, zum Beispiel durch Destillation oder ein langes Steigrohr.",
+        wrong: "Nicht ganz. Zuerst musste der Alkohol abgetrennt werden."
+      }
+    };
+
+    let score = 0;
+    let answered = 0;
+    const totalQuestions = 4;
+
+    document.querySelectorAll('.question').forEach(question => {
+      const qid = question.dataset.question;
+      const buttons = question.querySelectorAll('button');
+      const feedback = question.querySelector('.feedback');
+
+      buttons.forEach(button => {
+        button.addEventListener('click', () => {
+          if(question.dataset.answered === "true") return;
+
+          const isCorrect = button.dataset.correct === "true";
+          question.dataset.answered = "true";
+          answered++;
+
+          buttons.forEach(btn => {
+            btn.classList.add('disabled');
+            if(btn.dataset.correct === "true"){
+              btn.classList.add('correct');
+            }
+          });
+
+          if(isCorrect){
+            score++;
+            button.classList.add('correct');
+            feedback.textContent = feedbackTexts[qid].correct;
+            feedback.className = 'feedback good';
+          } else {
+            button.classList.add('wrong');
+            feedback.textContent = feedbackTexts[qid].wrong;
+            feedback.className = 'feedback bad';
+          }
+
+          updateProgress();
+        });
+      });
+    });
+
+    function updateProgress(){
+      document.getElementById('scoreNow').textContent = score;
+      document.getElementById('doneNow').textContent = answered;
+      const percent = (answered / totalQuestions) * 100;
+      document.getElementById('progressBar').style.width = percent + '%';
+    }
+
+    let currentStep = 0;
+    function showNextStep(){
+      const steps = document.querySelectorAll('.step');
+      if(currentStep < steps.length){
+        steps[currentStep].classList.add('show');
+        currentStep++;
+      }
+    }
+
+    function finishQuiz(){
+      const resultBox = document.getElementById('resultBox');
+      const finalScore = document.getElementById('finalScore');
+      const finalText = document.getElementById('finalText');
+      const badgeText = document.getElementById('badgeText');
+
+      finalScore.textContent = score;
+
+      let text = "";
+      let badge = "";
+
+      if(score === 4){
+        text = "Super gemacht! Du hast alle Fragen richtig beantwortet.";
+        badge = "🌟 Gärungs-Profi";
+      } else if(score === 3){
+        text = "Sehr gut! Du hast schon fast alles richtig verstanden.";
+        badge = "👏 Fast perfekt";
+      } else if(score === 2){
+        text = "Gut gemacht! Schau dir das Video und die Hinweise noch einmal an.";
+        badge = "🙂 Gut dabei";
+      } else if(score === 1){
+        text = "Ein Anfang ist geschafft. Wiederhole die wichtigsten Punkte noch einmal.";
+        badge = "📘 Noch bisschen üben";
+      } else {
+        text = "Versuche es noch einmal in Ruhe. Das schaffst du!";
+        badge = "💪 Neuer Versuch";
+      }
+
+      if(answered < totalQuestions){
+        text += " Du hast noch nicht alle Fragen bearbeitet.";
+      }
+
+      finalText.textContent = text;
+      badgeText.textContent = badge;
+      resultBox.classList.add('show');
+    }
+
+    function restartQuiz(){
+      score = 0;
+      answered = 0;
+      currentStep = 0;
+
+      document.querySelectorAll('.question').forEach(question => {
+        question.dataset.answered = "false";
+        const feedback = question.querySelector('.feedback');
+        feedback.className = 'feedback';
+        feedback.textContent = '';
+
+        question.querySelectorAll('button').forEach(button => {
+          button.className = '';
+        });
+      });
+
+      document.querySelectorAll('.step').forEach(step => {
+        step.classList.remove('show');
+      });
+
+      document.getElementById('resultBox').classList.remove('show');
+      updateProgress();
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+function showSolution(){
+  const text = document.getElementById('studentAnswer').value.trim();
+  const box = document.getElementById('solutionBox');
+
+  if(text.length < 10){
+    alert("Bitte schreibe zuerst deine eigene Antwort auf 🙂");
+    return;
+  }
+
+  box.style.display = "block";
+}
+
+    updateProgress();
+  </script>
+</body>
+</html>

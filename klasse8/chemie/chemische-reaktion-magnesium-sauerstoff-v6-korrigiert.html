@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chemische Reaktion – Magnesium und Sauerstoff</title>
+  <style>
+    :root{
+      --bg:#f3f7fb; --card:#ffffff; --ink:#233443; --sub:#56697b; --line:#d9e3ed;
+      --blue:#5b89ea; --blue-soft:#eef4ff; --green:#58b06b; --green-soft:#edf8ef;
+      --orange:#efb25d; --orange-soft:#fff4e3; --red:#d76a82; --red-soft:#fff1f4;
+      --shadow:0 10px 24px rgba(36,56,78,.08); --r:18px;
+    }
+    *{box-sizing:border-box} html{scroll-behavior:smooth}
+    body{margin:0;font-family:Arial, Helvetica, sans-serif;background:linear-gradient(180deg,#edf4fb 0%, #f8fbfd 100%);color:var(--ink)}
+    .wrap{width:min(1000px, calc(100% - 24px));margin:0 auto;padding:18px 0 36px}
+    .hero,.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow)}
+    .hero{padding:22px;margin-bottom:14px}.card{padding:18px;margin-top:14px}
+    h1{margin:0 0 8px;font-size:clamp(1.95rem,4vw,2.8rem);line-height:1.08}
+    h2{margin:0 0 10px;font-size:1.28rem} p{margin:0;color:var(--sub);line-height:1.62}
+    .grid{display:grid;grid-template-columns:1fr;gap:14px}
+    @media (min-width:900px){ .grid.two{grid-template-columns:1fr 1fr;} }
+    .yt-box{aspect-ratio:16/9;overflow:hidden;border-radius:14px;border:1px solid var(--line);background:#000;margin-top:12px}
+    iframe{width:100%;height:100%;border:0;display:block}
+    .info{margin-top:12px;padding:12px 14px;border-radius:14px;background:var(--blue-soft);border:1px solid #d7e5ff;color:#35506a;line-height:1.62}
+    .toggle{width:100%;margin-top:10px;padding:12px 14px;border:none;border-radius:14px;font-size:1rem;font-weight:700;text-align:left;cursor:pointer;background:var(--blue);color:#fff}
+    .toggle.orange{background:var(--orange);color:#4f3300}
+    .panel{margin-top:10px;padding:13px 14px;border:1px solid var(--line);border-radius:14px;background:#fbfdff;color:#3a5368;line-height:1.64}
+    .hidden{display:none} ul.clean{margin:0;padding-left:18px;line-height:1.72;color:#385066}
+    .steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px}
+    .step-btn,.small-btn{border:1px solid #cddceb;background:#eef5fd;color:#28455c;border-radius:12px;padding:10px 9px;font-weight:700;cursor:pointer;font-size:.97rem}
+    .step-btn.active,.small-btn.active{background:var(--blue);color:#fff;border-color:var(--blue)}
+    .scene-shell{margin-top:12px;border:1px solid var(--line);border-radius:16px;padding:10px;background:#fafcff}
+    svg{width:100%;height:auto;display:block;border-radius:12px;background:#fff}
+    .scene-caption{margin-top:10px;padding:12px 14px;border:1px solid var(--line);border-radius:14px;background:#fff;color:#35506a;line-height:1.6;min-height:74px}
+    .reaction-stage{margin-top:12px;border:1px solid var(--line);border-radius:16px;background:#fbfdff;padding:18px 16px 16px;overflow:hidden}
+    .reaction-controls{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;justify-content:center}
+    .reaction-line{min-height:140px;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;position:relative;flex-wrap:wrap}
+    .reaction-part{opacity:0;transform:translateY(18px);transition:opacity .45s ease, transform .45s ease;font-size:clamp(1.22rem,3.2vw,2rem);font-weight:800;color:#1f3449;margin:0 10px;display:inline-block;padding:6px 12px;border-radius:12px}
+    .reaction-part.show{opacity:1;transform:translateY(0)}
+    .reaction-part.left.show{background:#eaf2ff;border:1px solid #cfe0f7;color:#244e7b}
+    .reaction-part.right.show{background:#edf8ef;border:1px solid #cfe8d4;color:#27623b}
+    .term-row{display:flex;justify-content:center;gap:22px;flex-wrap:wrap;margin-top:6px;min-height:90px}
+    .term-box{width:min(280px,100%);padding:14px;border-radius:16px;border:1px solid var(--line);background:#fff;text-align:center;opacity:0;transform:translateX(-40px);transition:opacity .5s ease, transform .5s ease}
+    .term-box.right{transform:translateX(40px)} .term-box.show{opacity:1;transform:translateX(0)}
+    .term-box.educt{background:#eef4ff;border-color:#d2e2f7}.term-box.product{background:#edf8ef;border-color:#d0ead6}
+    .term-box strong{display:block;font-size:1.12rem;margin-bottom:5px;color:#20384d}.term-box span{color:#546879;line-height:1.5}
+    .feature-stage{margin-top:12px;border:1px solid var(--line);border-radius:16px;background:#fbfdff;padding:16px}
+    .feature-visual{min-height:180px;border:1px solid var(--line);border-radius:14px;background:#fff;margin-bottom:12px;padding:10px;display:flex;align-items:center;justify-content:center}
+    .feature-card{min-height:108px;padding:16px;border-radius:14px;border:1px solid var(--line);background:#fff;color:#395167;line-height:1.68;font-size:1.02rem}
+    .feature-card strong{color:#1f3950}.feature-progress{margin-top:10px;color:#617588;font-weight:700;text-align:center}
+    .def{padding:15px;border-radius:15px;border:1px solid var(--line);background:#fff;line-height:1.72;color:#334a5f}
+    .quiz-item{margin-top:12px;padding:14px;border-radius:15px;border:1px solid var(--line);background:#fff}
+    .quiz-item h3{margin:0 0 10px;font-size:1rem;line-height:1.45}.options{display:grid;gap:8px}
+    .option{border:1px solid #d6e1ec;background:#f6f9fc;color:#28455b;border-radius:12px;padding:10px 12px;text-align:left;cursor:pointer;font-size:1rem}
+    .option.correct{background:var(--green-soft);border-color:#9bd2a6;color:#1e5d2d;font-weight:700}
+    .option.wrong{background:var(--red-soft);border-color:#ebb0bf;color:#7d2943;font-weight:700}.feedback{margin-top:8px;min-height:22px;font-weight:700}
+    .drag-wrap{margin-top:12px;border:1px solid var(--line);border-radius:16px;background:#fbfdff;padding:14px}
+    .drag-bank{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+    .drag-item{padding:10px 14px;border-radius:12px;border:1px solid #cfdcec;background:#eef5fd;color:#24455f;font-weight:700;cursor:grab;user-select:none}
+    .drop-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+    @media (max-width:700px){ .drop-row{grid-template-columns:1fr;} }
+    .drop-zone{min-height:92px;border:2px dashed #bfd0e2;border-radius:14px;background:#fff;padding:10px;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;gap:6px}
+    .drop-zone.hover{background:#f4f9ff;border-color:var(--blue)} .drop-zone.filled{border-style:solid}
+    .drop-zone .label{font-weight:800;color:#1f3950;font-size:1.05rem}.drop-zone .hint{color:#708393;font-size:.95rem}
+    .drag-result{margin-top:12px;font-weight:700;min-height:22px}
+    .legend{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
+    .legend span{display:inline-flex;align-items:center;gap:8px;padding:7px 11px;border-radius:999px;border:1px solid var(--line);background:#fff;color:#395066;font-size:.96rem;font-weight:700}
+    .dot{width:15px;height:15px;border-radius:50%;display:inline-block}
+    .dot.mg{background:#d7dde5;border:1px solid #9ea9b5}.dot.o{background:#a8e1ff;border:1px solid #69bbe5}
+    .control-row{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:12px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Was passiert bei einer chemischen Reaktion?</h1>
+      <p>Wir betrachten die Reaktion von Magnesium mit Sauerstoff. Öffne die Inhalte Schritt für Schritt.</p>
+    </section>
+
+    <section class="grid two">
+      <div class="card">
+        <h2>1. Versuch</h2>
+        <p>Schau dir zuerst das Video an.</p>
+        <div class="yt-box">
+          <iframe src="https://www.youtube.com/embed/r7OdQGns_ts" title="Magnesium reagiert mit Sauerstoff" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        </div>
+        <div class="info">
+          Achte auf drei Dinge:
+          <br>• Was sieht man vor dem Erhitzen?
+          <br>• Was passiert beim Erhitzen?
+          <br>• Was entsteht am Ende?
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>2. Erste Beobachtungen</h2>
+        <p>Die ersten Informationen kannst du hier nacheinander öffnen.</p>
+        <button class="toggle" data-target="p1">Beobachtungen anzeigen</button>
+        <div id="p1" class="panel hidden">
+          <ul class="clean">
+            <li>Magnesium wird erhitzt.</li>
+            <li>Es leuchtet sehr hell.</li>
+            <li>Am Ende entsteht ein weißer Stoff.</li>
+            <li>Es ist also ein neuer Stoff entstanden.</li>
+          </ul>
+        </div>
+        <button class="toggle orange" data-target="p2">Wichtige Idee anzeigen</button>
+        <div id="p2" class="panel hidden">Bei einer chemischen Reaktion werden Teilchen <strong>neu angeordnet</strong>. So entstehen <strong>neue Stoffe</strong>.</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3. Teilchenebene</h2>
+      <p>Hier ist die Reaktion bewusst einfach und übersichtlich dargestellt.</p>
+      <div class="legend">
+        <span><i class="dot mg"></i> Magnesiumatom</span>
+        <span><i class="dot o"></i> Sauerstoffatom</span>
+      </div>
+      <div class="steps">
+        <button class="step-btn active" data-scene="1">1. Edukte im Kolben</button>
+        <button class="step-btn" data-scene="2">2. Erhitzen</button>
+        <button class="step-btn" data-scene="3">3. Bindungen lösen sich</button>
+        <button class="step-btn" data-scene="4">4. Neuordnung</button>
+        <button class="step-btn" data-scene="5">5. Produkt</button>
+      </div>
+
+      <div class="scene-shell">
+        <svg viewBox="0 0 940 500" aria-label="Teilchenmodell Magnesium Sauerstoff im Erlenmeyerkolben">
+          <rect x="0" y="0" width="940" height="500" rx="18" fill="#ffffff"></rect>
+          <g id="flaskOutline">
+            <path d="M390 55 L390 110 L300 390 Q295 410 315 420 L625 420 Q645 410 640 390 L550 110 L550 55" fill="none" stroke="#93a9bc" stroke-width="6" stroke-linejoin="round"/>
+            <path d="M410 55 L530 55" stroke="#93a9bc" stroke-width="6" stroke-linecap="round"/>
+          </g>
+
+          <g id="initialParticles">
+            <g id="mgMetal">
+              <circle cx="390" cy="285" r="28" fill="#d7dde5" stroke="#9ea9b5" stroke-width="4"></circle>
+              <circle cx="420" cy="285" r="28" fill="#d7dde5" stroke="#9ea9b5" stroke-width="4"></circle>
+              <circle cx="450" cy="285" r="28" fill="#d7dde5" stroke="#9ea9b5" stroke-width="4"></circle>
+              <circle cx="480" cy="285" r="28" fill="#d7dde5" stroke="#9ea9b5" stroke-width="4"></circle>
+              <path d="M402 273 Q408 268 414 273" stroke="#9faab6" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+              <path d="M432 273 Q438 268 444 273" stroke="#9faab6" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+              <path d="M462 273 Q468 268 474 273" stroke="#9faab6" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+              <text x="372" y="293" font-size="20" font-weight="700" fill="#495868">Mg</text>
+              <text x="402" y="293" font-size="20" font-weight="700" fill="#495868">Mg</text>
+              <text x="432" y="293" font-size="20" font-weight="700" fill="#495868">Mg</text>
+              <text x="462" y="293" font-size="20" font-weight="700" fill="#495868">Mg</text>
+            </g>
+            <g id="o2a">
+              <circle cx="372" cy="180" r="24" fill="#a8e1ff" stroke="#69bbe5" stroke-width="4"></circle>
+              <circle cx="452" cy="180" r="24" fill="#a8e1ff" stroke="#69bbe5" stroke-width="4"></circle>
+              <line x1="396" y1="180" x2="428" y2="180" stroke="#78c8f3" stroke-width="8" stroke-linecap="round"></line>
+              <line x1="400" y1="170" x2="424" y2="170" stroke="#8fd4ff" stroke-width="4" stroke-linecap="round"></line>
+              <text x="363" y="188" font-size="20" font-weight="700" fill="#1f576f">O</text>
+              <text x="443" y="188" font-size="20" font-weight="700" fill="#1f576f">O</text>
+            </g>
+            <g id="o2b">
+              <circle cx="472" cy="180" r="24" fill="#a8e1ff" stroke="#69bbe5" stroke-width="4"></circle>
+              <circle cx="552" cy="180" r="24" fill="#a8e1ff" stroke="#69bbe5" stroke-width="4"></circle>
+              <line x1="496" y1="180" x2="528" y2="180" stroke="#78c8f3" stroke-width="8" stroke-linecap="round"></line>
+              <line x1="500" y1="170" x2="524" y2="170" stroke="#8fd4ff" stroke-width="4" stroke-linecap="round"></line>
+              <text x="463" y="188" font-size="20" font-weight="700" fill="#1f576f">O</text>
+              <text x="543" y="188" font-size="20" font-weight="700" fill="#1f576f">O</text>
+            </g>
+          </g>
+
+          <g transform="translate(430,410)">
+            <rect x="30" y="16" width="22" height="48" rx="8" fill="#6d7b8a"></rect>
+            <rect x="0" y="58" width="82" height="16" rx="8" fill="#4d5964"></rect>
+            <path id="flameOuter" d="M41 15 C68 -16, 66 -48, 41 -78 C16 -48, 14 -16, 41 15Z" fill="#ffc861" opacity="0"></path>
+            <path id="flameInner" d="M41 10 C55 -10, 54 -25, 41 -41 C28 -25, 27 -10, 41 10Z" fill="#8fd4ff" opacity="0"></path>
+          </g>
+
+          <g id="splitParticles" opacity="0">
+            <circle cx="350" cy="245" r="28" fill="#d7dde5" stroke="#9ea9b5" stroke-width="4"></circle>
+            <circle cx="425" cy="225" r="28" fill="#d7dde5" stroke="#9ea9b5" stroke-width="4"></circle>
+            <circle cx="515" cy="225" r="28" fill="#d7dde5" stroke="#9ea9b5" stroke-width="4"></circle>
+            <circle cx="590" cy="245" r="28" fill="#d7dde5" stroke="#9ea9b5" stroke-width="4"></circle>
+
+            <circle cx="355" cy="150" r="24" fill="#a8e1ff" stroke="#69bbe5" stroke-width="4"></circle>
+            <circle cx="445" cy="150" r="24" fill="#a8e1ff" stroke="#69bbe5" stroke-width="4"></circle>
+            <circle cx="520" cy="150" r="24" fill="#a8e1ff" stroke="#69bbe5" stroke-width="4"></circle>
+            <circle cx="610" cy="150" r="24" fill="#a8e1ff" stroke="#69bbe5" stroke-width="4"></circle>
+
+            <text x="332" y="253" font-size="20" font-weight="700" fill="#495868">Mg</text>
+            <text x="407" y="233" font-size="20" font-weight="700" fill="#495868">Mg</text>
+            <text x="497" y="233" font-size="20" font-weight="700" fill="#495868">Mg</text>
+            <text x="572" y="253" font-size="20" font-weight="700" fill="#495868">Mg</text>
+
+            <text x="346" y="158" font-size="20" font-weight="700" fill="#1f576f">O</text>
+            <text x="436" y="158" font-size="20" font-weight="700" fill="#1f576f">O</text>
+            <text x="511" y="158" font-size="20" font-weight="700" fill="#1f576f">O</text>
+            <text x="601" y="158" font-size="20" font-weight="700" fill="#1f576f">O</text>
+          </g>
+
+          <g id="reorderGroup" opacity="0">
+            <circle id="m1" r="28" fill="#d7dde5" stroke="#9ea9b5" stroke-width="4"></circle>
+            <circle id="m2" r="28" fill="#d7dde5" stroke="#9ea9b5" stroke-width="4"></circle>
+            <circle id="m3" r="28" fill="#d7dde5" stroke="#9ea9b5" stroke-width="4"></circle>
+            <circle id="m4" r="28" fill="#d7dde5" stroke="#9ea9b5" stroke-width="4"></circle>
+            <circle id="o1" r="24" fill="#a8e1ff" stroke="#69bbe5" stroke-width="4"></circle>
+            <circle id="o2" r="24" fill="#a8e1ff" stroke="#69bbe5" stroke-width="4"></circle>
+            <circle id="o3" r="24" fill="#a8e1ff" stroke="#69bbe5" stroke-width="4"></circle>
+            <circle id="o4" r="24" fill="#a8e1ff" stroke="#69bbe5" stroke-width="4"></circle>
+
+            <text id="m1t" font-size="20" font-weight="700" fill="#495868">Mg</text>
+            <text id="m2t" font-size="20" font-weight="700" fill="#495868">Mg</text>
+            <text id="m3t" font-size="20" font-weight="700" fill="#495868">Mg</text>
+            <text id="m4t" font-size="20" font-weight="700" fill="#495868">Mg</text>
+            <text id="o1t" font-size="20" font-weight="700" fill="#1f576f">O</text>
+            <text id="o2t" font-size="20" font-weight="700" fill="#1f576f">O</text>
+            <text id="o3t" font-size="20" font-weight="700" fill="#1f576f">O</text>
+            <text id="o4t" font-size="20" font-weight="700" fill="#1f576f">O</text>
+          </g>
+
+          <g id="productFinal" opacity="0">
+            <circle cx="400" cy="220" r="28" fill="#d7dde5" stroke="#9ea9b5" stroke-width="4"></circle>
+            <circle cx="445" cy="220" r="24" fill="#a8e1ff" stroke="#69bbe5" stroke-width="4"></circle>
+            <circle cx="490" cy="220" r="28" fill="#d7dde5" stroke="#9ea9b5" stroke-width="4"></circle>
+            <circle cx="535" cy="220" r="24" fill="#a8e1ff" stroke="#69bbe5" stroke-width="4"></circle>
+            <circle cx="422" cy="275" r="24" fill="#a8e1ff" stroke="#69bbe5" stroke-width="4"></circle>
+            <circle cx="467" cy="275" r="28" fill="#d7dde5" stroke="#9ea9b5" stroke-width="4"></circle>
+            <circle cx="512" cy="275" r="24" fill="#a8e1ff" stroke="#69bbe5" stroke-width="4"></circle>
+            <circle cx="557" cy="275" r="28" fill="#d7dde5" stroke="#9ea9b5" stroke-width="4"></circle>
+            <text x="382" y="228" font-size="20" font-weight="700" fill="#495868">Mg</text>
+            <text x="436" y="228" font-size="20" font-weight="700" fill="#1f576f">O</text>
+            <text x="472" y="228" font-size="20" font-weight="700" fill="#495868">Mg</text>
+            <text x="526" y="228" font-size="20" font-weight="700" fill="#1f576f">O</text>
+            <text x="413" y="283" font-size="20" font-weight="700" fill="#1f576f">O</text>
+            <text x="449" y="283" font-size="20" font-weight="700" fill="#495868">Mg</text>
+            <text x="503" y="283" font-size="20" font-weight="700" fill="#1f576f">O</text>
+            <text x="539" y="283" font-size="20" font-weight="700" fill="#495868">Mg</text>
+          </g>
+        </svg>
+        <div id="sceneText" class="scene-caption">Vor der Reaktion befinden sich Magnesium und Sauerstoff gemeinsam im Kolben, aber noch unverändert als Edukte.</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>4. Reaktionsgleichung, Edukte und Produkte</h2>
+      <p>Hier wird alles nacheinander im selben Feld eingeblendet.</p>
+      <div class="reaction-controls">
+        <button class="small-btn active" data-react="1">1</button>
+        <button class="small-btn" data-react="2">2</button>
+        <button class="small-btn" data-react="3">3</button>
+        <button class="small-btn" data-react="4">4</button>
+        <button class="small-btn" data-react="5">5</button>
+      </div>
+      <div class="reaction-stage">
+        <div class="reaction-line">
+          <span id="react-left" class="reaction-part left">Magnesium + Sauerstoff</span>
+          <span id="react-arrow" class="reaction-part">→</span>
+          <span id="react-right" class="reaction-part right">Magnesiumoxid</span>
+        </div>
+        <div class="term-row">
+          <div id="educt-box" class="term-box educt"><strong>Edukte</strong><span>(Ausgangsstoffe)</span></div>
+          <div id="product-box" class="term-box right product"><strong>Produkte</strong><span>(entstehende Stoffe)</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>5. Merkmale einer chemischen Reaktion</h2>
+      <p>Gehe mit „Weiter“ Schritt für Schritt durch die Merkmale.</p>
+      <div class="feature-stage">
+        <div class="feature-visual"><svg id="featureSvg" viewBox="0 0 500 150" aria-label="Bildhafte Darstellung zu Merkmalen chemischer Reaktionen"></svg></div>
+        <div id="featureCard" class="feature-card"></div>
+        <div id="featureProgress" class="feature-progress"></div>
+        <div class="control-row">
+          <button id="featurePrev" class="small-btn">Zurück</button>
+          <button id="featureNext" class="small-btn active">Weiter</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="grid two">
+      <div class="card"><h2>6. Definition</h2><div class="def">Eine <strong>chemische Reaktion</strong> ist ein Vorgang, bei dem aus Ausgangsstoffen <strong>neue Stoffe</strong> entstehen. Dabei werden Teilchen <strong>neu angeordnet</strong>, es findet ein <strong>Energieumsatz</strong> statt und die <strong>Masse bleibt erhalten</strong>.</div></div>
+      <div class="card"><h2>7. Merksatz</h2><div class="def">Aus <strong>Edukten</strong> entstehen bei einer chemischen Reaktion <strong>Produkte</strong>.</div></div>
+    </section>
+
+    <section class="card">
+      <h2>8. Quizfragen</h2>
+      <div class="quiz-item"><h3>1. Welche Aussage beschreibt den Unterschied zwischen Edukten und Produkten am besten?</h3><div class="options"><button class="option">Edukte und Produkte sind immer genau dieselben Stoffe.</button><button class="option" data-correct="true">Edukte sind die Ausgangsstoffe, Produkte die neu entstandenen Stoffe.</button><button class="option">Produkte sind nur erwärmte Edukte ohne weitere Veränderung.</button></div><div class="feedback"></div></div>
+      <div class="quiz-item"><h3>2. Warum reicht es nicht aus zu sagen, beim Magnesiumversuch habe sich nur das Aussehen geändert?</h3><div class="options"><button class="option">Weil Farbe in der Chemie nie wichtig ist.</button><button class="option">Weil Magnesium nach der Reaktion verschwunden ist.</button><button class="option" data-correct="true">Weil ein neuer Stoff mit neuen Eigenschaften entstanden ist.</button></div><div class="feedback"></div></div>
+      <div class="quiz-item"><h3>3. Welche Beobachtung spricht am deutlichsten für einen Energieumsatz?</h3><div class="options"><button class="option">Die Teilchen sind im Modell rund dargestellt.</button><button class="option" data-correct="true">Beim Erhitzen werden helles Licht und Wärme sichtbar.</button><button class="option">Im Produkt stehen die Atome näher zusammen.</button></div><div class="feedback"></div></div>
+      <div class="quiz-item"><h3>4. Welche Aussage zur Masse passt zu chemischen Reaktionen?</h3><div class="options"><button class="option">Ein Teil der Masse geht bei jeder Reaktion verloren.</button><button class="option" data-correct="true">Die Atome bleiben erhalten und werden nur neu angeordnet.</button><button class="option">Die Produkte haben nie mehr Masse als die Edukte.</button></div><div class="feedback"></div></div>
+      <div class="quiz-item"><h3>5. Was wird im Teilchenmodell mit dem Schritt „Bindungen lösen sich“ gemeint?</h3><div class="options"><button class="option" data-correct="true">Die bisherigen Verbindungen zwischen Teilchen werden aufgebrochen.</button><button class="option">Die Atome lösen sich vollständig in Luft auf.</button><button class="option">Es entstehen sofort fertige Produkte ohne Übergang.</button></div><div class="feedback"></div></div>
+      <div class="quiz-item"><h3>6. Woran erkennt man im Modell die Produktbildung besonders gut?</h3><div class="options"><button class="option">Daran, dass der Kolben noch vorhanden ist.</button><button class="option" data-correct="true">Daran, dass Magnesium- und Sauerstoffteilchen nun eng und neu angeordnet vorliegen.</button><button class="option">Daran, dass die Teilchen jetzt größer gezeichnet sind.</button></div><div class="feedback"></div></div>
+      <div class="quiz-item"><h3>7. Welche Formulierung beschreibt eine chemische Reaktion am treffendsten?</h3><div class="options"><button class="option">Stoffe werden nur an einen anderen Ort bewegt.</button><button class="option">Ausgangsstoffe werden sichtbar, aber nicht verändert.</button><button class="option" data-correct="true">Teilchen ordnen sich neu und dadurch entstehen neue Stoffe.</button></div><div class="feedback"></div></div>
+      <div class="quiz-item"><h3>8. Welche Rolle hat der Reaktionspfeil in einer Reaktionsgleichung?</h3><div class="options"><button class="option">Er trennt Metalle von Nichtmetallen.</button><button class="option" data-correct="true">Er zeigt an, dass aus den Edukten Produkte entstehen.</button><button class="option">Er bedeutet, dass die Reaktion rückgängig gemacht wurde.</button></div><div class="feedback"></div></div>
+    </section>
+
+    <section class="card">
+      <h2>9. Zuordnung</h2>
+      <p>Ziehe die Begriffe in die passenden Kästchen.</p>
+      <div class="drag-wrap">
+        <div class="drag-bank" id="dragBank">
+          <div class="drag-item" draggable="true" data-value="educt">Edukte</div>
+          <div class="drag-item" draggable="true" data-value="arrow">⟶</div>
+          <div class="drag-item" draggable="true" data-value="product">Produkte</div>
+        </div>
+        <div class="drop-row">
+          <div class="drop-zone" data-accept="educt"><div class="label">Magnesium + Sauerstoff</div><div class="hint">Begriff einsetzen</div></div>
+          <div class="drop-zone" data-accept="arrow"><div class="label">?</div><div class="hint">Symbol einsetzen</div></div>
+          <div class="drop-zone" data-accept="product"><div class="label">Magnesiumoxid</div><div class="hint">Begriff einsetzen</div></div>
+        </div>
+        <div id="dragResult" class="drag-result"></div>
+      </div>
+    </section>
+  </div>
+
+<script>
+document.querySelectorAll('.toggle').forEach(btn => {
+  btn.addEventListener('click', () => document.getElementById(btn.dataset.target).classList.toggle('hidden'));
+});
+
+const flameOuter = document.getElementById('flameOuter');
+const flameInner = document.getElementById('flameInner');
+const initialParticles = document.getElementById('initialParticles');
+const splitParticles = document.getElementById('splitParticles');
+const reorderGroup = document.getElementById('reorderGroup');
+const productFinal = document.getElementById('productFinal');
+const sceneText = document.getElementById('sceneText');
+
+let flameTimer = null;
+let moveTimer = null;
+
+const movingItems = [
+  {id:'m1', start:[350,245], end:[400,220], type:'mg'},
+  {id:'o1', start:[355,150], end:[445,220], type:'o'},
+  {id:'m2', start:[425,225], end:[490,220], type:'mg'},
+  {id:'o2', start:[445,150], end:[535,220], type:'o'},
+  {id:'o3', start:[520,150], end:[422,275], type:'o'},
+  {id:'m3', start:[515,225], end:[467,275], type:'mg'},
+  {id:'o4', start:[610,150], end:[512,275], type:'o'},
+  {id:'m4', start:[590,245], end:[557,275], type:'mg'}
+];
+
+function setPos(id, x, y, type){
+  const el = document.getElementById(id);
+  const t = document.getElementById(id + 't');
+  el.setAttribute('cx', x);
+  el.setAttribute('cy', y);
+  t.setAttribute('x', type === 'mg' ? x - 18 : x - 9);
+  t.setAttribute('y', y + 8);
+}
+function resetReorderPositions(){ movingItems.forEach(item => setPos(item.id, item.start[0], item.start[1], item.type)); }
+
+function startFlame(){
+  flameOuter.style.opacity = '1'; flameInner.style.opacity = '1';
+  if(flameTimer) clearInterval(flameTimer);
+  flameTimer = setInterval(() => {
+    flameOuter.setAttribute('transform', `translate(0 ${Math.random()*2}) scale(1 ${0.92 + Math.random()*0.15})`);
+    flameInner.setAttribute('transform', `translate(0 ${Math.random()*2}) scale(1 ${0.92 + Math.random()*0.15})`);
+  }, 180);
+}
+function stopFlame(){
+  if(flameTimer) clearInterval(flameTimer);
+  flameOuter.style.opacity = '0'; flameInner.style.opacity = '0';
+  flameOuter.removeAttribute('transform'); flameInner.removeAttribute('transform');
+}
+function stopMove(){ if(moveTimer) clearInterval(moveTimer); moveTimer = null; }
+function animateReorder(){
+  stopMove(); resetReorderPositions(); let t = 0;
+  moveTimer = setInterval(() => {
+    t += 0.02;
+    if(t >= 1){ t = 1; stopMove(); }
+    movingItems.forEach(item => {
+      const x = item.start[0] + (item.end[0] - item.start[0]) * t;
+      const y = item.start[1] + (item.end[1] - item.start[1]) * t;
+      setPos(item.id, x, y, item.type);
+    });
+  }, 25);
+}
+function setScene(step){
+  document.querySelectorAll('[data-scene]').forEach(btn => btn.classList.toggle('active', btn.dataset.scene === String(step)));
+  stopFlame(); stopMove();
+  initialParticles.style.opacity = '1'; splitParticles.style.opacity = '0'; reorderGroup.style.opacity = '0'; productFinal.style.opacity = '0';
+  resetReorderPositions();
+
+  if(step === 1) sceneText.textContent = 'Vor der Reaktion befinden sich Magnesium und Sauerstoff gemeinsam im Kolben, aber noch unverändert als Edukte.';
+  if(step === 2){ startFlame(); sceneText.textContent = 'Der Kolben wird erhitzt. Die Teilchen befinden sich oberhalb des Bunsenbrenners im Reaktionsraum.'; }
+  if(step === 3){
+    startFlame(); initialParticles.style.opacity = '0.10'; splitParticles.style.opacity = '1';
+    sceneText.textContent = 'Jetzt werden Bindungen gelöst: Die Sauerstoffatome sind deutlich voneinander getrennt, und auch die Magnesiumteilchen liegen nicht mehr dicht zusammen.';
+  }
+  if(step === 4){
+    startFlame(); initialParticles.style.opacity = '0.05'; splitParticles.style.opacity = '0'; reorderGroup.style.opacity = '1'; animateReorder();
+    sceneText.textContent = 'Nun ordnen sich alle Teilchen neu: Magnesium- und Sauerstoffteilchen bewegen sich in eine neue gemeinsame Struktur.';
+  }
+  if(step === 5){
+    productFinal.style.opacity = '1'; initialParticles.style.opacity = '0.03';
+    sceneText.textContent = 'Das Produkt ist entstanden: Magnesiumoxid. Magnesium- und Sauerstoffteilchen liegen nun sehr nah beieinander in neuer Anordnung.';
+  }
+}
+document.querySelectorAll('[data-scene]').forEach(btn => btn.addEventListener('click', () => setScene(Number(btn.dataset.scene))));
+
+const reactLeft = document.getElementById('react-left');
+const reactArrow = document.getElementById('react-arrow');
+const reactRight = document.getElementById('react-right');
+const eductBox = document.getElementById('educt-box');
+const productBox = document.getElementById('product-box');
+
+function setReactionStep(step){
+  document.querySelectorAll('[data-react]').forEach(btn => btn.classList.toggle('active', btn.dataset.react === String(step)));
+  [reactLeft, reactArrow, reactRight, eductBox, productBox].forEach(el => el.classList.remove('show'));
+  if(step >= 1) reactLeft.classList.add('show');
+  if(step >= 2) reactArrow.classList.add('show');
+  if(step >= 3) reactRight.classList.add('show');
+  if(step >= 4) eductBox.classList.add('show');
+  if(step >= 5) productBox.classList.add('show');
+}
+document.querySelectorAll('[data-react]').forEach(btn => btn.addEventListener('click', () => setReactionStep(Number(btn.dataset.react))));
+
+const featureCard = document.getElementById('featureCard');
+const featureProgress = document.getElementById('featureProgress');
+const featurePrev = document.getElementById('featurePrev');
+const featureNext = document.getElementById('featureNext');
+const featureSvg = document.getElementById('featureSvg');
+
+const features = [
+  { text:'<strong>1. Stoffveränderung:</strong><br>Es entstehen neue Stoffe mit neuen Eigenschaften.', draw:() => { featureSvg.innerHTML = `
+    <rect x="20" y="18" width="180" height="114" rx="16" fill="#eef4ff" stroke="#d5e3f5"></rect>
+    <text x="78" y="42" font-size="18" font-weight="800" fill="#29507b">Edukte</text>
+    <circle cx="78" cy="80" r="23" fill="#d7dde5" stroke="#9ea9b5" stroke-width="3"></circle>
+    <circle cx="128" cy="80" r="19" fill="#a8e1ff" stroke="#69bbe5" stroke-width="3"></circle>
+    <text x="62" y="87" font-size="16" font-weight="700" fill="#495868">Mg</text>
+    <text x="120" y="87" font-size="16" font-weight="700" fill="#1f576f">O</text>
+    <text x="46" y="118" font-size="14" fill="#567082">Ausgangsstoffe</text>
+    <text x="228" y="83" font-size="38" font-weight="800" fill="#8aa2b9">→</text>
+    <rect x="290" y="18" width="190" height="114" rx="16" fill="#edf8ef" stroke="#d3ead7"></rect>
+    <text x="350" y="42" font-size="18" font-weight="800" fill="#2e6a3e">Produkt</text>
+    <circle cx="350" cy="80" r="23" fill="#d7dde5" stroke="#9ea9b5" stroke-width="3"></circle>
+    <circle cx="383" cy="80" r="19" fill="#a8e1ff" stroke="#69bbe5" stroke-width="3"></circle>
+    <circle cx="416" cy="80" r="23" fill="#d7dde5" stroke="#9ea9b5" stroke-width="3"></circle>
+    <text x="334" y="87" font-size="16" font-weight="700" fill="#495868">Mg</text>
+    <text x="375" y="87" font-size="16" font-weight="700" fill="#1f576f">O</text>
+    <text x="400" y="87" font-size="16" font-weight="700" fill="#495868">Mg</text>
+    <text x="312" y="118" font-size="14" fill="#567082">neuer Stoff entsteht</text>`; }},
+  { text:'<strong>2. Energieumsatz:</strong><br>Bei chemischen Reaktionen wird Energie aufgenommen oder abgegeben. Hier erkennt man das an Licht und Wärme.', draw:() => { featureSvg.innerHTML = `
+    <rect x="30" y="24" width="150" height="100" rx="16" fill="#fff4e3" stroke="#f0d3a6"></rect>
+    <text x="73" y="48" font-size="18" font-weight="800" fill="#875400">Energie</text>
+    <path d="M108 62 L92 88 L108 88 L96 116 L128 82 L111 82 L124 62 Z" fill="#f4b851"></path>
+    <text x="215" y="82" font-size="38" font-weight="800" fill="#8aa2b9">→</text>
+    <rect x="282" y="18" width="188" height="112" rx="16" fill="#fff" stroke="#d9e3ed"></rect>
+    <rect x="362" y="72" width="22" height="32" rx="7" fill="#6d7b8a"></rect>
+    <rect x="337" y="100" width="72" height="13" rx="7" fill="#4d5964"></rect>
+    <path d="M373 68 C396 40, 395 12, 373 -10 C351 12, 350 40, 373 68Z" fill="#ffc861"></path>
+    <path d="M373 60 C385 42, 384 28, 373 16 C362 28, 361 42, 373 60Z" fill="#8fd4ff"></path>
+    <text x="320" y="130" font-size="14" fill="#567082">sichtbar: Licht und Wärme</text>`; }},
+  { text:'<strong>3. Erhalt der Masse:</strong><br>Die Atome bleiben erhalten. Sie verschwinden nicht, sondern werden nur neu angeordnet.', draw:() => { featureSvg.innerHTML = `
+    <rect x="18" y="18" width="208" height="114" rx="16" fill="#eef4ff" stroke="#d5e3f5"></rect>
+    <circle cx="62" cy="77" r="21" fill="#d7dde5" stroke="#9ea9b5" stroke-width="3"></circle>
+    <circle cx="108" cy="77" r="18" fill="#a8e1ff" stroke="#69bbe5" stroke-width="3"></circle>
+    <circle cx="151" cy="77" r="21" fill="#d7dde5" stroke="#9ea9b5" stroke-width="3"></circle>
+    <circle cx="194" cy="77" r="18" fill="#a8e1ff" stroke="#69bbe5" stroke-width="3"></circle>
+    <text x="41" y="84" font-size="15" font-weight="700" fill="#495868">Mg</text>
+    <text x="100" y="84" font-size="15" font-weight="700" fill="#1f576f">O</text>
+    <text x="130" y="84" font-size="15" font-weight="700" fill="#495868">Mg</text>
+    <text x="186" y="84" font-size="15" font-weight="700" fill="#1f576f">O</text>
+    <text x="48" y="118" font-size="14" fill="#567082">4 Atome insgesamt</text>
+    <text x="242" y="83" font-size="38" font-weight="800" fill="#8aa2b9">=</text>
+    <rect x="292" y="18" width="190" height="114" rx="16" fill="#edf8ef" stroke="#d3ead7"></rect>
+    <circle cx="340" cy="62" r="21" fill="#d7dde5" stroke="#9ea9b5" stroke-width="3"></circle>
+    <circle cx="380" cy="62" r="18" fill="#a8e1ff" stroke="#69bbe5" stroke-width="3"></circle>
+    <circle cx="360" cy="102" r="18" fill="#a8e1ff" stroke="#69bbe5" stroke-width="3"></circle>
+    <circle cx="400" cy="102" r="21" fill="#d7dde5" stroke="#9ea9b5" stroke-width="3"></circle>
+    <text x="319" y="69" font-size="15" font-weight="700" fill="#495868">Mg</text>
+    <text x="372" y="69" font-size="15" font-weight="700" fill="#1f576f">O</text>
+    <text x="352" y="109" font-size="15" font-weight="700" fill="#1f576f">O</text>
+    <text x="379" y="109" font-size="15" font-weight="700" fill="#495868">Mg</text>
+    <text x="312" y="130" font-size="14" fill="#567082">gleiche Anzahl an Atomen</text>`; }},
+  { text:'<strong>4. Neuordnung der Teilchen:</strong><br>Alte Bindungen werden gelöst und neue Bindungen entstehen. Dadurch bildet sich ein neuer Stoff.', draw:() => { featureSvg.innerHTML = `
+    <rect x="18" y="18" width="208" height="114" rx="16" fill="#fff" stroke="#d9e3ed"></rect>
+    <circle cx="70" cy="76" r="18" fill="#a8e1ff" stroke="#69bbe5" stroke-width="3"></circle>
+    <circle cx="110" cy="76" r="18" fill="#a8e1ff" stroke="#69bbe5" stroke-width="3"></circle>
+    <line x1="84" y1="76" x2="96" y2="76" stroke="#69bbe5" stroke-width="5" stroke-linecap="round"></line>
+    <circle cx="156" cy="76" r="21" fill="#d7dde5" stroke="#9ea9b5" stroke-width="3"></circle>
+    <circle cx="196" cy="76" r="21" fill="#d7dde5" stroke="#9ea9b5" stroke-width="3"></circle>
+    <text x="61" y="83" font-size="15" font-weight="700" fill="#1f576f">O</text>
+    <text x="101" y="83" font-size="15" font-weight="700" fill="#1f576f">O</text>
+    <text x="136" y="83" font-size="15" font-weight="700" fill="#495868">Mg</text>
+    <text x="176" y="83" font-size="15" font-weight="700" fill="#495868">Mg</text>
+    <text x="62" y="118" font-size="14" fill="#567082">vorher getrennte Partner</text>
+    <text x="244" y="83" font-size="38" font-weight="800" fill="#8aa2b9">→</text>
+    <rect x="292" y="18" width="190" height="114" rx="16" fill="#edf8ef" stroke="#d3ead7"></rect>
+    <circle cx="334" cy="76" r="21" fill="#d7dde5" stroke="#9ea9b5" stroke-width="3"></circle>
+    <circle cx="368" cy="76" r="18" fill="#a8e1ff" stroke="#69bbe5" stroke-width="3"></circle>
+    <circle cx="402" cy="76" r="21" fill="#d7dde5" stroke="#9ea9b5" stroke-width="3"></circle>
+    <circle cx="436" cy="76" r="18" fill="#a8e1ff" stroke="#69bbe5" stroke-width="3"></circle>
+    <text x="315" y="83" font-size="15" font-weight="700" fill="#495868">Mg</text>
+    <text x="360" y="83" font-size="15" font-weight="700" fill="#1f576f">O</text>
+    <text x="383" y="83" font-size="15" font-weight="700" fill="#495868">Mg</text>
+    <text x="428" y="83" font-size="15" font-weight="700" fill="#1f576f">O</text>
+    <text x="334" y="118" font-size="14" fill="#567082">neue Bindungen / neue Ordnung</text>`; }}
+];
+let featureIndex = 0;
+function renderFeature(){
+  featureCard.innerHTML = features[featureIndex].text;
+  featureProgress.textContent = (featureIndex + 1) + ' von ' + features.length;
+  featurePrev.style.opacity = featureIndex === 0 ? '0.5' : '1';
+  featureNext.style.opacity = featureIndex === features.length - 1 ? '0.5' : '1';
+  features[featureIndex].draw();
+}
+featurePrev.addEventListener('click', () => { if(featureIndex > 0){ featureIndex--; renderFeature(); } });
+featureNext.addEventListener('click', () => { if(featureIndex < features.length - 1){ featureIndex++; renderFeature(); } });
+
+document.querySelectorAll('.quiz-item').forEach(item => {
+  const options = item.querySelectorAll('.option');
+  const feedback = item.querySelector('.feedback');
+  options.forEach(btn => {
+    btn.addEventListener('click', () => {
+      if(item.dataset.done === '1') return;
+      item.dataset.done = '1';
+      const correct = btn.dataset.correct === 'true';
+      options.forEach(o => { if(o.dataset.correct === 'true') o.classList.add('correct'); });
+      if(correct){ feedback.textContent = 'Richtig!'; feedback.style.color = '#1e5d2d'; }
+      else { btn.classList.add('wrong'); feedback.textContent = 'Noch nicht ganz. Die richtige Antwort ist grün markiert.'; feedback.style.color = '#7d2943'; }
+    });
+  });
+});
+
+let draggedItem = null;
+const dragResult = document.getElementById('dragResult');
+document.querySelectorAll('.drag-item').forEach(item => item.addEventListener('dragstart', () => { draggedItem = item; }));
+document.querySelectorAll('.drop-zone').forEach(zone => {
+  zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('hover'); });
+  zone.addEventListener('dragleave', () => zone.classList.remove('hover'));
+  zone.addEventListener('drop', (e) => {
+    e.preventDefault(); zone.classList.remove('hover');
+    if(!draggedItem) return;
+    const existing = zone.querySelector('.drag-item');
+    if(existing) return;
+    zone.appendChild(draggedItem); zone.classList.add('filled'); checkDragTask();
+  });
+});
+function checkDragTask(){
+  const zones = document.querySelectorAll('.drop-zone');
+  let allFilled = true, allCorrect = true;
+  zones.forEach(zone => {
+    const item = zone.querySelector('.drag-item');
+    if(!item){ allFilled = false; allCorrect = false; }
+    else if(item.dataset.value !== zone.dataset.accept){ allCorrect = false; }
+  });
+  if(!allFilled){ dragResult.textContent = ''; return; }
+  if(allCorrect){ dragResult.textContent = 'Richtig zugeordnet!'; dragResult.style.color = '#1e5d2d'; }
+  else { dragResult.textContent = 'Noch nicht richtig. Prüfe die Zuordnung noch einmal.'; dragResult.style.color = '#7d2943'; }
+}
+
+setScene(1); setReactionStep(1); renderFeature();
+</script>
+</body>
+</html>

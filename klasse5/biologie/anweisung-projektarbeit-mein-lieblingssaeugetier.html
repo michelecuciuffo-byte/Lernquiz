@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kleines Projekt: Mein Lieblingssäugetier</title>
+  <style>
+    :root{
+      --bg: #fffaf2;
+      --paper: #ffffff;
+      --text: #3b342f;
+      --accent: #f4a261;
+      --accent2: #8ecae6;
+      --accent3: #90be6d;
+      --accent4: #f28482;
+      --line: #eadfce;
+      --shadow: 0 10px 24px rgba(0,0,0,0.08);
+    }
+
+    *{
+      box-sizing: border-box;
+    }
+
+    html, body{
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(180deg, #fff8ee 0%, #fffdf8 100%);
+      color: var(--text);
+      font-family: "Arial", "Verdana", sans-serif;
+      line-height: 1.5;
+      overflow-x: hidden;
+    }
+
+    body{
+      padding: 24px;
+    }
+
+    .sheet{
+      max-width: 980px;
+      margin: 0 auto;
+    }
+
+    .page{
+      background: var(--paper);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      border: 1px solid #f2e7d8;
+      margin-bottom: 28px;
+      page-break-after: always;
+      break-after: page;
+    }
+
+    .page:last-child{
+      page-break-after: auto;
+      break-after: auto;
+    }
+
+    .hero{
+      background: linear-gradient(135deg, #f4a261 0%, #ffd6a5 45%, #8ecae6 100%);
+      padding: 30px 26px 24px;
+      color: #2f241d;
+    }
+
+    .hero h1{
+      margin: 0 0 8px 0;
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      line-height: 1.12;
+    }
+
+    .hero p{
+      margin: 0;
+      font-size: 1.02rem;
+      max-width: 760px;
+    }
+
+    .content{
+      padding: 24px;
+    }
+
+    .box{
+      background: #fffdf9;
+      border: 2px solid var(--line);
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 18px;
+    }
+
+    .box h2{
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.32rem;
+      color: #6b4f3b;
+    }
+
+    .box h3{
+      margin-top: 0;
+      margin-bottom: 8px;
+      font-size: 1.07rem;
+      color: #5d6b2f;
+    }
+
+    .badge{
+      display: inline-block;
+      background: #fff3d8;
+      border: 1px solid #f3d79c;
+      border-radius: 999px;
+      padding: 7px 14px;
+      font-weight: bold;
+      margin-bottom: 12px;
+    }
+
+    .grid{
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+    }
+
+    p{
+      margin: 8px 0;
+    }
+
+    ul{
+      margin-top: 8px;
+      margin-bottom: 8px;
+      padding-left: 22px;
+    }
+
+    li{
+      margin-bottom: 6px;
+    }
+
+    .steps{
+      counter-reset: step;
+      list-style: none;
+      padding-left: 0;
+      margin: 0;
+    }
+
+    .steps li{
+      counter-increment: step;
+      background: #fff;
+      border: 2px solid #efe3d2;
+      border-radius: 16px;
+      padding: 13px 13px 13px 50px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .steps li::before{
+      content: counter(step);
+      position: absolute;
+      left: 14px;
+      top: 11px;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: var(--accent2);
+      color: #17384a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+    }
+
+    .example{
+      background: #f7fbff;
+      border-left: 8px solid var(--accent2);
+      padding: 14px;
+      border-radius: 14px;
+      margin-top: 12px;
+    }
+
+    .note{
+      background: #f0faee;
+      border: 2px dashed #a8d39b;
+      border-radius: 16px;
+      padding: 14px;
+      margin-top: 12px;
+    }
+
+    .table-like{
+      display: grid;
+      gap: 9px;
+      margin-top: 10px;
+    }
+
+    .row{
+      display: grid;
+      grid-template-columns: 210px 1fr;
+      gap: 12px;
+      background: #fff;
+      border: 1px solid #eee1cf;
+      border-radius: 14px;
+      padding: 11px;
+      align-items: start;
+    }
+
+    .row strong{
+      color: #7a593f;
+    }
+
+    .stars{
+      font-size: 1.2rem;
+      letter-spacing: 2px;
+    }
+
+    .footer{
+      text-align: center;
+      padding: 16px 24px 22px;
+      color: #7b6d61;
+      font-size: 0.95rem;
+    }
+
+    @page{
+      size: A4;
+      margin: 12mm;
+    }
+
+    @media (max-width: 700px){
+      body{
+        padding: 12px;
+      }
+
+      .content{
+        padding: 16px;
+      }
+
+      .hero{
+        padding: 24px 18px 20px;
+      }
+
+      .row{
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media print{
+      html, body{
+        background: white;
+      }
+
+      body{
+        padding: 0;
+      }
+
+      .sheet{
+        max-width: none;
+        margin: 0;
+      }
+
+      .page{
+        width: 100%;
+        min-height: calc(297mm - 24mm);
+        margin: 0;
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .content{
+        flex: 1;
+      }
+
+      .box,
+      .example,
+      .note,
+      .row,
+      .steps li{
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+
+    <!-- SEITE 1 -->
+    <section class="page">
+      <div class="hero">
+        <h1>🐾 Kleines Projekt: Mein Lieblingssäugetier</h1>
+        <p>
+          In diesem kleinen Projekt suchst du dir <strong>ein Säugetier</strong> aus und gestaltest dazu
+          eine kurze, schöne Arbeit. Du zeigst, was du über dein Tier herausgefunden hast,
+          und schreibst außerdem eine kleine Geschichte aus der Sicht deines Tieres.
+        </p>
+      </div>
+
+      <div class="content">
+        <div class="box">
+          <div class="badge">Für die 5. Klasse</div>
+          <h2>Worum geht es?</h2>
+          <p>
+            Du darfst dir <strong>ein beliebiges Säugetier</strong> aussuchen, zum Beispiel:
+            Hund, Katze, Pferd, Delfin, Elefant, Tiger, Maus, Fledermaus oder Koala.
+          </p>
+          <p>
+            Dann erstellst du eine <strong>kleine Projektarbeit</strong> dazu.
+            Sie soll zeigen, dass du Informationen sammeln, ordnen und verständlich aufschreiben kannst.
+          </p>
+        </div>
+
+        <div class="box">
+          <h2>Was ist ein Säugetier?</h2>
+          <p>
+            Säugetiere sind Tiere, die ihre Jungen mit Milch ernähren.
+            Viele Säugetiere haben Fell oder Haare. Säugetiere atmen mit der Lunge.
+            Ein Mensch ist übrigens auch ein Säugetier.
+          </p>
+          <div class="note">
+            <strong>Wichtig:</strong> Wähle bitte wirklich ein <strong>Säugetier</strong> aus
+            und kein Reptil, keinen Vogel, keinen Fisch und kein Insekt.
+          </div>
+        </div>
+
+        <div class="box">
+          <h2>Deine Aufgabe</h2>
+          <ol class="steps">
+            <li>Suche dir <strong>ein Säugetier</strong> aus.</li>
+            <li>Sammle dazu einige einfache Informationen.</li>
+            <li>Gestalte einen <strong>Steckbrief</strong>.</li>
+            <li>Füge ein <strong>Bild</strong> ein: gemalt, gezeichnet oder ausgedruckt.</li>
+            <li>Schreibe eine <strong>kurze Geschichte in Ich-Form</strong> aus Sicht deines Tieres.</li>
+            <li>Bearbeite noch einen kleinen Zusatzpunkt.</li>
+          </ol>
+        </div>
+      </div>
+
+      <div class="footer">
+        Kleines benotetes Projekt – 5. Klasse – Mein Lieblingssäugetier
+      </div>
+    </section>
+
+    <!-- SEITE 2 -->
+    <section class="page">
+      <div class="content">
+        <div class="box">
+          <h2>So soll deine Arbeit aufgebaut sein</h2>
+
+          <div class="grid">
+            <div class="box" style="margin:0;">
+              <h3>1. Titel</h3>
+              <p>
+                Schreibe als Überschrift zum Beispiel:
+                <strong>„Mein Lieblingssäugetier: Der Delfin“</strong>
+              </p>
+            </div>
+
+            <div class="box" style="margin:0;">
+              <h3>2. Steckbrief</h3>
+              <p>
+                Trage die wichtigsten Informationen kurz und ordentlich ein.
+              </p>
+            </div>
+
+            <div class="box" style="margin:0;">
+              <h3>3. Bild</h3>
+              <p>
+                Male dein Tier oder klebe ein ausgedrucktes Bild ein.
+              </p>
+            </div>
+
+            <div class="box" style="margin:0;">
+              <h3>4. Geschichte</h3>
+              <p>
+                Schreibe eine kurze Ich-Geschichte aus Sicht des Tieres.
+              </p>
+            </div>
+
+            <div class="box" style="margin:0;">
+              <h3>5. Kleiner Zusatz</h3>
+              <p>
+                Zum Beispiel: „Das finde ich besonders spannend an meinem Tier“.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="box">
+          <h2>Der Steckbrief</h2>
+          <p>Dein Steckbrief kann zum Beispiel diese Punkte enthalten:</p>
+
+          <div class="table-like">
+            <div class="row"><strong>Name des Tieres:</strong><div>Wie heißt dein Säugetier?</div></div>
+            <div class="row"><strong>Lebensraum:</strong><div>Wo lebt es? Im Wald, in der Savanne, im Meer, in den Bergen oder beim Menschen?</div></div>
+            <div class="row"><strong>Nahrung:</strong><div>Was frisst es?</div></div>
+            <div class="row"><strong>Aussehen:</strong><div>Wie sieht es aus? Fell, Farbe, Größe, besondere Merkmale?</div></div>
+            <div class="row"><strong>Besonderheit:</strong><div>Was kann das Tier besonders gut?</div></div>
+          </div>
+
+          <div class="example">
+            <strong>Beispiel:</strong><br />
+            <strong>Name:</strong> Elefant<br />
+            <strong>Lebensraum:</strong> Afrika und Asien<br />
+            <strong>Nahrung:</strong> Gräser, Blätter, Früchte<br />
+            <strong>Aussehen:</strong> groß, grau, Rüssel, Stoßzähne<br />
+            <strong>Besonderheit:</strong> Er hat ein sehr gutes Gedächtnis.
+          </div>
+        </div>
+      </div>
+
+      <div class="footer">
+        Kleines benotetes Projekt – 5. Klasse – Mein Lieblingssäugetier
+      </div>
+    </section>
+
+    <!-- SEITE 3 -->
+    <section class="page">
+      <div class="content">
+        <div class="box">
+          <h2>Das Bild</h2>
+          <ul>
+            <li>Du darfst dein Tier <strong>zeichnen, malen oder ausdrucken</strong>.</li>
+            <li>Wenn du ein Bild ausdruckst, soll es <strong>sauber eingeklebt</strong> werden.</li>
+            <li>Wenn du kein Bild drucken kannst, ist eine <strong>eigene Zeichnung</strong> völlig in Ordnung.</li>
+            <li>Schreibe unter das Bild am besten noch den <strong>Namen des Tieres</strong>.</li>
+          </ul>
+        </div>
+
+        <div class="box">
+          <h2>Die kurze Geschichte in Ich-Form</h2>
+          <p>
+            Schreibe eine kleine Geschichte, als wärst du selbst das Tier.
+            Du schreibst also in der <strong>Ich-Form</strong>.
+          </p>
+
+          <div class="example">
+            <strong>Beispielanfang:</strong><br />
+            „Ich bin ein Delfin und lebe im Meer. Am liebsten schwimme ich mit meiner Gruppe durch die Wellen.
+            Heute habe ich einen Fischschwarm entdeckt und bin ganz schnell hinterhergeschwommen ...“
+          </div>
+
+          <p><strong>Wichtig für die Geschichte:</strong></p>
+          <ul>
+            <li>Schreibe in der <strong>Ich-Form</strong>.</li>
+            <li>Die Geschichte soll zu deinem Tier passen.</li>
+            <li>Sie darf kurz sein, aber sie soll ordentlich geschrieben sein.</li>
+            <li>Du kannst erzählen, was dein Tier an einem Tag erlebt.</li>
+          </ul>
+
+          <div class="note">
+            <strong>Tipp:</strong> Überlege:
+            Wo bin ich? Was mache ich? Was kann ich besonders gut?
+            Wovor habe ich vielleicht Angst? Was ist mein Lieblingsort?
+          </div>
+        </div>
+
+        <div class="box">
+          <h2>Der kleine Zusatzpunkt</h2>
+          <p>
+            Wähle <strong>einen</strong> dieser kleinen Zusatzpunkte aus:
+          </p>
+          <ul>
+            <li><strong>Mein Lieblingsteil:</strong> Was finde ich an meinem Tier besonders spannend?</li>
+            <li><strong>Wusstest du schon?</strong> Schreibe 3 interessante Fakten auf.</li>
+            <li><strong>Darum mag ich dieses Tier:</strong> Erkläre in 2–4 Sätzen, warum du es gewählt hast.</li>
+          </ul>
+        </div>
+
+        <div class="box">
+          <h2>Umfang</h2>
+          <ul>
+            <li>Die Arbeit soll <strong>mindestens 2 bis 3 Seiten</strong> lang sein.</li>
+            <li>Du darfst aber <strong>sehr gerne auch mehr schreiben</strong>.</li>
+            <li>Wenn du besonders ausführlich, ordentlich und sinnvoll arbeitest, wird das <strong>positiv in die Bewertung mit einbezogen</strong>.</li>
+            <li>Sie darf <strong>handschriftlich oder digital</strong> erstellt werden.</li>
+            <li>Wichtig ist, dass alles <strong>leserlich, ordentlich und vollständig</strong> ist.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="footer">
+        Kleines benotetes Projekt – 5. Klasse – Mein Lieblingssäugetier
+      </div>
+    </section>
+
+    <!-- SEITE 4 -->
+    <section class="page">
+      <div class="content">
+        <div class="box">
+          <h2>Bewertung</h2>
+          <div class="table-like">
+            <div class="row">
+              <strong>Inhalt</strong>
+              <div>Sind die Informationen richtig und passend zum Tier?</div>
+            </div>
+            <div class="row">
+              <strong>Vollständigkeit</strong>
+              <div>Sind Steckbrief, Bild, Geschichte und Zusatzpunkt vorhanden?</div>
+            </div>
+            <div class="row">
+              <strong>Ordnung und Gestaltung</strong>
+              <div>Ist die Arbeit sauber, übersichtlich und schön gestaltet?</div>
+            </div>
+            <div class="row">
+              <strong>Sprache</strong>
+              <div>Sind die Sätze verständlich und ordentlich geschrieben?</div>
+            </div>
+          </div>
+
+          <div class="note">
+            <strong>Merke:</strong> Es geht nicht darum, möglichst viel zu schreiben.
+            Wichtig ist, dass du dir Mühe gibst und dein Tier gut vorstellst.
+          </div>
+        </div>
+
+        <div class="box">
+          <h2>Checkliste vor der Abgabe</h2>
+          <ul>
+            <li>☐ Ich habe ein <strong>Säugetier</strong> ausgewählt.</li>
+            <li>☐ Ich habe einen <strong>Steckbrief</strong> erstellt.</li>
+            <li>☐ Ich habe ein <strong>Bild</strong> eingefügt oder gezeichnet.</li>
+            <li>☐ Ich habe eine <strong>kurze Geschichte in Ich-Form</strong> geschrieben.</li>
+            <li>☐ Ich habe den <strong>Zusatzpunkt</strong> bearbeitet.</li>
+            <li>☐ Meine Arbeit ist <strong>ordentlich und leserlich</strong>.</li>
+          </ul>
+        </div>
+
+        <div class="box">
+          <h2>Viel Freude bei deinem Projekt! 🌟</h2>
+          <p>
+            Suche dir ein Tier aus, das du spannend findest. Arbeite sorgfältig und kreativ.
+            Zeige, was du herausgefunden hast — und hab Spaß dabei!
+          </p>
+          <p class="stars">⭐ ⭐ ⭐ ⭐ ⭐</p>
+        </div>
+      </div>
+
+      <div class="footer">
+        Kleines benotetes Projekt – 5. Klasse – Mein Lieblingssäugetier
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

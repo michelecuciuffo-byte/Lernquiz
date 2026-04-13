@@ -1,0 +1,1046 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Prägung bei Entenküken – Animation und Quiz</title>
+<style>
+  :root{
+    --bg:#eef6ff;
+    --card:#ffffff;
+    --line:#d7e4f4;
+    --text:#163047;
+    --muted:#5f7488;
+    --accent:#2b6de0;
+    --accent2:#1547a8;
+    --ok:#17884f;
+    --bad:#c43b3b;
+    --soft:#f6fbff;
+    --warn:#d38a12;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:linear-gradient(180deg,#eef7ff 0%,#f9fcff 100%);
+    color:var(--text);
+  }
+
+  .wrap{
+    max-width:1150px;
+    margin:0 auto;
+    padding:22px;
+  }
+
+  h1,h2,h3{ margin:0 0 12px; }
+
+  .hero{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:24px;
+    box-shadow:0 14px 40px rgba(22,48,71,.08);
+    margin-bottom:20px;
+  }
+
+  .hero p{
+    margin:8px 0;
+    line-height:1.55;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: 1.2fr .8fr;
+    gap:20px;
+    align-items:start;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:18px;
+    box-shadow:0 12px 30px rgba(22,48,71,.06);
+    margin-bottom:20px;
+  }
+
+  canvas{
+    width:100%;
+    height:auto;
+    display:block;
+    background:linear-gradient(180deg,#cce9ff 0 56%, #d8f0d5 56% 100%);
+    border-radius:18px;
+    border:1px solid #bfd8ef;
+  }
+
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:14px;
+  }
+
+  button{
+    border:none;
+    border-radius:12px;
+    padding:11px 16px;
+    font-size:15px;
+    cursor:pointer;
+    background:var(--accent);
+    color:#fff;
+    transition:.18s ease;
+  }
+  button:hover{ background:var(--accent2); transform:translateY(-1px); }
+
+  button.secondary{
+    background:#eef4ff;
+    color:#21456d;
+    border:1px solid #c9daf7;
+  }
+  button.secondary:hover{ background:#e3eeff; }
+
+  .status{
+    margin-top:12px;
+    background:var(--soft);
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:12px 14px;
+    line-height:1.5;
+  }
+
+  .pillRow{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin-top:10px;
+  }
+
+  .pill{
+    border:1px solid var(--line);
+    background:#fff;
+    color:#31506b;
+    border-radius:999px;
+    padding:6px 11px;
+    font-size:13px;
+  }
+
+  .legend{
+    display:grid;
+    gap:10px;
+  }
+
+  .legendItem{
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:12px;
+    background:#fbfdff;
+  }
+
+  .legendItem b{
+    display:block;
+    margin-bottom:5px;
+  }
+
+  .explain{
+    line-height:1.58;
+  }
+
+  .note{
+    font-size:14px;
+    color:var(--muted);
+  }
+
+  .q{
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:16px;
+    background:#fcfeff;
+    margin-bottom:14px;
+  }
+
+  .q p{
+    margin:0 0 12px;
+    line-height:1.5;
+  }
+
+  .option{
+    display:block;
+    padding:10px 12px;
+    margin:8px 0;
+    border:1px solid #d8e6f4;
+    border-radius:12px;
+    background:#fff;
+    cursor:pointer;
+    transition:.15s ease;
+    line-height:1.45;
+  }
+
+  .option:hover{
+    background:#f5faff;
+    border-color:#bdd5f0;
+  }
+
+  .option input{
+    margin-right:8px;
+    transform:translateY(1px);
+  }
+
+  .feedback{
+    margin-top:10px;
+    padding:10px 12px;
+    border-radius:12px;
+    display:none;
+    line-height:1.45;
+  }
+
+  .feedback.ok{
+    background:#eaf8f0;
+    border:1px solid #bfe6cd;
+    color:#13633c;
+    display:block;
+  }
+
+  .feedback.bad{
+    background:#fff1f1;
+    border:1px solid #efc3c3;
+    color:#993131;
+    display:block;
+  }
+
+  .resultBox{
+    margin-top:16px;
+    padding:14px 16px;
+    border-radius:14px;
+    border:1px solid var(--line);
+    background:#f8fbff;
+    font-weight:bold;
+  }
+
+  @media (max-width: 900px){
+    .grid{ grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section class="hero">
+    <h1>Prägung bei Entenküken</h1>
+    <p><b>Interaktive Animation + Quiz für die 7. Klasse</b></p>
+    <p>
+      Entenküken besitzen eine <b>angeborene Bereitschaft zum Nachfolgen</b>.
+      Auf <b>welches Objekt</b> sie sich binden, wird aber in einer frühen
+      <b>sensiblen Phase gelernt</b>. Das nennt man <b>Prägung</b>.
+    </p>
+    <div class="pillRow">
+      <span class="pill">Nestflüchter</span>
+      <span class="pill">sensible Phase</span>
+      <span class="pill">akustische Reize</span>
+      <span class="pill">optische Reize</span>
+      <span class="pill">Bindung</span>
+      <span class="pill">Nachfolgereaktion</span>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section class="card">
+      <h2>Animation</h2>
+      <canvas id="scene" width="900" height="500"></canvas>
+
+      <div class="controls">
+        <button id="playBtn">Animation starten</button>
+        <button class="secondary" data-scene="0">Szene 1: Ei</button>
+        <button class="secondary" data-scene="1">Szene 2: Schlüpfen</button>
+        <button class="secondary" data-scene="2">Szene 3: Ente zuerst</button>
+        <button class="secondary" data-scene="3">Szene 4: Mensch zuerst</button>
+        <button class="secondary" data-scene="4">Szene 5: Zu spät</button>
+      </div>
+
+      <div class="status" id="sceneText">
+        Hier erscheint die Erklärung zur aktuellen Szene.
+      </div>
+    </section>
+
+    <aside class="card">
+      <h2>Worum geht es?</h2>
+      <div class="legend explain">
+        <div class="legendItem">
+          <b>1. Schlüpfen:</b>
+          Das Küken kommt aus dem Ei. Kurz danach beginnt die sensible Phase.
+        </div>
+        <div class="legendItem">
+          <b>2. Ente zuerst:</b>
+          Im Normalfall prägt sich das Küken auf die Mutterente und folgt ihr.
+        </div>
+        <div class="legendItem">
+          <b>3. Mensch zuerst:</b>
+          Erscheint zuerst ein Mensch mit passenden Reizen, kann auch er zum Prägungsobjekt werden.
+        </div>
+        <div class="legendItem">
+          <b>4. Zu spät:</b>
+          Nach der sensiblen Phase gelingt diese Bindung meist nicht mehr.
+        </div>
+      </div>
+      <p class="note">
+        Achte darauf, wann das Küken neugierig wird, wann es folgt und wann es gerade nicht mehr geprägt werden kann.
+      </p>
+    </aside>
+  </div>
+
+  <section class="card">
+    <h2>Erklärung in einfacher Sprache</h2>
+    <div class="explain">
+      <p>
+        Entenküken sind <b>Nestflüchter</b>. Sie können schon früh laufen, brauchen aber Schutz und Orientierung.
+        Normalerweise folgen sie ihrer Mutter.
+      </p>
+      <p>
+        Die <b>Bereitschaft zum Nachfolgen</b> ist angeboren. Auf <b>wen</b> sich das Küken festlegt, ist aber ein
+        <b>Lernprozess</b>. Dieser Vorgang heißt <b>Prägung</b>.
+      </p>
+      <p>
+        In einer kurzen <b>sensiblen Phase</b> nach dem Schlüpfen kann sich das Küken Reize einprägen,
+        zum Beispiel <b>Bewegung</b> und <b>Laute</b>.
+      </p>
+      <p>
+        Im Normalfall ist das die Ente. Taucht aber zuerst ein Mensch auf, kann auch dieser zum Prägungsobjekt werden.
+        Ist die sensible Phase vorbei, klappt das meist nicht mehr.
+      </p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>Quiz: Wie gut hast du die Prägung verstanden?</h2>
+
+    <div class="q" data-answer="b">
+      <p><b>1. Welche Aussage beschreibt den Unterschied zwischen angeborenem Verhalten und Prägung am besten?</b></p>
+      <label class="option"><input type="radio" name="q1" value="a"> Das Küken lernt erst später vollständig, überhaupt laufen zu können, und dadurch entsteht erst das Nachfolgen.</label>
+      <label class="option"><input type="radio" name="q1" value="b"> Die Bereitschaft zum Nachfolgen ist angeboren, aber auf welches Objekt sich das Küken bindet, wird in einer frühen Phase gelernt.</label>
+      <label class="option"><input type="radio" name="q1" value="c"> Sowohl das Nachfolgen als auch die Wahl des Objekts werden vollständig erst durch spätere Erfahrung aufgebaut.</label>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-answer="a">
+      <p><b>2. Was zeigt die Szene „Ente zuerst“ am deutlichsten?</b></p>
+      <label class="option"><input type="radio" name="q2" value="a"> Im Normalfall prägt sich das Küken auf die Ente und folgt ihr.</label>
+      <label class="option"><input type="radio" name="q2" value="b"> Küken folgen immer automatisch nur dem größten Objekt.</label>
+      <label class="option"><input type="radio" name="q2" value="c"> Das Küken wählt das Prägungsobjekt erst viele Tage später bewusst aus.</label>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-answer="c">
+      <p><b>3. Warum kann in einer anderen Situation auch ein Mensch zum Prägungsobjekt werden?</b></p>
+      <label class="option"><input type="radio" name="q3" value="a"> Weil Menschen für Küken immer attraktiver sind als Enten.</label>
+      <label class="option"><input type="radio" name="q3" value="b"> Weil Küken von Anfang an nicht zwischen Mensch und Tier unterscheiden können.</label>
+      <label class="option"><input type="radio" name="q3" value="c"> Weil in der sensiblen Phase nicht nur das genaue Aussehen zählt, sondern auch passende Reize wie Bewegung und Laute.</label>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-answer="b">
+      <p><b>4. Was ist die wichtigste Aussage der Szene „Zu spät“?</b></p>
+      <label class="option"><input type="radio" name="q4" value="a"> Später reagiert das Küken stärker auf Menschen als auf Enten.</label>
+      <label class="option"><input type="radio" name="q4" value="b"> Nach der sensiblen Phase kann die versäumte Bindung meist nicht mehr normal aufgebaut werden.</label>
+      <label class="option"><input type="radio" name="q4" value="c"> Nach der sensiblen Phase folgt das Küken grundsätzlich gar nichts mehr, auch nicht der echten Mutter.</label>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-answer="b">
+      <p><b>5. Welche Deutung passt am besten dazu, dass ein Küken bei Rückkehr des Prägungsobjekts ruhiger wird?</b></p>
+      <label class="option"><input type="radio" name="q5" value="a"> Es reagiert zufällig nur auf irgendein Geräusch.</label>
+      <label class="option"><input type="radio" name="q5" value="b"> Es zeigt bereits eine Bindung an dieses Objekt.</label>
+      <label class="option"><input type="radio" name="q5" value="c"> Es hat in diesem Moment einfach keine Energie mehr zum Rufen.</label>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="q" data-answer="a">
+      <p><b>6. Welche Aussage ist insgesamt am treffendsten?</b></p>
+      <label class="option"><input type="radio" name="q6" value="a"> Das Nachfolgen ist angeboren, aber das konkrete Prägungsobjekt wird in einer kurzen frühen Phase gelernt.</label>
+      <label class="option"><input type="radio" name="q6" value="b"> Prägung bedeutet, dass Küken immer ihrer biologischen Mutter folgen, unabhängig von den Erfahrungen nach dem Schlüpfen.</label>
+      <label class="option"><input type="radio" name="q6" value="c"> Die Prägung entsteht nur dann, wenn ein Objekt exakt wie eine Ente aussieht.</label>
+      <div class="feedback"></div>
+    </div>
+
+    <button id="checkBtn">Quiz auswerten</button>
+    <button class="secondary" id="resetBtn">Zurücksetzen</button>
+    <div class="resultBox" id="resultBox">Noch nicht ausgewertet.</div>
+  </section>
+
+</div>
+
+<script>
+const canvas = document.getElementById('scene');
+const ctx = canvas.getContext('2d');
+
+let currentScene = 0;
+let autoPlay = false;
+let sceneTimer = 0;
+let lastTime = 0;
+let t = 0;
+
+const sceneTexts = [
+  "Szene 1: Das Ei liegt im Nest. Das Küken ist kurz vor dem Schlüpfen.",
+  "Szene 2: Das Küken schlüpft. Jetzt beginnt die sensible Phase, in der Prägung möglich ist.",
+  "Szene 3: Die Ente erscheint zuerst. Das Küken richtet seine Aufmerksamkeit auf sie und folgt ihr. Das ist der normale Fall.",
+  "Szene 4: In einer anderen Situation erscheint zuerst ein Mensch. Auch dann kann das Küken sich auf den Menschen prägen und ihm folgen.",
+  "Szene 5: Die Zeit vergeht. Erst später erscheint ein Mensch. Doch jetzt ist die sensible Phase vorbei – das Küken baut keine normale Prägungsbindung mehr auf."
+];
+
+document.getElementById('sceneText').textContent = sceneTexts[0];
+
+function drawSkyAndGround() {
+  ctx.fillStyle = '#cce9ff';
+  ctx.fillRect(0,0,900,280);
+  ctx.fillStyle = '#d8f0d5';
+  ctx.fillRect(0,280,900,220);
+
+  ctx.fillStyle = '#c8e7be';
+  circleHill(120,340,170);
+  circleHill(420,350,210);
+  circleHill(760,350,180);
+
+  ctx.beginPath();
+  ctx.fillStyle = '#ffd76a';
+  ctx.arc(780,78,42,0,Math.PI*2);
+  ctx.fill();
+
+  drawCloud(130,80,1);
+  drawCloud(320,60,0.9);
+  drawCloud(620,95,1.1);
+}
+
+function circleHill(x,y,r){
+  ctx.beginPath();
+  ctx.arc(x,y,r,Math.PI,2*Math.PI);
+  ctx.fill();
+}
+
+function drawCloud(x,y,s){
+  ctx.fillStyle='rgba(255,255,255,.92)';
+  ctx.beginPath();
+  ctx.arc(x,y,22*s,0,Math.PI*2);
+  ctx.arc(x+24*s,y-9*s,18*s,0,Math.PI*2);
+  ctx.arc(x+48*s,y,24*s,0,Math.PI*2);
+  ctx.arc(x+23*s,y+8*s,22*s,0,Math.PI*2);
+  ctx.fill();
+}
+
+function drawNest(x,y,scale=1){
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.scale(scale,scale);
+  ctx.fillStyle = '#a36c3f';
+  ctx.beginPath();
+  ctx.ellipse(0,0,90,34,0,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.strokeStyle = '#7f522e';
+  ctx.lineWidth = 3;
+  for(let i=-70;i<=70;i+=14){
+    ctx.beginPath();
+    ctx.moveTo(i,-8 + Math.sin(i*.1)*2);
+    ctx.lineTo(i+26,10 + Math.cos(i*.2)*2);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawEgg(x,y,crack=0,wobble=0){
+  ctx.save();
+  ctx.translate(x+wobble,y);
+  ctx.fillStyle = '#fff8e7';
+  ctx.beginPath();
+  ctx.ellipse(0,0,36,48,0,0,Math.PI*2);
+  ctx.fill();
+  ctx.strokeStyle = '#d4c9ad';
+  ctx.lineWidth = 2;
+  ctx.stroke();
+
+  if(crack > 0){
+    ctx.strokeStyle = '#8f7b5a';
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    ctx.moveTo(-10,-2);
+    ctx.lineTo(-2,-10);
+    ctx.lineTo(6,-1);
+    ctx.lineTo(13,-12);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(-22,14);
+    ctx.lineTo(-8,7);
+    ctx.lineTo(3,18);
+    ctx.lineTo(16,10);
+    ctx.stroke();
+
+    if(crack > 0.55){
+      ctx.fillStyle='#fff8e7';
+      ctx.beginPath();
+      ctx.moveTo(-18,6);
+      ctx.lineTo(-5,-6);
+      ctx.lineTo(8,4);
+      ctx.lineTo(18,-8);
+      ctx.lineTo(23,26);
+      ctx.lineTo(-24,26);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+    }
+  }
+  ctx.restore();
+}
+
+function drawDuckling(x,y,scale=1,dir=1,blink=0,leg=0,down=false){
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.scale(scale*dir, scale);
+
+  ctx.globalAlpha = 0.16;
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.ellipse(0,32,30,7,0,0,Math.PI*2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  ctx.fillStyle = '#ffe56b';
+  ctx.beginPath();
+  ctx.ellipse(0,0,34,24,0,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.beginPath();
+  for(let i=0;i<7;i++){
+    const px = -18 + i*6;
+    ctx.arc(px,-15 - Math.sin(i)*2,4.5,0,Math.PI*2);
+  }
+  ctx.fill();
+
+  ctx.fillStyle = '#ffd84f';
+  ctx.beginPath();
+  ctx.ellipse(-5,2,13,10,-0.5,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle = '#ffe56b';
+  ctx.beginPath();
+  ctx.arc(27,-15,17,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.strokeStyle = '#222';
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  if(blink){
+    ctx.moveTo(32,-18);
+    ctx.lineTo(38,-18);
+  } else {
+    ctx.arc(35,-18,2.4,0,Math.PI*2);
+  }
+  ctx.stroke();
+
+  ctx.fillStyle = '#f29b2d';
+  ctx.beginPath();
+  ctx.moveTo(42,-13);
+  ctx.lineTo(58,-9);
+  ctx.lineTo(43,-4);
+  ctx.closePath();
+  ctx.fill();
+
+  ctx.strokeStyle = '#e18f1d';
+  ctx.lineWidth = 3;
+  const legA = down ? 7 : leg;
+  const legB = down ? 1 : -leg;
+  ctx.beginPath();
+  ctx.moveTo(-5,18); ctx.lineTo(-8,29+legA);
+  ctx.moveTo(8,18); ctx.lineTo(10,29+legB);
+  ctx.stroke();
+
+  ctx.beginPath();
+  ctx.moveTo(-10,29+legA); ctx.lineTo(-16,33+legA);
+  ctx.moveTo(-10,29+legA); ctx.lineTo(-8,34+legA);
+  ctx.moveTo(-10,29+legA); ctx.lineTo(-3,33+legA);
+
+  ctx.moveTo(10,29+legB); ctx.lineTo(4,33+legB);
+  ctx.moveTo(10,29+legB); ctx.lineTo(11,34+legB);
+  ctx.moveTo(10,29+legB); ctx.lineTo(17,33+legB);
+  ctx.stroke();
+
+  ctx.restore();
+}
+
+function drawMotherDuck(x,y,scale=1,dir=1,sound=false,moveLeg=0){
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.scale(scale*dir,scale);
+
+  ctx.globalAlpha = 0.18;
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.ellipse(0,42,44,9,0,0,Math.PI*2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  ctx.fillStyle = '#7b5a3c';
+  ctx.beginPath();
+  ctx.ellipse(0,0,58,34,0,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle='#6c4d33';
+  ctx.beginPath();
+  ctx.ellipse(-8,2,24,15,-0.3,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle = '#7b5a3c';
+  ctx.beginPath();
+  ctx.arc(45,-20,22,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.fillStyle = '#e89d2f';
+  ctx.beginPath();
+  ctx.moveTo(62,-18); ctx.lineTo(84,-12); ctx.lineTo(62,-5); ctx.closePath();
+  ctx.fill();
+
+  ctx.fillStyle='#111';
+  ctx.beginPath();
+  ctx.arc(50,-24,3,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.strokeStyle='#d48317';
+  ctx.lineWidth=4;
+  ctx.beginPath();
+  ctx.moveTo(-15,28); ctx.lineTo(-16,45+moveLeg);
+  ctx.moveTo(10,28); ctx.lineTo(11,45-moveLeg);
+  ctx.stroke();
+
+  if(sound){
+    drawSoundWaves(86,-16,1);
+  }
+  ctx.restore();
+}
+
+function drawHuman(x,y,scale=1,sound=false){
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.scale(scale,scale);
+
+  ctx.globalAlpha=0.14;
+  ctx.fillStyle='#000';
+  ctx.beginPath();
+  ctx.ellipse(0,55,24,8,0,0,Math.PI*2);
+  ctx.fill();
+  ctx.globalAlpha=1;
+
+  ctx.fillStyle='#2f5aa8';
+  ctx.fillRect(-12,-5,24,48);
+
+  ctx.fillStyle='#f0c29c';
+  ctx.beginPath();
+  ctx.arc(0,-22,14,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.strokeStyle='#274785';
+  ctx.lineWidth=5;
+  ctx.beginPath();
+  ctx.moveTo(-7,43); ctx.lineTo(-10,74);
+  ctx.moveTo(7,43); ctx.lineTo(10,74);
+  ctx.moveTo(-12,5); ctx.lineTo(-33,23);
+  ctx.moveTo(12,5); ctx.lineTo(30,20);
+  ctx.stroke();
+
+  if(sound){
+    drawSoundWaves(26,-20,.8);
+  }
+  ctx.restore();
+}
+
+function drawSoundWaves(x,y,s=1){
+  ctx.save();
+  ctx.translate(x,y);
+  ctx.strokeStyle = 'rgba(60,95,135,.85)';
+  ctx.lineWidth = 2;
+  for(let i=0;i<3;i++){
+    ctx.beginPath();
+    ctx.arc(0,0,8*s+i*8*s,-0.7,0.7);
+    ctx.stroke();
+  }
+  ctx.restore();
+}
+
+function drawClock(x,y,r,angle){
+  ctx.save();
+  ctx.translate(x,y);
+
+  ctx.globalAlpha = 0.14;
+  ctx.fillStyle = '#000';
+  ctx.beginPath();
+  ctx.ellipse(0,r+10,r*0.85,6,0,0,Math.PI*2);
+  ctx.fill();
+  ctx.globalAlpha = 1;
+
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(0,0,r,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.strokeStyle = '#8fb4d9';
+  ctx.lineWidth = 4;
+  ctx.stroke();
+
+  ctx.strokeStyle = '#55738f';
+  ctx.lineWidth = 2;
+  for(let i=0;i<12;i++){
+    const a = -Math.PI/2 + i*Math.PI/6;
+    const x1 = Math.cos(a)*(r-10);
+    const y1 = Math.sin(a)*(r-10);
+    const x2 = Math.cos(a)*(r-4);
+    const y2 = Math.sin(a)*(r-4);
+    ctx.beginPath();
+    ctx.moveTo(x1,y1);
+    ctx.lineTo(x2,y2);
+    ctx.stroke();
+  }
+
+  ctx.save();
+  ctx.rotate(angle*1.8);
+  ctx.strokeStyle = '#2b6de0';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(0,4);
+  ctx.lineTo(0,-r+12);
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.save();
+  ctx.rotate(angle);
+  ctx.strokeStyle = '#163047';
+  ctx.lineWidth = 4;
+  ctx.beginPath();
+  ctx.moveTo(0,3);
+  ctx.lineTo(0,-r+22);
+  ctx.stroke();
+  ctx.restore();
+
+  ctx.fillStyle = '#163047';
+  ctx.beginPath();
+  ctx.arc(0,0,4,0,Math.PI*2);
+  ctx.fill();
+
+  ctx.restore();
+}
+
+function drawTimeline(x,y,w,progress,threshold){
+  ctx.save();
+
+  ctx.fillStyle = 'rgba(255,255,255,.88)';
+  roundRect(x,y,w,26,12,true,false);
+
+  ctx.fillStyle = '#d7e4f4';
+  roundRect(x+8,y+9,w-16,8,5,true,false);
+
+  const passedWidth = Math.max(0, Math.min(w-16, (w-16)*progress));
+  ctx.fillStyle = '#2b6de0';
+  roundRect(x+8,y+9,passedWidth,8,5,true,false);
+
+  const tx = x+8 + (w-16)*threshold;
+  ctx.strokeStyle = '#d38a12';
+  ctx.lineWidth = 3;
+  ctx.beginPath();
+  ctx.moveTo(tx,y+4);
+  ctx.lineTo(tx,y+22);
+  ctx.stroke();
+
+  ctx.fillStyle = '#4a6580';
+  ctx.font = '13px Arial';
+  ctx.fillText('Beginn', x, y+42);
+  ctx.fillText('sensible Phase', x + w*0.32, y+42);
+  ctx.fillText('vorbei', x + w*0.74, y+42);
+
+  ctx.restore();
+}
+
+function drawArrow(x1,y1,x2,y2,color='#2b6de0'){
+  ctx.strokeStyle=color;
+  ctx.lineWidth=3;
+  ctx.beginPath();
+  ctx.moveTo(x1,y1);
+  ctx.lineTo(x2,y2);
+  ctx.stroke();
+
+  const ang = Math.atan2(y2-y1,x2-x1);
+  ctx.beginPath();
+  ctx.moveTo(x2,y2);
+  ctx.lineTo(x2-12*Math.cos(ang-0.4), y2-12*Math.sin(ang-0.4));
+  ctx.lineTo(x2-12*Math.cos(ang+0.4), y2-12*Math.sin(ang+0.4));
+  ctx.closePath();
+  ctx.fillStyle=color;
+  ctx.fill();
+}
+
+function drawLabel(text,x,y,w=180, fill='rgba(255,255,255,.88)', color='#23425d'){
+  ctx.fillStyle=fill;
+  roundRect(x,y,w,34,10,true,false);
+  ctx.fillStyle=color;
+  ctx.font='16px Arial';
+  ctx.fillText(text,x+10,y+22);
+}
+
+function roundRect(x,y,w,h,r,fill=true,stroke=false){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  if(fill) ctx.fill();
+  if(stroke) ctx.stroke();
+}
+
+function drawScene(index, time){
+  drawSkyAndGround();
+  const phase = time;
+
+  if(index === 0){
+    drawNest(450,360,1.2);
+    const wobble = Math.sin(phase*0.006)*4;
+    const crack = 0.15 + 0.1*Math.sin(phase*0.004);
+    drawEgg(450,312,crack,wobble);
+    drawLabel("Kurz vor dem Schlüpfen", 330, 45, 240);
+  }
+
+  if(index === 1){
+    drawNest(450,360,1.2);
+    const p = Math.min(1, phase/5000);
+    const wobble = Math.sin(phase*0.03) * (5 + 10*p);
+    drawEgg(450,312,0.4 + 0.6*p,wobble);
+
+    if(p > 0.35){
+      const y = 330 - p*55;
+      drawDuckling(450,y,0.72,1,Math.floor((phase/240)%6===0),Math.sin(phase*0.02)*3,false);
+    }
+
+    drawLabel("Das Küken schlüpft", 355, 45, 190);
+    drawLabel("Beginn der sensiblen Phase", 320, 88, 260);
+  }
+
+  if(index === 2){
+    const p = Math.min(1, phase/6000);
+    const duckMotherX = 650 - p*170;
+    const ducklingX = 210 + p*190;
+
+    drawNest(160,395,0.78);
+    drawMotherDuck(duckMotherX,300,1,-1,true,Math.sin(phase*0.02)*2);
+    drawDuckling(ducklingX,350,0.82,1,0,Math.sin(phase*0.03)*2,false);
+
+    drawArrow(ducklingX+18,340,duckMotherX-40,325,'#17884f');
+    drawLabel("Normalfall: Ente zuerst", 315, 42, 240);
+    drawLabel("Das Küken folgt der Ente", 320, 84, 235);
+  }
+
+  if(index === 3){
+    const p = Math.min(1, phase/6000);
+    const humanX = 650 - p*170;
+    const ducklingX = 210 + p*190;
+
+    drawNest(160,395,0.78);
+    drawHuman(humanX,305,1.02,true);
+    drawDuckling(ducklingX,350,0.82,1,0,Math.sin(phase*0.03)*2,false);
+
+    drawArrow(ducklingX+18,340,humanX-10,330,'#17884f');
+    drawLabel("Sonderfall: Mensch zuerst", 300, 42, 255);
+    drawLabel("Auch der Mensch kann Prägungsobjekt werden", 230, 84, 430);
+  }
+
+  if(index === 4){
+    const p = Math.min(1, phase / 6000);
+    const threshold = 0.58;
+    const clockAngle = phase * 0.0045;
+
+    let humanX;
+    if(p < 0.45){
+      humanX = 980;
+    } else {
+      const lateP = (p - 0.45) / 0.55;
+      humanX = 980 - lateP * 340;
+    }
+
+    drawNest(170,395,0.78);
+    drawDuckling(255,350,0.82,1,0,0,true);
+
+    drawClock(735,110,52,clockAngle);
+    drawTimeline(470, 245, 340, p, threshold);
+
+    drawLabel("Zeit vergeht ...", 645, 42, 170);
+
+    if(p < 0.45){
+      drawLabel("Noch kein Prägungsobjekt da", 505, 180, 245);
+    } else {
+      drawHuman(humanX,305,1.02,true);
+      drawLabel("Der Mensch kommt erst später", 500, 180, 255);
+    }
+
+    if(p > threshold){
+      drawLabel("sensible Phase vorbei", 535, 285, 220, 'rgba(255,243,224,.95)', '#9a5a00');
+    } else {
+      drawLabel("sensible Phase läuft noch", 530, 285, 230, 'rgba(236,246,255,.95)', '#1b5f9e');
+    }
+
+    drawLabel("Zu spät nach der sensiblen Phase", 250, 84, 310);
+    drawLabel("Keine normale Prägung auf den Menschen", 225, 126, 365);
+
+    ctx.strokeStyle = '#c43b3b';
+    ctx.lineWidth = 4;
+    ctx.beginPath();
+    ctx.moveTo(315,350);
+    ctx.lineTo(410,355);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(410,350);
+    ctx.lineTo(315,355);
+    ctx.stroke();
+
+    if(p >= 0.45){
+      ctx.save();
+      ctx.setLineDash([8,8]);
+      ctx.strokeStyle = 'rgba(196,59,59,.7)';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(305,340);
+      ctx.lineTo(humanX - 20, 332);
+      ctx.stroke();
+      ctx.restore();
+    }
+  }
+}
+
+function animate(ts){
+  if(!lastTime) lastTime = ts;
+  const dt = ts - lastTime;
+  lastTime = ts;
+  t += dt;
+
+  if(autoPlay){
+    sceneTimer += dt;
+    if(sceneTimer > 6200){
+      sceneTimer = 0;
+      currentScene++;
+      if(currentScene > 4){
+        currentScene = 0;
+        autoPlay = false;
+        document.getElementById('playBtn').textContent = 'Animation starten';
+      }
+      document.getElementById('sceneText').textContent = sceneTexts[currentScene];
+    }
+  }
+
+  const sceneTime = autoPlay ? sceneTimer : t;
+  drawScene(currentScene, sceneTime);
+  requestAnimationFrame(animate);
+}
+requestAnimationFrame(animate);
+
+document.getElementById('playBtn').addEventListener('click', () => {
+  autoPlay = !autoPlay;
+  sceneTimer = 0;
+  if(autoPlay){
+    currentScene = 0;
+    document.getElementById('sceneText').textContent = sceneTexts[currentScene];
+    document.getElementById('playBtn').textContent = 'Animation stoppen';
+  } else {
+    document.getElementById('playBtn').textContent = 'Animation starten';
+  }
+});
+
+document.querySelectorAll('[data-scene]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    autoPlay = false;
+    document.getElementById('playBtn').textContent = 'Animation starten';
+    currentScene = Number(btn.dataset.scene);
+    t = 0;
+    document.getElementById('sceneText').textContent = sceneTexts[currentScene];
+  });
+});
+
+const feedbackTexts = {
+  q1: {
+    a: "Nicht passend. Laufenkönnen und Prägung sind nicht dasselbe.",
+    b: "Richtig. Genau dieser Unterschied ist wichtig: Nachfolgebereitschaft angeboren, Objektbindung gelernt.",
+    c: "Nicht passend. Das widerspricht den Beobachtungen."
+  },
+  q2: {
+    a: "Richtig. Das ist der normale Fall bei Entenküken.",
+    b: "Nicht passend. Größe allein entscheidet nicht.",
+    c: "Nicht passend. Das passiert nicht erst viele Tage später."
+  },
+  q3: {
+    a: "Nicht passend. Menschen sind nicht grundsätzlich attraktiver.",
+    b: "Zu ungenau. Das erklärt den Vorgang nicht richtig.",
+    c: "Richtig. Genau diese Reize sind in der sensiblen Phase entscheidend."
+  },
+  q4: {
+    a: "Nicht passend. Die späte Reaktion auf Menschen wird nicht stärker.",
+    b: "Richtig. Genau das ist die Kernaussage.",
+    c: "Zu stark formuliert. Es geht um die versäumte neue Bindung, nicht darum, dass gar nichts mehr möglich wäre."
+  },
+  q5: {
+    a: "Nicht passend. Das wäre zu zufällig erklärt.",
+    b: "Richtig. Das spricht für eine entstandene Bindung.",
+    c: "Nicht passend. Das erklärt das Verhalten nicht sinnvoll."
+  },
+  q6: {
+    a: "Richtig. Das fasst den Kern der Prägung am besten zusammen.",
+    b: "Nicht passend. Erfahrungen nach dem Schlüpfen sind gerade wichtig.",
+    c: "Nicht passend. Das genaue Entenaussehen allein ist nicht entscheidend."
+  }
+};
+
+document.getElementById('checkBtn').addEventListener('click', () => {
+  let score = 0;
+  const questions = document.querySelectorAll('.q');
+
+  questions.forEach((q, i) => {
+    const name = 'q' + (i + 1);
+    const correct = q.dataset.answer;
+    const checked = q.querySelector('input[type="radio"]:checked');
+    const fb = q.querySelector('.feedback');
+
+    if(!checked){
+      fb.className = 'feedback bad';
+      fb.textContent = 'Hier fehlt noch eine Antwort.';
+      return;
+    }
+
+    const chosen = checked.value;
+    const text = feedbackTexts[name][chosen];
+
+    if(chosen === correct){
+      score++;
+      fb.className = 'feedback ok';
+      fb.textContent = text;
+    } else {
+      fb.className = 'feedback bad';
+      fb.textContent = text;
+    }
+  });
+
+  const box = document.getElementById('resultBox');
+  let comment = '';
+  if(score === 6) comment = 'Sehr stark – du hast die Idee der Prägung richtig verstanden.';
+  else if(score >= 4) comment = 'Gut gemacht – die wichtigsten Zusammenhänge sind klar.';
+  else if(score >= 2) comment = 'Ordentlich – schau dir besonders die sensible Phase noch einmal an.';
+  else comment = 'Schau dir Animation und Erklärung noch einmal in Ruhe an.';
+
+  box.textContent = 'Ergebnis: ' + score + ' von 6 Punkten. ' + comment;
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  document.querySelectorAll('input[type="radio"]').forEach(i => i.checked = false);
+  document.querySelectorAll('.feedback').forEach(f => {
+    f.className = 'feedback';
+    f.textContent = '';
+  });
+  document.getElementById('resultBox').textContent = 'Noch nicht ausgewertet.';
+});
+</script>
+</body>
+</html>

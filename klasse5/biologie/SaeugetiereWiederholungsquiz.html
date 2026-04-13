@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Säugetiere – Interaktive Lernwerkstatt</title>
+<style>
+  :root{
+    --bg1:#eef7ff;
+    --bg2:#f9fcff;
+    --card:#ffffff;
+    --line:#d7e4f4;
+    --text:#17324a;
+    --muted:#62798f;
+    --accent:#2f6fe4;
+    --accent2:#1b54b5;
+    --ok:#17884f;
+    --warn:#d38a12;
+    --bad:#c44242;
+    --soft:#f5faff;
+    --shadow:0 16px 40px rgba(17,44,74,.08);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    font-family:Arial, Helvetica, sans-serif;
+    color:var(--text);
+    background:linear-gradient(180deg,var(--bg1),var(--bg2));
+  }
+  .wrap{
+    max-width:1200px;
+    margin:0 auto;
+    padding:22px;
+  }
+  .hero, .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:22px;
+    box-shadow:var(--shadow);
+  }
+  .hero{
+    padding:24px;
+    margin-bottom:20px;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero h1{margin:0 0 8px;font-size:38px}
+  .hero p{margin:8px 0;line-height:1.55}
+  .hero .mini{
+    color:var(--muted);
+    font-size:15px;
+  }
+  .pillRow{
+    display:flex;flex-wrap:wrap;gap:10px;margin-top:14px;
+  }
+  .pill{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:999px;
+    padding:7px 12px;
+    font-size:14px;
+    color:#2e5374;
+  }
+
+  .mammal-strip{
+    position:absolute;
+    right:16px;
+    top:8px;
+    width:260px;
+    height:110px;
+    pointer-events:none;
+  }
+
+  .tabs{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-bottom:20px;
+  }
+  .tabBtn{
+    border:none;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:11px 15px;
+    cursor:pointer;
+    color:#234765;
+    font-weight:bold;
+  }
+  .tabBtn.active{
+    background:var(--accent);
+    color:#fff;
+    border-color:var(--accent);
+  }
+
+  .page{display:none}
+  .page.active{display:block}
+
+  .grid{
+    display:grid;
+    grid-template-columns:1.15fr .85fr;
+    gap:20px;
+  }
+  .card{padding:18px;margin-bottom:20px}
+  h2,h3{margin:0 0 12px}
+  .sub{color:var(--muted);font-size:15px;line-height:1.45;margin-bottom:12px}
+  .infoBox{
+    border:1px solid var(--line);
+    background:var(--soft);
+    border-radius:16px;
+    padding:14px;
+    line-height:1.55;
+  }
+  .bullet{
+    display:grid;gap:10px;
+  }
+  .bulletItem{
+    background:#fbfdff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:12px;
+  }
+  .bulletItem b{display:block;margin-bottom:4px}
+  canvas, svg{
+    max-width:100%;
+    display:block;
+  }
+  .animalStage{
+    width:100%;
+    border-radius:18px;
+    border:1px solid #bfd8ef;
+    background:linear-gradient(180deg,#cde9ff 0 60%, #d8f0d5 60% 100%);
+  }
+  .controls{
+    display:flex;gap:10px;flex-wrap:wrap;margin-top:12px
+  }
+  button{
+    border:none;
+    border-radius:12px;
+    padding:11px 16px;
+    background:var(--accent);
+    color:#fff;
+    cursor:pointer;
+    font-size:15px;
+  }
+  button:hover{background:var(--accent2)}
+  button.secondary{
+    background:#eef4ff;
+    color:#21456d;
+    border:1px solid #c9daf7;
+  }
+  .status{
+    margin-top:12px;
+    border-radius:14px;
+    border:1px solid var(--line);
+    background:var(--soft);
+    padding:12px 14px;
+    line-height:1.5;
+  }
+
+  .featureGrid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+  }
+  .featureCard{
+    border:1px solid var(--line);
+    border-radius:16px;
+    background:#fbfdff;
+    padding:14px;
+    min-height:120px;
+  }
+  .featureCard h4{margin:0 0 6px}
+
+  .dragWrap{
+    display:grid;
+    grid-template-columns:.85fr 1.15fr;
+    gap:18px;
+  }
+  .wordbox, .targets, .exerciseBox{
+    border:1px solid var(--line);
+    border-radius:18px;
+    background:#fcfeff;
+    padding:14px;
+  }
+  .wordList{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .dragWord{
+    padding:9px 12px;
+    border-radius:12px;
+    border:1px solid #b8d1ec;
+    background:#fff;
+    cursor:grab;
+    user-select:none;
+    font-weight:bold;
+    color:#274966;
+  }
+  .dragWord.used{
+    opacity:.45;
+  }
+  .dropRow{
+    margin-bottom:10px;
+    line-height:1.7;
+    font-size:18px;
+  }
+  .drop{
+    display:inline-flex;
+    min-width:145px;
+    min-height:40px;
+    align-items:center;
+    justify-content:center;
+    border:2px dashed #9fc1e8;
+    border-radius:10px;
+    background:#f4faff;
+    vertical-align:middle;
+    margin:0 6px;
+    padding:4px 8px;
+    color:#35628c;
+    font-weight:bold;
+  }
+  .drop.correct{
+    border-style:solid;
+    border-color:#9bd5b2;
+    background:#ebf8f0;
+    color:#10663c;
+  }
+  .drop.wrong{
+    border-style:solid;
+    border-color:#efb1b1;
+    background:#fff1f1;
+    color:#a13535;
+  }
+
+  .toothLayout{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:18px;
+  }
+  .labelBank{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-bottom:12px;
+  }
+  .labelToken{
+    padding:10px 12px;
+    border-radius:12px;
+    border:1px solid #b8d1ec;
+    background:#fff;
+    cursor:grab;
+    font-weight:bold;
+  }
+  .svgDrop{
+    fill:#f4faff;
+    stroke:#6ea4d8;
+    stroke-width:2;
+    stroke-dasharray:7 6;
+  }
+  .svgDrop.ok{
+    fill:#ebf8f0;
+    stroke:#3d9e69;
+    stroke-dasharray:none;
+  }
+  .svgDrop.bad{
+    fill:#fff1f1;
+    stroke:#c44242;
+    stroke-dasharray:none;
+  }
+  .svgLabel{
+    font-size:18px;
+    fill:#234765;
+    font-weight:bold;
+    pointer-events:none;
+  }
+  .svgHint{
+    font-size:15px;
+    fill:#5b768f;
+  }
+
+  .matchGrid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .matchCol{
+    border:1px solid var(--line);
+    border-radius:16px;
+    background:#fbfdff;
+    padding:12px;
+  }
+  .matchItem{
+    padding:10px 12px;
+    margin-bottom:8px;
+    border-radius:12px;
+    border:1px solid #d5e4f3;
+    background:#fff;
+    cursor:pointer;
+  }
+  .matchItem.selected{
+    outline:3px solid #b7d2ff;
+    background:#eef5ff;
+  }
+  .matchItem.done{
+    background:#ebf8f0;
+    border-color:#a8dabc;
+    color:#0d6a3b;
+  }
+  .matchItem.badflash{
+    background:#fff1f1;
+    border-color:#efb6b6;
+  }
+
+  .quizCard{
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:16px;
+    background:#fcfeff;
+    margin-bottom:14px;
+  }
+  .quizCard p{margin:0 0 10px;line-height:1.5}
+  .option{
+    display:block;
+    position:relative;
+    padding:10px 12px;
+    padding-right:46px;
+    margin:8px 0;
+    border-radius:12px;
+    border:1px solid #d8e6f4;
+    background:#fff;
+    cursor:pointer;
+    line-height:1.45;
+  }
+  .option input{
+    margin-right:8px;
+    accent-color:var(--accent);
+  }
+  .option.correct{
+    border-color:#9bd5b2;
+    background:#ebf8f0;
+    color:#10663c;
+    font-weight:bold;
+  }
+  .option.correct::after{
+    content:'🏆';
+    position:absolute;
+    right:12px;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:18px;
+  }
+  .option.wrong{
+    border-color:#efb1b1;
+    background:#fff1f1;
+    color:#a13535;
+  }
+  .feedback{
+    margin-top:8px;
+    padding:10px 12px;
+    border-radius:12px;
+    display:none;
+  }
+  .feedback.ok{
+    display:block;
+    background:#eaf8f0;
+    border:1px solid #bfe6cd;
+    color:#13633c;
+  }
+  .feedback.bad{
+    display:block;
+    background:#fff1f1;
+    border:1px solid #efc3c3;
+    color:#993131;
+  }
+
+  .score{
+    margin-top:14px;
+    padding:14px;
+    border:1px solid var(--line);
+    border-radius:14px;
+    background:#f8fbff;
+    font-weight:bold;
+  }
+
+  .smallBtnRow{
+    display:flex;flex-wrap:wrap;gap:10px;margin-top:12px
+  }
+
+  .commonsFigure{
+    margin:0;
+  }
+  .commonsImage{
+    width:100%;
+    display:block;
+    border-radius:18px;
+    border:1px solid var(--line);
+    background:#fff;
+  }
+  .commonsCaption{
+    margin-top:10px;
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.5;
+  }
+  .commonsCaption a{
+    color:var(--accent2);
+  }
+
+  .footerNote{
+    color:var(--muted);
+    font-size:14px;
+    margin-top:6px;
+  }
+
+  @media (max-width:980px){
+    .grid, .dragWrap, .toothLayout, .matchGrid{grid-template-columns:1fr}
+    .hero h1{font-size:31px}
+    .mammal-strip{display:none}
+    .featureGrid{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <section class="hero">
+    <canvas class="mammal-strip" id="miniAnimals" width="260" height="110"></canvas>
+    <h1>Säugetiere – Interaktive Lernwerkstatt</h1>
+    <p>Mit Animationen, Ziehaufgaben, Bildbeschriftung und Quizfragen für die <b>5. Klasse</b>.</p>
+    <p class="mini">Themen: Merkmale von Säugetieren, Gebiss, Gliedmaßen-Skelett und ein Abschlusstest.</p>
+    <div class="pillRow">
+      <span class="pill">Merkmale</span>
+      <span class="pill">Gebiss</span>
+      <span class="pill">Schneidezähne</span>
+      <span class="pill">Reißzähne</span>
+      <span class="pill">Backenzähne</span>
+      <span class="pill">Gliedmaßen</span>
+      <span class="pill">Skelett</span>
+      <span class="pill">Quiz</span>
+    </div>
+  </section>
+
+  <div class="tabs">
+    <button class="tabBtn active" data-page="start">Start</button>
+    <button class="tabBtn" data-page="merkmale">Merkmale</button>
+    <button class="tabBtn" data-page="gebiss1">Gebiss – Wortbox</button>
+    <button class="tabBtn" data-page="gebiss2">Gebiss – Bild</button>
+    <button class="tabBtn" data-page="skelett">Gliedmaßen-Skelett</button>
+    <button class="tabBtn" data-page="quiz">Abschluss-Quiz</button>
+  </div>
+
+  <section class="page active" id="page-start">
+    <div class="grid">
+      <div class="card">
+        <h2>Animation: Tiere bewegen sich</h2>
+        <p class="sub">Drücke auf Start. Du siehst ein Pferd, eine Katze und einen Delfin. So merkst du dir: Säugetiere leben nicht nur an Land.</p>
+        <canvas id="animalStage" class="animalStage" width="820" height="360"></canvas>
+        <div class="controls">
+          <button id="animToggle">Animation starten</button>
+          <button class="secondary" id="animReset">Zurücksetzen</button>
+        </div>
+        <div class="status" id="animText">Viele Säugetiere bewegen sich auf unterschiedliche Weise: laufen, springen oder schwimmen. Trotzdem haben sie gemeinsame Merkmale.</div>
+      </div>
+
+      <div class="card">
+        <h2>Was lernst du hier?</h2>
+        <div class="bullet">
+          <div class="bulletItem"><b>Merkmale von Säugetieren:</b> Fell oder Haare, lebende Jungen, Milch zum Säugen, Lungenatmung, Wirbeltiere.</div>
+          <div class="bulletItem"><b>Gebiss:</b> verschiedene Zähne haben verschiedene Aufgaben.</div>
+          <div class="bulletItem"><b>Gliedmaßen-Skelett:</b> Vorder- und Hintergliedmaßen bestehen aus ähnlichen Grundteilen.</div>
+          <div class="bulletItem"><b>Übungen:</b> Wörter in Kästchen ziehen, Bilder beschriften, Paare finden und Quiz lösen.</div>
+        </div>
+        <div class="smallBtnRow">
+          <button id="toMerkmale">Zu den Merkmalen</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="page-merkmale">
+    <div class="grid">
+      <div class="card">
+        <h2>Merkmale von Säugetieren</h2>
+        <p class="sub">Klicke auf die Karten. Jede Karte zeigt ein wichtiges Merkmal.</p>
+        <div class="featureGrid" id="featureGrid">
+          <div class="featureCard" data-title="Haare oder Fell" data-text="Säugetiere besitzen Haare oder Fell. Das schützt sie und hält warm."><h4>🟦 Karte 1</h4><div>Klicke mich</div></div>
+          <div class="featureCard" data-title="Lebende Jungen" data-text="Die meisten Säugetiere bringen lebende Junge zur Welt."><h4>🟦 Karte 2</h4><div>Klicke mich</div></div>
+          <div class="featureCard" data-title="Milchdrüsen" data-text="Die Jungen werden mit Milch gesäugt. Daher kommt der Name Säugetier."><h4>🟦 Karte 3</h4><div>Klicke mich</div></div>
+          <div class="featureCard" data-title="Lungenatmung" data-text="Säugetiere atmen mit Lungen, auch Wale und Delfine."><h4>🟦 Karte 4</h4><div>Klicke mich</div></div>
+          <div class="featureCard" data-title="Wirbelsäule" data-text="Säugetiere gehören zu den Wirbeltieren. Sie haben ein inneres Skelett."><h4>🟦 Karte 5</h4><div>Klicke mich</div></div>
+          <div class="featureCard" data-title="Gleichwarme Tiere" data-text="Ihre Körpertemperatur bleibt ziemlich konstant."><h4>🟦 Karte 6</h4><div>Klicke mich</div></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Mini-Übung</h2>
+        <p class="sub">Ziehe nur die Wörter in die Säugetier-Box, die wirklich zu Säugetieren passen.</p>
+        <div class="dragWrap" style="grid-template-columns:.9fr 1.1fr">
+          <div class="wordbox">
+            <h3>Wortkarten</h3>
+            <div class="wordList" id="mammalWords">
+              <div class="dragWord" draggable="true" data-value="Fell">Fell</div>
+              <div class="dragWord" draggable="true" data-value="Milch">Milch</div>
+              <div class="dragWord" draggable="true" data-value="Kiemen">Kiemen</div>
+              <div class="dragWord" draggable="true" data-value="Lunge">Lunge</div>
+              <div class="dragWord" draggable="true" data-value="Federn">Federn</div>
+              <div class="dragWord" draggable="true" data-value="Wirbelsäule">Wirbelsäule</div>
+            </div>
+          </div>
+          <div class="targets">
+            <h3>Säugetier-Box</h3>
+            <div id="mammalDrop" class="drop" style="display:flex;flex-wrap:wrap;gap:8px;justify-content:flex-start;min-height:120px;padding:10px"></div>
+            <div class="smallBtnRow">
+              <button class="secondary" id="checkMammalBox">Prüfen</button>
+              <button class="secondary" id="resetMammalBox">Neu</button>
+            </div>
+            <div class="status" id="mammalBoxStatus">Tipp: Nicht alles passt zu Säugetieren.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="page-gebiss1">
+    <div class="card">
+      <h2>Gebiss der Säugetiere – Wortbox</h2>
+      <p class="sub">Ziehe die Wörter in die passenden Kästchen. Die Sätze orientieren sich an einem einfachen Lückentext für die 5. Klasse.</p>
+      <div class="dragWrap">
+        <div class="wordbox">
+          <h3>Wortbox</h3>
+          <div class="wordList" id="wordbox">
+            <div class="dragWord" draggable="true" data-value="heterodontes">heterodontes</div>
+            <div class="dragWord" draggable="true" data-value="Schneidezähne">Schneidezähne</div>
+            <div class="dragWord" draggable="true" data-value="zerschneiden">zerschneiden</div>
+            <div class="dragWord" draggable="true" data-value="Reißzähne">Reißzähne</div>
+            <div class="dragWord" draggable="true" data-value="zerreißen">zerreißen</div>
+            <div class="dragWord" draggable="true" data-value="Backenzähne">Backenzähne</div>
+            <div class="dragWord" draggable="true" data-value="Mahlzähne">Mahlzähne</div>
+            <div class="dragWord" draggable="true" data-value="zermahlen">zermahlen</div>
+            <div class="dragWord" draggable="true" data-value="zerkleinert">zerkleinert</div>
+            <div class="dragWord" draggable="true" data-value="Zahnformel">Zahnformel</div>
+            <div class="dragWord" draggable="true" data-value="Milchgebiss">Milchgebiss</div>
+            <div class="dragWord" draggable="true" data-value="Dauergebiss">Dauergebiss</div>
+          </div>
+        </div>
+
+        <div class="targets">
+          <div class="dropRow">
+            Säugetiere besitzen ein <span class="drop" data-answer="heterodontes"></span> Gebiss, weil verschiedene Zähne unterschiedliche Aufgaben haben.
+          </div>
+          <div class="dropRow">
+            Vorne im Mund befinden sich die <span class="drop" data-answer="Schneidezähne"></span>. Mit ihnen kann man Nahrung <span class="drop" data-answer="zerschneiden"></span>.
+          </div>
+          <div class="dropRow">
+            Daneben liegen die <span class="drop" data-answer="Reißzähne"></span>. Sie helfen dabei, Nahrung zu <span class="drop" data-answer="zerreißen"></span>.
+          </div>
+          <div class="dropRow">
+            Weiter hinten befinden sich die <span class="drop" data-answer="Backenzähne"></span> und die <span class="drop" data-answer="Mahlzähne"></span>.
+          </div>
+          <div class="dropRow">
+            Mit ihnen wird Nahrung <span class="drop" data-answer="zermahlen"></span> und <span class="drop" data-answer="zerkleinert"></span>.
+          </div>
+          <div class="dropRow">
+            Die verschiedenen Zähne zusammen nennt man <span class="drop" data-answer="Zahnformel"></span>.
+          </div>
+          <div class="dropRow">
+            Viele Säugetiere haben zuerst ein <span class="drop" data-answer="Milchgebiss"></span>. Später wird es durch das <span class="drop" data-answer="Dauergebiss"></span> ersetzt.
+          </div>
+
+          <div class="smallBtnRow">
+            <button id="checkLuecke">Prüfen</button>
+            <button class="secondary" id="resetLuecke">Neu</button>
+          </div>
+          <div class="status" id="lueckeStatus">Alle Wörter aus der Wortbox werden genau einmal gebraucht.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="page-gebiss2">
+    <div class="card">
+      <h2>Gebiss – Zähne am Bild beschriften</h2>
+      <p class="sub">Ziehe die Begriffe auf die richtigen Kästchen. Rechts daneben siehst du noch einmal das Arbeitsblatt als Erinnerung.</p>
+
+      <div class="toothLayout">
+        <div class="exerciseBox">
+          <div class="labelBank" id="toothLabels">
+            <div class="labelToken" draggable="true" data-value="Schneidezähne">Schneidezähne</div>
+            <div class="labelToken" draggable="true" data-value="Reißzähne">Reißzähne</div>
+            <div class="labelToken" draggable="true" data-value="Backenzähne">Backenzähne</div>
+            <div class="labelToken" draggable="true" data-value="Mahlzähne">Mahlzähne</div>
+          </div>
+
+          <svg id="toothSVG" viewBox="0 0 760 420" aria-label="Schematisches Gebiss">
+            <defs>
+              <linearGradient id="gum" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#ffccd8"/>
+                <stop offset="100%" stop-color="#f5a9bc"/>
+              </linearGradient>
+            </defs>
+
+            <rect x="0" y="0" width="760" height="420" rx="18" fill="#f9fcff" stroke="#d7e4f4"/>
+            <text x="26" y="34" class="svgLabel">Vereinfachtes Säugetier-Gebiss</text>
+            <text x="26" y="58" class="svgHint">Ziehe die Namen auf die passenden Zahn-Gruppen.</text>
+
+            <path d="M90 120 Q380 35 670 120 L670 160 Q380 80 90 160 Z" fill="url(#gum)" opacity=".8"/>
+            <path d="M90 260 Q380 345 670 260 L670 220 Q380 300 90 220 Z" fill="url(#gum)" opacity=".8"/>
+
+            <!-- obere Zahnreihe -->
+            <rect x="120" y="115" width="18" height="50" rx="5" fill="#fff"/>
+            <rect x="144" y="110" width="18" height="55" rx="5" fill="#fff"/>
+            <polygon points="185,104 205,104 195,175" fill="#fff"/>
+            <rect x="240" y="108" width="30" height="58" rx="7" fill="#fff"/>
+            <rect x="278" y="108" width="32" height="58" rx="7" fill="#fff"/>
+            <rect x="320" y="108" width="34" height="58" rx="7" fill="#fff"/>
+
+            <!-- Spiegelung -->
+            <rect x="622" y="115" width="18" height="50" rx="5" fill="#fff"/>
+            <rect x="598" y="110" width="18" height="55" rx="5" fill="#fff"/>
+            <polygon points="555,104 575,104 565,175" fill="#fff"/>
+            <rect x="490" y="108" width="30" height="58" rx="7" fill="#fff"/>
+            <rect x="450" y="108" width="32" height="58" rx="7" fill="#fff"/>
+            <rect x="406" y="108" width="34" height="58" rx="7" fill="#fff"/>
+
+            <!-- untere Zahnreihe -->
+            <rect x="120" y="255" width="18" height="50" rx="5" fill="#fff"/>
+            <rect x="144" y="255" width="18" height="55" rx="5" fill="#fff"/>
+            <polygon points="185,316 205,316 195,245" fill="#fff"/>
+            <rect x="240" y="246" width="30" height="58" rx="7" fill="#fff"/>
+            <rect x="278" y="246" width="32" height="58" rx="7" fill="#fff"/>
+            <rect x="320" y="246" width="34" height="58" rx="7" fill="#fff"/>
+
+            <rect x="622" y="255" width="18" height="50" rx="5" fill="#fff"/>
+            <rect x="598" y="255" width="18" height="55" rx="5" fill="#fff"/>
+            <polygon points="555,316 575,316 565,245" fill="#fff"/>
+            <rect x="490" y="246" width="30" height="58" rx="7" fill="#fff"/>
+            <rect x="450" y="246" width="32" height="58" rx="7" fill="#fff"/>
+            <rect x="406" y="246" width="34" height="58" rx="7" fill="#fff"/>
+
+            <!-- Dropzones -->
+            <rect class="svgDrop" data-answer="Schneidezähne" x="82" y="52" width="160" height="42" rx="12"/>
+            <text x="102" y="79" class="svgHint">vordere Zähne</text>
+
+            <rect class="svgDrop" data-answer="Reißzähne" x="256" y="52" width="150" height="42" rx="12"/>
+            <text x="284" y="79" class="svgHint">spitze Zähne</text>
+
+            <rect class="svgDrop" data-answer="Backenzähne" x="426" y="52" width="155" height="42" rx="12"/>
+            <text x="451" y="79" class="svgHint">hintere Zähne</text>
+
+            <rect class="svgDrop" data-answer="Mahlzähne" x="594" y="52" width="130" height="42" rx="12"/>
+            <text x="611" y="79" class="svgHint">zum Mahlen</text>
+          </svg>
+
+          <div class="smallBtnRow">
+            <button id="checkTeethImage">Prüfen</button>
+            <button class="secondary" id="resetTeethImage">Neu</button>
+          </div>
+          <div class="status" id="teethImageStatus">Die Kästchen oben helfen dir mit kleinen Hinweisen.</div>
+        </div>
+
+        <div class="exerciseBox">
+          <h3>Arbeitsblatt-Ausschnitt</h3>
+          <img src="image.png" alt="Arbeitsblatt zum Gebiss der Säugetiere" style="width:100%;border-radius:14px;border:1px solid var(--line)">
+          <p class="footerNote">Das Bild dient hier nur als Lernhilfe. Die eigentliche Übung machst du links am schematischen Gebiss.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="page-skelett">
+    <div class="card">
+      <h2>Gliedmaßen-Skelett der Säugetiere</h2>
+      <p class="sub">Viele Säugetiere haben trotz verschiedener Lebensweise einen ähnlichen Grundbauplan. Im Wikimedia-Commons-Bild siehst du diesen Vergleich, rechts dazu die passende Übung.</p>
+
+      <div class="grid">
+        <div class="exerciseBox">
+          <figure class="commonsFigure">
+            <img
+              class="commonsImage"
+              src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Homologous_frontlimbs.svg/1200px-Homologous_frontlimbs.svg.png"
+              alt="Vergleich der Vordergliedmaßen von verschiedenen Tieren"
+              loading="lazy"
+              referrerpolicy="no-referrer"
+              onerror="if(!this.dataset.fallback){this.dataset.fallback='1';this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/3/3d/Homologous_frontlimbs.svg/800px-Homologous_frontlimbs.svg.png';}else{this.onerror=null;this.src='https://upload.wikimedia.org/wikipedia/commons/3/3d/Homologous_frontlimbs.svg';}"
+            >
+            <figcaption class="commonsCaption">
+              Bildquelle:
+              <a href="https://commons.wikimedia.org/wiki/File:Homologous_frontlimbs.svg" target="_blank" rel="noopener noreferrer">Wikimedia Commons</a>.
+              Zuerst wird eine PNG-Vorschau geladen, damit das Bild zuverlässiger sichtbar ist.
+            </figcaption>
+          </figure>
+        </div>
+
+        <div class="exerciseBox">
+          <div class="matchGrid">
+            <div class="matchCol" id="leftMatch">
+              <h3>Knochen</h3>
+              <div class="matchItem" data-id="1">Oberarmknochen</div>
+              <div class="matchItem" data-id="2">Unterarm</div>
+              <div class="matchItem" data-id="3">Handwurzel</div>
+              <div class="matchItem" data-id="4">Fingerknochen</div>
+            </div>
+            <div class="matchCol" id="rightMatch">
+              <h3>Aufgabe / Erklärung</h3>
+              <div class="matchItem" data-id="2">verbindet Oberarm und Hand</div>
+              <div class="matchItem" data-id="4">können stark verlängert sein, zum Beispiel bei der Fledermaus</div>
+              <div class="matchItem" data-id="1">liegt körpernah an der Schulter</div>
+              <div class="matchItem" data-id="3">liegt zwischen Unterarm und Fingern</div>
+            </div>
+          </div>
+          <div class="smallBtnRow">
+            <button class="secondary" id="resetMatch">Neu</button>
+          </div>
+          <div class="status" id="matchStatus">Klicke links ein Wort und dann rechts die passende Erklärung.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="page" id="page-quiz">
+    <div class="card">
+      <h2>Abschluss-Quiz</h2>
+      <p class="sub">Die Antworten sind absichtlich nicht zu offensichtlich formuliert. Lies genau.</p>
+
+      <div class="quizCard" data-answer="b">
+        <p><b>1. Welche Eigenschaft passt am besten zu Säugetieren?</b></p>
+        <label class="option"><input type="radio" name="q1" value="a"> Ihre Jungen entwickeln sich grundsätzlich immer in Eiern außerhalb des Mutterkörpers.</label>
+        <label class="option"><input type="radio" name="q1" value="b"> Die Jungen werden mit Milch ernährt, und der Körper besitzt Haare oder Fell.</label>
+        <label class="option"><input type="radio" name="q1" value="c"> Sie atmen nur im Wasser und besitzen Kiemen.</label>
+        <div class="feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="quizCard" data-answer="c">
+        <p><b>2. Warum nennt man das Gebiss vieler Säugetiere „heterodont“?</b></p>
+        <label class="option"><input type="radio" name="q2" value="a"> Weil alle Zähne gleich aussehen und dieselbe Aufgabe haben.</label>
+        <label class="option"><input type="radio" name="q2" value="b"> Weil das Gebiss nur aus zwei Zahnarten besteht.</label>
+        <label class="option"><input type="radio" name="q2" value="c"> Weil verschiedene Zähne unterschiedliche Formen und Aufgaben haben.</label>
+        <div class="feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="quizCard" data-answer="a">
+        <p><b>3. Welche Aussage über Backen- und Mahlzähne ist am treffendsten?</b></p>
+        <label class="option"><input type="radio" name="q3" value="a"> Sie helfen dabei, Nahrung zu zermahlen und zu zerkleinern.</label>
+        <label class="option"><input type="radio" name="q3" value="b"> Mit ihnen wird Nahrung hauptsächlich festgehalten.</label>
+        <label class="option"><input type="radio" name="q3" value="c"> Sie sind vor allem für das Zerschneiden vorne im Mund zuständig.</label>
+        <div class="feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="quizCard" data-answer="b">
+        <p><b>4. Was zeigt der Vergleich von Pferd, Fledermaus und Wal?</b></p>
+        <label class="option"><input type="radio" name="q4" value="a"> Ihre Gliedmaßen haben völlig verschiedene Grundbaupläne.</label>
+        <label class="option"><input type="radio" name="q4" value="b"> Der Grundbauplan ist ähnlich, auch wenn die Gliedmaßen verschieden genutzt werden.</label>
+        <label class="option"><input type="radio" name="q4" value="c"> Nur Landtiere besitzen Knochen in den Vordergliedmaßen.</label>
+        <div class="feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="quizCard" data-answer="c">
+        <p><b>5. Welche Reihenfolge passt von vorne nach hinten im Maul am besten?</b></p>
+        <label class="option"><input type="radio" name="q5" value="a"> Mahlzähne – Reißzähne – Schneidezähne</label>
+        <label class="option"><input type="radio" name="q5" value="b"> Reißzähne – Schneidezähne – Backenzähne</label>
+        <label class="option"><input type="radio" name="q5" value="c"> Schneidezähne – Reißzähne – Backenzähne / Mahlzähne</label>
+        <div class="feedback" aria-live="polite"></div>
+      </div>
+
+      <div class="smallBtnRow">
+        <button class="secondary" id="resetQuiz">Quiz neu starten</button>
+      </div>
+      <div class="score" id="quizScore" aria-live="polite">Klicke auf eine Antwort. Richtige Lösungen werden grün mit Pokal markiert.</div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ---------- TABS ---------- */
+const tabButtons = document.querySelectorAll('.tabBtn');
+const pages = document.querySelectorAll('.page');
+
+function showPage(pageName){
+  tabButtons.forEach(btn => btn.classList.toggle('active', btn.dataset.page === pageName));
+  pages.forEach(p => p.classList.toggle('active', p.id === 'page-' + pageName));
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+tabButtons.forEach(btn => btn.addEventListener('click', () => showPage(btn.dataset.page)));
+document.getElementById('toMerkmale').addEventListener('click', () => showPage('merkmale'));
+shuffleAllExercises();
+
+/* ---------- MINI HEADER ANIMALS ---------- */
+const mini = document.getElementById('miniAnimals');
+const mctx = mini.getContext('2d');
+let miniT = 0;
+function drawHeaderAnimals(){
+  mctx.clearRect(0,0,mini.width,mini.height);
+  mctx.fillStyle = 'rgba(255,255,255,.0)';
+  mctx.fillRect(0,0,mini.width,mini.height);
+
+  function drawCat(x,y,s){
+    mctx.save();
+    mctx.translate(x,y);
+    mctx.scale(s,s);
+    mctx.fillStyle='#5a6170';
+    mctx.beginPath(); mctx.ellipse(0,0,22,12,0,0,Math.PI*2); mctx.fill();
+    mctx.beginPath(); mctx.arc(20,-8,8,0,Math.PI*2); mctx.fill();
+    mctx.beginPath(); mctx.moveTo(16,-15); mctx.lineTo(19,-23); mctx.lineTo(22,-15); mctx.fill();
+    mctx.beginPath(); mctx.moveTo(24,-15); mctx.lineTo(27,-23); mctx.lineTo(30,-15); mctx.fill();
+    mctx.strokeStyle='#5a6170'; mctx.lineWidth=3;
+    let leg = Math.sin(miniT*0.08)*2;
+    mctx.beginPath();
+    mctx.moveTo(-10,8); mctx.lineTo(-12,20+leg);
+    mctx.moveTo(3,8); mctx.lineTo(4,20-leg);
+    mctx.moveTo(14,7); mctx.lineTo(16,18+leg);
+    mctx.stroke();
+    mctx.beginPath(); mctx.moveTo(-22,-4); mctx.quadraticCurveTo(-38,-18,-48,-5); mctx.stroke();
+    mctx.restore();
+  }
+  function drawHorse(x,y,s){
+    mctx.save(); mctx.translate(x,y); mctx.scale(s,s);
+    mctx.fillStyle='#8a5a35';
+    mctx.beginPath(); mctx.ellipse(0,0,28,14,0,0,Math.PI*2); mctx.fill();
+    mctx.fillRect(18,-16,11,20);
+    mctx.beginPath(); mctx.arc(32,-18,8,0,Math.PI*2); mctx.fill();
+    mctx.strokeStyle='#8a5a35'; mctx.lineWidth=4;
+    let leg = Math.sin(miniT*0.09)*3;
+    mctx.beginPath();
+    mctx.moveTo(-14,10); mctx.lineTo(-16,30+leg);
+    mctx.moveTo(-2,10); mctx.lineTo(-3,30-leg);
+    mctx.moveTo(10,10); mctx.lineTo(11,30+leg);
+    mctx.moveTo(21,8); mctx.lineTo(22,28-leg);
+    mctx.stroke();
+    mctx.beginPath(); mctx.moveTo(-28,-2); mctx.quadraticCurveTo(-42,-12,-48,-2); mctx.stroke();
+    mctx.restore();
+  }
+  function drawDolphin(x,y,s){
+    mctx.save(); mctx.translate(x,y); mctx.scale(s,s);
+    mctx.fillStyle='#4d83b8';
+    mctx.beginPath();
+    mctx.moveTo(-32,0); mctx.quadraticCurveTo(-10,-18,14,-10); mctx.quadraticCurveTo(28,-5,38,-10);
+    mctx.quadraticCurveTo(28,2,14,4); mctx.quadraticCurveTo(-10,12,-32,0); mctx.fill();
+    mctx.beginPath(); mctx.moveTo(-4,-8); mctx.lineTo(5,-22); mctx.lineTo(10,-8); mctx.fill();
+    mctx.beginPath(); mctx.moveTo(-34,0); mctx.lineTo(-48,-10); mctx.lineTo(-46,0); mctx.lineTo(-48,10); mctx.fill();
+    mctx.restore();
+  }
+
+  drawCat(35 + (miniT*0.5)%320, 72, 0.95);
+  drawHorse((miniT*0.38)%320 - 25, 42, 0.9);
+  drawDolphin(180 + Math.sin(miniT*0.03)*20, 35 + Math.sin(miniT*0.06)*5, 1);
+  miniT++;
+  requestAnimationFrame(drawHeaderAnimals);
+}
+drawHeaderAnimals();
+
+/* ---------- START ANIMATION ---------- */
+const stage = document.getElementById('animalStage');
+const ctx = stage.getContext('2d');
+const animText = document.getElementById('animText');
+let running = false;
+let animFrame = 0;
+
+function hill(x,y,r,color){
+  ctx.fillStyle=color;
+  ctx.beginPath(); ctx.arc(x,y,r,Math.PI,2*Math.PI); ctx.fill();
+}
+function cloud(x,y,s){
+  ctx.fillStyle='rgba(255,255,255,.92)';
+  ctx.beginPath();
+  ctx.arc(x,y,22*s,0,Math.PI*2);
+  ctx.arc(x+22*s,y-8*s,18*s,0,Math.PI*2);
+  ctx.arc(x+46*s,y,22*s,0,Math.PI*2);
+  ctx.arc(x+25*s,y+6*s,20*s,0,Math.PI*2);
+  ctx.fill();
+}
+function drawCat(x,y,s){
+  ctx.save(); ctx.translate(x,y); ctx.scale(s,s);
+  ctx.globalAlpha=.16; ctx.fillStyle='#000';
+  ctx.beginPath(); ctx.ellipse(0,28,26,6,0,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+  ctx.fillStyle='#626a78';
+  ctx.beginPath(); ctx.ellipse(0,0,34,18,0,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(28,-12,13,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(20,-22); ctx.lineTo(25,-34); ctx.lineTo(29,-21); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(31,-22); ctx.lineTo(36,-34); ctx.lineTo(39,-20); ctx.fill();
+  ctx.strokeStyle='#626a78'; ctx.lineWidth=5;
+  let leg = Math.sin(animFrame*0.14)*4;
+  ctx.beginPath();
+  ctx.moveTo(-16,12); ctx.lineTo(-18,38+leg);
+  ctx.moveTo(-2,12); ctx.lineTo(-2,38-leg);
+  ctx.moveTo(13,11); ctx.lineTo(14,34+leg);
+  ctx.moveTo(24,9); ctx.lineTo(26,31-leg);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(-30,-4); ctx.quadraticCurveTo(-50,-18,-63,-2);
+  ctx.stroke();
+  ctx.fillStyle='#111';
+  ctx.beginPath(); ctx.arc(32,-14,2,0,Math.PI*2); ctx.fill();
+  ctx.restore();
+}
+function drawHorse(x,y,s){
+  ctx.save(); ctx.translate(x,y); ctx.scale(s,s);
+  ctx.globalAlpha=.16; ctx.fillStyle='#000';
+  ctx.beginPath(); ctx.ellipse(0,40,35,7,0,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+  ctx.fillStyle='#8a5b36';
+  ctx.beginPath(); ctx.ellipse(0,0,45,22,0,0,Math.PI*2); ctx.fill();
+  ctx.fillRect(30,-24,15,28);
+  ctx.beginPath(); ctx.arc(48,-28,12,0,Math.PI*2); ctx.fill();
+  ctx.strokeStyle='#8a5b36'; ctx.lineWidth=6;
+  let leg = Math.sin(animFrame*0.11)*5;
+  ctx.beginPath();
+  ctx.moveTo(-24,15); ctx.lineTo(-26,52+leg);
+  ctx.moveTo(-8,16); ctx.lineTo(-9,52-leg);
+  ctx.moveTo(9,15); ctx.lineTo(10,51+leg);
+  ctx.moveTo(24,13); ctx.lineTo(25,49-leg);
+  ctx.stroke();
+  ctx.beginPath();
+  ctx.moveTo(-45,-4); ctx.quadraticCurveTo(-62,-18,-71,-5);
+  ctx.stroke();
+  ctx.restore();
+}
+function drawDolphin(x,y,s){
+  ctx.save(); ctx.translate(x,y); ctx.scale(s,s);
+  ctx.globalAlpha=.13; ctx.fillStyle='#000';
+  ctx.beginPath(); ctx.ellipse(-2,24,35,7,0,0,Math.PI*2); ctx.fill(); ctx.globalAlpha=1;
+  ctx.fillStyle='#4c82b7';
+  ctx.beginPath();
+  ctx.moveTo(-45,0); ctx.quadraticCurveTo(-18,-28,16,-14); ctx.quadraticCurveTo(34,-8,48,-15);
+  ctx.quadraticCurveTo(36,2,16,5); ctx.quadraticCurveTo(-15,18,-45,0);
+  ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-2,-12); ctx.lineTo(10,-30); ctx.lineTo(18,-10); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(-48,0); ctx.lineTo(-66,-14); ctx.lineTo(-63,0); ctx.lineTo(-66,14); ctx.fill();
+  ctx.beginPath(); ctx.moveTo(5,2); ctx.lineTo(18,18); ctx.lineTo(-4,8); ctx.fill();
+  ctx.restore();
+}
+function drawAnimalScene(){
+  ctx.clearRect(0,0,stage.width,stage.height);
+  ctx.fillStyle='#cde9ff'; ctx.fillRect(0,0,stage.width,215);
+  ctx.fillStyle='#d8f0d5'; ctx.fillRect(0,215,stage.width,145);
+
+  hill(100,265,120,'#c7e7be'); hill(360,270,155,'#c6e6bc'); hill(690,268,145,'#c6e6bc');
+  ctx.fillStyle='#ffd86a'; ctx.beginPath(); ctx.arc(735,58,34,0,Math.PI*2); ctx.fill();
+  cloud(90,54,1); cloud(270,44,.9); cloud(530,66,1.05);
+
+  const horseX = 70 + (animFrame*2.3) % 960;
+  const catX = 720 - ((animFrame*3.1) % 980);
+  const dolphinX = 130 + ((animFrame*2.5) % 920);
+
+  drawHorse(horseX,240,.95);
+  drawCat(catX,263,.88);
+  drawDolphin((dolphinX % 920)-50,155 + Math.sin(animFrame*0.09)*10, .95);
+
+  ctx.fillStyle='rgba(255,255,255,.9)';
+  ctx.strokeStyle='#d7e4f4';
+  roundRectCanvas(20,18,300,68,14);
+  ctx.fillStyle='#234765';
+  ctx.font='bold 22px Arial';
+  ctx.fillText('Säugetiere bewegen sich unterschiedlich', 35, 47);
+  ctx.font='16px Arial';
+  ctx.fillStyle='#5c7690';
+  ctx.fillText('laufen – springen – schwimmen', 35, 72);
+
+  if(running){
+    animFrame++;
+    requestAnimationFrame(drawAnimalScene);
+  }
+}
+function roundRectCanvas(x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y);
+  ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);
+  ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);
+  ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);
+  ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.fill();
+  ctx.stroke();
+}
+drawAnimalScene();
+
+document.getElementById('animToggle').addEventListener('click', () => {
+  running = !running;
+  document.getElementById('animToggle').textContent = running ? 'Animation stoppen' : 'Animation starten';
+  animText.textContent = running
+    ? 'Das Pferd läuft, die Katze schleicht und der Delfin schwimmt. Säugetiere können sehr verschieden leben.'
+    : 'Die Animation ist pausiert.';
+  if(running) requestAnimationFrame(drawAnimalScene);
+});
+document.getElementById('animReset').addEventListener('click', () => {
+  running = false;
+  animFrame = 0;
+  document.getElementById('animToggle').textContent = 'Animation starten';
+  animText.textContent = 'Viele Säugetiere bewegen sich auf unterschiedliche Weise: laufen, springen oder schwimmen. Trotzdem haben sie gemeinsame Merkmale.';
+  drawAnimalScene();
+});
+
+/* ---------- FEATURE CARDS ---------- */
+document.querySelectorAll('.featureCard').forEach(card => {
+  let flipped = false;
+  card.addEventListener('click', () => {
+    flipped = !flipped;
+    if(flipped){
+      card.innerHTML = '<h4>' + card.dataset.title + '</h4><div>' + card.dataset.text + '</div>';
+      card.style.background = '#eef6ff';
+    } else {
+      const num = [...card.parentNode.children].indexOf(card) + 1;
+      card.innerHTML = '<h4>🟦 Karte ' + num + '</h4><div>Klicke mich</div>';
+      card.style.background = '#fbfdff';
+    }
+  });
+});
+
+function shuffleChildren(container){
+  const items = [...container.children];
+  for(let i = items.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
+  items.forEach(item => container.appendChild(item));
+}
+
+function shuffleMatchingRightColumn(){
+  const right = document.getElementById('rightMatch');
+  const heading = right.querySelector('h3');
+  const items = [...right.querySelectorAll('.matchItem')];
+  for(let i = items.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [items[i], items[j]] = [items[j], items[i]];
+  }
+  items.forEach(item => right.appendChild(item));
+  if(heading) right.prepend(heading);
+}
+
+function shuffleAllExercises(){
+  const ids = ['mammalWords', 'wordbox', 'toothLabels'];
+  ids.forEach(id => {
+    const el = document.getElementById(id);
+    if(el) shuffleChildren(el);
+  });
+  shuffleMatchingRightColumn();
+}
+
+/* ---------- GENERIC DRAG ---------- */
+let dragged = null;
+document.addEventListener('dragstart', e => {
+  if(e.target.classList.contains('dragWord') || e.target.classList.contains('labelToken')){
+    dragged = e.target;
+  }
+});
+document.addEventListener('dragover', e => {
+  if(e.target.classList.contains('drop') || e.target.classList.contains('svgDrop') || e.target.id === 'mammalDrop'){
+    e.preventDefault();
+  }
+});
+
+/* ---------- MERKMALE BOX ---------- */
+const mammalCorrect = new Set(['Fell','Milch','Lunge','Wirbelsäule']);
+document.getElementById('mammalDrop').addEventListener('drop', e => {
+  e.preventDefault();
+  if(!dragged) return;
+  e.currentTarget.appendChild(dragged);
+});
+
+document.getElementById('checkMammalBox').addEventListener('click', () => {
+  const box = document.getElementById('mammalDrop');
+  const words = [...box.querySelectorAll('.dragWord')].map(el => el.dataset.value);
+  let good = 0;
+  let bad = 0;
+  words.forEach(w => mammalCorrect.has(w) ? good++ : bad++);
+  const missing = [...mammalCorrect].filter(w => !words.includes(w));
+  const status = document.getElementById('mammalBoxStatus');
+
+  if(bad === 0 && missing.length === 0){
+    status.textContent = 'Super! Genau diese vier Wörter passen zu Säugetieren.';
+  } else {
+    status.textContent = 'Noch nicht ganz. Richtig sind: Fell, Milch, Lunge und Wirbelsäule.';
+  }
+});
+document.getElementById('resetMammalBox').addEventListener('click', () => {
+  const source = document.getElementById('mammalWords');
+  [...document.getElementById('mammalDrop').children].forEach(el => source.appendChild(el));
+  shuffleChildren(source);
+  document.getElementById('mammalBoxStatus').textContent = 'Tipp: Nicht alles passt zu Säugetieren.';
+});
+
+/* ---------- LÜCKENTEXT ---------- */
+document.querySelectorAll('#page-gebiss1 .drop').forEach(drop => {
+  drop.addEventListener('dragover', e => e.preventDefault());
+  drop.addEventListener('drop', e => {
+    e.preventDefault();
+    if(!dragged) return;
+    if(drop.firstChild){
+      document.getElementById('wordbox').appendChild(drop.firstChild);
+    }
+    drop.textContent = '';
+    drop.appendChild(dragged);
+    dragged.classList.remove('used');
+  });
+});
+document.getElementById('wordbox').addEventListener('dragover', e => e.preventDefault());
+document.getElementById('wordbox').addEventListener('drop', e => {
+  e.preventDefault();
+  if(!dragged) return;
+  e.currentTarget.appendChild(dragged);
+});
+
+document.getElementById('checkLuecke').addEventListener('click', () => {
+  let allCorrect = true;
+  document.querySelectorAll('#page-gebiss1 .drop').forEach(drop => {
+    const child = drop.querySelector('.dragWord');
+    const correct = child && child.dataset.value === drop.dataset.answer;
+    drop.classList.remove('correct','wrong');
+    if(correct){
+      drop.classList.add('correct');
+    } else {
+      drop.classList.add('wrong');
+      allCorrect = false;
+    }
+  });
+  document.getElementById('lueckeStatus').textContent = allCorrect
+    ? 'Sehr gut! Der Lückentext ist richtig ausgefüllt.'
+    : 'Einige Wörter passen noch nicht. Vergleiche Zahnart und Aufgabe noch einmal.';
+});
+document.getElementById('resetLuecke').addEventListener('click', () => {
+  const box = document.getElementById('wordbox');
+  document.querySelectorAll('#page-gebiss1 .drop').forEach(drop => {
+    drop.classList.remove('correct','wrong');
+    const child = drop.querySelector('.dragWord');
+    if(child) box.appendChild(child);
+    drop.textContent = '';
+  });
+  shuffleChildren(box);
+  document.getElementById('lueckeStatus').textContent = 'Alle Wörter aus der Wortbox werden genau einmal gebraucht.';
+});
+
+/* ---------- TEETH IMAGE ---------- */
+document.querySelectorAll('.svgDrop').forEach(zone => {
+  zone.addEventListener('dragover', e => e.preventDefault());
+  zone.addEventListener('drop', e => {
+    e.preventDefault();
+    if(!dragged) return;
+    const svg = document.getElementById('toothSVG');
+    const oldText = svg.querySelector('text[data-zone="' + zone.dataset.answer + '"]');
+    if(oldText) oldText.remove();
+
+    const x = Number(zone.getAttribute('x')) + 12;
+    const y = Number(zone.getAttribute('y')) + 27;
+
+    const text = document.createElementNS('http://www.w3.org/2000/svg','text');
+    text.setAttribute('x', x);
+    text.setAttribute('y', y);
+    text.setAttribute('class', 'svgLabel');
+    text.setAttribute('data-zone', zone.dataset.answer);
+    text.textContent = dragged.dataset.value;
+    svg.appendChild(text);
+
+    zone.dataset.filled = dragged.dataset.value;
+    dragged.classList.add('used');
+    dragged.style.opacity = '.45';
+  });
+});
+
+document.getElementById('checkTeethImage').addEventListener('click', () => {
+  let correctAll = true;
+  document.querySelectorAll('.svgDrop').forEach(zone => {
+    zone.classList.remove('ok','bad');
+    if(zone.dataset.filled === zone.dataset.answer){
+      zone.classList.add('ok');
+    } else {
+      zone.classList.add('bad');
+      correctAll = false;
+    }
+  });
+  document.getElementById('teethImageStatus').textContent = correctAll
+    ? 'Prima! Du hast die Zahnarten richtig am Bild zugeordnet.'
+    : 'Noch nicht alles richtig. Denke daran: vorne Schneidezähne, dann Reißzähne, hinten Backen- und Mahlzähne.';
+});
+document.getElementById('resetTeethImage').addEventListener('click', () => {
+  document.querySelectorAll('.svgDrop').forEach(zone => {
+    zone.classList.remove('ok','bad');
+    delete zone.dataset.filled;
+  });
+  document.querySelectorAll('#toothSVG text[data-zone]').forEach(t => t.remove());
+  document.querySelectorAll('#toothLabels .labelToken').forEach(t => {
+    t.classList.remove('used');
+    t.style.opacity = '1';
+  });
+  shuffleChildren(document.getElementById('toothLabels'));
+  document.getElementById('teethImageStatus').textContent = 'Die Kästchen oben helfen dir mit kleinen Hinweisen.';
+});
+
+/* ---------- MATCHING ---------- */
+let selectedLeft = null;
+let selectedRight = null;
+
+function markBad(el){
+  el.classList.add('badflash');
+  setTimeout(() => el.classList.remove('badflash'), 500);
+}
+document.querySelectorAll('#leftMatch .matchItem').forEach(item => {
+  item.addEventListener('click', () => {
+    if(item.classList.contains('done')) return;
+    document.querySelectorAll('#leftMatch .matchItem').forEach(i => i.classList.remove('selected'));
+    item.classList.add('selected');
+    selectedLeft = item;
+  });
+});
+document.querySelectorAll('#rightMatch .matchItem').forEach(item => {
+  item.addEventListener('click', () => {
+    if(item.classList.contains('done')) return;
+    document.querySelectorAll('#rightMatch .matchItem').forEach(i => i.classList.remove('selected'));
+    item.classList.add('selected');
+    selectedRight = item;
+
+    if(selectedLeft && selectedRight){
+      const ok = selectedLeft.dataset.id === selectedRight.dataset.id;
+      if(ok){
+        selectedLeft.classList.remove('selected');
+        selectedRight.classList.remove('selected');
+        selectedLeft.classList.add('done');
+        selectedRight.classList.add('done');
+        document.getElementById('matchStatus').textContent = 'Richtig zugeordnet.';
+      } else {
+        markBad(selectedLeft); markBad(selectedRight);
+        document.getElementById('matchStatus').textContent = 'Das passt noch nicht. Probiere ein anderes Paar.';
+        selectedLeft.classList.remove('selected');
+        selectedRight.classList.remove('selected');
+      }
+      selectedLeft = null;
+      selectedRight = null;
+
+      const allDone = document.querySelectorAll('#leftMatch .done').length === 4;
+      if(allDone){
+        document.getElementById('matchStatus').textContent = 'Super! Du hast alle Knochen richtig zugeordnet.';
+      }
+    }
+  });
+});
+document.getElementById('resetMatch').addEventListener('click', () => {
+  document.querySelectorAll('.matchItem').forEach(i => i.classList.remove('done','selected','badflash'));
+  selectedLeft = null; selectedRight = null;
+  shuffleMatchingRightColumn();
+  document.getElementById('matchStatus').textContent = 'Klicke links ein Wort und dann rechts die passende Erklärung.';
+});
+
+/* ---------- QUIZ ---------- */
+const quizFeedback = {
+  q1:{a:'Nicht passend. Das trifft eher auf viele andere Tiere zu.', b:'Richtig. Das sind zwei wichtige Kennzeichen von Säugetieren.', c:'Nicht passend. Säugetiere atmen mit Lungen. '},
+  q2:{a:'Nicht passend. Gerade die Verschiedenheit ist wichtig.', b:'Nicht passend. Es gibt mehr als zwei Zahnarten.', c:'Richtig. Genau das bedeutet heterodontes Gebiss.'},
+  q3:{a:'Richtig. Diese Zähne zerkleinern und zermahlen die Nahrung.', b:'Nicht passend. Das ist eher Aufgabe anderer Zähne.', c:'Nicht passend. Schneidezähne liegen vorne.'},
+  q4:{a:'Nicht passend. Der Grundbauplan ist ähnlich.', b:'Richtig. Die Form ändert sich, der Grundbauplan bleibt erkennbar.', c:'Nicht passend. Auch Wale haben Knochen in ihren Vordergliedmaßen.'},
+  q5:{a:'Nicht passend. Das ist in der falschen Reihenfolge.', b:'Nicht passend. Schneidezähne stehen vorne.', c:'Richtig. So passt die Reihenfolge am besten.'}
+};
+
+const quizCards = [...document.querySelectorAll('#page-quiz .quizCard')];
+
+function evaluateQuizCard(card, idx){
+  const correct = card.dataset.answer;
+  const checked = card.querySelector('input[type="radio"]:checked');
+  const fb = card.querySelector('.feedback');
+  const qName = 'q' + (idx + 1);
+
+  card.querySelectorAll('.option').forEach(option => {
+    option.classList.remove('correct', 'wrong');
+  });
+
+  if(!checked){
+    fb.className = 'feedback';
+    fb.textContent = '';
+    return;
+  }
+
+  const selectedLabel = checked.closest('.option');
+  const correctLabel = card.querySelector('input[value="' + correct + '"]').closest('.option');
+  const isCorrect = checked.value === correct;
+
+  correctLabel.classList.add('correct');
+  if(!isCorrect){
+    selectedLabel.classList.add('wrong');
+  }
+
+  fb.className = 'feedback ' + (isCorrect ? 'ok' : 'bad');
+  fb.textContent = isCorrect
+    ? '🏆 ' + quizFeedback[qName][checked.value]
+    : quizFeedback[qName][checked.value] + ' Die richtige Antwort ist grün markiert.';
+}
+
+function updateQuizScore(){
+  let answered = 0;
+  let score = 0;
+
+  quizCards.forEach(card => {
+    const checked = card.querySelector('input[type="radio"]:checked');
+    if(!checked) return;
+    answered++;
+    if(checked.value === card.dataset.answer) score++;
+  });
+
+  let text = 'Klicke auf eine Antwort. Richtige Lösungen werden grün mit Pokal markiert.';
+  if(answered > 0 && answered < quizCards.length){
+    text = 'Zwischenstand: ' + score + ' von ' + answered + ' beantworteten Fragen richtig.';
+  }
+  if(answered === quizCards.length){
+    let comment = '';
+    if(score === quizCards.length) comment = 'Stark! Du kennst die wichtigsten Merkmale von Säugetieren schon sehr gut.';
+    else if(score >= 3) comment = 'Gut gemacht. Ein paar Dinge kannst du noch wiederholen.';
+    else comment = 'Schau dir Merkmale, Gebiss und Skelett noch einmal an.';
+    text = 'Ergebnis: ' + score + ' von ' + quizCards.length + ' Punkten. ' + comment;
+  }
+
+  document.getElementById('quizScore').textContent = text;
+}
+
+quizCards.forEach((card, idx) => {
+  card.querySelectorAll('input[type="radio"]').forEach(input => {
+    input.addEventListener('change', () => {
+      evaluateQuizCard(card, idx);
+      updateQuizScore();
+    });
+  });
+});
+
+document.getElementById('resetQuiz').addEventListener('click', () => {
+  document.querySelectorAll('#page-quiz input[type="radio"]').forEach(i => i.checked = false);
+  document.querySelectorAll('#page-quiz .feedback').forEach(f => { f.className='feedback'; f.textContent=''; });
+  document.querySelectorAll('#page-quiz .option').forEach(option => option.classList.remove('correct', 'wrong'));
+  document.getElementById('quizScore').textContent = 'Klicke auf eine Antwort. Richtige Lösungen werden grün mit Pokal markiert.';
+});
+</script>
+</body>
+</html>

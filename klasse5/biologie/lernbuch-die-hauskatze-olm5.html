@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Die Hauskatze – Interaktives Lernbuch</title>
+  <style>
+    :root {
+      --bg: #f3eee6;
+      --paper: #fffaf2;
+      --paper-2: #f9f1e3;
+      --ink: #3d3128;
+      --accent: #b76e4d;
+      --accent-2: #7a9c63;
+      --accent-3: #7a8db8;
+      --gold: #cf9f3f;
+      --shadow: rgba(66, 42, 24, 0.18);
+      --success: #2f7d46;
+      --danger: #a54242;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+    }
+
+    body {
+      font-family: "Georgia", "Times New Roman", serif;
+      background: radial-gradient(circle at top, #fff7ec 0%, #efe3d1 38%, #e4d2be 100%);
+      color: var(--ink);
+      min-height: 100vh;
+    }
+
+    .shelf {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 24px 18px 44px;
+    }
+
+    .title-bar {
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .title-bar h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      letter-spacing: 0.02em;
+      color: #5e3d2b;
+    }
+
+    .title-bar p {
+      margin: 8px 0 0;
+      font-size: 1rem;
+      color: #6d5648;
+    }
+
+    .progress-wrap {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 8px;
+      margin-bottom: 18px;
+      flex-wrap: wrap;
+    }
+
+    .progress {
+      width: min(620px, 80vw);
+      height: 12px;
+      background: rgba(86, 55, 32, 0.12);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #b47857, #d2a05f);
+      transition: width 0.25s ease;
+    }
+
+    .book-wrap {
+      display: grid;
+      grid-template-columns: minmax(290px, 980px);
+      justify-content: center;
+      gap: 20px;
+    }
+
+    .book {
+      position: relative;
+      width: 100%;
+    }
+
+    .page {
+      display: none;
+      position: relative;
+      border-radius: 18px;
+      background: linear-gradient(90deg, #f7eddc 0%, #fffaf2 7%, #fffaf2 93%, #f6ead8 100%);
+      box-shadow: 0 18px 40px var(--shadow);
+      padding: 28px 30px 26px;
+      border: 1px solid rgba(86, 55, 32, 0.12);
+      animation: pageFade 0.45s ease;
+      overflow: visible;
+      min-height: auto;
+    }
+
+    .page.active {
+      display: block;
+    }
+
+    @keyframes pageFade {
+      from {
+        opacity: 0;
+        transform: rotateY(8deg) scale(0.99);
+      }
+      to {
+        opacity: 1;
+        transform: rotateY(0) scale(1);
+      }
+    }
+
+    .page::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 16px;
+      width: 2px;
+      background: rgba(120, 86, 58, 0.08);
+      box-shadow: 7px 0 0 rgba(120, 86, 58, 0.05);
+      border-radius: 2px;
+      pointer-events: none;
+    }
+
+    .chapter-label {
+      display: inline-block;
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: #efe0cd;
+      color: #76563f;
+      font-size: 0.88rem;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+    }
+
+    h2 {
+      font-size: clamp(1.8rem, 3vw, 2.5rem);
+      margin: 0 0 14px;
+      color: #5b392b;
+    }
+
+    h3 {
+      margin: 18px 0 8px;
+      color: #6a4832;
+      font-size: 1.25rem;
+    }
+
+    h4 {
+      margin-top: 0;
+    }
+
+    p, li {
+      font-size: 1.08rem;
+      line-height: 1.65;
+    }
+
+    .lead {
+      font-size: 1.16rem;
+      color: #5d4a3f;
+      max-width: 68ch;
+    }
+
+    .spread {
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 28px;
+      align-items: start;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.7), rgba(247,236,221,0.95));
+      border: 1px solid rgba(108, 78, 49, 0.12);
+      border-radius: 16px;
+      padding: 16px 18px;
+      box-shadow: 0 8px 18px rgba(80, 55, 36, 0.08);
+    }
+
+    .card h4 {
+      margin: 0 0 8px;
+      font-size: 1.05rem;
+      color: #634530;
+    }
+
+    .picture {
+      background: linear-gradient(180deg, #fffdf8, #f8efdf);
+      border-radius: 18px;
+      padding: 16px;
+      border: 1px solid rgba(108, 78, 49, 0.12);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5);
+    }
+
+    .picture figcaption {
+      font-size: 0.96rem;
+      color: #6c5b4d;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    svg {
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .note,
+    .task-box,
+    .fact-box {
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-top: 14px;
+    }
+
+    .note {
+      background: #fff1cc;
+      border-left: 6px solid var(--gold);
+    }
+
+    .fact-box {
+      background: #eaf2e5;
+      border-left: 6px solid var(--accent-2);
+    }
+
+    .task-box {
+      background: #e9eef8;
+      border-left: 6px solid var(--accent-3);
+    }
+
+    .question {
+      margin: 12px 0;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.6);
+      border-radius: 12px;
+      border: 1px dashed rgba(90, 60, 40, 0.25);
+    }
+
+    .blank {
+      display: inline-block;
+      min-width: 110px;
+      border-bottom: 2px solid #8a6c55;
+      margin: 0 4px;
+      height: 1.2em;
+      vertical-align: bottom;
+    }
+
+    .word-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .chip {
+      padding: 8px 12px;
+      background: #f0dfca;
+      border: 1px solid rgba(108, 78, 49, 0.18);
+      border-radius: 999px;
+      font-size: 0.96rem;
+    }
+
+    .quiz {
+      display: grid;
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .quiz button,
+    .nav button,
+    .solution-toggle {
+      appearance: none;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s ease;
+    }
+
+    .quiz button {
+      text-align: left;
+      padding: 12px 14px;
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid rgba(108, 78, 49, 0.12);
+      box-shadow: 0 4px 10px rgba(67, 46, 31, 0.06);
+      font-family: inherit;
+      font-size: 1rem;
+    }
+
+    .quiz button:hover,
+    .nav button:hover,
+    .solution-toggle:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 18px rgba(67, 46, 31, 0.12);
+    }
+
+    .quiz button.correct {
+      background: #e9f7ec;
+      border-color: #8bc39a;
+    }
+
+    .quiz button.wrong {
+      background: #faecec;
+      border-color: #d2a1a1;
+    }
+
+    .feedback {
+      margin-top: 4px;
+      font-weight: 700;
+      min-height: 1.4em;
+    }
+
+    .crossword-wrap {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(9, 40px);
+      grid-auto-rows: 40px;
+      gap: 4px;
+      justify-content: start;
+    }
+
+    .cell {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      border: 1px solid rgba(108, 78, 49, 0.16);
+      background: #fff;
+      font-size: 1rem;
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #5c4231;
+      position: relative;
+    }
+
+    .cell.block {
+      background: #c9b9a6;
+      border-color: #c9b9a6;
+    }
+
+    .cell .num,
+    .crossword-num {
+      position: absolute;
+      top: 2px;
+      left: 4px;
+      font-size: 0.62rem;
+      color: #8e6f57;
+      font-weight: 700;
+      pointer-events: none;
+    }
+
+    .crossword-cell-wrap {
+      position: relative;
+      width: 40px;
+      height: 40px;
+    }
+
+    .crossword-input {
+      width: 40px;
+      height: 40px;
+      border-radius: 8px;
+      border: 1px solid rgba(108, 78, 49, 0.16);
+      background: #fff;
+      font-size: 1rem;
+      text-align: center;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: #5c4231;
+      outline: none;
+      font-family: inherit;
+    }
+
+    .crossword-input:focus {
+      border-color: #8b664d;
+      box-shadow: 0 0 0 3px rgba(139, 102, 77, 0.15);
+    }
+
+    .clues ol {
+      margin: 6px 0 0 18px;
+      padding: 0;
+    }
+
+    .clues li {
+      margin-bottom: 8px;
+    }
+
+    .page-footer {
+      margin-top: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .page-number {
+      font-size: 0.95rem;
+      color: #8b6e57;
+      text-align: right;
+    }
+
+    .nav {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .nav button {
+      padding: 12px 18px;
+      background: #6f4b36;
+      color: white;
+      font-size: 1rem;
+      font-family: inherit;
+    }
+
+    .nav button[disabled] {
+      opacity: 0.45;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .mini-list {
+      margin: 8px 0 0 18px;
+    }
+
+    .center {
+      text-align: center;
+    }
+
+    .solution {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 14px;
+      background: #f7f1e7;
+      border-radius: 12px;
+      border: 1px solid rgba(108, 78, 49, 0.12);
+    }
+
+    .solution.open {
+      display: block;
+    }
+
+    .solution-toggle {
+      margin-top: 10px;
+      padding: 10px 14px;
+      background: #8b664d;
+      color: #fff;
+      font-family: inherit;
+      font-size: 0.98rem;
+    }
+
+    @media (max-width: 900px) {
+      .spread,
+      .two-col,
+      .crossword-wrap {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      .page {
+        padding: 22px 18px 24px;
+        border-radius: 12px;
+      }
+
+      .grid {
+        grid-template-columns: repeat(9, 31px);
+        grid-auto-rows: 31px;
+      }
+
+      .cell,
+      .crossword-cell-wrap,
+      .crossword-input {
+        width: 31px;
+        height: 31px;
+        font-size: 0.9rem;
+      }
+
+      .nav {
+        flex-direction: column;
+      }
+
+      .nav button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="shelf">
+    <div class="title-bar">
+      <h1>Die Hauskatze</h1>
+      <p>Ein interaktives Lernbuch für die 5. Klasse</p>
+    </div>
+
+    <div class="progress-wrap">
+      <div class="progress" aria-label="Lernfortschritt">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+      <div id="progressText">Seite 1 von 9</div>
+    </div>
+
+    <div class="book-wrap">
+      <div class="book" id="book">
+
+        <section class="page active" data-page="1">
+          <div class="chapter-label">Titel</div>
+          <div class="spread">
+            <div>
+              <h2>Willkommen im Katzenbuch</h2>
+              <p class="lead">Heute lernst du die <strong>Hauskatze</strong> Schritt für Schritt kennen. Du erfährst, woher sie stammt, wie ihr Körper gebaut ist, was sie frisst, wie sie sich verständigt und wie ihre Jungen aufwachsen.</p>
+              <p>Zwischendurch warten kleine Aufgaben, ein Lückentext, Quizfragen und ein Kreuzworträtsel auf dich. So wird aus dem Lernen eine kleine Entdeckungsreise.</p>
+
+              <div class="note">
+                <strong>Merke:</strong> Die Hauskatze ist ein <strong>Säugetier</strong>. Das bedeutet: Sie bekommt lebende Junge und säugt sie mit Milch.
+              </div>
+
+              <div class="task-box">
+                <strong>Startfrage:</strong> Was weißt du schon über Katzen? Nenne mündlich drei Dinge, die dir einfallen.
+              </div>
+            </div>
+
+            <figure class="picture">
+              <svg viewBox="0 0 420 360" role="img" aria-label="Illustration einer Hauskatze im Gras">
+                <rect x="0" y="0" width="420" height="360" rx="20" fill="#fffaf3"/>
+                <ellipse cx="210" cy="304" rx="160" ry="26" fill="#d7ebc7"/>
+                <ellipse cx="205" cy="190" rx="100" ry="74" fill="#c78a61"/>
+                <circle cx="286" cy="144" r="52" fill="#c78a61"/>
+                <polygon points="252,108 268,66 291,108" fill="#b1724d"/>
+                <polygon points="308,108 324,66 347,108" fill="#b1724d"/>
+                <polygon points="267,99 275,79 286,99" fill="#f2c5c8"/>
+                <polygon points="313,99 321,79 332,99" fill="#f2c5c8"/>
+                <ellipse cx="271" cy="145" rx="7" ry="13" fill="#243238"/>
+                <ellipse cx="305" cy="145" rx="7" ry="13" fill="#243238"/>
+                <circle cx="288" cy="163" r="6" fill="#d97f72"/>
+                <path d="M282 170 Q288 178 294 170" stroke="#6f4735" stroke-width="3" fill="none"/>
+                <line x1="248" y1="160" x2="208" y2="153" stroke="#6f4735" stroke-width="3"/>
+                <line x1="248" y1="170" x2="206" y2="170" stroke="#6f4735" stroke-width="3"/>
+                <line x1="248" y1="180" x2="206" y2="187" stroke="#6f4735" stroke-width="3"/>
+                <line x1="328" y1="160" x2="368" y2="153" stroke="#6f4735" stroke-width="3"/>
+                <line x1="328" y1="170" x2="370" y2="170" stroke="#6f4735" stroke-width="3"/>
+                <line x1="328" y1="180" x2="368" y2="187" stroke="#6f4735" stroke-width="3"/>
+                <rect x="132" y="238" width="22" height="76" rx="11" fill="#c78a61"/>
+                <rect x="178" y="245" width="22" height="69" rx="11" fill="#c78a61"/>
+                <rect x="222" y="245" width="22" height="69" rx="11" fill="#c78a61"/>
+                <rect x="268" y="238" width="22" height="76" rx="11" fill="#c78a61"/>
+                <path d="M108 192 Q56 158 72 112 Q89 72 132 99" stroke="#c78a61" stroke-width="20" fill="none" stroke-linecap="round"/>
+                <path d="M112 191 Q64 156 80 116" stroke="#f0bd95" stroke-width="8" fill="none" stroke-linecap="round"/>
+                <ellipse cx="183" cy="174" rx="18" ry="10" fill="#e7b185" opacity="0.65"/>
+                <ellipse cx="227" cy="174" rx="18" ry="10" fill="#e7b185" opacity="0.65"/>
+              </svg>
+              <figcaption>Die Hauskatze ist geschickt, schnell und sehr gut an das Jagen angepasst.</figcaption>
+            </figure>
+          </div>
+
+          <div class="page-footer">
+            <div class="page-number">1</div>
+            <div class="nav">
+              <button disabled>◀ Zurück</button>
+              <button data-next>Weiter ▶</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" data-page="2">
+          <div class="chapter-label">Herkunft und Abstammung</div>
+          <h2>Woher kommt die Hauskatze?</h2>
+
+          <div class="spread">
+            <div>
+              <p class="lead">Unsere Hauskatze stammt von der <strong>Falbkatze</strong> ab. Diese wilde Katzenart lebte unter anderem in <strong>Ägypten</strong>. Dort begannen Menschen schon vor sehr langer Zeit, Katzen in ihrer Nähe zu dulden und später zu halten.</p>
+              <p>Die Hauskatze ist also kein Tier, das plötzlich entstanden ist. Sie hat Vorfahren. Seit <strong>über 10&nbsp;000 Jahren</strong> lebt sie als Haustier in der Nähe des Menschen. Katzen halfen dabei, Mäuse und Ratten zu fangen. Deshalb waren sie für Vorratslager besonders nützlich.</p>
+
+              <div class="fact-box">
+                <strong>Wichtige Begriffe:</strong>
+                <ul class="mini-list">
+                  <li><strong>Abstammung</strong> = von welchen Vorfahren ein Tier kommt</li>
+                  <li><strong>Haustier</strong> = Tier, das vom Menschen gehalten wird</li>
+                </ul>
+              </div>
+
+              <div class="task-box">
+                <strong>Kleine Denkfrage:</strong> Warum war es für Menschen früher praktisch, Katzen in der Nähe zu haben?
+              </div>
+
+              <div class="task-box">
+                <strong>Quiz:</strong> Wovon stammt die Hauskatze ab?
+                <div class="quiz" data-answer="2" data-feedback-correct="Richtig! Die Hauskatze stammt von der Falbkatze ab." data-feedback-wrong="Noch nicht ganz. Lies den Abschnitt über die Abstammung noch einmal.">
+                  <button>1. Vom Fuchs</button>
+                  <button>2. Von der Falbkatze</button>
+                  <button>3. Vom Luchs</button>
+                  <div class="feedback"></div>
+                </div>
+              </div>
+            </div>
+
+            <figure class="picture">
+              <svg viewBox="0 0 420 320" role="img" aria-label="Wüstenartige Landschaft mit Falbkatze und Hauskatze">
+                <rect width="420" height="320" rx="20" fill="#fff9ef"/>
+                <rect y="205" width="420" height="115" fill="#efd8a4"/>
+                <circle cx="335" cy="70" r="34" fill="#f4d28a"/>
+                <path d="M55 214 Q120 170 185 214" fill="#dec08a"/>
+                <path d="M160 214 Q235 145 320 214" fill="#e6c78f"/>
+                <g transform="translate(78,120)">
+                  <ellipse cx="78" cy="75" rx="58" ry="38" fill="#d8b285"/>
+                  <circle cx="142" cy="48" r="28" fill="#d8b285"/>
+                  <polygon points="124,29 132,8 145,29" fill="#b88b62"/>
+                  <polygon points="149,29 157,8 170,29" fill="#b88b62"/>
+                  <rect x="43" y="100" width="13" height="50" rx="6" fill="#d8b285"/>
+                  <rect x="70" y="106" width="13" height="44" rx="6" fill="#d8b285"/>
+                  <rect x="94" y="106" width="13" height="44" rx="6" fill="#d8b285"/>
+                  <rect x="121" y="100" width="13" height="50" rx="6" fill="#d8b285"/>
+                  <path d="M27 75 Q-15 48 4 20" stroke="#d8b285" stroke-width="13" fill="none" stroke-linecap="round"/>
+                </g>
+                <g transform="translate(240,132) scale(0.82)">
+                  <ellipse cx="78" cy="75" rx="58" ry="38" fill="#c78a61"/>
+                  <circle cx="142" cy="48" r="28" fill="#c78a61"/>
+                  <polygon points="124,29 132,8 145,29" fill="#a96f4b"/>
+                  <polygon points="149,29 157,8 170,29" fill="#a96f4b"/>
+                  <rect x="43" y="100" width="13" height="50" rx="6" fill="#c78a61"/>
+                  <rect x="70" y="106" width="13" height="44" rx="6" fill="#c78a61"/>
+                  <rect x="94" y="106" width="13" height="44" rx="6" fill="#c78a61"/>
+                  <rect x="121" y="100" width="13" height="50" rx="6" fill="#c78a61"/>
+                  <path d="M27 75 Q-15 48 4 20" stroke="#c78a61" stroke-width="13" fill="none" stroke-linecap="round"/>
+                </g>
+              </svg>
+              <figcaption>Die Hauskatze stammt von der Falbkatze ab. Zwischen Wildform und Haustier gibt es Gemeinsamkeiten.</figcaption>
+            </figure>
+          </div>
+
+          <div class="page-footer">
+            <div class="page-number">2</div>
+            <div class="nav">
+              <button data-prev>◀ Zurück</button>
+              <button data-next>Weiter ▶</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" data-page="3">
+          <div class="chapter-label">Sinnesorgane und Besonderheiten</div>
+          <h2>Die Katze ist ein echter Spürprofi</h2>
+
+          <div class="two-col">
+            <div class="card">
+              <h4>Sehr gute Augen</h4>
+              <p>Katzen können vor allem in der Dämmerung und bei Dunkelheit gut sehen. Im Dunkeln werden ihre <strong>Pupillen groß und rund</strong>. Im Hellen sind die Pupillen <strong>schmal und schlitzförmig</strong>.</p>
+            </div>
+            <div class="card">
+              <h4>Gutes Gehör</h4>
+              <p>Eine Katze hört sehr gut. So kann sie sogar kleine Tiere wahrnehmen, die sich im Gras oder Laub bewegen.</p>
+            </div>
+            <div class="card">
+              <h4>Lange Tasthaare</h4>
+              <p>Die langen <strong>Tasthaare</strong> helfen der Katze beim Tasten. Besonders die Schnurrhaare an der Oberlippe sind wichtig, um die Umgebung zu prüfen.</p>
+            </div>
+            <div class="card">
+              <h4>Guter Geruchs- und Geschmackssinn</h4>
+              <p>Mit Nase und Zunge kann die Katze Futter gut prüfen. So bemerkt sie, ob etwas frisch und geeignet ist.</p>
+            </div>
+          </div>
+
+          <div class="spread" style="margin-top:18px;">
+            <div>
+              <h3>Weitere Besonderheiten:</h3>
+              <ul>
+                <li>Die Katze hat eine <strong>Wirbelsäule</strong>, die ihren Körper beweglich macht.</li>
+                <li>Ihre <strong>Krallen</strong> sind <strong>einziehbar</strong> und sehr spitz.</li>
+                <li>Viele Katzen sind <strong>Einzelgänger</strong>.</li>
+              </ul>
+
+              <div class="note">
+                <strong>Merke:</strong> Gute Sinne und ein beweglicher Körper helfen der Katze beim Jagen und bei der Orientierung.
+              </div>
+
+              <div class="task-box">
+                <strong>Quiz:</strong> Wozu dienen die Tasthaare?
+                <div class="quiz" data-answer="3" data-feedback-correct="Genau! Mit den Tasthaaren prüft die Katze ihre Umgebung." data-feedback-wrong="Schau noch einmal in den Abschnitt über die Tasthaare.">
+                  <button>1. Zum Fliegen</button>
+                  <button>2. Zum Schwitzen</button>
+                  <button>3. Zum Tasten der Umgebung</button>
+                  <div class="feedback"></div>
+                </div>
+              </div>
+            </div>
+
+            <figure class="picture">
+              <svg viewBox="0 0 420 300" role="img" aria-label="Katzenkopf mit hervorgehobenen Sinnesorganen">
+                <rect width="420" height="300" rx="20" fill="#fffaf2"/>
+                <circle cx="210" cy="145" r="92" fill="#d4986e"/>
+                <polygon points="142,82 165,30 196,85" fill="#ba7d56"/>
+                <polygon points="224,85 255,30 278,82" fill="#ba7d56"/>
+                <polygon points="160,76 171,49 187,78" fill="#f4c2cb"/>
+                <polygon points="233,78 249,49 260,76" fill="#f4c2cb"/>
+                <ellipse cx="177" cy="140" rx="12" ry="23" fill="#21323b"/>
+                <ellipse cx="244" cy="140" rx="12" ry="23" fill="#21323b"/>
+                <circle cx="210" cy="168" r="9" fill="#d97f72"/>
+                <path d="M200 178 Q210 190 220 178" stroke="#704736" stroke-width="3" fill="none"/>
+                <line x1="146" y1="160" x2="65" y2="147" stroke="#704736" stroke-width="3"/>
+                <line x1="146" y1="175" x2="58" y2="175" stroke="#704736" stroke-width="3"/>
+                <line x1="146" y1="190" x2="70" y2="204" stroke="#704736" stroke-width="3"/>
+                <line x1="274" y1="160" x2="355" y2="147" stroke="#704736" stroke-width="3"/>
+                <line x1="274" y1="175" x2="362" y2="175" stroke="#704736" stroke-width="3"/>
+                <line x1="274" y1="190" x2="350" y2="204" stroke="#704736" stroke-width="3"/>
+                <path d="M45 52 L120 82" stroke="#7a8db8" stroke-width="4"/>
+                <path d="M365 52 L292 82" stroke="#7a8db8" stroke-width="4"/>
+                <path d="M42 145 L125 145" stroke="#7a9c63" stroke-width="4"/>
+                <path d="M377 168 L287 168" stroke="#b76e4d" stroke-width="4"/>
+                <text x="16" y="49" font-size="18" fill="#5d4a3f">Ohren</text>
+                <text x="300" y="47" font-size="18" fill="#5d4a3f">Augen</text>
+                <text x="8" y="140" font-size="18" fill="#5d4a3f">Tasthaare</text>
+                <text x="298" y="164" font-size="18" fill="#5d4a3f">Nase</text>
+              </svg>
+              <figcaption>Augen, Ohren, Nase und Tasthaare helfen der Katze, sich sicher zu orientieren.</figcaption>
+            </figure>
+          </div>
+
+          <div class="page-footer">
+            <div class="page-number">3</div>
+            <div class="nav">
+              <button data-prev>◀ Zurück</button>
+              <button data-next>Weiter ▶</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" data-page="4">
+          <div class="chapter-label">Gebiss</div>
+          <h2>Das Raubtiergebiss der Katze</h2>
+
+          <div class="spread">
+            <div>
+              <p class="lead">Die Katze besitzt ein <strong>Raubtiergebiss</strong>. Das passt zu ihrer Nahrung. Verschiedene Zähne übernehmen verschiedene Aufgaben.</p>
+
+              <div class="card">
+                <h4>Schneidezähne</h4>
+                <p>Die Schneidezähne sind scharf. Mit ihnen kann die Katze kleine Stücke abnagen und Nahrung festhalten.</p>
+              </div>
+
+              <div class="card">
+                <h4>Eckzähne</h4>
+                <p>Die Eckzähne sind <strong>spitz und lang</strong>. Damit kann die Katze Beute packen und festhalten.</p>
+              </div>
+
+              <div class="card">
+                <h4>Backenzähne</h4>
+                <p>Auch die Backenzähne sind scharf. Der größte Backenzahn heißt <strong>Reißzahn</strong>. Er hilft dabei, Fleisch zu zerschneiden.</p>
+              </div>
+
+              <div class="note">
+                <strong>Merke:</strong> Weil Katzen Fleischfresser sind, brauchen sie besonders scharfe Zähne.
+              </div>
+
+              <div class="task-box">
+                <strong>Quiz:</strong> Wie heißt der größte Backenzahn der Katze?
+                <div class="quiz" data-answer="1" data-feedback-correct="Richtig! Der größte Backenzahn heißt Reißzahn." data-feedback-wrong="Fast. Schau noch einmal bei den Backenzähnen nach.">
+                  <button>1. Reißzahn</button>
+                  <button>2. Mahlzahn</button>
+                  <button>3. Milchzahn</button>
+                  <div class="feedback"></div>
+                </div>
+              </div>
+            </div>
+
+            <figure class="picture">
+              <svg viewBox="0 0 420 330" role="img" aria-label="Schematische Darstellung eines Katzengebisses">
+                <rect width="420" height="330" rx="20" fill="#fffaf2"/>
+                <path d="M78 121 Q210 52 342 121" fill="#f7d6d3"/>
+                <path d="M78 209 Q210 279 342 209" fill="#f7d6d3"/>
+                <rect x="115" y="120" width="12" height="42" rx="4" fill="#fff"/>
+                <rect x="131" y="113" width="12" height="49" rx="4" fill="#fff"/>
+                <rect x="147" y="108" width="12" height="54" rx="4" fill="#fff"/>
+                <rect x="163" y="114" width="12" height="48" rx="4" fill="#fff"/>
+                <polygon points="185,162 199,96 214,162" fill="#fff"/>
+                <polygon points="220,162 235,92 250,162" fill="#fff"/>
+                <polygon points="256,162 273,110 289,162" fill="#fff"/>
+                <polygon points="293,162 310,116 325,162" fill="#fff"/>
+                <rect x="115" y="168" width="12" height="42" rx="4" fill="#fff"/>
+                <rect x="131" y="168" width="12" height="49" rx="4" fill="#fff"/>
+                <rect x="147" y="168" width="12" height="54" rx="4" fill="#fff"/>
+                <rect x="163" y="168" width="12" height="48" rx="4" fill="#fff"/>
+                <polygon points="185,168 199,235 214,168" fill="#fff"/>
+                <polygon points="220,168 235,239 250,168" fill="#fff"/>
+                <polygon points="256,168 273,220 289,168" fill="#fff"/>
+                <polygon points="293,168 310,214 325,168" fill="#fff"/>
+                <path d="M182 70 L168 100" stroke="#7a8db8" stroke-width="4"/>
+                <path d="M240 48 L236 89" stroke="#b76e4d" stroke-width="4"/>
+                <path d="M330 80 L307 111" stroke="#7a9c63" stroke-width="4"/>
+                <text x="93" y="68" font-size="18" fill="#5e4a3c">Schneidezähne</text>
+                <text x="218" y="38" font-size="18" fill="#5e4a3c">lange Eckzähne</text>
+                <text x="286" y="74" font-size="18" fill="#5e4a3c">Backenzähne</text>
+                <text x="265" y="295" font-size="18" fill="#5e4a3c">größter Backenzahn: Reißzahn</text>
+              </svg>
+              <figcaption>Das Katzengebiss ist an das Jagen und Fressen von Beute angepasst.</figcaption>
+            </figure>
+          </div>
+
+          <div class="page-footer">
+            <div class="page-number">4</div>
+            <div class="nav">
+              <button data-prev>◀ Zurück</button>
+              <button data-next>Weiter ▶</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" data-page="5">
+          <div class="chapter-label">Ernährung</div>
+          <h2>Was frisst die Hauskatze?</h2>
+
+          <div class="spread">
+            <div>
+              <p class="lead">Katzen sind Jäger. Sie fressen vor allem kleine Tiere. Typische Beute sind <strong>Ratten</strong> und <strong>Mäuse</strong>. Manchmal fangen sie auch <strong>Vögel</strong> oder <strong>Eidechsen</strong>.</p>
+              <p>Außerdem fressen Katzen gelegentlich <strong>Gräser</strong>. Das Gras ist keine eigentliche Hauptnahrung. Es kann aber die <strong>Verdauung fördern</strong> und dabei helfen, <strong>Haare aus dem Magen</strong> zu befördern.</p>
+
+              <div class="fact-box">
+                <strong>Warum sind Haare im Magen?</strong>
+                <p>Beim Putzen leckt die Katze ihr Fell. Dabei werden lose Haare geschluckt. Gras kann dann helfen, diese Haare wieder loszuwerden.</p>
+              </div>
+
+              <div class="task-box">
+                <strong>Überlege:</strong> Wieso passt das Raubtiergebiss gut zur Nahrung der Katze?
+              </div>
+
+              <div class="task-box">
+                <strong>Quiz:</strong> Warum frisst die Katze manchmal Gras?
+                <div class="quiz" data-answer="2" data-feedback-correct="Richtig! Gras kann die Verdauung fördern und beim Loswerden von Haaren helfen." data-feedback-wrong="Nicht ganz. Lies noch einmal den Abschnitt über Gräser.">
+                  <button>1. Damit sie besser laufen kann</button>
+                  <button>2. Damit die Verdauung unterstützt wird</button>
+                  <button>3. Damit sie lauter miauen kann</button>
+                  <div class="feedback"></div>
+                </div>
+              </div>
+            </div>
+
+            <figure class="picture">
+              <svg viewBox="0 0 420 320" role="img" aria-label="Katze mit Beutetieren und Gras">
+                <rect width="420" height="320" rx="20" fill="#fffaf2"/>
+                <rect y="245" width="420" height="75" fill="#d8ebc4"/>
+                <g transform="translate(18,22)">
+                  <ellipse cx="135" cy="130" rx="66" ry="46" fill="#c78a61"/>
+                  <circle cx="194" cy="103" r="34" fill="#c78a61"/>
+                  <polygon points="170,80 179,56 195,80" fill="#aa6f4a"/>
+                  <polygon points="194,80 206,55 219,80" fill="#aa6f4a"/>
+                  <rect x="100" y="163" width="14" height="58" rx="7" fill="#c78a61"/>
+                  <rect x="128" y="170" width="14" height="51" rx="7" fill="#c78a61"/>
+                  <rect x="151" y="170" width="14" height="51" rx="7" fill="#c78a61"/>
+                  <rect x="179" y="163" width="14" height="58" rx="7" fill="#c78a61"/>
+                  <path d="M75 126 Q39 107 54 77" stroke="#c78a61" stroke-width="13" fill="none" stroke-linecap="round"/>
+                </g>
+                <g transform="translate(275,80)">
+                  <ellipse cx="32" cy="35" rx="22" ry="14" fill="#9a9a9a"/>
+                  <circle cx="52" cy="29" r="10" fill="#9a9a9a"/>
+                  <circle cx="55" cy="27" r="2" fill="#1f1f1f"/>
+                  <line x1="10" y1="35" x2="-4" y2="25" stroke="#9a9a9a" stroke-width="5"/>
+                  <line x1="22" y1="47" x2="18" y2="58" stroke="#7b7b7b" stroke-width="3"/>
+                  <line x1="38" y1="47" x2="38" y2="58" stroke="#7b7b7b" stroke-width="3"/>
+                  <line x1="8" y1="23" x2="0" y2="14" stroke="#7b7b7b" stroke-width="3"/>
+                </g>
+                <g transform="translate(321,134)">
+                  <ellipse cx="18" cy="20" rx="18" ry="11" fill="#927a68"/>
+                  <circle cx="33" cy="17" r="7" fill="#927a68"/>
+                  <circle cx="35" cy="16" r="1.8" fill="#111"/>
+                  <line x1="4" y1="20" x2="-6" y2="12" stroke="#927a68" stroke-width="4"/>
+                </g>
+                <g transform="translate(283,188)">
+                  <path d="M0 58 C8 40, 8 20, 12 0" stroke="#78ab5d" stroke-width="4" fill="none"/>
+                  <path d="M10 58 C19 39, 20 20, 24 3" stroke="#67a24b" stroke-width="4" fill="none"/>
+                  <path d="M22 58 C30 43, 30 27, 35 6" stroke="#82b45a" stroke-width="4" fill="none"/>
+                  <path d="M32 58 C42 40, 44 25, 48 2" stroke="#6ba250" stroke-width="4" fill="none"/>
+                </g>
+                <g transform="translate(345,155)">
+                  <path d="M5 55 Q20 25 35 10" stroke="#849d5b" stroke-width="4" fill="none"/>
+                  <path d="M20 56 Q30 33 50 14" stroke="#718f4b" stroke-width="4" fill="none"/>
+                </g>
+                <text x="262" y="72" font-size="18" fill="#5e4a3c">Maus</text>
+                <text x="320" y="127" font-size="18" fill="#5e4a3c">Ratte</text>
+                <text x="296" y="280" font-size="18" fill="#5e4a3c">Gräser</text>
+              </svg>
+              <figcaption>Zur Nahrung der Katze gehören Mäuse und Ratten. Gras hilft manchmal bei der Verdauung.</figcaption>
+            </figure>
+          </div>
+
+          <div class="page-footer">
+            <div class="page-number">5</div>
+            <div class="nav">
+              <button data-prev>◀ Zurück</button>
+              <button data-next>Weiter ▶</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" data-page="6">
+          <div class="chapter-label">Verständigung und Verhalten</div>
+          <h2>So zeigt die Katze, wie sie sich fühlt</h2>
+
+          <div class="two-col">
+            <div class="card">
+              <h4>Schnurren</h4>
+              <p>Wenn eine Katze <strong>schnurrt</strong>, fühlt sie sich oft wohl und sicher.</p>
+            </div>
+            <div class="card">
+              <h4>Katzenbuckel und Fauchen</h4>
+              <p>Macht sie einen <strong>Katzenbuckel</strong> und <strong>faucht</strong>, fühlt sie sich bedroht oder angegriffen.</p>
+            </div>
+            <div class="card">
+              <h4>Geduckte Fortbewegung</h4>
+              <p>Bewegt sie sich <strong>geduckt</strong>, schleicht sie sich an etwas heran.</p>
+            </div>
+            <div class="card">
+              <h4>Zittern des Schwanzes</h4>
+              <p>Zittert der Schwanz, ist die Katze oft <strong>aufgeregt</strong>.</p>
+            </div>
+            <div class="card">
+              <h4>Auf den Rücken legen</h4>
+              <p>Legt sich die Katze auf den Rücken, möchte sie manchmal <strong>spielen</strong>.</p>
+            </div>
+            <div class="card">
+              <h4>Angst</h4>
+              <p>Ein <strong>eingezogener Schwanz</strong>, eine <strong>geduckte Haltung</strong>, <strong>angelegte Ohren</strong> und <strong>sichtbare Zähne</strong> können auf Angst hinweisen.</p>
+            </div>
+          </div>
+
+          <div class="task-box">
+            <strong>Mini-Quiz 1:</strong> Klicke die richtige Antwort an.
+            <div class="quiz" data-answer="2" data-feedback-correct="Richtig! Schnurren zeigt oft Wohlbefinden." data-feedback-wrong="Noch nicht ganz. Lies den Infotext noch einmal.">
+              <button>1. Wenn eine Katze schnurrt, ist sie meistens wütend.</button>
+              <button>2. Wenn eine Katze schnurrt, fühlt sie sich oft wohl.</button>
+              <button>3. Wenn eine Katze schnurrt, will sie immer jagen.</button>
+              <div class="feedback"></div>
+            </div>
+          </div>
+
+          <div class="task-box">
+            <strong>Mini-Quiz 2:</strong> Was kann ein Katzenbuckel bedeuten?
+            <div class="quiz" data-answer="3" data-feedback-correct="Genau! Ein Katzenbuckel kann zeigen, dass sich die Katze bedroht fühlt." data-feedback-wrong="Schau noch einmal in den Abschnitt über Verhalten.">
+              <button>1. Dass die Katze schläft</button>
+              <button>2. Dass die Katze Hunger hat</button>
+              <button>3. Dass die Katze sich bedroht fühlt</button>
+              <div class="feedback"></div>
+            </div>
+          </div>
+
+          <div class="page-footer">
+            <div class="page-number">6</div>
+            <div class="nav">
+              <button data-prev>◀ Zurück</button>
+              <button data-next>Weiter ▶</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" data-page="7">
+          <div class="chapter-label">Fortpflanzung</div>
+          <h2>Wie bekommen Katzen Junge?</h2>
+
+          <div class="spread">
+            <div>
+              <p class="lead">Die <strong>Tragezeit</strong> einer Katze beträgt etwa <strong>9 Wochen</strong>. Katzen paaren sich ungefähr <strong>zweimal im Jahr</strong>. Pro Wurf gibt es meist <strong>2 bis 6 Junge</strong>.</p>
+              <p>Die Jungen kommen <strong>blind und hilflos</strong> zur Welt. Sie werden in einem <strong>Versteck</strong> geboren. Dort sind sie zunächst geschützt. Etwa <strong>4 bis 6 Wochen</strong> lang werden sie von der Mutter <strong>gesäugt</strong>.</p>
+
+              <div class="note">
+                <strong>Merke:</strong> Katzenjunge brauchen in den ersten Wochen besonders viel Schutz und die Milch der Mutter.
+              </div>
+            </div>
+
+            <figure class="picture">
+              <svg viewBox="0 0 420 300" role="img" aria-label="Katzenmutter mit Jungen im Nest">
+                <rect width="420" height="300" rx="20" fill="#fffaf2"/>
+                <ellipse cx="210" cy="244" rx="158" ry="38" fill="#d9c4a5"/>
+                <ellipse cx="194" cy="172" rx="98" ry="58" fill="#c78a61"/>
+                <circle cx="274" cy="136" r="40" fill="#c78a61"/>
+                <polygon points="246,112 258,84 274,112" fill="#a96f4b"/>
+                <polygon points="278,112 292,84 306,112" fill="#a96f4b"/>
+                <ellipse cx="150" cy="216" rx="32" ry="22" fill="#e0b48d"/>
+                <ellipse cx="200" cy="228" rx="32" ry="22" fill="#e8c09c"/>
+                <ellipse cx="242" cy="214" rx="32" ry="22" fill="#deb28b"/>
+                <circle cx="171" cy="203" r="10" fill="#e0b48d"/>
+                <circle cx="221" cy="214" r="10" fill="#e8c09c"/>
+                <circle cx="263" cy="201" r="10" fill="#deb28b"/>
+                <line x1="164" y1="202" x2="156" y2="194" stroke="#8e6a52" stroke-width="2"/>
+                <line x1="178" y1="202" x2="186" y2="194" stroke="#8e6a52" stroke-width="2"/>
+                <line x1="214" y1="214" x2="206" y2="206" stroke="#8e6a52" stroke-width="2"/>
+                <line x1="228" y1="214" x2="236" y2="206" stroke="#8e6a52" stroke-width="2"/>
+                <line x1="256" y1="201" x2="248" y2="193" stroke="#8e6a52" stroke-width="2"/>
+                <line x1="270" y1="201" x2="278" y2="193" stroke="#8e6a52" stroke-width="2"/>
+              </svg>
+              <figcaption>Die Katzenmutter schützt und versorgt ihre Jungen in den ersten Lebenswochen.</figcaption>
+            </figure>
+          </div>
+
+          <div class="task-box">
+            <strong>Lückentext:</strong>
+            <div class="question">
+              Die Tragezeit der Katze beträgt etwa <span class="blank"></span>. Die Jungen sind bei der Geburt <span class="blank"></span> und <span class="blank"></span>. Sie werden ungefähr <span class="blank"></span> gesäugt.
+            </div>
+            <div class="word-bank">
+              <span class="chip">blind</span>
+              <span class="chip">hilflos</span>
+              <span class="chip">4 bis 6 Wochen</span>
+              <span class="chip">9 Wochen</span>
+            </div>
+            <button class="solution-toggle" data-solution="sol1">Lösung anzeigen</button>
+            <div class="solution" id="sol1">9 Wochen · blind · hilflos · 4 bis 6 Wochen</div>
+          </div>
+
+          <div class="task-box">
+            <strong>Quiz:</strong> Wie kommen Katzenjunge zur Welt?
+            <div class="quiz" data-answer="1" data-feedback-correct="Richtig! Katzenjunge kommen blind und hilflos zur Welt." data-feedback-wrong="Nicht ganz. Lies den Abschnitt über die Geburt noch einmal.">
+              <button>1. Blind und hilflos</button>
+              <button>2. Mit geöffneten Augen und schon laufend</button>
+              <button>3. Bereits selbstständig jagend</button>
+              <div class="feedback"></div>
+            </div>
+          </div>
+
+          <div class="page-footer">
+            <div class="page-number">7</div>
+            <div class="nav">
+              <button data-prev>◀ Zurück</button>
+              <button data-next>Weiter ▶</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" data-page="8">
+          <div class="chapter-label">Rätselseite</div>
+          <h2>Kreuzworträtsel zur Hauskatze</h2>
+          <p class="lead">Trage die Wörter in das Raster ein. Schreibe alles in Großbuchstaben. Nicht jedes Feld muss von dir ausgefüllt werden – manche schwarzen Felder trennen die Wörter.</p>
+
+          <div class="crossword-wrap">
+            <div class="grid" id="crosswordGrid"></div>
+
+            <div class="clues card">
+              <h4>Hinweise:</h4>
+              <ol>
+                <li><strong>1 waagerecht:</strong> Diese Haare helfen beim Tasten.</li>
+                <li><strong>2 waagerecht:</strong> So heißt der größte Backenzahn der Katze.</li>
+                <li><strong>3 waagerecht:</strong> Von ihr stammt die Hauskatze ab.</li>
+                <li><strong>4 waagerecht:</strong> Damit zeigt die Katze oft, dass sie sich wohlfühlt.</li>
+                <li><strong>5 waagerecht:</strong> Typische Beute der Katze.</li>
+              </ol>
+              <button class="solution-toggle" data-solution="sol2">Lösung anzeigen</button>
+              <div class="solution" id="sol2">
+                1 = TASTHAARE<br>
+                2 = REISSZAHN<br>
+                3 = FALBKATZE<br>
+                4 = SCHNURREN<br>
+                5 = MAUS
+              </div>
+            </div>
+          </div>
+
+          <div class="task-box">
+            <strong>Zusatzaufgabe:</strong> Nenne aus dem Kopf noch zwei weitere Wörter, die zur Hauskatze passen.
+          </div>
+
+          <div class="page-footer">
+            <div class="page-number">8</div>
+            <div class="nav">
+              <button data-prev>◀ Zurück</button>
+              <button data-next>Weiter ▶</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="page" data-page="9">
+          <div class="chapter-label">Abschluss</div>
+          <h2>Das kannst du jetzt über die Hauskatze</h2>
+
+          <div class="two-col">
+            <div class="card">
+              <h4>Ich weiß jetzt:</h4>
+              <ul class="mini-list">
+                <li>woher die Hauskatze stammt</li>
+                <li>wie ihre Sinnesorgane funktionieren</li>
+                <li>warum sie ein Raubtiergebiss hat</li>
+                <li>was sie frisst</li>
+                <li>wie sie sich verständigt</li>
+                <li>wie Katzenjunge aufwachsen</li>
+              </ul>
+            </div>
+
+            <div class="card">
+              <h4>Abschlussfragen:</h4>
+              <div class="question">1. Warum sind die langen Eckzähne für die Katze wichtig?</div>
+              <div class="question">2. Wie zeigen sich die Pupillen im Dunkeln?</div>
+              <div class="question">3. Warum frisst die Katze manchmal Gras?</div>
+            </div>
+          </div>
+
+          <div class="fact-box">
+            <strong>Gut gemacht!</strong> Du hast das Lernbuch durchgearbeitet. Jetzt kannst du die wichtigsten Merkmale der Hauskatze erklären.
+          </div>
+
+          <button class="solution-toggle" data-solution="sol3">Mögliche Antworten anzeigen</button>
+          <div class="solution" id="sol3">
+            1. Die langen Eckzähne helfen, Beute zu packen und festzuhalten.<br>
+            2. Im Dunkeln sind die Pupillen groß und rund.<br>
+            3. Gras kann die Verdauung fördern und helfen, Haare aus dem Magen zu befördern.
+          </div>
+
+          <div class="task-box">
+            <strong>Abschluss-Quiz 1:</strong> Welche Aussage stimmt?
+            <div class="quiz" data-answer="2" data-feedback-correct="Richtig! Die Katze ist ein Säugetier." data-feedback-wrong="Schau noch einmal an den Anfang des Lernbuchs zurück.">
+              <button>1. Die Katze ist ein Reptil.</button>
+              <button>2. Die Katze ist ein Säugetier.</button>
+              <button>3. Die Katze ist ein Fisch.</button>
+              <div class="feedback"></div>
+            </div>
+          </div>
+
+          <div class="task-box">
+            <strong>Abschluss-Quiz 2:</strong> Welche Tiere gehören typisch zur Beute der Katze?
+            <div class="quiz" data-answer="1" data-feedback-correct="Genau! Mäuse und Ratten gehören zu ihrer typischen Beute." data-feedback-wrong="Nicht ganz. Lies noch einmal den Abschnitt zur Ernährung.">
+              <button>1. Mäuse und Ratten</button>
+              <button>2. Kühe und Pferde</button>
+              <button>3. Wale und Delfine</button>
+              <div class="feedback"></div>
+            </div>
+          </div>
+
+          <div class="task-box">
+            <strong>Abschluss-Quiz 3:</strong> Wie lange beträgt die Tragezeit ungefähr?
+            <div class="quiz" data-answer="3" data-feedback-correct="Richtig! Die Tragezeit beträgt etwa 9 Wochen." data-feedback-wrong="Fast. Schau noch einmal auf die Seite zur Fortpflanzung.">
+              <button>1. 2 Wochen</button>
+              <button>2. 20 Wochen</button>
+              <button>3. 9 Wochen</button>
+              <div class="feedback"></div>
+            </div>
+          </div>
+
+          <div class="page-footer">
+            <div class="page-number">9</div>
+            <div class="nav">
+              <button data-prev>◀ Zurück</button>
+              <button disabled>Ende ▶</button>
+            </div>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const pages = [...document.querySelectorAll('.page')];
+    let current = 0;
+
+    function showPage(index) {
+      current = Math.max(0, Math.min(index, pages.length - 1));
+
+      pages.forEach((page, i) => {
+        page.classList.toggle('active', i === current);
+      });
+
+      const percent = ((current + 1) / pages.length) * 100;
+      document.getElementById('progressBar').style.width = percent + '%';
+      document.getElementById('progressText').textContent = `Seite ${current + 1} von ${pages.length}`;
+
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.addEventListener('click', (e) => {
+      const nextBtn = e.target.closest('[data-next]');
+      const prevBtn = e.target.closest('[data-prev]');
+      const solBtn = e.target.closest('.solution-toggle');
+
+      if (nextBtn) showPage(current + 1);
+      if (prevBtn) showPage(current - 1);
+
+      if (solBtn) {
+        const id = solBtn.dataset.solution;
+        const box = document.getElementById(id);
+        if (box) {
+          box.classList.toggle('open');
+          solBtn.textContent = box.classList.contains('open') ? 'Lösung ausblenden' : 'Lösung anzeigen';
+        }
+      }
+    });
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight') showPage(current + 1);
+      if (e.key === 'ArrowLeft') showPage(current - 1);
+    });
+
+    document.querySelectorAll('.quiz').forEach(quiz => {
+      const correct = Number(quiz.dataset.answer);
+      const feedback = quiz.querySelector('.feedback');
+      const buttons = [...quiz.querySelectorAll('button')];
+
+      buttons.forEach((btn, index) => {
+        btn.addEventListener('click', () => {
+          buttons.forEach(b => b.classList.remove('correct', 'wrong'));
+
+          if (index + 1 === correct) {
+            btn.classList.add('correct');
+            feedback.textContent = quiz.dataset.feedbackCorrect || 'Richtig!';
+            feedback.style.color = '#2f7d46';
+          } else {
+            btn.classList.add('wrong');
+            feedback.textContent = quiz.dataset.feedbackWrong || 'Noch nicht ganz.';
+            feedback.style.color = '#a54242';
+          }
+        });
+      });
+    });
+
+    const layout = [
+      ['T','A','S','T','H','A','A','R','E'],
+      ['#','#','#','#','A','#','#','#','#'],
+      ['R','E','I','S','S','Z','A','H','N'],
+      ['#','#','#','#','K','#','#','#','#'],
+      ['F','A','L','B','K','A','T','Z','E'],
+      ['#','#','#','#','A','#','#','#','#'],
+      ['S','C','H','N','U','R','R','E','N'],
+      ['#','#','#','#','S','#','#','#','#'],
+      ['M','A','U','S','#','#','#','#','#']
+    ];
+
+    const starts = {
+      '0-0': '1',
+      '2-0': '2',
+      '4-0': '3',
+      '6-0': '4',
+      '8-0': '5'
+    };
+
+    const grid = document.getElementById('crosswordGrid');
+
+    if (grid) {
+      grid.innerHTML = '';
+
+      layout.forEach((row, r) => {
+        row.forEach((char, c) => {
+          if (char === '#') {
+            const block = document.createElement('div');
+            block.className = 'cell block';
+            grid.appendChild(block);
+          } else {
+            const wrap = document.createElement('div');
+            wrap.className = 'crossword-cell-wrap';
+
+            const key = `${r}-${c}`;
+            if (starts[key]) {
+              const num = document.createElement('span');
+              num.className = 'crossword-num';
+              num.textContent = starts[key];
+              wrap.appendChild(num);
+            }
+
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.maxLength = 1;
+            input.className = 'crossword-input';
+            input.setAttribute('aria-label', `Feld ${r + 1}-${c + 1}`);
+
+            input.addEventListener('input', () => {
+              input.value = input.value
+                .toUpperCase()
+                .replace(/[^A-ZÄÖÜ]/g, '');
+            });
+
+            wrap.appendChild(input);
+            grid.appendChild(wrap);
+          }
+        });
+      });
+    }
+
+    showPage(0);
+  </script>
+</body>
+</html>

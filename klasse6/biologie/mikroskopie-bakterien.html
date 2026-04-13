@@ -1,0 +1,805 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Virtuelles Mikroskop – Bakterien (Klasse 6)</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel:#0f1b33;
+      --card:#111f3d;
+      --ink:#e8eefc;
+      --muted:#a7b7db;
+      --line:rgba(255,255,255,.10);
+      --accent:#4da3ff;
+      --good:#39d98a;
+      --warn:#ffcf5a;
+      --bad:#ff6b6b;
+      --shadow: 0 18px 45px rgba(0,0,0,.45);
+      --r:18px;
+      --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(77,163,255,.20), transparent 60%),
+        radial-gradient(900px 600px at 90% 0%, rgba(57,217,138,.10), transparent 55%),
+        radial-gradient(900px 700px at 55% 110%, rgba(255,207,90,.10), transparent 60%),
+        linear-gradient(180deg, #060a13, var(--bg));
+      min-height:100vh;
+    }
+    header{
+      padding:18px 18px 10px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:12px;
+      max-width:1200px;
+      margin:0 auto;
+    }
+    .title{
+      display:flex; flex-direction:column; gap:6px;
+    }
+    h1{
+      margin:0;
+      font-size:clamp(18px, 2.4vw, 28px);
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.35;
+    }
+    .chiprow{
+      display:flex; flex-wrap:wrap; gap:8px; justify-content:flex-end;
+    }
+    .chip{
+      padding:7px 10px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+      border-radius:999px;
+      font-size:12px;
+      color:var(--muted);
+      user-select:none;
+      backdrop-filter: blur(8px);
+    }
+
+    main{
+      max-width:1200px;
+      margin:0 auto;
+      padding:14px 18px 22px;
+      display:grid;
+      grid-template-columns: 320px 1fr 340px;
+      gap:14px;
+    }
+    @media (max-width: 1050px){
+      main{grid-template-columns: 1fr; }
+    }
+    .panel{
+      background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.03));
+      border:1px solid var(--line);
+      border-radius:var(--r);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+    .panel h2{
+      margin:0;
+      font-size:14px;
+      letter-spacing:.3px;
+      text-transform:uppercase;
+      color:var(--muted);
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+      background:rgba(0,0,0,.10);
+    }
+    .panel .body{
+      padding:12px 14px 14px;
+    }
+
+    /* left list */
+    .list{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .item{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      padding:10px;
+      border-radius:14px;
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.14);
+      cursor:pointer;
+      transition: transform .12s ease, border-color .12s ease, background .12s ease;
+    }
+    .item:hover{
+      transform: translateY(-1px);
+      border-color: rgba(77,163,255,.40);
+      background:rgba(77,163,255,.10);
+    }
+    .item.active{
+      border-color: rgba(77,163,255,.70);
+      background:rgba(77,163,255,.16);
+    }
+    .thumb{
+      width:56px; height:56px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      overflow:hidden;
+      flex:0 0 auto;
+      background:rgba(255,255,255,.05);
+      position:relative;
+    }
+    .thumb img{
+      width:100%; height:100%;
+      object-fit:cover;
+      display:block;
+      filter: saturate(1.05) contrast(1.05);
+    }
+    .meta{
+      min-width:0;
+      display:flex;
+      flex-direction:column;
+      gap:3px;
+    }
+    .name{
+      font-weight:700;
+      font-size:14px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .tag{
+      font-size:12px;
+      color:var(--muted);
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.04);
+    }
+    .dot{
+      width:8px; height:8px; border-radius:50%;
+      background:var(--muted);
+      box-shadow: 0 0 0 2px rgba(0,0,0,.25);
+    }
+    .dot.good{background:var(--good)}
+    .dot.warn{background:var(--warn)}
+    .dot.bad{background:var(--bad)}
+
+    /* microscope center */
+    .stageWrap{
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      align-items:center;
+    }
+    .scope{
+      width:min(560px, 100%);
+      aspect-ratio: 1 / 1;
+      border-radius: 28px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.18);
+      display:grid;
+      place-items:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .scope::before{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(circle at 50% 50%, rgba(255,255,255,.06), transparent 55%),
+        radial-gradient(circle at 50% 50%, rgba(0,0,0,.0) 40%, rgba(0,0,0,.55) 70%, rgba(0,0,0,.85) 100%);
+      pointer-events:none;
+      z-index: 5;
+    }
+    .scope::after{
+      /* subtle moving scanline */
+      content:"";
+      position:absolute; inset:-20%;
+      background: linear-gradient(180deg, transparent 0%, rgba(255,255,255,.05) 50%, transparent 100%);
+      opacity:.25;
+      animation: scan 3.8s linear infinite;
+      pointer-events:none;
+      z-index: 6;
+    }
+    @keyframes scan{
+      0%{ transform: translateY(-35%) }
+      100%{ transform: translateY(35%) }
+    }
+
+    .viewport{
+      width:82%;
+      height:82%;
+      border-radius: 999px;
+      position:relative;
+      overflow:hidden;
+      border:1px solid rgba(255,255,255,.14);
+      box-shadow: inset 0 0 0 2px rgba(0,0,0,.35);
+      background:rgba(255,255,255,.03);
+      cursor: grab;
+      user-select:none;
+      z-index: 2;
+    }
+    .viewport:active{ cursor: grabbing; }
+    .slide{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform: translate(-50%,-50%) scale(1);
+      will-change: transform, filter;
+      width:120%;
+      height:120%;
+      display:grid;
+      place-items:center;
+      filter: blur(0px);
+    }
+    .slide img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      transform: translateZ(0);
+    }
+    .reticle{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+      z-index: 4;
+      background:
+        radial-gradient(circle at 50% 50%, transparent 0 46%, rgba(255,255,255,.08) 47% 47.5%, transparent 48%),
+        linear-gradient(transparent 49.7%, rgba(255,255,255,.07) 49.8% 50.2%, transparent 50.3%),
+        linear-gradient(90deg, transparent 49.7%, rgba(255,255,255,.07) 49.8% 50.2%, transparent 50.3%);
+      mix-blend-mode: screen;
+      opacity:.55;
+    }
+
+    .controls{
+      width:min(560px, 100%);
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    @media (max-width: 520px){
+      .controls{grid-template-columns:1fr;}
+    }
+    .ctrl{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:rgba(0,0,0,.14);
+      padding:10px 10px 12px;
+    }
+    .ctrl label{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:8px;
+    }
+    input[type="range"]{
+      width:100%;
+      accent-color: var(--accent);
+    }
+    .hint{
+      color:var(--muted);
+      font-size:12px;
+      line-height:1.35;
+      text-align:center;
+      opacity:.95;
+    }
+    .btnrow{
+      display:flex; gap:8px; justify-content:center; flex-wrap:wrap;
+    }
+    button{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      color:var(--ink);
+      padding:8px 10px;
+      border-radius:12px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      font-size:12px;
+    }
+    button:hover{ transform: translateY(-1px); border-color: rgba(77,163,255,.45); background:rgba(77,163,255,.10); }
+
+    /* right info */
+    .infoTitle{
+      display:flex;
+      align-items:flex-start;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:10px;
+    }
+    .latin{
+      margin:0;
+      font-size:18px;
+      line-height:1.2;
+    }
+    .badge{
+      flex:0 0 auto;
+      border-radius:999px;
+      padding:6px 10px;
+      border:1px solid var(--line);
+      font-size:12px;
+      background:rgba(255,255,255,.05);
+      color:var(--muted);
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+    }
+    .badge .dot{ width:10px; height:10px; }
+    .blurb{
+      color:var(--ink);
+      opacity:.92;
+      font-size:13px;
+      line-height:1.45;
+      margin:0 0 10px;
+    }
+    .facts{
+      border-top:1px solid var(--line);
+      padding-top:10px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .fact{
+      border:1px solid var(--line);
+      background:rgba(0,0,0,.12);
+      border-radius:14px;
+      padding:10px;
+    }
+    .fact b{
+      display:block;
+      font-size:12px;
+      color:var(--muted);
+      margin-bottom:6px;
+      text-transform:uppercase;
+      letter-spacing:.3px;
+    }
+    .fact p{
+      margin:0;
+      font-size:13px;
+      line-height:1.45;
+      color:var(--ink);
+      opacity:.92;
+    }
+    .src{
+      margin-top:10px;
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.35;
+    }
+    .src a{
+      color: #b9d8ff;
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(185,216,255,.45);
+    }
+    .src a:hover{ border-bottom-color: rgba(185,216,255,.85); }
+
+    /* loading */
+    .loader{
+      position:absolute; inset:0;
+      display:grid; place-items:center;
+      background:rgba(0,0,0,.25);
+      z-index:10;
+      opacity:0;
+      pointer-events:none;
+      transition: opacity .18s ease;
+    }
+    .loader.show{ opacity:1; pointer-events:auto; }
+    .spinner{
+      width:34px; height:34px;
+      border-radius:50%;
+      border:3px solid rgba(255,255,255,.18);
+      border-top-color: rgba(77,163,255,.9);
+      animation: spin .9s linear infinite;
+    }
+    @keyframes spin{ to{ transform: rotate(360deg)} }
+  </style>
+</head>
+<body>
+<header>
+  <div class="title">
+    <h1>Virtuelles Mikroskop: Bakterien</h1>
+    <p class="sub">Klicke links eine Art an. Im Okular kannst du zoomen, den Fokus ändern und das Bild per Drag verschieben.</p>
+  </div>
+  <div class="chiprow">
+    <div class="chip">👆 Auswahl links</div>
+    <div class="chip">🖱️ Drag = Präparat bewegen</div>
+    <div class="chip">🔎 Zoom + Fokus</div>
+  </div>
+</header>
+
+<main>
+  <!-- LEFT -->
+  <section class="panel" aria-label="Auswahl">
+    <h2>Proben-Auswahl</h2>
+    <div class="body">
+      <div id="list" class="list"></div>
+      <p class="src" style="margin-bottom:0">
+        Bilder: Wikimedia Commons (u. a. CDC/PHIL & frei lizenzierte Uploads).
+      </p>
+    </div>
+  </section>
+
+  <!-- CENTER -->
+  <section class="panel" aria-label="Mikroskop">
+    <h2>Okular</h2>
+    <div class="stageWrap">
+      <div class="scope">
+        <div id="loader" class="loader"><div class="spinner" aria-label="Lädt…"></div></div>
+        <div id="viewport" class="viewport" title="Ziehen zum Verschieben">
+          <div id="slide" class="slide">
+            <img id="img" alt="Mikroskopbild" />
+          </div>
+          <div class="reticle" aria-hidden="true"></div>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="ctrl">
+          <label><span>Zoom</span><span id="zoomVal">1.40×</span></label>
+          <input id="zoom" type="range" min="1" max="3.2" step="0.01" value="1.4" />
+        </div>
+        <div class="ctrl">
+          <label><span>Fokus (Unschärfe)</span><span id="blurVal">0.6</span></label>
+          <input id="blur" type="range" min="0" max="3" step="0.05" value="0.6" />
+        </div>
+        <div class="ctrl">
+          <label><span>Helligkeit</span><span id="brightVal">1.02</span></label>
+          <input id="bright" type="range" min="0.7" max="1.35" step="0.01" value="1.02" />
+        </div>
+        <div class="ctrl">
+          <label><span>Kontrast</span><span id="contVal">1.10</span></label>
+          <input id="cont" type="range" min="0.85" max="1.5" step="0.01" value="1.10" />
+        </div>
+      </div>
+
+      <div class="btnrow">
+        <button id="centerBtn" type="button">Zentrieren</button>
+        <button id="randomBtn" type="button">Zufällige Probe</button>
+        <button id="resetBtn" type="button">Alles zurücksetzen</button>
+      </div>
+
+      <div class="hint">
+        Tipp für Klasse 6: Lass die SuS beschreiben, was sie sehen (Form: Stäbchen/Kugeln) – erst danach Name/Info aufdecken.
+      </div>
+    </div>
+  </section>
+
+  <!-- RIGHT -->
+  <section class="panel" aria-label="Info">
+    <h2>Info zur Probe</h2>
+    <div class="body">
+      <div class="infoTitle">
+        <h3 id="latin" class="latin">—</h3>
+        <div id="badge" class="badge"><span class="dot warn"></span><span>—</span></div>
+      </div>
+      <p id="blurb" class="blurb">Wähle links eine Probe aus.</p>
+
+      <div class="facts">
+        <div class="fact">
+          <b>Wo kommt das vor?</b>
+          <p id="where">—</p>
+        </div>
+        <div class="fact">
+          <b>Nützlich oder schädlich?</b>
+          <p id="harm">—</p>
+        </div>
+        <div class="fact">
+          <b>Mini-Merksatz</b>
+          <p id="mnemo">—</p>
+        </div>
+      </div>
+
+      <p class="src" id="sourceBox">Quelle Bild: —</p>
+    </div>
+  </section>
+</main>
+
+<script>
+  // Datensatz (alles in einer Datei)
+  const samples = [
+    {
+      id: "ecoli",
+      title: "Escherichia coli (E. coli)",
+      level: "warn", // viele harmlos, manche krank
+      levelText: "Meist harmlos, manche krankmachend",
+      thumb: "https://commons.wikimedia.org/wiki/Special:FilePath/Escherichia%20coli%20(SEM).jpg",
+      img:   "https://commons.wikimedia.org/wiki/Special:FilePath/Escherichia%20coli%20(SEM).jpg",
+      blurb: "E. coli sind typische Darmbakterien. Viele helfen bei Verdauung und Stoffwechsel – aber bestimmte Stämme können Durchfall und andere Erkrankungen auslösen.",
+      where: "Vor allem im Darm von warmblütigen Tieren und Menschen; außerdem in Wasser/Umwelt, wenn Fäkalien hinein gelangen.",
+      harm:  "Nützlinge: viele Stämme sind Teil der normalen Darmflora. Schädlich: einige Stämme (z. B. STEC/EHEC) können schwere Durchfälle verursachen.",
+      mnemo: "„E. coli: oft Darm-Helfer, manchmal Durchfall-Ärger.“",
+      sourceName: "Wikimedia Commons – „Escherichia coli (SEM)“ (CDC/PHIL #7138)",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Escherichia_coli_(SEM).jpg"
+    },
+    {
+      id: "staph",
+      title: "Staphylococcus aureus",
+      level: "bad",
+      levelText: "Kann Infektionen verursachen",
+      thumb: "https://commons.wikimedia.org/wiki/Special:FilePath/Staphylococcus%20aureus%20VISA%202.jpg",
+      img:   "https://commons.wikimedia.org/wiki/Special:FilePath/Staphylococcus%20aureus%20VISA%202.jpg",
+      blurb: "Staph. aureus lebt bei vielen Menschen auf der Haut oder in der Nase – meistens ohne Probleme. Gelangt es aber in Wunden, kann es Entzündungen auslösen.",
+      where: "Häufig auf der Haut und in der Nase von Menschen; kann über Hände/Flächen weitergegeben werden.",
+      harm:  "Meist harmlos als „Mitbewohner“. Problematisch bei Wunden/geschwächtem Immunsystem; manche Stämme sind gegen Antibiotika resistent (z. B. MRSA).",
+      mnemo: "„Staph auf der Haut: okay – in der Wunde: au!“",
+      sourceName: "Wikimedia Commons – „Staphylococcus aureus VISA 2“ (SEM)",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Staphylococcus_aureus_VISA_2.jpg"
+    },
+    {
+      id: "bacillus",
+      title: "Bacillus subtilis",
+      level: "good",
+      levelText: "Meist harmlos, oft nützlich",
+      thumb: "https://commons.wikimedia.org/wiki/Special:FilePath/Bacillus%20subtilis%20image.jpg",
+      img:   "https://commons.wikimedia.org/wiki/Special:FilePath/Bacillus%20subtilis%20image.jpg",
+      blurb: "B. subtilis ist ein Bodenbakterium. Es bildet widerstandsfähige Sporen und wird in der Forschung oft als Modellbakterium genutzt.",
+      where: "Vor allem in Böden und auf Pflanzen; kann auch auf der Haut vorkommen.",
+      harm:  "Für Menschen meistens nicht krankmachend. In der Natur und Landwirtschaft kann es sogar nützlich sein (z. B. als „Gegenspieler“ mancher Pflanzenkrankheiten).",
+      mnemo: "„Boden-Bacillus: zäh (Sporen) und meist ein Helfer.“",
+      sourceName: "Wikimedia Commons – „Bacillus subtilis image“",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Bacillus_subtilis_image.jpg"
+    },
+    {
+      id: "lacto",
+      title: "Lactobacillus (z. B. L. bulgaricus)",
+      level: "good",
+      levelText: "Nützlich (Milchsäurebakterien)",
+      thumb: "https://commons.wikimedia.org/wiki/Special:FilePath/Microscopic%20Image%20Lactobacillus%20bulgaricus%20GLB44.jpg",
+      img:   "https://commons.wikimedia.org/wiki/Special:FilePath/Microscopic%20Image%20Lactobacillus%20bulgaricus%20GLB44.jpg",
+      blurb: "Lactobacillen sind Milchsäurebakterien. Sie werden zur Herstellung von Joghurt & Co. genutzt und können helfen, andere Keime zu verdrängen.",
+      where: "In fermentierten Lebensmitteln (z. B. Joghurt) und als Teil natürlicher Mikrobiota (je nach Art).",
+      harm:  "Meist nützlich: produzieren Milchsäure, die Lebensmittel haltbarer macht und andere Keime hemmen kann.",
+      mnemo: "„Lacto = Milch + Säure → gut für Joghurt!“",
+      sourceName: "Wikimedia Commons – „Microscopic Image Lactobacillus bulgaricus GLB44“",
+      sourceUrl: "https://commons.wikimedia.org/wiki/File:Microscopic_Image_Lactobacillus_bulgaricus_GLB44.jpg"
+    }
+  ];
+
+  // UI refs
+  const listEl = document.getElementById("list");
+  const imgEl = document.getElementById("img");
+  const slideEl = document.getElementById("slide");
+  const viewportEl = document.getElementById("viewport");
+  const loaderEl = document.getElementById("loader");
+
+  const latinEl = document.getElementById("latin");
+  const badgeEl = document.getElementById("badge");
+  const blurbEl = document.getElementById("blurb");
+  const whereEl = document.getElementById("where");
+  const harmEl = document.getElementById("harm");
+  const mnemoEl = document.getElementById("mnemo");
+  const sourceBox = document.getElementById("sourceBox");
+
+  const zoom = document.getElementById("zoom");
+  const blur = document.getElementById("blur");
+  const bright = document.getElementById("bright");
+  const cont = document.getElementById("cont");
+  const zoomVal = document.getElementById("zoomVal");
+  const blurVal = document.getElementById("blurVal");
+  const brightVal = document.getElementById("brightVal");
+  const contVal = document.getElementById("contVal");
+
+  const centerBtn = document.getElementById("centerBtn");
+  const randomBtn = document.getElementById("randomBtn");
+  const resetBtn = document.getElementById("resetBtn");
+
+  // microscope state
+  let activeId = samples[0].id;
+  let pos = {x: 0, y: 0};     // translate offsets (px)
+  let base = {x: 0, y: 0};
+  let drag = {on:false, sx:0, sy:0};
+  let rafPending = false;
+
+  function levelDot(level){
+    const d = document.createElement("span");
+    d.className = "dot " + level;
+    return d;
+  }
+
+  function renderList(){
+    listEl.innerHTML = "";
+    samples.forEach(s => {
+      const el = document.createElement("div");
+      el.className = "item" + (s.id === activeId ? " active" : "");
+      el.tabIndex = 0;
+
+      const thumb = document.createElement("div");
+      thumb.className = "thumb";
+      const ti = document.createElement("img");
+      ti.alt = s.title;
+      ti.loading = "lazy";
+      ti.referrerPolicy = "no-referrer";
+      ti.src = s.thumb;
+      thumb.appendChild(ti);
+
+      const meta = document.createElement("div");
+      meta.className = "meta";
+      const name = document.createElement("div");
+      name.className = "name";
+      name.textContent = s.title;
+
+      const tag = document.createElement("div");
+      tag.className = "tag";
+
+      const pill = document.createElement("span");
+      pill.className = "pill";
+      pill.appendChild(levelDot(s.level));
+      const t = document.createElement("span");
+      t.textContent = s.levelText;
+      pill.appendChild(t);
+
+      tag.appendChild(pill);
+      meta.appendChild(name);
+      meta.appendChild(tag);
+
+      el.appendChild(thumb);
+      el.appendChild(meta);
+
+      el.addEventListener("click", () => selectSample(s.id));
+      el.addEventListener("keydown", (e) => {
+        if(e.key === "Enter" || e.key === " "){
+          e.preventDefault();
+          selectSample(s.id);
+        }
+      });
+
+      listEl.appendChild(el);
+    });
+  }
+
+  function setBadge(level, text){
+    badgeEl.innerHTML = "";
+    const d = document.createElement("span");
+    d.className = "dot " + level;
+    const t = document.createElement("span");
+    t.textContent = text;
+    badgeEl.appendChild(d);
+    badgeEl.appendChild(t);
+  }
+
+  function showLoader(on){
+    loaderEl.classList.toggle("show", !!on);
+  }
+
+  function selectSample(id){
+    const s = samples.find(x => x.id === id);
+    if(!s) return;
+    activeId = id;
+    renderList();
+
+    latinEl.textContent = s.title;
+    setBadge(s.level, s.levelText);
+    blurbEl.textContent = s.blurb;
+    whereEl.textContent = s.where;
+    harmEl.textContent = s.harm;
+    mnemoEl.textContent = s.mnemo;
+
+    sourceBox.innerHTML = `Quelle Bild: <a href="${s.sourceUrl}" target="_blank" rel="noopener noreferrer">${s.sourceName}</a>`;
+
+    // load image
+    showLoader(true);
+    const tmp = new Image();
+    tmp.referrerPolicy = "no-referrer";
+    tmp.onload = () => {
+      imgEl.src = s.img;
+      showLoader(false);
+    };
+    tmp.onerror = () => {
+      imgEl.alt = "Bild konnte nicht geladen werden (evtl. Internet/Quelle blockiert).";
+      showLoader(false);
+    };
+    tmp.src = s.img;
+
+    // subtle re-center for new sample
+    pos = {x: 0, y: 0};
+    base = {x: 0, y: 0};
+    scheduleUpdate();
+  }
+
+  function applyFilters(){
+    const z = parseFloat(zoom.value);
+    const b = parseFloat(blur.value);
+    const br = parseFloat(bright.value);
+    const co = parseFloat(cont.value);
+
+    zoomVal.textContent = z.toFixed(2) + "×";
+    blurVal.textContent = b.toFixed(2);
+    brightVal.textContent = br.toFixed(2);
+    contVal.textContent = co.toFixed(2);
+
+    slideEl.style.filter = `blur(${b}px) brightness(${br}) contrast(${co})`;
+    const tx = pos.x;
+    const ty = pos.y;
+    slideEl.style.transform = `translate(-50%,-50%) translate(${tx}px, ${ty}px) scale(${z})`;
+  }
+
+  function scheduleUpdate(){
+    if(rafPending) return;
+    rafPending = true;
+    requestAnimationFrame(() => {
+      rafPending = false;
+      applyFilters();
+    });
+  }
+
+  // controls
+  [zoom, blur, bright, cont].forEach(r => r.addEventListener("input", scheduleUpdate));
+
+  centerBtn.addEventListener("click", () => {
+    pos = {x: 0, y: 0};
+    base = {x: 0, y: 0};
+    scheduleUpdate();
+  });
+
+  randomBtn.addEventListener("click", () => {
+    const pick = samples[Math.floor(Math.random() * samples.length)];
+    selectSample(pick.id);
+  });
+
+  resetBtn.addEventListener("click", () => {
+    zoom.value = "1.4";
+    blur.value = "0.6";
+    bright.value = "1.02";
+    cont.value = "1.10";
+    pos = {x: 0, y: 0};
+    base = {x: 0, y: 0};
+    scheduleUpdate();
+  });
+
+  // drag to pan (inside viewport)
+  function onDown(e){
+    drag.on = true;
+    viewportEl.setPointerCapture(e.pointerId);
+    drag.sx = e.clientX;
+    drag.sy = e.clientY;
+    base.x = pos.x;
+    base.y = pos.y;
+  }
+  function onMove(e){
+    if(!drag.on) return;
+    const dx = e.clientX - drag.sx;
+    const dy = e.clientY - drag.sy;
+
+    // clamp pan depending on zoom so you can't "lose" image too easily
+    const z = parseFloat(zoom.value);
+    const lim = 140 * z; // basic limit
+    pos.x = Math.max(-lim, Math.min(lim, base.x + dx));
+    pos.y = Math.max(-lim, Math.min(lim, base.y + dy));
+    scheduleUpdate();
+  }
+  function onUp(e){
+    drag.on = false;
+    try{ viewportEl.releasePointerCapture(e.pointerId);}catch(_){}
+  }
+
+  viewportEl.addEventListener("pointerdown", onDown);
+  viewportEl.addEventListener("pointermove", onMove);
+  viewportEl.addEventListener("pointerup", onUp);
+  viewportEl.addEventListener("pointercancel", onUp);
+
+  // init
+  renderList();
+  selectSample(activeId);
+  scheduleUpdate();
+</script>
+</body>
+</html>

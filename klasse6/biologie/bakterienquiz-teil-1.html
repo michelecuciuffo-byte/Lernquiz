@@ -1,0 +1,658 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Quiz – Bakterien (6. Klasse) – Zuordnungsaufgabe</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --ink:#0f172a;
+      --muted:#475569;
+      --line:#e2e8f0;
+      --soft:#f8fafc;
+      --card:#ffffff;
+      --ok:#16a34a;
+      --bad:#dc2626;
+      --accent:#2563eb;
+      --shadow: 0 10px 30px rgba(15,23,42,.08);
+      --radius: 18px;
+      --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", "Liberation Sans", sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font);
+      background:var(--bg);
+      color:var(--ink);
+      line-height:1.35;
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:24px}
+    header{
+      display:flex; gap:14px; align-items:flex-start; justify-content:space-between;
+      border:1px solid var(--line); border-radius:var(--radius); background:var(--card);
+      box-shadow:var(--shadow); padding:18px;
+    }
+    h1{margin:0;font-size:20px}
+    .sub{margin:6px 0 0;color:var(--muted);font-size:14px}
+    .pillbar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+    .pill{
+      border:1px solid var(--line); background:var(--soft);
+      padding:6px 10px; border-radius:999px; font-size:12px; color:var(--muted)
+    }
+    .grid{
+      display:grid; gap:16px; margin-top:16px;
+      grid-template-columns: 1.2fr 1fr;
+    }
+    @media (max-width: 920px){
+      .grid{grid-template-columns:1fr}
+    }
+
+    .panel{
+      border:1px solid var(--line); border-radius:var(--radius);
+      background:var(--card); box-shadow:var(--shadow); padding:16px;
+    }
+    .panel h2{margin:0 0 10px;font-size:16px}
+    .hint{color:var(--muted);font-size:13px;margin:0 0 12px}
+
+    .controls{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+      margin-top:12px;
+    }
+    .btn{
+      appearance:none; border:1px solid var(--line); background:var(--soft);
+      padding:10px 12px; border-radius:12px; cursor:pointer; font-weight:600;
+    }
+    .btn.primary{background:var(--accent); color:white; border-color:transparent}
+    .btn:disabled{opacity:.6; cursor:not-allowed}
+    .status{font-size:13px; color:var(--muted)}
+    .status strong{color:var(--ink)}
+
+    /* Cards */
+    .cards{
+      display:grid; gap:10px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    @media (max-width: 520px){ .cards{grid-template-columns:1fr} }
+
+    .card{
+      border:1px solid var(--line); border-radius:16px; background:var(--card);
+      padding:12px; display:flex; gap:10px; align-items:flex-start;
+      box-shadow: 0 6px 16px rgba(15,23,42,.06);
+      cursor:grab;
+      user-select:none;
+    }
+    .card:active{cursor:grabbing}
+    .card.assigned{opacity:.86}
+    .card.correct{outline:2px solid rgba(22,163,74,.7)}
+    .card.wrong{outline:2px solid rgba(220,38,38,.7)}
+    .badge{
+      font-size:11px; font-weight:700; padding:4px 8px; border-radius:999px;
+      border:1px solid var(--line); background:var(--soft); color:var(--muted);
+      display:inline-block;
+    }
+    .ctext{flex:1}
+    .ctext p{margin:6px 0 0; font-size:14px}
+    .mini{margin-top:6px; color:var(--muted); font-size:12px}
+
+    /* Buckets */
+    .buckets{
+      display:grid; gap:12px;
+      grid-template-columns: 1fr;
+    }
+    .bucket{
+      border:2px dashed var(--line);
+      border-radius:16px;
+      padding:12px;
+      background:linear-gradient(0deg, var(--soft), #fff);
+      min-height:120px;
+      position:relative;
+    }
+    .bucket.selected{
+      border-color: rgba(37,99,235,.55);
+      box-shadow: 0 0 0 4px rgba(37,99,235,.10);
+    }
+    .btitle{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      margin-bottom:8px;
+    }
+    .btitle h3{margin:0; font-size:14px}
+    .bdesc{margin:0 0 10px; color:var(--muted); font-size:12px}
+    .dropzone{
+      display:flex; flex-wrap:wrap; gap:8px;
+      min-height:54px;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--line);
+      background:var(--card);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      box-shadow: 0 4px 12px rgba(15,23,42,.06);
+    }
+    .chip button{
+      border:0; background:transparent; cursor:pointer;
+      font-weight:900; color:var(--muted); line-height:1;
+    }
+
+    /* Simple inline SVG icons */
+    .icon{
+      width:44px; height:44px; flex:0 0 44px;
+      border-radius:12px; border:1px solid var(--line);
+      background:var(--soft);
+      display:grid; place-items:center;
+      overflow:hidden;
+    }
+    .icon svg{width:44px;height:44px}
+
+    /* Footer note */
+    .note{
+      margin-top:16px;
+      border:1px solid var(--line); border-radius:var(--radius);
+      background:var(--soft);
+      padding:12px 14px;
+      color:var(--muted);
+      font-size:12px;
+    }
+    kbd{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      border:1px solid var(--line);
+      background:#fff;
+      padding:1px 6px;
+      border-radius:8px;
+      color:var(--ink);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>🦠 Bakterien – Zuordnungsquiz (6. Klasse)</h1>
+        <p class="sub">
+          Ordne die Aussagen aus dem Infotext den richtigen Kategorien zu: <strong>Vorkommen</strong>, <strong>Nutzen</strong>, <strong>Gefahr</strong>, <strong>Fakten</strong>.
+        </p>
+        <div class="pillbar">
+          <span class="pill">Drag & Drop am PC</span>
+          <span class="pill">Oder: Kategorie anklicken → Karte anklicken</span>
+          <span class="pill">Ohne Fach-Extra: nur Text-Inhalte</span>
+        </div>
+      </div>
+      <div style="text-align:right; min-width:220px">
+        <div class="status" id="status">
+          Zugeordnet: <strong><span id="assignedCount">0</span>/<span id="totalCount">0</span></strong>
+        </div>
+        <div class="controls">
+          <button class="btn primary" id="checkBtn" disabled>✅ Prüfen</button>
+          <button class="btn" id="resetBtn">↩️ Reset</button>
+        </div>
+      </div>
+    </header>
+
+    <div class="grid">
+      <!-- Left: Cards -->
+      <section class="panel">
+        <h2>1) Aussagen (Karten):</h2>
+        <p class="hint">Zieh eine Karte in eine Box – oder wähle erst eine Box (rechts) und klicke dann auf die Karte.</p>
+        <div class="cards" id="cards"></div>
+      </section>
+
+      <!-- Right: Buckets -->
+      <section class="panel">
+        <h2>2) Kategorien (Boxen):</h2>
+        <p class="hint">Tipp: Wenn du unsicher bist, lies die Aussage und suche Schlüsselwörter wie „kommen vor“, „bauen um“, „Krankheiten“.</p>
+
+        <div class="buckets" id="buckets">
+          <div class="bucket" data-bucket="vorkommen" tabindex="0" aria-label="Kategorie Vorkommen">
+            <div class="btitle">
+              <h3>🌍 Vorkommen</h3>
+              <span class="badge">Wo findet man sie?</span>
+            </div>
+            <p class="bdesc">Orte/Umgebungen, in denen Bakterien vorkommen.</p>
+            <div class="dropzone" data-dropzone="vorkommen"></div>
+          </div>
+
+          <div class="bucket" data-bucket="nutzen" tabindex="0" aria-label="Kategorie Nutzen">
+            <div class="btitle">
+              <h3>♻️ Nutzen</h3>
+              <span class="badge">Wofür sind sie wichtig?</span>
+            </div>
+            <p class="bdesc">Was Bakterien „Gutes“/Wichtiges tun (Kreislauf).</p>
+            <div class="dropzone" data-dropzone="nutzen"></div>
+          </div>
+
+          <div class="bucket" data-bucket="gefahr" tabindex="0" aria-label="Kategorie Gefahr">
+            <div class="btitle">
+              <h3>⚠️ Gefahr</h3>
+              <span class="badge">Was kann schaden?</span>
+            </div>
+            <p class="bdesc">Parasiten, Gifte, Krankheiten.</p>
+            <div class="dropzone" data-dropzone="gefahr"></div>
+          </div>
+
+          <div class="bucket" data-bucket="fakten" tabindex="0" aria-label="Kategorie Fakten">
+            <div class="btitle">
+              <h3>📌 Fakten</h3>
+              <span class="badge">Allgemeines</span>
+            </div>
+            <p class="bdesc">Aussagen über Alter/Anzahl Arten etc.</p>
+            <div class="dropzone" data-dropzone="fakten"></div>
+          </div>
+        </div>
+
+        <div class="note">
+          <strong>Bedienung:</strong>  
+          <br>• PC: Karte ziehen → Box loslassen.  
+          <br>• Tablet/Handy: Erst Box antippen (sie wird blau), dann Karte antippen.  
+          <br>• Zuordnung rückgängig: In der Box auf <kbd>×</kbd> tippen.
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <script>
+    // -----------------------------
+    // Inhalt nur aus dem gegebenen Text
+    // -----------------------------
+    const items = [
+      {
+        id: "i1",
+        text: "Bakterien gibt es auf der Welt schon sehr lange; möglicherweise sind sie sogar die ältesten Lebewesen.",
+        bucket: "fakten",
+        icon: "clock"
+      },
+      {
+        id: "i2",
+        text: "Bislang sind ca. 2.500 verschiedene Bakterienarten bekannt.",
+        bucket: "fakten",
+        icon: "count"
+      },
+      {
+        id: "i3",
+        text: "Bakterien kommen in humusreichen Böden vor.",
+        bucket: "vorkommen",
+        icon: "soil"
+      },
+      {
+        id: "i4",
+        text: "Bakterien kommen in nährstoffreichen Gewässern vor.",
+        bucket: "vorkommen",
+        icon: "water"
+      },
+      {
+        id: "i5",
+        text: "Bakterien kommen auch auf abgestorbenen Lebewesen vor.",
+        bucket: "vorkommen",
+        icon: "leaf"
+      },
+      {
+        id: "i6",
+        text: "Bakterien bauen organische und faulende Stoffe in anorganische Mineralstoffe um.",
+        bucket: "nutzen",
+        icon: "cycle"
+      },
+      {
+        id: "i7",
+        text: "Diese Mineralstoffe brauchen Tiere und Pflanzen zum Leben – das ist ein wichtiger Kreislauf.",
+        bucket: "nutzen",
+        icon: "plant"
+      },
+      {
+        id: "i8",
+        text: "Es gibt auch Bakterien, die als Parasiten in anderen Lebewesen leben und sich dort vermehren.",
+        bucket: "gefahr",
+        icon: "host"
+      },
+      {
+        id: "i9",
+        text: "Dabei können sie Bakteriengifte bilden, die den Organismus schädigen können.",
+        bucket: "gefahr",
+        icon: "toxin"
+      },
+      {
+        id: "i10",
+        text: "Einige Krankheiten wie Salmonelleninfektionen und Wundstarrkrampf werden durch Bakterien verursacht.",
+        bucket: "gefahr",
+        icon: "warning"
+      },
+    ];
+
+    const ICONS = {
+      clock: svgClock(),
+      count: svgCount(),
+      soil: svgSoil(),
+      water: svgWater(),
+      leaf: svgLeaf(),
+      cycle: svgCycle(),
+      plant: svgPlant(),
+      host: svgHost(),
+      toxin: svgToxin(),
+      warning: svgWarning(),
+    };
+
+    const cardsEl = document.getElementById("cards");
+    const bucketsEl = document.getElementById("buckets");
+    const checkBtn = document.getElementById("checkBtn");
+    const resetBtn = document.getElementById("resetBtn");
+    const assignedCountEl = document.getElementById("assignedCount");
+    const totalCountEl = document.getElementById("totalCount");
+
+    totalCountEl.textContent = String(items.length);
+
+    // State: where each item is currently assigned (bucket key or null)
+    const state = {
+      selectedBucket: null,
+      assigned: new Map(), // id -> bucketKey
+      checked: false
+    };
+
+    function shuffle(arr){
+      const a = arr.slice();
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function renderCards(){
+      cardsEl.innerHTML = "";
+      const order = shuffle(items);
+
+      for(const it of order){
+        const card = document.createElement("div");
+        card.className = "card";
+        card.draggable = true;
+        card.dataset.id = it.id;
+
+        card.innerHTML = `
+          <div class="icon" aria-hidden="true">${ICONS[it.icon] ?? ""}</div>
+          <div class="ctext">
+            <span class="badge">Aussage</span>
+            <p>${escapeHTML(it.text)}</p>
+            <div class="mini" id="mini-${it.id}"></div>
+          </div>
+        `;
+
+        // Drag events
+        card.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/plain", it.id);
+          e.dataTransfer.effectAllowed = "move";
+        });
+
+        // Click-to-assign (touch friendly)
+        card.addEventListener("click", () => {
+          if(state.selectedBucket){
+            assign(it.id, state.selectedBucket);
+          }
+        });
+
+        cardsEl.appendChild(card);
+      }
+      updateAssignedUI();
+    }
+
+    function renderBuckets(){
+      const bucketNodes = bucketsEl.querySelectorAll(".bucket");
+      bucketNodes.forEach(bucket => {
+        // Select bucket on click/focus
+        bucket.addEventListener("click", () => selectBucket(bucket.dataset.bucket));
+        bucket.addEventListener("keydown", (e) => {
+          if(e.key === "Enter" || e.key === " "){
+            e.preventDefault();
+            selectBucket(bucket.dataset.bucket);
+          }
+        });
+
+        // Drag & drop
+        bucket.addEventListener("dragover", (e) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = "move";
+        });
+        bucket.addEventListener("drop", (e) => {
+          e.preventDefault();
+          const id = e.dataTransfer.getData("text/plain");
+          if(id) assign(id, bucket.dataset.bucket);
+        });
+      });
+    }
+
+    function selectBucket(bucketKey){
+      state.selectedBucket = bucketKey;
+      bucketsEl.querySelectorAll(".bucket").forEach(b => {
+        b.classList.toggle("selected", b.dataset.bucket === bucketKey);
+      });
+    }
+
+    function assign(id, bucketKey){
+      // If already assigned elsewhere, remove first
+      state.assigned.set(id, bucketKey);
+      state.checked = false;
+      updateAssignedUI();
+    }
+
+    function unassign(id){
+      state.assigned.delete(id);
+      state.checked = false;
+      updateAssignedUI();
+    }
+
+    function updateAssignedUI(){
+      // Update counter & check button
+      const assignedCount = state.assigned.size;
+      assignedCountEl.textContent = String(assignedCount);
+      checkBtn.disabled = assignedCount !== items.length;
+
+      // Clear all dropzones
+      const zones = bucketsEl.querySelectorAll(".dropzone");
+      zones.forEach(z => z.innerHTML = "");
+
+      // Reset card styles and minis
+      document.querySelectorAll(".card").forEach(c => {
+        c.classList.remove("assigned","correct","wrong");
+        const id = c.dataset.id;
+        const mini = document.getElementById("mini-" + id);
+        if(mini) mini.textContent = "";
+      });
+
+      // Place chips into buckets + mark cards assigned
+      for(const it of items){
+        const b = state.assigned.get(it.id);
+        if(!b) continue;
+
+        const zone = bucketsEl.querySelector(`.dropzone[data-dropzone="${b}"]`);
+        if(zone){
+          const chip = document.createElement("div");
+          chip.className = "chip";
+          chip.innerHTML = `
+            <span>${shorten(it.text, 54)}</span>
+            <button type="button" aria-label="Entfernen">×</button>
+          `;
+          chip.querySelector("button").addEventListener("click", (e) => {
+            e.stopPropagation();
+            unassign(it.id);
+          });
+          zone.appendChild(chip);
+        }
+
+        const card = document.querySelector(`.card[data-id="${it.id}"]`);
+        if(card) card.classList.add("assigned");
+
+        const mini = document.getElementById("mini-" + it.id);
+        if(mini){
+          mini.textContent = "Zuordnung: " + bucketLabel(b);
+        }
+      }
+    }
+
+    function check(){
+      state.checked = true;
+
+      let correct = 0;
+      for(const it of items){
+        const chosen = state.assigned.get(it.id);
+        const card = document.querySelector(`.card[data-id="${it.id}"]`);
+        if(!card) continue;
+
+        if(chosen === it.bucket){
+          card.classList.add("correct");
+          card.classList.remove("wrong");
+          correct++;
+        }else{
+          card.classList.add("wrong");
+          card.classList.remove("correct");
+        }
+      }
+
+      const msg = `Ergebnis: ${correct}/${items.length} richtig.`;
+      document.getElementById("status").innerHTML =
+        `Zugeordnet: <strong>${items.length}/${items.length}</strong> · <strong>${escapeHTML(msg)}</strong>`;
+    }
+
+    function resetAll(){
+      state.selectedBucket = null;
+      state.assigned.clear();
+      state.checked = false;
+      bucketsEl.querySelectorAll(".bucket").forEach(b => b.classList.remove("selected"));
+      document.getElementById("status").innerHTML =
+        `Zugeordnet: <strong><span id="assignedCount">0</span>/<span id="totalCount">${items.length}</span></strong>`;
+      // Re-bind assignedCount element after resetting status HTML:
+      // (simple approach: reload page section)
+      location.reload();
+    }
+
+    checkBtn.addEventListener("click", check);
+    resetBtn.addEventListener("click", resetAll);
+
+    // Init
+    renderBuckets();
+    renderCards();
+
+    // -----------------------------
+    // Helpers
+    // -----------------------------
+    function bucketLabel(k){
+      return ({
+        vorkommen:"Vorkommen",
+        nutzen:"Nutzen",
+        gefahr:"Gefahr",
+        fakten:"Fakten"
+      })[k] || k;
+    }
+    function shorten(s, n){
+      return s.length <= n ? s : (s.slice(0, n-1) + "…");
+    }
+    function escapeHTML(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    // -----------------------------
+    // Inline SVG "Bilder" (bakterienbezogene Icons)
+    // (keine externen Quellen nötig)
+    // -----------------------------
+    function svgClock(){
+      return `
+      <svg viewBox="0 0 64 64" role="img" aria-label="Uhr">
+        <rect x="0" y="0" width="64" height="64" fill="#ffffff"/>
+        <circle cx="32" cy="32" r="22" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="32" y1="32" x2="32" y2="18" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+        <line x1="32" y1="32" x2="44" y2="36" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="32" cy="32" r="2.5" fill="#0f172a"/>
+      </svg>`;
+    }
+    function svgCount(){
+      return `
+      <svg viewBox="0 0 64 64" role="img" aria-label="Anzahl">
+        <rect width="64" height="64" fill="#ffffff"/>
+        <rect x="10" y="14" width="44" height="36" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <text x="32" y="40" text-anchor="middle" font-size="20" font-weight="800" fill="#0f172a">2500</text>
+      </svg>`;
+    }
+    function svgSoil(){
+      return `
+      <svg viewBox="0 0 64 64" role="img" aria-label="Boden">
+        <rect width="64" height="64" fill="#ffffff"/>
+        <rect x="8" y="34" width="48" height="22" rx="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <circle cx="20" cy="46" r="3" fill="#64748b"/>
+        <circle cx="32" cy="50" r="3" fill="#64748b"/>
+        <circle cx="44" cy="44" r="3" fill="#64748b"/>
+        <path d="M20 30 C22 24, 27 20, 32 18 C37 20, 42 24, 44 30" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+      </svg>`;
+    }
+    function svgWater(){
+      return `
+      <svg viewBox="0 0 64 64" role="img" aria-label="Wasser">
+        <rect width="64" height="64" fill="#ffffff"/>
+        <path d="M32 10 C26 20, 18 28, 18 38 C18 48, 24 54, 32 54 C40 54, 46 48, 46 38 C46 28, 38 20, 32 10Z"
+              fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <path d="M24 40 C26 44, 30 46, 34 46" fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+      </svg>`;
+    }
+    function svgLeaf(){
+      return `
+      <svg viewBox="0 0 64 64" role="img" aria-label="Abgestorbenes Lebewesen">
+        <rect width="64" height="64" fill="#ffffff"/>
+        <path d="M16 40 C18 22, 36 18, 48 22 C50 38, 34 50, 22 50 C18 50, 16 46, 16 40Z"
+              fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <path d="M22 46 C28 38, 36 30, 46 24" fill="none" stroke="#64748b" stroke-width="2" stroke-linecap="round"/>
+        <path d="M28 44 L26 50" stroke="#64748b" stroke-width="2" stroke-linecap="round"/>
+      </svg>`;
+    }
+    function svgCycle(){
+      return `
+      <svg viewBox="0 0 64 64" role="img" aria-label="Kreislauf">
+        <rect width="64" height="64" fill="#ffffff"/>
+        <path d="M20 34 A16 16 0 0 1 48 28" fill="none" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="48,28 43,26 45,31" fill="#16a34a"/>
+        <path d="M44 30 A16 16 0 0 1 16 36" fill="none" stroke="#2563eb" stroke-width="3" stroke-linecap="round"/>
+        <polygon points="16,36 21,38 19,33" fill="#2563eb"/>
+      </svg>`;
+    }
+    function svgPlant(){
+      return `
+      <svg viewBox="0 0 64 64" role="img" aria-label="Pflanze/Tier">
+        <rect width="64" height="64" fill="#ffffff"/>
+        <path d="M32 50 V28" stroke="#16a34a" stroke-width="3" stroke-linecap="round"/>
+        <path d="M32 30 C26 26, 20 26, 18 30 C22 34, 28 34, 32 30Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <path d="M32 36 C38 32, 44 32, 46 36 C42 40, 36 40, 32 36Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <circle cx="32" cy="54" r="3" fill="#64748b"/>
+      </svg>`;
+    }
+    function svgHost(){
+      return `
+      <svg viewBox="0 0 64 64" role="img" aria-label="Wirt/Parasit">
+        <rect width="64" height="64" fill="#ffffff"/>
+        <circle cx="26" cy="30" r="14" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <circle cx="44" cy="38" r="10" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <path d="M18 30 C20 26, 24 24, 26 24" stroke="#dc2626" stroke-width="3" stroke-linecap="round"/>
+        <circle cx="26" cy="30" r="3" fill="#dc2626"/>
+      </svg>`;
+    }
+    function svgToxin(){
+      return `
+      <svg viewBox="0 0 64 64" role="img" aria-label="Gift">
+        <rect width="64" height="64" fill="#ffffff"/>
+        <path d="M24 18 H40" stroke="#0f172a" stroke-width="3" stroke-linecap="round"/>
+        <path d="M26 18 C28 24, 28 28, 24 34 C20 40, 20 48, 32 52 C44 48, 44 40, 40 34 C36 28, 36 24, 38 18"
+              fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <path d="M26 40 C30 36, 34 36, 38 40" fill="none" stroke="#dc2626" stroke-width="3" stroke-linecap="round"/>
+      </svg>`;
+    }
+    function svgWarning(){
+      return `
+      <svg viewBox="0 0 64 64" role="img" aria-label="Warnung">
+        <rect width="64" height="64" fill="#ffffff"/>
+        <path d="M32 10 L56 52 H8 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="32" y1="24" x2="32" y2="38" stroke="#dc2626" stroke-width="4" stroke-linecap="round"/>
+        <circle cx="32" cy="45" r="3" fill="#dc2626"/>
+      </svg>`;
+    }
+  </script>
+</body>
+</html>

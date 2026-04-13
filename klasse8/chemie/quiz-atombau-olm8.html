@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quiz: Atombau (Kern-Hülle-Modell)</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:rgba(17,24,39,.12);
+      --ok:#16a34a;
+      --bad:#dc2626;
+      --accent:#2563eb;
+      --shadow: 0 10px 22px rgba(17,24,39,.05);
+      --ring: 0 0 0 4px rgba(37,99,235,.12);
+    }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.45;
+    }
+    .wrap{ max-width: 980px; margin:0 auto; padding: 18px; }
+    header{
+      background: linear-gradient(180deg, rgba(37,99,235,.12), rgba(37,99,235,0));
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:16px 16px 12px;
+      margin-bottom:14px;
+    }
+    h1{ margin:0 0 6px; font-size: 1.2rem; letter-spacing:.2px; }
+    .sub{ margin:0; color:var(--muted); font-size:.95rem; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 12px;
+      align-items: start;
+    }
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px;
+      margin:12px 0;
+      box-shadow: var(--shadow);
+    }
+    h2{ margin:0 0 8px; font-size:1.05rem; }
+    p{ margin: 8px 0; }
+    .muted{ color:var(--muted); }
+
+    button{
+      padding:10px 12px;
+      border-radius:12px;
+      border:1px solid var(--border);
+      background: rgba(37,99,235,.10);
+      color: var(--accent);
+      font-weight:700;
+      cursor:pointer;
+      transition: transform .06s ease, background .15s ease;
+      user-select:none;
+    }
+    button:hover{ transform: translateY(-1px); background: rgba(37,99,235,.14); }
+    button:active{ transform: translateY(0); }
+
+    .btnrow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+    }
+    .btn-ghost{
+      background:#fff;
+      color:var(--text);
+    }
+
+    .fb{
+      margin-top:10px;
+      border-radius:12px;
+      padding:10px 10px;
+      border:1px solid var(--border);
+      background:#fafafa;
+      display:none;
+    }
+    .fb.ok{ border-color: rgba(22,163,74,.35); background: rgba(22,163,74,.06); }
+    .fb.bad{ border-color: rgba(220,38,38,.35); background: rgba(220,38,38,.06); }
+
+    .badge{
+      display:inline-block;
+      font-weight:800;
+      font-size:.85rem;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#fff;
+      margin-right:8px;
+    }
+    .badge.ok{ color: var(--ok); border-color: rgba(22,163,74,.35); }
+    .badge.bad{ color: var(--bad); border-color: rgba(220,38,38,.35); }
+
+    .svgwrap{
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:10px;
+      background:#fff;
+      overflow:hidden;
+    }
+
+    /* Inputs im SVG */
+    .svgField{
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      padding:6px;
+      box-sizing:border-box;
+      height:100%;
+      width:100%;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    }
+    .svgField .hint{
+      font-size:12px;
+      color: var(--muted);
+      line-height:1.1;
+      user-select:none;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .svgField input{
+      width:100%;
+      padding:8px 8px;
+      border-radius:10px;
+      border:1px solid rgba(17,24,39,.18);
+      font-size:14px;
+      outline:none;
+      background:#fff;
+      box-sizing:border-box;
+    }
+    .svgField input:focus{ border-color: rgba(37,99,235,.45); box-shadow: var(--ring); }
+
+    .svgField.ok input{
+      border-color: rgba(22,163,74,.55);
+      box-shadow: 0 0 0 4px rgba(22,163,74,.10);
+    }
+    .svgField.bad input{
+      border-color: rgba(220,38,38,.55);
+      box-shadow: 0 0 0 4px rgba(220,38,38,.10);
+    }
+    .svgField .miniFb{
+      font-size:12px;
+      line-height:1.1;
+      color: var(--muted);
+      display:flex;
+      gap:6px;
+      align-items:center;
+      min-height: 14px;
+    }
+    .dot{
+      width:8px;height:8px;border-radius:999px; display:inline-block;
+      border:1px solid rgba(17,24,39,.15);
+      background:#fff;
+      flex: 0 0 auto;
+    }
+    .dot.ok{ background: rgba(22,163,74,.85); border-color: rgba(22,163,74,.35); }
+    .dot.bad{ background: rgba(220,38,38,.85); border-color: rgba(220,38,38,.35); }
+
+    .note{
+      border-left: 4px solid rgba(37,99,235,.35);
+      padding: 8px 10px;
+      border-radius: 10px;
+      background: rgba(37,99,235,.06);
+      color: #0f172a;
+      margin-top: 10px;
+      font-size: .95rem;
+    }
+
+    /* dezenter Tipp */
+    .tinyTip{
+      margin-top:10px;
+      font-size:.82rem;
+      color: rgba(107,114,128,.85);
+    }
+
+    /* Lückentext */
+    .clozeCard{
+      margin-top: 10px;
+      border:1px solid var(--border);
+      border-radius:16px;
+      background:#fff;
+      padding:12px;
+      box-shadow: var(--shadow);
+    }
+    .sentence{
+      font-size: 1rem;
+      line-height: 1.7;
+      display:flex;
+      flex-wrap:wrap;
+      gap: 6px 8px;
+      align-items: baseline;
+    }
+    .blank{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid rgba(17,24,39,.14);
+      border-radius: 12px;
+      padding:6px 8px;
+      background:#fff;
+      box-shadow: 0 6px 14px rgba(17,24,39,.04);
+    }
+    .blank input{
+      width: 150px;
+      padding:8px 8px;
+      border-radius:10px;
+      border:1px solid rgba(17,24,39,.18);
+      font-size: .95rem;
+      outline:none;
+      background:#fff;
+    }
+    .blank input:focus{ border-color: rgba(37,99,235,.45); box-shadow: var(--ring); }
+    .mini{
+      padding:8px 10px;
+      border-radius:10px;
+      font-size:.9rem;
+    }
+    .ic{
+      width:10px;height:10px;border-radius:999px; display:inline-block;
+      border:1px solid rgba(17,24,39,.15);
+      background:#fff;
+    }
+    .ic.ok{ background: rgba(22,163,74,.85); border-color: rgba(22,163,74,.35); }
+    .ic.bad{ background: rgba(220,38,38,.85); border-color: rgba(220,38,38,.35); }
+
+    .clozeFb{
+      margin-top:10px;
+      display:none;
+      border-radius:12px;
+      padding:10px;
+      border:1px solid var(--border);
+      background:#fafafa;
+    }
+    .clozeFb.ok{ border-color: rgba(22,163,74,.35); background: rgba(22,163,74,.06); }
+    .clozeFb.bad{ border-color: rgba(220,38,38,.35); background: rgba(220,38,38,.06); }
+
+    /* MERKE: erscheint erst am Ende */
+    #merkeBox{ display:none; }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Quiz: Atombau (Kern-Hülle-Modell)</h1>
+      <p class="sub">Beschrifte direkt in der Zeichnung und prüfe sofort.</p>
+    </header>
+
+    <!-- 1) Diagramm -->
+    <section class="card">
+      <h2>1) Beschrifte das Atom:</h2>
+      <p class="muted">Begriffe: <b>Atomkern</b>, <b>Atomhülle</b>, <b>Elektronen</b>, <b>Protonen</b>, <b>Neutronen</b>.</p>
+
+      <div class="grid">
+        <div class="svgwrap" aria-label="Schematische Atomzeichnung">
+          <svg viewBox="0 0 560 360" width="100%" height="auto" role="img">
+            <!-- Orbit-Linien -->
+            <circle cx="280" cy="170" r="130" fill="none" stroke="rgba(17,24,39,.25)" stroke-width="3"/>
+            <circle cx="280" cy="170" r="85" fill="none" stroke="rgba(17,24,39,.18)" stroke-width="3" stroke-dasharray="6 8"/>
+
+            <!-- Elektronen: exakt auf den Kreislinien + Ladung "-" -->
+            <!-- außen: oben & rechts -->
+            <circle cx="280" cy="40"  r="9" fill="rgba(37,99,235,.85)"/>
+            <text x="294" y="44" font-size="16" fill="rgba(37,99,235,.95)" font-weight="800">−</text>
+
+            <circle cx="410" cy="170" r="9" fill="rgba(37,99,235,.85)"/>
+            <text x="424" y="174" font-size="16" fill="rgba(37,99,235,.95)" font-weight="800">−</text>
+
+            <!-- innen: links & unten -->
+            <circle cx="195" cy="170" r="9" fill="rgba(37,99,235,.85)"/>
+            <text x="209" y="174" font-size="16" fill="rgba(37,99,235,.95)" font-weight="800">−</text>
+
+            <circle cx="280" cy="255" r="9" fill="rgba(37,99,235,.85)"/>
+            <text x="294" y="259" font-size="16" fill="rgba(37,99,235,.95)" font-weight="800">−</text>
+
+            <!-- Kern -->
+            <circle cx="280" cy="170" r="45" fill="rgba(220,38,38,.10)" stroke="rgba(220,38,38,.45)" stroke-width="3"/>
+
+            <!-- Protonen (rot, +) und Neutronen (grau, 0) -->
+            <!-- Protonen -->
+            <circle cx="268" cy="160" r="9" fill="rgba(220,38,38,.80)"/>
+            <text x="264" y="164" font-size="12" fill="#fff" font-weight="900">+</text>
+
+            <circle cx="292" cy="160" r="9" fill="rgba(220,38,38,.80)"/>
+            <text x="288" y="164" font-size="12" fill="#fff" font-weight="900">+</text>
+
+            <!-- Neutronen -->
+            <circle cx="280" cy="178" r="9" fill="rgba(107,114,128,.90)"/>
+            <text x="277" y="182" font-size="12" fill="#fff" font-weight="900">0</text>
+
+            <circle cx="268" cy="188" r="9" fill="rgba(107,114,128,.90)"/>
+            <text x="265" y="192" font-size="12" fill="#fff" font-weight="900">0</text>
+
+            <circle cx="292" cy="188" r="9" fill="rgba(107,114,128,.90)"/>
+            <text x="289" y="192" font-size="12" fill="#fff" font-weight="900">0</text>
+
+            <!-- Boxen -->
+            <rect x="20"  y="30"  width="160" height="70" rx="12" fill="#fff" stroke="rgba(17,24,39,.18)" stroke-width="2"/>
+            <rect x="380" y="25"  width="160" height="70" rx="12" fill="#fff" stroke="rgba(17,24,39,.18)" stroke-width="2"/>
+            <rect x="20"  y="260" width="160" height="70" rx="12" fill="#fff" stroke="rgba(17,24,39,.18)" stroke-width="2"/>
+            <rect x="380" y="245" width="160" height="70" rx="12" fill="#fff" stroke="rgba(17,24,39,.18)" stroke-width="2"/>
+            <rect x="200" y="290" width="160" height="70" rx="12" fill="#fff" stroke="rgba(17,24,39,.18)" stroke-width="2"/>
+
+            <!-- Pfeile/Striche: exakt auf Zielpunkte -->
+            <!-- Atomhülle -> auf äußeren Orbit (oben rechts Bereich) -->
+            <line x1="180" y1="65" x2="235" y2="105" stroke="rgba(17,24,39,.28)" stroke-width="2"/>
+            <line x1="235" y1="105" x2="280" y2="80"  stroke="rgba(17,24,39,.28)" stroke-width="2"/>
+
+            <!-- Elektron -> auf Elektron oben (280,40) -->
+            <line x1="380" y1="60" x2="330" y2="55" stroke="rgba(17,24,39,.28)" stroke-width="2"/>
+            <line x1="330" y1="55" x2="288" y2="42" stroke="rgba(17,24,39,.28)" stroke-width="2"/>
+
+            <!-- Atomkern -> in den Kern (280,170) -->
+            <line x1="180" y1="295" x2="230" y2="260" stroke="rgba(17,24,39,.28)" stroke-width="2"/>
+            <line x1="230" y1="260" x2="268" y2="200" stroke="rgba(17,24,39,.28)" stroke-width="2"/>
+
+            <!-- Proton -> auf roten Proton bei (292,160) -->
+            <line x1="380" y1="280" x2="335" y2="245" stroke="rgba(17,24,39,.28)" stroke-width="2"/>
+            <line x1="335" y1="245" x2="296" y2="166" stroke="rgba(17,24,39,.28)" stroke-width="2"/>
+
+            <!-- Neutron -> auf graues Neutron bei (292,188) -->
+            <line x1="280" y1="290" x2="280" y2="232" stroke="rgba(17,24,39,.28)" stroke-width="2"/>
+            <line x1="280" y1="232" x2="292" y2="197" stroke="rgba(17,24,39,.28)" stroke-width="2"/>
+
+            <!-- Inputs in den Boxen -->
+            <foreignObject x="24" y="34" width="152" height="62">
+              <div xmlns="http://www.w3.org/1999/xhtml" class="svgField" data-label="lbl_huelle">
+                <div class="hint">äußere Region</div>
+                <input id="lbl_huelle" type="text" placeholder="..." autocomplete="off"/>
+                <div class="miniFb"><span class="dot" id="dot_lbl_huelle"></span><span id="msg_lbl_huelle"></span></div>
+              </div>
+            </foreignObject>
+
+            <foreignObject x="384" y="29" width="152" height="62">
+              <div xmlns="http://www.w3.org/1999/xhtml" class="svgField" data-label="lbl_elektronen">
+                <div class="hint">Elektron</div>
+                <input id="lbl_elektronen" type="text" placeholder="..." autocomplete="off"/>
+                <div class="miniFb"><span class="dot" id="dot_lbl_elektronen"></span><span id="msg_lbl_elektronen"></span></div>
+              </div>
+            </foreignObject>
+
+            <foreignObject x="24" y="264" width="152" height="62">
+              <div xmlns="http://www.w3.org/1999/xhtml" class="svgField" data-label="lbl_kern">
+                <div class="hint">Mitte</div>
+                <input id="lbl_kern" type="text" placeholder="..." autocomplete="off"/>
+                <div class="miniFb"><span class="dot" id="dot_lbl_kern"></span><span id="msg_lbl_kern"></span></div>
+              </div>
+            </foreignObject>
+
+            <foreignObject x="384" y="249" width="152" height="62">
+              <div xmlns="http://www.w3.org/1999/xhtml" class="svgField" data-label="lbl_protonen">
+                <div class="hint">Proton</div>
+                <input id="lbl_protonen" type="text" placeholder="..." autocomplete="off"/>
+                <div class="miniFb"><span class="dot" id="dot_lbl_protonen"></span><span id="msg_lbl_protonen"></span></div>
+              </div>
+            </foreignObject>
+
+            <foreignObject x="204" y="294" width="152" height="62">
+              <div xmlns="http://www.w3.org/1999/xhtml" class="svgField" data-label="lbl_neutronen">
+                <div class="hint">Neutron</div>
+                <input id="lbl_neutronen" type="text" placeholder="..." autocomplete="off"/>
+                <div class="miniFb"><span class="dot" id="dot_lbl_neutronen"></span><span id="msg_lbl_neutronen"></span></div>
+              </div>
+            </foreignObject>
+          </svg>
+
+          <div class="note">
+            <b>Mini-Info:</b> Der Atomkern ist im Vergleich zur Atomhülle winzig – Größenunterschied ungefähr <b>100.000</b>.
+          </div>
+        </div>
+
+        <div>
+          <div class="btnrow">
+            <button type="button" id="btnCheckAll">Alle prüfen</button>
+            <button type="button" id="btnReset" class="btn-ghost">Reset</button>
+            <button type="button" id="btnShowSolutions" class="btn-ghost">Lösungen zeigen</button>
+          </div>
+
+          <div class="fb" id="labelsFeedback" aria-live="polite"></div>
+          <div class="tinyTip">Groß-/Kleinschreibung und Singular/Plural werden tolerant akzeptiert.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2) Lückentext -->
+    <section class="card">
+      <h2>2) Lückentext: Ladungen & Aufgaben</h2>
+      <p class="muted">MERKE erscheint erst, wenn der komplette Lückentext korrekt ist.</p>
+
+      <div class="clozeCard">
+        <div class="sentence" id="clozeSentence"></div>
+
+        <div class="btnrow" style="margin-top:12px">
+          <button type="button" id="btnClozeAll">Alles prüfen</button>
+          <button type="button" id="btnClozeReset" class="btn-ghost">Reset</button>
+          <button type="button" id="btnClozeSolutions" class="btn-ghost">Lösungen zeigen</button>
+        </div>
+
+        <div class="clozeFb" id="clozeGlobalFb" aria-live="polite"></div>
+      </div>
+
+      <!-- MERKE: wird per JS erst eingeblendet, wenn alles korrekt -->
+      <div class="note" id="merkeBox" style="margin-top:12px">
+        <b>MERKE:</b>
+        Protonen sind <b>positiv</b>, Elektronen <b>negativ</b>, Neutronen <b>neutral</b>.<br>
+        Protonen und Neutronen zusammen heißen <b>Nukleonen (=Kernteilchen)</b> – sie machen fast die ganze <b>Masse</b> des Atoms aus.<br>
+        Neutronen helfen außerdem, dass der Atomkern <b>stabil</b> bleibt (trotz Abstoßung der positiven Protonen).
+      </div>
+    </section>
+  </div>
+
+  <script>
+    // -------- Helpers --------
+    function normalize(s){
+      return (s ?? "")
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replaceAll("ä","ae")
+        .replaceAll("ö","oe")
+        .replaceAll("ü","ue")
+        .replaceAll("ß","ss")
+        .replace(/[\s\-_/.,;:()]+/g, "");
+    }
+    function isOneOf(input, accepted){
+      const n = normalize(input);
+      return accepted.some(a => normalize(a) === n);
+    }
+    function fbBox(el, ok, title, msg, correctText){
+      el.style.display = "block";
+      el.classList.toggle("ok", ok);
+      el.classList.toggle("bad", !ok);
+      el.innerHTML = `
+        <span class="badge ${ok ? "ok" : "bad"}">${ok ? "Richtig" : "Falsch"}</span>
+        <b>${title}</b><br>
+        <span>${msg}</span>
+        ${correctText ? `<div style="margin-top:6px;color:#6b7280;font-size:.92rem;">Richtig wäre: <b>${correctText}</b></div>` : ""}
+      `;
+    }
+
+    // -------- 1) Diagramm-Inputs --------
+    const labelItems = [
+      { id:"lbl_huelle", accepted:["Atomhülle","Atomhuelle","Hülle","Huelle"], correct:"Atomhülle",
+        why:"Die Atomhülle ist der Bereich um den Kern herum, in dem sich die Elektronen aufhalten." },
+      { id:"lbl_elektronen", accepted:["Elektronen","Elektron"], correct:"Elektronen",
+        why:"Elektronen sind negativ geladen und befinden sich in der Atomhülle." },
+      { id:"lbl_kern", accepted:["Atomkern","Kern"], correct:"Atomkern",
+        why:"Im Atomkern sitzen Protonen und Neutronen (Nukleonen)." },
+      { id:"lbl_protonen", accepted:["Protonen","Proton"], correct:"Protonen",
+        why:"Protonen sind positiv geladen und gehören zum Atomkern." },
+      { id:"lbl_neutronen", accepted:["Neutronen","Neutron"], correct:"Neutronen",
+        why:"Neutronen sind neutral (ungeladen) und helfen, den Kern stabil zu halten." }
+    ];
+
+    const labelsFeedback = document.getElementById("labelsFeedback");
+
+    function setSvgFieldState(id, state, msg){
+      const wrap = document.querySelector(`.svgField[data-label="${id}"]`);
+      const dot = document.getElementById("dot_" + id);
+      const msgEl = document.getElementById("msg_" + id);
+
+      wrap.classList.remove("ok","bad");
+      dot.classList.remove("ok","bad");
+
+      if(state === "ok"){
+        wrap.classList.add("ok");
+        dot.classList.add("ok");
+      } else if(state === "bad"){
+        wrap.classList.add("bad");
+        dot.classList.add("bad");
+      }
+      msgEl.textContent = msg || "";
+    }
+
+    function checkOneLabel(id, {showExplain=false} = {}){
+      const it = labelItems.find(x => x.id === id);
+      const inp = document.getElementById(id).value;
+      const ok = isOneOf(inp, it.accepted);
+
+      setSvgFieldState(id, ok ? "ok" : "bad", ok ? "passt" : "nochmal");
+
+      if(showExplain){
+        fbBox(
+          labelsFeedback,
+          ok,
+          ok ? "Passt!" : "Noch nicht ganz.",
+          it.why,
+          ok ? "" : it.correct
+        );
+      }
+      return ok;
+    }
+
+    labelItems.forEach(it => {
+      const el = document.getElementById(it.id);
+      el.addEventListener("input", () => {
+        const v = el.value.trim();
+        if(!v){ setSvgFieldState(it.id, "", ""); return; }
+        checkOneLabel(it.id, {showExplain:false});
+      });
+      el.addEventListener("blur", () => checkOneLabel(it.id, {showExplain:false}));
+      el.addEventListener("keydown", (e) => {
+        if(e.key === "Enter"){
+          e.preventDefault();
+          checkOneLabel(it.id, {showExplain:true});
+        }
+      });
+    });
+
+    document.getElementById("btnCheckAll").addEventListener("click", () => {
+      const results = labelItems.map(it => checkOneLabel(it.id, {showExplain:false}));
+      const okCount = results.filter(Boolean).length;
+      const allOk = okCount === labelItems.length;
+
+      fbBox(
+        labelsFeedback,
+        allOk,
+        allOk ? "Alles richtig!" : "Noch nicht alles korrekt.",
+        allOk
+          ? "Top — alle Begriffe passen zur Zeichnung."
+          : `Du hast ${okCount}/${labelItems.length} richtig. Schau bei den roten Feldern nochmal nach.`,
+        ""
+      );
+    });
+
+    document.getElementById("btnReset").addEventListener("click", () => {
+      labelItems.forEach(it => {
+        document.getElementById(it.id).value = "";
+        setSvgFieldState(it.id, "", "");
+      });
+      labelsFeedback.style.display = "none";
+      labelsFeedback.innerHTML = "";
+    });
+
+    document.getElementById("btnShowSolutions").addEventListener("click", () => {
+      labelItems.forEach(it => {
+        document.getElementById(it.id).value = it.correct;
+        setSvgFieldState(it.id, "ok", "Lösung");
+      });
+      fbBox(labelsFeedback, true, "Lösungen eingesetzt", "Du kannst jetzt wieder resetten und selbst probieren.", "");
+    });
+
+    // -------- 2) Lückentext --------
+    const clozeParts = [
+      { type:"text", value:"Protonen sind" },
+      { type:"blank", id:"c_pos", accepted:["positiv","positivgeladen","positiv geladen","+","plus"], correct:"positiv",
+        why:"Protonen tragen eine positive Ladung." },
+      { type:"text", value:"geladen, Neutronen sind" },
+      { type:"blank", id:"c_neu", accepted:["neutral","ungeladen","0"], correct:"neutral",
+        why:"Neutronen haben keine Ladung." },
+      { type:"text", value:"und Elektronen sind" },
+      { type:"blank", id:"c_neg", accepted:["negativ","negativgeladen","negativ geladen","-","minus"], correct:"negativ",
+        why:"Elektronen tragen eine negative Ladung." },
+      { type:"text", value:"geladen." },
+
+      { type:"text", value:" Protonen und Neutronen nennt man zusammen" },
+      { type:"blank", id:"c_nuk", accepted:["nukleonen","nukleon", "Kernteilchen", "Nukleonen (=Kernteilchen)"], correct:"Nukleonen (=Kernteilchen)",
+        why:"Sammelbegriff für Protonen + Neutronen." },
+      { type:"text", value:"– sie bestimmen den Großteil der" },
+      { type:"blank", id:"c_masse", accepted:["masse","gewicht","atommasse"], correct:"Masse",
+        why:"Fast die gesamte Masse steckt im Kern." },
+      { type:"text", value:"des Atoms." },
+
+      { type:"text", value:" Neutronen helfen außerdem, dass der Kern" },
+      { type:"blank", id:"c_stabil", accepted:["stabil","zusammen","gebunden","stabiler"], correct:"stabil",
+        why:"Vereinfacht: Sie tragen zur Kernstabilität bei." },
+      { type:"text", value:"bleibt." }
+    ];
+
+    const clozeSentence = document.getElementById("clozeSentence");
+    const clozeGlobalFb = document.getElementById("clozeGlobalFb");
+    const merkeBox = document.getElementById("merkeBox");
+
+    function setIcon(id, state){
+      const ic = document.getElementById(id + "_ic");
+      ic.classList.remove("ok","bad");
+      if(state === "ok") ic.classList.add("ok");
+      if(state === "bad") ic.classList.add("bad");
+    }
+
+    function allClozeCorrect(){
+      const blanks = clozeParts.filter(p => p.type === "blank");
+      return blanks.every(p => isOneOf(document.getElementById(p.id).value, p.accepted));
+    }
+
+    function updateMerkeVisibility(){
+      merkeBox.style.display = allClozeCorrect() ? "block" : "none";
+    }
+
+    function checkBlank(part, showExplain){
+      const inp = document.getElementById(part.id).value;
+      const ok = isOneOf(inp, part.accepted);
+      setIcon(part.id, ok ? "ok" : "bad");
+
+      if(showExplain){
+        clozeGlobalFb.style.display = "block";
+        clozeGlobalFb.classList.toggle("ok", ok);
+        clozeGlobalFb.classList.toggle("bad", !ok);
+        clozeGlobalFb.innerHTML = `
+          <span class="badge ${ok ? "ok" : "bad"}">${ok ? "Richtig" : "Falsch"}</span>
+          <b>${ok ? "Passt!" : "Noch nicht."}</b><br>
+          <span>${part.why}</span>
+          ${ok ? "" : `<div style="margin-top:6px;color:#6b7280;font-size:.92rem;">Richtig wäre: <b>${part.correct}</b></div>`}
+        `;
+      }
+
+      updateMerkeVisibility();
+      return ok;
+    }
+
+    function renderCloze(){
+      clozeSentence.innerHTML = "";
+      clozeParts.forEach(part => {
+        if(part.type === "text"){
+          const span = document.createElement("span");
+          span.textContent = part.value;
+          clozeSentence.appendChild(span);
+        } else {
+          const box = document.createElement("span");
+          box.className = "blank";
+          box.innerHTML = `
+            <input type="text" id="${part.id}" placeholder="..." autocomplete="off"/>
+            <button type="button" class="mini">Prüfen</button>
+            <span class="ic" id="${part.id}_ic" aria-hidden="true"></span>
+          `;
+          clozeSentence.appendChild(box);
+
+          const btn = box.querySelector("button");
+          const inp = box.querySelector("input");
+
+          btn.addEventListener("click", () => checkBlank(part, true));
+          inp.addEventListener("keydown", (e) => {
+            if(e.key === "Enter"){
+              e.preventDefault();
+              btn.click();
+            }
+          });
+          inp.addEventListener("input", () => {
+            const v = inp.value.trim();
+            if(!v){ setIcon(part.id, ""); updateMerkeVisibility(); return; }
+            checkBlank(part, false);
+          });
+        }
+      });
+
+      updateMerkeVisibility();
+    }
+
+    document.getElementById("btnClozeAll").addEventListener("click", () => {
+      const blanks = clozeParts.filter(p => p.type === "blank");
+      const results = blanks.map(p => checkBlank(p, false));
+      const okCount = results.filter(Boolean).length;
+      const allOk = okCount === blanks.length;
+
+      clozeGlobalFb.style.display = "block";
+      clozeGlobalFb.classList.toggle("ok", allOk);
+      clozeGlobalFb.classList.toggle("bad", !allOk);
+      clozeGlobalFb.innerHTML = `
+        <span class="badge ${allOk ? "ok" : "bad"}">${allOk ? "Alles richtig" : "Nicht ganz"}</span>
+        <b>${allOk ? "Top!" : "Nochmal kurz nachbessern."}</b><br>
+        <span>${allOk ? "Alle Lücken passen." : `Du hast ${okCount}/${blanks.length} richtig.`}</span>
+      `;
+
+      updateMerkeVisibility();
+    });
+
+    document.getElementById("btnClozeReset").addEventListener("click", () => {
+      clozeParts.filter(p => p.type === "blank").forEach(p => {
+        document.getElementById(p.id).value = "";
+        setIcon(p.id, "");
+      });
+      clozeGlobalFb.style.display = "none";
+      clozeGlobalFb.innerHTML = "";
+      updateMerkeVisibility();
+    });
+
+    document.getElementById("btnClozeSolutions").addEventListener("click", () => {
+      clozeParts.filter(p => p.type === "blank").forEach(p => {
+        document.getElementById(p.id).value = p.correct;
+        setIcon(p.id, "ok");
+      });
+      clozeGlobalFb.style.display = "block";
+      clozeGlobalFb.className = "clozeFb ok";
+      clozeGlobalFb.innerHTML = `
+        <span class="badge ok">Lösungen</span>
+        <b>Lösungen eingesetzt.</b>
+      `;
+      updateMerkeVisibility();
+    });
+
+    renderCloze();
+  </script>
+</body>
+</html>

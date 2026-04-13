@@ -1,0 +1,1101 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Periodensystem – Interaktiv (Hauptgruppen, Nebengruppen, Perioden)</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --panel: rgba(255,255,255,.06);
+      --panel2: rgba(255,255,255,.04);
+      --ink:#e8eefc;
+      --muted:#a7b7db;
+      --line: rgba(255,255,255,.12);
+      --accent:#4da3ff;
+      --good:#39d98a;
+      --warn:#ffcf5a;
+      --bad:#ff6b6b;
+      --shadow: 0 18px 45px rgba(0,0,0,.45);
+      --r:18px;
+      --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, "Noto Sans", sans-serif;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:var(--font);
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 700px at 20% 10%, rgba(77,163,255,.20), transparent 60%),
+        radial-gradient(900px 600px at 90% 0%, rgba(57,217,138,.10), transparent 55%),
+        radial-gradient(900px 700px at 55% 110%, rgba(255,207,90,.10), transparent 60%),
+        linear-gradient(180deg, #060a13, var(--bg));
+      min-height:100vh;
+    }
+    header{
+      max-width:1200px;
+      margin:0 auto;
+      padding:18px 18px 10px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+    h1{
+      margin:0;
+      font-size:clamp(18px, 2.4vw, 28px);
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin:6px 0 0;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.35;
+      max-width:820px;
+    }
+    .nav{
+      display:flex;
+      gap:8px;
+      align-items:center;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+    }
+    button{
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.05);
+      color:var(--ink);
+      padding:9px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      transition: transform .12s ease, background .12s ease, border-color .12s ease;
+      font-size:13px;
+      user-select:none;
+    }
+    button:hover{
+      transform: translateY(-1px);
+      border-color: rgba(77,163,255,.45);
+      background:rgba(77,163,255,.10);
+    }
+    button.primary{
+      border-color: rgba(77,163,255,.55);
+      background: rgba(77,163,255,.18);
+    }
+    button:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+      transform:none;
+    }
+
+    main{
+      max-width:1200px;
+      margin:0 auto;
+      padding:14px 18px 26px;
+    }
+
+    .page{
+      display:none;
+      gap:14px;
+    }
+    .page.active{ display:grid; }
+
+    /* PAGE 1 layout */
+    #page1{
+      grid-template-columns: 1fr 360px;
+    }
+    @media (max-width: 1050px){
+      #page1{ grid-template-columns: 1fr; }
+    }
+
+    /* PAGE 2 layout */
+    #page2{
+      grid-template-columns: 1fr 420px;
+    }
+    @media (max-width: 1050px){
+      #page2{ grid-template-columns: 1fr; }
+    }
+
+    .panel{
+      background: linear-gradient(180deg, var(--panel), var(--panel2));
+      border:1px solid var(--line);
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .panel h2{
+      margin:0;
+      padding:14px 14px 10px;
+      border-bottom:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+      color:var(--muted);
+      font-size:14px;
+      text-transform:uppercase;
+      letter-spacing:.3px;
+    }
+    .panel .body{
+      padding:12px 14px 14px;
+    }
+
+    /* Periodic table */
+    .pseWrap{
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .legend{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .legend .box{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      border:1px solid var(--line);
+      padding:6px 10px;
+      border-radius:999px;
+      background:rgba(255,255,255,.04);
+    }
+    .swatch{
+      width:12px; height:12px; border-radius:4px;
+      border:1px solid rgba(255,255,255,.22);
+    }
+    .swatch.hg{ background: rgba(57,217,138,.18); }
+    .swatch.ng{ background: rgba(255,207,90,.18); }
+    .swatch.per{ background: rgba(77,163,255,.18); }
+
+    .pse{
+      width:100%;
+      overflow:auto;
+      padding-bottom:6px;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: repeat(18, 48px);
+      grid-auto-rows: 48px;
+      gap:6px;
+      min-width: (18*48px);
+      align-items:stretch;
+    }
+    .cell{
+      border:1px solid rgba(255,255,255,.10);
+      border-radius:12px;
+      background: rgba(0,0,0,.18);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      padding:6px 4px;
+      position:relative;
+      transition: background .18s ease, border-color .18s ease, transform .12s ease;
+      user-select:none;
+    }
+    .cell:hover{
+      border-color: rgba(255,255,255,.22);
+      transform: translateY(-1px);
+    }
+    .cell .num{
+      position:absolute;
+      top:6px; left:7px;
+      font-size:10px;
+      color: rgba(232,238,252,.78);
+    }
+    .cell .sym{
+      font-weight:800;
+      letter-spacing:.4px;
+      font-size:14px;
+    }
+    .cell .name{
+      font-size:9.5px;
+      color: rgba(167,183,219,.92);
+      margin-top:2px;
+      text-align:center;
+      line-height:1.1;
+    }
+    .empty{
+      background: transparent;
+      border: 1px dashed rgba(255,255,255,.08);
+      opacity:.35;
+    }
+    .empty:hover{ transform:none; border-color: rgba(255,255,255,.08); }
+
+    /* Highlights */
+    .hgOn .cell.hg{ background: rgba(57,217,138,.14); border-color: rgba(57,217,138,.40); }
+    .ngOn .cell.ng{ background: rgba(255,207,90,.14); border-color: rgba(255,207,90,.42); }
+    .perOn .cell.perRow{ background: rgba(77,163,255,.12); border-color: rgba(77,163,255,.40); }
+
+    /* Right side tasks */
+    .taskBox{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+    }
+
+    .draggables{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+    .drag{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      cursor:grab;
+      font-size:13px;
+      user-select:none;
+    }
+    .drag:active{ cursor:grabbing; }
+
+    .dropzones{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    .drop{
+      border:1px dashed rgba(255,255,255,.20);
+      border-radius:14px;
+      background: rgba(0,0,0,.10);
+      padding:10px;
+      min-height:56px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .drop strong{
+      font-size:13px;
+    }
+    .drop span{
+      color:var(--muted);
+      font-size:12px;
+    }
+    .drop.filled{
+      border-style:solid;
+      border-color: rgba(57,217,138,.40);
+      background: rgba(57,217,138,.08);
+    }
+    .drop.wrong{
+      border-style:solid;
+      border-color: rgba(255,107,107,.55);
+      background: rgba(255,107,107,.08);
+    }
+    .drop .slot{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      min-width:150px;
+      justify-content:center;
+      color:var(--muted);
+      font-size:12px;
+    }
+    .drop.filled .slot{ color: var(--ink); border-color: rgba(57,217,138,.45); background: rgba(57,217,138,.12); }
+    .drop.wrong .slot{ color: var(--ink); border-color: rgba(255,107,107,.55); background: rgba(255,107,107,.12); }
+
+    .feedback{
+      border:1px solid var(--line);
+      border-radius:14px;
+      background: rgba(255,255,255,.04);
+      padding:10px;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.45;
+    }
+    .feedback.good{ border-color: rgba(57,217,138,.45); background: rgba(57,217,138,.08); color: rgba(232,238,252,.92); }
+    .feedback.bad{ border-color: rgba(255,107,107,.55); background: rgba(255,107,107,.08); color: rgba(232,238,252,.92); }
+
+    /* Cloze */
+    .cloze{
+      margin-top:10px;
+      border-top:1px solid var(--line);
+      padding-top:12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .clozeText{
+      color: rgba(232,238,252,.92);
+      font-size:13.5px;
+      line-height:1.55;
+    }
+    .blank{
+      display:inline-block;
+      min-width: 170px;
+      padding:7px 10px;
+      margin:2px 2px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.12);
+      color: var(--ink);
+      outline:none;
+      font-size:13px;
+    }
+    .blank.good{ border-color: rgba(57,217,138,.55); background: rgba(57,217,138,.10); }
+    .blank.bad{ border-color: rgba(255,107,107,.60); background: rgba(255,107,107,.10); }
+
+    /* PAGE 2: element labeling */
+    .tileStage{
+      display:flex;
+      flex-direction:column;
+      gap:12px;
+      align-items:center;
+    }
+    .tile{
+      width: 300px;
+      height: 300px;
+      border-radius: 26px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(0,0,0,.20);
+      position:relative;
+      overflow:hidden;
+      box-shadow: var(--shadow);
+    }
+    .tile::before{
+      content:"";
+      position:absolute; inset:-40%;
+      background: radial-gradient(circle at 30% 25%, rgba(77,163,255,.18), transparent 55%),
+                  radial-gradient(circle at 80% 15%, rgba(57,217,138,.12), transparent 55%),
+                  radial-gradient(circle at 65% 85%, rgba(255,207,90,.12), transparent 60%);
+      pointer-events:none;
+    }
+    .tileContent{
+      position:absolute; inset:0;
+      display:grid;
+      grid-template-rows: 70px 1fr 70px;
+      padding:18px;
+      z-index:1;
+    }
+    .topRow{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap:10px;
+    }
+    .bigSym{
+      font-weight:900;
+      font-size:84px;
+      letter-spacing:1px;
+      line-height:1;
+      margin-top:10px;
+      text-align:center;
+    }
+    .midRow{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+    .bottomRow{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-end;
+      gap:10px;
+      color: rgba(232,238,252,.92);
+    }
+    .small{
+      font-size:16px;
+      font-weight:700;
+    }
+    .mass{
+      font-size:16px;
+      font-weight:700;
+      color: rgba(232,238,252,.92);
+    }
+    .tileLabelHint{
+      color:var(--muted);
+      font-size:13px;
+      text-align:center;
+      line-height:1.4;
+      max-width:520px;
+    }
+
+    .hotspots{
+      width: 100%;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .hot{
+      border:1px dashed rgba(255,255,255,.20);
+      border-radius:14px;
+      background: rgba(0,0,0,.10);
+      padding:10px;
+      min-height:62px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .hot b{ font-size:13px; color: rgba(232,238,252,.92); }
+    .hot .slot{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:150px;
+      padding:6px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: var(--muted);
+      font-size:12px;
+    }
+    .hot.filled{ border-style:solid; border-color: rgba(57,217,138,.45); background: rgba(57,217,138,.08); }
+    .hot.wrong{ border-style:solid; border-color: rgba(255,107,107,.55); background: rgba(255,107,107,.08); }
+    .hot.filled .slot{ color: var(--ink); border-color: rgba(57,217,138,.45); background: rgba(57,217,138,.12); }
+    .hot.wrong .slot{ color: var(--ink); border-color: rgba(255,107,107,.55); background: rgba(255,107,107,.12); }
+
+    .tinyRow{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+  </style>
+</head>
+
+<body>
+<header>
+  <div>
+    <h1>Periodensystem – Interaktiv</h1>
+    <p class="sub">
+      1) Ordne „Hauptgruppen / Nebengruppen / Perioden“ per Drag&Drop zu.<br>
+      2) Fülle den Lückentext.<br>
+      3) Beschrifte eine Element-Kachel (Ordnungszahl, Symbol, Name, Atommasse).
+    </p>
+  </div>
+  <div class="nav">
+    <button id="toPage1" class="primary" type="button">Seite 1: PSE</button>
+    <button id="toPage2" type="button">Seite 2: Element-Kachel</button>
+  </div>
+</header>
+
+<main>
+
+  <!-- PAGE 1 -->
+  <section id="page1" class="page active">
+    <div class="panel">
+      <h2>Periodensystem (vereinfachte Schulansicht)</h2>
+      <div class="body">
+        <div class="pseWrap">
+          <div class="legend">
+            <div class="box"><span class="swatch hg"></span><span>Hauptgruppen (1–2, 13–18)</span></div>
+            <div class="box"><span class="swatch ng"></span><span>Nebengruppen (3–12)</span></div>
+            <div class="box"><span class="swatch per"></span><span>Perioden (Zeilen 1–7)</span></div>
+          </div>
+
+          <div class="pse">
+            <div id="grid" class="grid" aria-label="Periodensystem"></div>
+          </div>
+
+          <div class="feedback" id="pseFeedback">
+            Ziehe die Begriffe rechts in die passenden Boxen. Wenn etwas korrekt ist, wird es im PSE farbig markiert.
+          </div>
+        </div>
+
+        <div class="cloze">
+          <div class="clozeText" id="clozeText">
+            <b>Lückentext:</b><br><br>
+            <span>Die </span>
+            <input class="blank" id="b1" placeholder="Begriff 1" />
+            <span> geben die Anzahl an </span>
+            <input class="blank" id="b2" placeholder="Begriff 2" />
+            <span> an (Schalen), auf denen sich Elektronen um den Kern bewegen.</span><br><br>
+
+            <span>Die </span>
+            <input class="blank" id="b3" placeholder="Begriff 3" />
+            <span> geben die Anzahl der </span>
+            <input class="blank" id="b4" placeholder="Begriff 4" />
+            <span> an. Diese sind besonders wichtig für die Reaktivität, weil sie bei chemischen Reaktionen „mitmachen“.</span>
+          </div>
+
+          <div class="tinyRow">
+            <button id="checkCloze" type="button" class="primary">Lückentext prüfen</button>
+            <button id="resetCloze" type="button">Lückentext zurücksetzen</button>
+          </div>
+          <div class="feedback" id="clozeFeedback">Tipp: Es reichen kurze Wörter (z. B. „Perioden“, „Elektronenschalen“, „Hauptgruppen“, „Außenelektronen“).</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Aufgabe 1: Drag&Drop</h2>
+      <div class="body">
+        <div class="taskBox">
+          <div class="draggables" id="draggables">
+            <div class="drag" draggable="true" data-term="Hauptgruppen">Hauptgruppen</div>
+            <div class="drag" draggable="true" data-term="Nebengruppen">Nebengruppen</div>
+            <div class="drag" draggable="true" data-term="Perioden">Perioden</div>
+          </div>
+
+          <div class="dropzones">
+            <div class="drop" data-accept="Hauptgruppen">
+              <div>
+                <strong>Box A</strong><br>
+                <span>Hier gehört: Hauptgruppen</span>
+              </div>
+              <div class="slot">Begriff hier ablegen</div>
+            </div>
+            <div class="drop" data-accept="Nebengruppen">
+              <div>
+                <strong>Box B</strong><br>
+                <span>Hier gehört: Nebengruppen</span>
+              </div>
+              <div class="slot">Begriff hier ablegen</div>
+            </div>
+            <div class="drop" data-accept="Perioden">
+              <div>
+                <strong>Box C</strong><br>
+                <span>Hier gehört: Perioden</span>
+              </div>
+              <div class="slot">Begriff hier ablegen</div>
+            </div>
+          </div>
+
+          <div class="tinyRow">
+            <button id="resetDD" type="button">Drag&Drop zurücksetzen</button>
+            <button id="showAll" type="button">Alles markieren</button>
+          </div>
+
+          <div class="feedback" id="ddFeedback">
+            Ziel: Begriffe richtig zuordnen. Danach: Erkläre kurz, was „Hauptgruppen“ und „Perioden“ bedeuten.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PAGE 2 -->
+  <section id="page2" class="page">
+    <div class="panel">
+      <h2>Element-Kachel beschriften</h2>
+      <div class="body">
+        <div class="tileStage">
+          <div class="tile" aria-label="Elementkachel">
+            <div class="tileContent">
+              <div class="topRow">
+                <div class="small" id="tileNumber">8</div>
+                <div class="mass" id="tileMass">15.999</div>
+              </div>
+              <div class="midRow">
+                <div class="bigSym" id="tileSymbol">O</div>
+              </div>
+              <div class="bottomRow">
+                <div class="small" id="tileName">Sauerstoff</div>
+                <div class="small" id="tileHintRight">Element</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="tileLabelHint">
+            Ziehe die Begriffe unten auf die passenden Felder (Hotspots).<br>
+            Danach kannst du „Nächstes Element“ klicken.
+          </div>
+
+          <div class="draggables" id="tileLabels">
+            <div class="drag" draggable="true" data-term="Ordnungszahl">Ordnungszahl</div>
+            <div class="drag" draggable="true" data-term="Elementsymbol">Elementsymbol</div>
+            <div class="drag" draggable="true" data-term="Elementname">Elementname</div>
+            <div class="drag" draggable="true" data-term="Atommasse">Atommasse</div>
+          </div>
+
+          <div class="hotspots">
+            <div class="hot" data-accept="Ordnungszahl">
+              <div><b>Feld links oben (Zahl)</b></div>
+              <div class="slot">Begriff hier ablegen</div>
+            </div>
+            <div class="hot" data-accept="Atommasse">
+              <div><b>Feld rechts oben (Masse)</b></div>
+              <div class="slot">Begriff hier ablegen</div>
+            </div>
+            <div class="hot" data-accept="Elementsymbol">
+              <div><b>Großes Zeichen in der Mitte</b></div>
+              <div class="slot">Begriff hier ablegen</div>
+            </div>
+            <div class="hot" data-accept="Elementname">
+              <div><b>Name unten links</b></div>
+              <div class="slot">Begriff hier ablegen</div>
+            </div>
+          </div>
+
+          <div class="tinyRow">
+            <button id="resetTile" type="button">Beschriftung zurücksetzen</button>
+            <button id="nextElement" class="primary" type="button">Nächstes Element</button>
+          </div>
+
+          <div class="feedback" id="tileFeedback">
+            Tipp: Die <b>Ordnungszahl</b> sagt, wie viele Protonen (und bei neutralen Atomen auch Elektronen) vorhanden sind.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2>Mini-Check</h2>
+      <div class="body">
+        <div class="feedback">
+          <b>Kurze mündliche Fragen (optional):</b><br>
+          • Was ist der Unterschied zwischen Hauptgruppen und Nebengruppen?<br>
+          • Warum sind Außenelektronen wichtig für die Reaktivität?<br>
+          • Was bedeutet: „Atommasse“ (grob)?<br>
+        </div>
+        <div class="tinyRow" style="margin-top:10px;">
+          <button id="backToPse" type="button">Zurück zur PSE-Seite</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  /***********************
+   * PAGE NAV
+   ***********************/
+  const page1 = document.getElementById("page1");
+  const page2 = document.getElementById("page2");
+  const toPage1 = document.getElementById("toPage1");
+  const toPage2 = document.getElementById("toPage2");
+  const backToPse = document.getElementById("backToPse");
+
+  function showPage(n){
+    page1.classList.toggle("active", n === 1);
+    page2.classList.toggle("active", n === 2);
+    toPage1.classList.toggle("primary", n === 1);
+    toPage2.classList.toggle("primary", n === 2);
+  }
+  toPage1.addEventListener("click", () => showPage(1));
+  toPage2.addEventListener("click", () => showPage(2));
+  backToPse.addEventListener("click", () => showPage(1));
+
+  /***********************
+   * PERIODIC TABLE DATA (schul-tauglich, kompakt)
+   * Position: period (1..7), group (1..18)
+   ***********************/
+  const elements = [
+    // period 1
+    {Z:1,  sym:"H",  name:"Wasserstoff", period:1, group:1},
+    {Z:2,  sym:"He", name:"Helium",      period:1, group:18},
+
+    // period 2
+    {Z:3,  sym:"Li", name:"Lithium",     period:2, group:1},
+    {Z:4,  sym:"Be", name:"Beryllium",   period:2, group:2},
+    {Z:5,  sym:"B",  name:"Bor",         period:2, group:13},
+    {Z:6,  sym:"C",  name:"Kohlenstoff", period:2, group:14},
+    {Z:7,  sym:"N",  name:"Stickstoff",  period:2, group:15},
+    {Z:8,  sym:"O",  name:"Sauerstoff",  period:2, group:16},
+    {Z:9,  sym:"F",  name:"Fluor",       period:2, group:17},
+    {Z:10, sym:"Ne", name:"Neon",        period:2, group:18},
+
+    // period 3
+    {Z:11, sym:"Na", name:"Natrium",     period:3, group:1},
+    {Z:12, sym:"Mg", name:"Magnesium",   period:3, group:2},
+    {Z:13, sym:"Al", name:"Aluminium",   period:3, group:13},
+    {Z:14, sym:"Si", name:"Silicium",    period:3, group:14},
+    {Z:15, sym:"P",  name:"Phosphor",    period:3, group:15},
+    {Z:16, sym:"S",  name:"Schwefel",    period:3, group:16},
+    {Z:17, sym:"Cl", name:"Chlor",       period:3, group:17},
+    {Z:18, sym:"Ar", name:"Argon",       period:3, group:18},
+
+    // period 4 (inkl. Nebengruppen)
+    {Z:19, sym:"K",  name:"Kalium",      period:4, group:1},
+    {Z:20, sym:"Ca", name:"Calcium",     period:4, group:2},
+    {Z:21, sym:"Sc", name:"Scandium",    period:4, group:3},
+    {Z:22, sym:"Ti", name:"Titan",       period:4, group:4},
+    {Z:23, sym:"V",  name:"Vanadium",    period:4, group:5},
+    {Z:24, sym:"Cr", name:"Chrom",       period:4, group:6},
+    {Z:25, sym:"Mn", name:"Mangan",      period:4, group:7},
+    {Z:26, sym:"Fe", name:"Eisen",       period:4, group:8},
+    {Z:27, sym:"Co", name:"Cobalt",      period:4, group:9},
+    {Z:28, sym:"Ni", name:"Nickel",      period:4, group:10},
+    {Z:29, sym:"Cu", name:"Kupfer",      period:4, group:11},
+    {Z:30, sym:"Zn", name:"Zink",        period:4, group:12},
+    {Z:31, sym:"Ga", name:"Gallium",     period:4, group:13},
+    {Z:32, sym:"Ge", name:"Germanium",   period:4, group:14},
+    {Z:33, sym:"As", name:"Arsen",       period:4, group:15},
+    {Z:34, sym:"Se", name:"Selen",       period:4, group:16},
+    {Z:35, sym:"Br", name:"Brom",        period:4, group:17},
+    {Z:36, sym:"Kr", name:"Krypton",     period:4, group:18},
+
+    // period 5 (nur Hauptgruppen-Rand + ein paar bekannte)
+    {Z:37, sym:"Rb", name:"Rubidium",    period:5, group:1},
+    {Z:38, sym:"Sr", name:"Strontium",   period:5, group:2},
+    {Z:47, sym:"Ag", name:"Silber",      period:5, group:11},
+    {Z:53, sym:"I",  name:"Iod",         period:5, group:17},
+    {Z:54, sym:"Xe", name:"Xenon",       period:5, group:18},
+
+    // period 6 (nur Auswahl)
+    {Z:55, sym:"Cs", name:"Cäsium",      period:6, group:1},
+    {Z:56, sym:"Ba", name:"Barium",      period:6, group:2},
+    {Z:79, sym:"Au", name:"Gold",        period:6, group:11},
+    {Z:80, sym:"Hg", name:"Quecksilber", period:6, group:12},
+    {Z:82, sym:"Pb", name:"Blei",        period:6, group:14},
+
+    // period 7 (nur Auswahl)
+    {Z:87, sym:"Fr", name:"Francium",    period:7, group:1},
+    {Z:88, sym:"Ra", name:"Radium",      period:7, group:2},
+    {Z:92, sym:"U",  name:"Uran",        period:7, group:0} // Sonder (eigentlich f-Block), wird separat platziert
+  ];
+
+  function classify(group){
+    // Hauptgruppen: 1-2 und 13-18
+    if(group === 1 || group === 2 || (group >= 13 && group <= 18)) return "hg";
+    // Nebengruppen: 3-12
+    if(group >= 3 && group <= 12) return "ng";
+    return "other";
+  }
+
+  /***********************
+   * BUILD GRID (18x7)
+   ***********************/
+  const gridEl = document.getElementById("grid");
+  const psePanel = document.querySelector(".pseWrap");
+  const pseFeedback = document.getElementById("pseFeedback");
+
+  // map for quick lookup by period-group
+  const map = new Map();
+  for(const el of elements){
+    if(el.group >= 1 && el.group <= 18){
+      map.set(`${el.period}-${el.group}`, el);
+    }
+  }
+
+  // Build 7 periods x 18 groups
+  for(let p=1; p<=7; p++){
+    for(let g=1; g<=18; g++){
+      const key = `${p}-${g}`;
+      const el = map.get(key);
+
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.dataset.period = String(p);
+      cell.dataset.group = String(g);
+
+      // mark row for "Perioden" highlighting (entire row)
+      cell.classList.add("perRow");
+
+      if(!el){
+        cell.classList.add("empty");
+        cell.innerHTML = "";
+      } else {
+        const cls = classify(g);
+        if(cls === "hg") cell.classList.add("hg");
+        if(cls === "ng") cell.classList.add("ng");
+
+        cell.innerHTML = `
+          <div class="num">${el.Z}</div>
+          <div class="sym">${el.sym}</div>
+          <div class="name">${el.name}</div>
+        `;
+      }
+      gridEl.appendChild(cell);
+    }
+  }
+
+  /***********************
+   * DRAG & DROP – PAGE 1
+   ***********************/
+  const drags = Array.from(document.querySelectorAll(".drag"));
+  const drops = Array.from(document.querySelectorAll(".drop"));
+  const ddFeedback = document.getElementById("ddFeedback");
+  const resetDD = document.getElementById("resetDD");
+  const showAll = document.getElementById("showAll");
+
+  let draggedTerm = null;
+  let ddSolved = { Hauptgruppen:false, Nebengruppen:false, Perioden:false };
+
+  function setPseHighlight(){
+    // toggle classes on grid container (or panel) to show highlight
+    // Use body classes on grid parent for simplicity
+    const pse = document.getElementById("grid");
+    pse.classList.toggle("hgOn", ddSolved.Hauptgruppen);
+    pse.classList.toggle("ngOn", ddSolved.Nebengruppen);
+    pse.classList.toggle("perOn", ddSolved.Perioden);
+
+    // give user feedback
+    const doneCount = Object.values(ddSolved).filter(Boolean).length;
+    if(doneCount === 0){
+      pseFeedback.className = "feedback";
+      pseFeedback.textContent = "Ziehe die Begriffe rechts in die passenden Boxen. Wenn etwas korrekt ist, wird es im PSE farbig markiert.";
+    } else if(doneCount < 3){
+      pseFeedback.className = "feedback good";
+      pseFeedback.textContent = `Gut! Schon ${doneCount}/3 richtig. Beobachte jetzt: Welche Bereiche wurden markiert?`;
+    } else {
+      pseFeedback.className = "feedback good";
+      pseFeedback.textContent = "Top! Alles richtig zugeordnet. Jetzt: Was sagen Perioden und Hauptgruppen jeweils aus?";
+    }
+  }
+
+  function resetDrops(){
+    ddSolved = { Hauptgruppen:false, Nebengruppen:false, Perioden:false };
+    drops.forEach(d => {
+      d.classList.remove("filled","wrong");
+      const slot = d.querySelector(".slot");
+      slot.textContent = "Begriff hier ablegen";
+    });
+    // re-enable drags
+    drags.forEach(x => x.style.opacity = "1");
+    drags.forEach(x => x.style.pointerEvents = "auto");
+
+    // reset highlights
+    const pse = document.getElementById("grid");
+    pse.classList.remove("hgOn","ngOn","perOn");
+
+    ddFeedback.className = "feedback";
+    ddFeedback.textContent = "Ziel: Begriffe richtig zuordnen. Danach: Erkläre kurz, was „Hauptgruppen“ und „Perioden“ bedeuten.";
+    setPseHighlight();
+  }
+
+  drags.forEach(el => {
+    el.addEventListener("dragstart", (e) => {
+      draggedTerm = el.dataset.term;
+      e.dataTransfer.setData("text/plain", draggedTerm);
+      e.dataTransfer.effectAllowed = "move";
+    });
+  });
+
+  drops.forEach(zone => {
+    zone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+    });
+
+    zone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      const term = e.dataTransfer.getData("text/plain") || draggedTerm;
+      if(!term) return;
+
+      const accept = zone.dataset.accept;
+
+      zone.classList.remove("filled","wrong");
+
+      if(term === accept){
+        zone.classList.add("filled");
+        zone.querySelector(".slot").textContent = term;
+        ddSolved[accept] = true;
+
+        // "consume" drag token (optional)
+        const dragEl = drags.find(d => d.dataset.term === term);
+        if(dragEl){
+          dragEl.style.opacity = "0.45";
+          dragEl.style.pointerEvents = "none";
+        }
+
+        ddFeedback.className = "feedback good";
+        ddFeedback.textContent = `✅ Richtig: ${term}. Schau ins PSE: der passende Bereich wird markiert.`;
+
+      } else {
+        zone.classList.add("wrong");
+        zone.querySelector(".slot").textContent = term + " (falsch)";
+        ddFeedback.className = "feedback bad";
+        ddFeedback.textContent = "❌ Das passt noch nicht. Tipp: Perioden sind Zeilen – Gruppen sind Spalten.";
+      }
+
+      setPseHighlight();
+      draggedTerm = null;
+    });
+  });
+
+  resetDD.addEventListener("click", resetDrops);
+  showAll.addEventListener("click", () => {
+    ddSolved = { Hauptgruppen:true, Nebengruppen:true, Perioden:true };
+    drops.forEach(d => {
+      d.classList.remove("wrong");
+      d.classList.add("filled");
+      d.querySelector(".slot").textContent = d.dataset.accept;
+    });
+    drags.forEach(x => { x.style.opacity="0.45"; x.style.pointerEvents="none"; });
+    ddFeedback.className = "feedback good";
+    ddFeedback.textContent = "Alles markiert. Jetzt kannst du das als „Erklärung“ nutzen und danach wieder zurücksetzen.";
+    setPseHighlight();
+  });
+
+  // init state
+  setPseHighlight();
+
+  /***********************
+   * CLOZE – PAGE 1
+   ***********************/
+  const b1 = document.getElementById("b1");
+  const b2 = document.getElementById("b2");
+  const b3 = document.getElementById("b3");
+  const b4 = document.getElementById("b4");
+  const checkCloze = document.getElementById("checkCloze");
+  const resetCloze = document.getElementById("resetCloze");
+  const clozeFeedback = document.getElementById("clozeFeedback");
+
+  function norm(s){
+    return (s || "")
+      .toLowerCase()
+      .trim()
+      .replaceAll("ä","ae").replaceAll("ö","oe").replaceAll("ü","ue").replaceAll("ß","ss")
+      .replace(/\s+/g," ");
+  }
+
+  // Accept several reasonable variants
+  const answers = {
+    b1: ["perioden"],
+    b2: ["elektronenschalen", "schalen", "elektronenbahnen", "elektronen-schalen", "elektronen bahnen", "elektronenbahnen"],
+    b3: ["hauptgruppen", "gruppen"],
+    b4: ["aussenelektronen", "valenzelektronen", "valenz-elektronen", "valenz elektronen", "aeusseren elektronen", "ausserelektronen", "aeusserenelektronen", "auesseren elektronen"]
+  };
+
+  function markBlank(el, ok){
+    el.classList.remove("good","bad");
+    el.classList.add(ok ? "good" : "bad");
+  }
+
+  checkCloze.addEventListener("click", () => {
+    const v1 = norm(b1.value);
+    const v2 = norm(b2.value);
+    const v3 = norm(b3.value);
+    const v4 = norm(b4.value);
+
+    const ok1 = answers.b1.includes(v1);
+    const ok2 = answers.b2.includes(v2);
+    const ok3 = answers.b3.includes(v3);
+    const ok4 = answers.b4.includes(v4);
+
+    markBlank(b1, ok1);
+    markBlank(b2, ok2);
+    markBlank(b3, ok3);
+    markBlank(b4, ok4);
+
+    const okCount = [ok1,ok2,ok3,ok4].filter(Boolean).length;
+
+    if(okCount === 4){
+      clozeFeedback.className = "feedback good";
+      clozeFeedback.textContent = "✅ Perfekt! Perioden → Anzahl der Schalen. Hauptgruppen → Anzahl der Außenelektronen (wichtig für Reaktivität).";
+    } else {
+      clozeFeedback.className = "feedback bad";
+      clozeFeedback.textContent = `❌ Noch nicht ganz (${okCount}/4 richtig). Tipp: Perioden = Zeilen, Schalen; Hauptgruppen = Außenelektronen.`;
+    }
+  });
+
+  resetCloze.addEventListener("click", () => {
+    [b1,b2,b3,b4].forEach(x => { x.value=""; x.classList.remove("good","bad"); });
+    clozeFeedback.className = "feedback";
+    clozeFeedback.textContent = "Tipp: Es reichen kurze Wörter (z. B. „Perioden“, „Elektronenschalen“, „Hauptgruppen“, „Außenelektronen“).";
+  });
+
+  /***********************
+   * PAGE 2 – ELEMENT TILE LABELING
+   ***********************/
+  const tileNumber = document.getElementById("tileNumber");
+  const tileMass   = document.getElementById("tileMass");
+  const tileSymbol = document.getElementById("tileSymbol");
+  const tileName   = document.getElementById("tileName");
+
+  const hotZones = Array.from(document.querySelectorAll(".hot"));
+  const tileDrags = Array.from(document.querySelectorAll("#tileLabels .drag"));
+  const resetTile = document.getElementById("resetTile");
+  const nextElement = document.getElementById("nextElement");
+  const tileFeedback = document.getElementById("tileFeedback");
+
+  const tileElements = [
+    {Z:1,  sym:"H",  name:"Wasserstoff", mass:"1.008"},
+    {Z:6,  sym:"C",  name:"Kohlenstoff", mass:"12.011"},
+    {Z:8,  sym:"O",  name:"Sauerstoff",  mass:"15.999"},
+    {Z:11, sym:"Na", name:"Natrium",     mass:"22.990"},
+    {Z:12, sym:"Mg", name:"Magnesium",   mass:"24.305"},
+    {Z:17, sym:"Cl", name:"Chlor",       mass:"35.45"},
+    {Z:26, sym:"Fe", name:"Eisen",       mass:"55.845"},
+    {Z:29, sym:"Cu", name:"Kupfer",      mass:"63.546"},
+    {Z:47, sym:"Ag", name:"Silber",      mass:"107.868"},
+    {Z:79, sym:"Au", name:"Gold",        mass:"196.967"}
+  ];
+  let tileIndex = 2; // start with O
+
+  function setTile(el){
+    tileNumber.textContent = el.Z;
+    tileMass.textContent = el.mass;
+    tileSymbol.textContent = el.sym;
+    tileName.textContent = el.name;
+  }
+
+  let tileDragged = null;
+  let tileSolved = { Ordnungszahl:false, Atommasse:false, Elementsymbol:false, Elementname:false };
+
+  function resetTileZones(){
+    tileSolved = { Ordnungszahl:false, Atommasse:false, Elementsymbol:false, Elementname:false };
+    hotZones.forEach(z => {
+      z.classList.remove("filled","wrong");
+      z.querySelector(".slot").textContent = "Begriff hier ablegen";
+    });
+    tileDrags.forEach(x => { x.style.opacity="1"; x.style.pointerEvents="auto"; });
+    tileFeedback.className = "feedback";
+    tileFeedback.textContent = "Tipp: Die Ordnungszahl sagt, wie viele Protonen (und bei neutralen Atomen auch Elektronen) vorhanden sind.";
+  }
+
+  tileDrags.forEach(el => {
+    el.addEventListener("dragstart", (e) => {
+      tileDragged = el.dataset.term;
+      e.dataTransfer.setData("text/plain", tileDragged);
+      e.dataTransfer.effectAllowed = "move";
+    });
+  });
+
+  hotZones.forEach(zone => {
+    zone.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = "move";
+    });
+    zone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      const term = e.dataTransfer.getData("text/plain") || tileDragged;
+      if(!term) return;
+
+      const accept = zone.dataset.accept;
+      zone.classList.remove("filled","wrong");
+
+      if(term === accept){
+        zone.classList.add("filled");
+        zone.querySelector(".slot").textContent = term;
+        tileSolved[accept] = true;
+
+        const dragEl = tileDrags.find(d => d.dataset.term === term);
+        if(dragEl){
+          dragEl.style.opacity = "0.45";
+          dragEl.style.pointerEvents = "none";
+        }
+
+        const done = Object.values(tileSolved).filter(Boolean).length;
+        if(done === 4){
+          tileFeedback.className = "feedback good";
+          tileFeedback.textContent = "✅ Sehr gut! Alles korrekt beschriftet. Klick gern auf „Nächstes Element“.";
+        } else {
+          tileFeedback.className = "feedback good";
+          tileFeedback.textContent = `✅ Richtig: ${term}. (${done}/4)`;
+        }
+      } else {
+        zone.classList.add("wrong");
+        zone.querySelector(".slot").textContent = term + " (falsch)";
+        tileFeedback.className = "feedback bad";
+        tileFeedback.textContent = "❌ Das passt hier nicht. Tipp: Symbol ist groß in der Mitte, Ordnungszahl ist die kleine Zahl.";
+      }
+
+      tileDragged = null;
+    });
+  });
+
+  resetTile.addEventListener("click", resetTileZones);
+  nextElement.addEventListener("click", () => {
+    tileIndex = (tileIndex + 1) % tileElements.length;
+    setTile(tileElements[tileIndex]);
+    resetTileZones();
+  });
+
+  // init tile
+  setTile(tileElements[tileIndex]);
+  resetTileZones();
+</script>
+</body>
+</html>

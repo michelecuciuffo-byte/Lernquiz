@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Projektarbeit: Mimikri und Mimese</title>
+  <style>
+    :root{
+      --bg:#f6f8fb;
+      --card:#ffffff;
+      --ink:#1f2937;
+      --muted:#5b6472;
+      --accent:#2f6fed;
+      --accent2:#0f766e;
+      --line:#dbe3ee;
+      --soft:#eef4ff;
+      --warn:#fff7e8;
+    }
+
+    *{box-sizing:border-box}
+
+    html, body{
+      margin:0;
+      padding:0;
+      font-family:Arial, Helvetica, sans-serif;
+      color:var(--ink);
+      background:var(--bg);
+      line-height:1.48;
+    }
+
+    body{
+      padding:24px;
+    }
+
+    .sheet{
+      max-width:1000px;
+      margin:0 auto;
+    }
+
+    .page{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:22px;
+      overflow:hidden;
+      box-shadow:0 10px 30px rgba(0,0,0,.06);
+      margin-bottom:28px;
+      page-break-after:always;
+      break-after:page;
+    }
+
+    .page:last-child{
+      page-break-after:auto;
+      break-after:auto;
+    }
+
+    .hero{
+      background:linear-gradient(135deg,#eef4ff,#f8fffb);
+      padding:34px 38px 24px;
+      border-bottom:1px solid var(--line);
+    }
+
+    h1,h2,h3{margin:0}
+    h1{
+      font-size:2rem;
+      margin-bottom:14px;
+    }
+    h2{
+      font-size:1.28rem;
+      color:#173b7a;
+      margin-top:0;
+      margin-bottom:18px;
+    }
+    h3{
+      font-size:1.02rem;
+      color:#0b5b54;
+      margin-top:30px;
+      margin-bottom:14px;
+    }
+
+    .spaced-heading{
+      margin-top:34px !important;
+      margin-bottom:24px !important;
+    }
+
+    p{margin:7px 0}
+
+    .lead{
+      font-size:1.03rem;
+      color:var(--muted);
+      max-width:780px;
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .chip{
+      padding:8px 12px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      font-size:.93rem;
+    }
+
+    .section{
+      padding:22px 38px;
+      border-top:1px solid var(--line);
+    }
+
+    .section.no-top{
+      border-top:none;
+    }
+
+    .grid{
+      display:grid;
+      gap:16px;
+    }
+
+    .grid.two{
+      grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+      background:#fff;
+    }
+
+    .soft{background:var(--soft)}
+    .warn{background:var(--warn)}
+
+    ul,ol{
+      margin:8px 0 8px 20px;
+      padding:0;
+    }
+
+    li{margin:5px 0}
+
+    .example{
+      display:grid;
+      grid-template-columns:110px 1fr;
+      gap:14px;
+      align-items:center;
+      margin-top:10px;
+    }
+
+    .svgwrap{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fff;
+      padding:10px;
+    }
+
+    .center{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:4px 10px;
+      border-radius:999px;
+      background:#e8f7f4;
+      color:#0f766e;
+      font-weight:bold;
+      font-size:.85rem;
+      margin-bottom:8px;
+    }
+
+    .checklist li::marker{
+      content:"✓  ";
+      font-weight:bold;
+      color:var(--accent2);
+    }
+
+    .rubric{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      font-size:.95rem;
+    }
+
+    .rubric th,.rubric td{
+      border:1px solid var(--line);
+      padding:9px;
+      vertical-align:top;
+    }
+
+    .rubric th{
+      background:#f3f7ff;
+      text-align:left;
+    }
+
+    .footer{
+      padding:18px 38px 28px;
+      color:var(--muted);
+      font-size:.92rem;
+    }
+
+    .mini{
+      font-size:.91rem;
+      color:var(--muted);
+    }
+
+    .deckblatt-box{
+      min-height:220px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      background:linear-gradient(180deg,#ffffff,#f8fbff);
+    }
+
+    .deckblatt-title{
+      font-size:1.2rem;
+      font-weight:bold;
+      margin-top:8px;
+      color:#173b7a;
+    }
+
+    .deckblatt-meta{
+      margin-top:16px;
+      line-height:1.8;
+      font-size:1rem;
+    }
+
+    @page{
+      size:A4;
+      margin:14mm;
+    }
+
+    @media print{
+      html, body{
+        background:#fff;
+      }
+
+      body{
+        padding:0;
+      }
+
+      .sheet{
+        max-width:none;
+        margin:0;
+      }
+
+      .page{
+        margin:0;
+        border:none;
+        border-radius:0;
+        box-shadow:none;
+        width:100%;
+        min-height:calc(297mm - 28mm);
+        display:flex;
+        flex-direction:column;
+      }
+
+      .hero,.section,.footer{
+        padding-left:20mm;
+        padding-right:20mm;
+      }
+
+      .section,.footer{
+        break-inside:avoid;
+        page-break-inside:avoid;
+      }
+
+      .card,.example,.rubric,.grid,.svgwrap{
+        break-inside:avoid;
+        page-break-inside:avoid;
+      }
+    }
+
+    @media (max-width:760px){
+      .grid.two,.example{
+        grid-template-columns:1fr;
+      }
+
+      .hero,.section,.footer{
+        padding:22px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="sheet">
+
+    <!-- SEITE 1 -->
+    <section class="page">
+      <section class="hero">
+        <h1>Projektarbeit: Mimikri und Mimese in der Tierwelt</h1>
+        <p class="lead">
+          Für dieses benotete Projekt wählst du <strong>genau ein Tier</strong>, das entweder <strong>Mimikri</strong> oder <strong>Mimese</strong> nutzt.
+          Darüber erstellst du ein <strong>Journal</strong> mit Informationen, Bildern und verständlichen Erklärungen.
+        </p>
+        <div class="chips">
+          <span class="chip">Mindestlänge: 4 Seiten Inhalt (Einzelarbeit)</span>
+          <span class="chip">Partnerarbeit: mind. 6 Seiten Inhalt</span>
+          <span class="chip">Deckblatt zählt nicht mit</span>
+          <span class="chip">Mehr als die Mindestseitenzahl ist erlaubt</span>
+          <span class="chip">Handschriftlich oder digital</span>
+          <span class="chip">Mit Bildern, Zeichnungen oder Ausdrucken</span>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>1. Begriffe verstehen:</h2>
+        <div class="grid two">
+          <div class="card soft">
+            <div class="badge">Mimikri</div>
+            <p><strong>Mimikri</strong> bedeutet, dass ein Tier <strong>ein anderes Tier oder ein gefährliches Vorbild nachahmt</strong>, um sich zu schützen.</p>
+            <p>Das Tier sieht also zum Beispiel so aus wie ein wehrhaftes oder giftiges Tier, obwohl es das selbst gar nicht ist.</p>
+            <div class="example">
+              <div class="svgwrap center">
+                <svg viewBox="0 0 120 120" width="96" height="96" aria-label="Schwebfliege als Beispiel für Mimikri">
+                  <ellipse cx="60" cy="68" rx="28" ry="18" fill="#f4c542" stroke="#222" stroke-width="2"/>
+                  <rect x="42" y="53" width="8" height="30" fill="#222"/>
+                  <rect x="56" y="50" width="8" height="36" fill="#222"/>
+                  <rect x="70" y="53" width="8" height="30" fill="#222"/>
+                  <ellipse cx="44" cy="46" rx="18" ry="10" fill="#dff3ff" stroke="#7aa8c7"/>
+                  <ellipse cx="76" cy="46" rx="18" ry="10" fill="#dff3ff" stroke="#7aa8c7"/>
+                  <circle cx="89" cy="66" r="7" fill="#222"/>
+                  <line x1="93" y1="60" x2="103" y2="50" stroke="#222" stroke-width="2"/>
+                  <line x1="91" y1="58" x2="98" y2="46" stroke="#222" stroke-width="2"/>
+                </svg>
+              </div>
+              <div>
+                <p><strong>Beispiel:</strong> Die <strong>Schwebfliege</strong> sieht einer Wespe ähnlich. Fressfeinde meiden sie deshalb eher.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="card soft">
+            <div class="badge">Mimese</div>
+            <p><strong>Mimese</strong> bedeutet, dass ein Tier <strong>wie ein Teil seiner Umwelt aussieht</strong>, zum Beispiel wie ein Blatt, ein Ast oder Rinde.</p>
+            <p>Dadurch wird es von Feinden schlechter entdeckt.</p>
+            <div class="example">
+              <div class="svgwrap center">
+                <svg viewBox="0 0 120 120" width="96" height="96" aria-label="Stabheuschrecke als Beispiel für Mimese">
+                  <rect x="18" y="55" width="84" height="8" rx="4" fill="#8d6a43"/>
+                  <line x1="38" y1="59" x2="25" y2="30" stroke="#5f8a3b" stroke-width="5" stroke-linecap="round"/>
+                  <line x1="50" y1="59" x2="42" y2="33" stroke="#5f8a3b" stroke-width="5" stroke-linecap="round"/>
+                  <line x1="65" y1="59" x2="71" y2="33" stroke="#5f8a3b" stroke-width="5" stroke-linecap="round"/>
+                  <line x1="78" y1="59" x2="94" y2="30" stroke="#5f8a3b" stroke-width="5" stroke-linecap="round"/>
+                  <line x1="42" y1="59" x2="28" y2="89" stroke="#5f8a3b" stroke-width="5" stroke-linecap="round"/>
+                  <line x1="58" y1="59" x2="50" y2="90" stroke="#5f8a3b" stroke-width="5" stroke-linecap="round"/>
+                  <line x1="72" y1="59" x2="80" y2="90" stroke="#5f8a3b" stroke-width="5" stroke-linecap="round"/>
+                  <line x1="86" y1="59" x2="100" y2="89" stroke="#5f8a3b" stroke-width="5" stroke-linecap="round"/>
+                </svg>
+              </div>
+              <div>
+                <p><strong>Beispiel:</strong> Die <strong>Stabheuschrecke</strong> sieht fast wie ein Zweig aus und fällt dadurch kaum auf.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <h2>2. Deine Aufgabe:</h2>
+        <div class="card">
+          <p>Wähle <strong>ein einziges Tier</strong>, das Mimikri oder Mimese nutzt, und erstelle darüber ein <strong>Journal</strong>.</p>
+          <ul class="checklist">
+            <li>Du darfst nur <strong>ein Tier</strong> auswählen.</li>
+            <li>Dein Journal muss mindestens <strong>4 volle Seiten Inhalt</strong> umfassen.</li>
+            <li>Bei <strong>Partnerarbeit</strong> muss euer Journal mindestens <strong>6 volle Seiten Inhalt</strong> umfassen.</li>
+            <li>Ein <strong>Deckblatt</strong> darf freiwillig gestaltet werden, zählt aber <strong>nicht</strong> zu diesen Seiten dazu.</li>
+            <li>Du sollst mit <strong>Bildern, Zeichnungen und Erklärungen</strong> arbeiten.</li>
+            <li>Du darfst <strong>handschriftlich</strong> oder <strong>digital</strong> arbeiten.</li>
+            <li>Wenn du keinen Drucker hast, darfst du Bilder <strong>selbst zeichnen</strong>.</li>
+            <li>Du darfst <strong>sehr gerne auch mehr als die Mindestseitenzahl</strong> schreiben.</li>
+          </ul>
+        </div>
+      </section>
+
+      <div class="footer">
+        Projektarbeit – Mimikri und Mimese in der Tierwelt
+      </div>
+    </section>
+
+    <!-- SEITE 2 -->
+    <section class="page">
+      <section class="section no-top">
+        <h2>3. Aufbau des Journals:</h2>
+
+        <h3>Freiwilliges Deckblatt:</h3>
+        <div class="card deckblatt-box">
+          <div class="badge">freiwillig</div>
+          <p>Du darfst gerne ein <strong>Deckblatt</strong> gestalten.</p>
+          <p>Darauf sollten der <strong>Titel deiner Arbeit</strong>, dein <strong>Name</strong> und deine <strong>Klasse</strong> stehen, zum Beispiel:</p>
+          <div class="deckblatt-title">„Die Mimikri der Schwebfliege“</div>
+          <div class="deckblatt-title">„Die Mimese des Blattschwanzgeckos“</div>
+          <div class="deckblatt-meta">
+            <div><strong>Name:</strong> Max Mustermann</div>
+            <div><strong>Klasse:</strong> 7a</div>
+          </div>
+          <p class="mini">Beim Gestalten des Deckblatts darfst du deiner <strong>Kreativität freien Lauf lassen</strong>.</p>
+          <p class="mini"><strong>Wichtig:</strong> Das Deckblatt ist freiwillig und zählt <strong>nicht</strong> zur Seitenzahl dazu.</p>
+        </div>
+
+        <h3>Kapitel 1: Steckbrief zu deinem Tier:</h3>
+        <div class="card">
+          <p>Beginne dein Journal mit einem übersichtlichen <strong>Steckbrief</strong>. Folgende Informationen sollen enthalten sein:</p>
+          <ul>
+            <li>Name des Tieres (deutsch, gerne auch wissenschaftlicher Name)</li>
+            <li>Tiergruppe (z. B. Insekt, Fisch, Reptil, Vogel)</li>
+            <li>Größe und eventuell Gewicht</li>
+            <li>Lebensraum</li>
+            <li>Vorkommen / Verbreitungsgebiet</li>
+            <li>Nahrung</li>
+            <li>Natürliche Feinde</li>
+            <li>Besondere Merkmale</li>
+            <li>Lebensweise (tagaktiv, nachtaktiv, einzelgängerisch, in Gruppen usw.)</li>
+          </ul>
+        </div>
+
+        <h3>Kapitel 2: Mimikri oder Mimese bei deinem Tier:</h3>
+        <div class="card">
+          <p>Erkläre nun genau, <strong>ob dein Tier Mimikri oder Mimese nutzt</strong>.</p>
+          <ul>
+            <li>Was genau wird nachgeahmt?</li>
+            <li>Wie sieht diese Anpassung aus?</li>
+            <li>Warum ist sie für das Überleben nützlich?</li>
+            <li>Vor welchen Feinden schützt sie das Tier?</li>
+          </ul>
+        </div>
+      </section>
+
+      <div class="footer">
+        Projektarbeit – Mimikri und Mimese in der Tierwelt
+      </div>
+    </section>
+
+    <!-- SEITE 3 -->
+    <section class="page">
+      <section class="section no-top">
+        <h2>3. Aufbau des Journals (Fortsetzung):</h2>
+
+        <h3>Kapitel 3: Die Tarnung im Detail:</h3>
+        <div class="card">
+          <p>Beschreibe möglichst genau, <strong>welche Merkmale</strong> die Tarnung oder Nachahmung besonders wirksam machen.</p>
+          <ul>
+            <li>Farbe</li>
+            <li>Körperform</li>
+            <li>Muster</li>
+            <li>Bewegung oder Verhalten</li>
+            <li>Aufenthaltsort in der Natur</li>
+          </ul>
+          <p class="mini">Hier kannst du auch mit vergrößerten Bildern, beschrifteten Zeichnungen oder Pfeilen arbeiten.</p>
+        </div>
+
+        <h3>Kapitel 4: Das Tier in seinem Lebensraum:</h3>
+        <div class="card">
+          <p>Zeige, wie dein Tier in seiner natürlichen Umgebung lebt.</p>
+          <ul>
+            <li>Wo hält es sich besonders oft auf?</li>
+            <li>Wann ist seine Tarnung besonders wichtig?</li>
+            <li>Wie verhält es sich bei Gefahr?</li>
+            <li>Welche Rolle spielt die Umwelt für seine Tarnung?</li>
+          </ul>
+        </div>
+
+        <h3>Kapitel 5: Spannender Experten-Teil:</h3>
+        <div class="card warn">
+          <p>Wähle <strong>mindestens eine</strong> der folgenden kreativen Vertiefungen:</p>
+          <ul>
+            <li><strong>Vergleich:</strong> Vergleiche dein Tier mit einem ähnlichen Tier, das keine solche Tarnung besitzt.</li>
+            <li><strong>Perspektivwechsel:</strong> Schreibe einen kurzen Text aus Sicht deines Tieres: „So schütze ich mich vor Feinden …“</li>
+            <li><strong>Forscherseite:</strong> Erkläre, welchen Vorteil diese Anpassung in der Evolution haben könnte.</li>
+            <li><strong>Beobachtungsseite:</strong> Zeichne dein Tier in seinem Lebensraum und beschrifte wichtige Stellen.</li>
+          </ul>
+        </div>
+
+        <h2 class="spaced-heading">4. Bilder und Gestaltung:</h2>
+        <div class="grid two">
+          <div class="card">
+            <h3>Erlaubt sind:</h3>
+            <ul>
+              <li>ausgedruckte Bilder</li>
+              <li>selbst gezeichnete Bilder</li>
+              <li>digitale Bilder</li>
+              <li>beschriftete Skizzen</li>
+            </ul>
+          </div>
+          <div class="card">
+            <h3>Wichtig:</h3>
+            <ul>
+              <li>Alle Bilder sollen zum Thema passen.</li>
+              <li>Bilder sollen möglichst <strong>beschriftet oder erklärt</strong> werden.</li>
+              <li>Die Gestaltung soll ordentlich und übersichtlich sein.</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <div class="footer">
+        Projektarbeit – Mimikri und Mimese in der Tierwelt
+      </div>
+    </section>
+
+    <!-- SEITE 4 -->
+    <section class="page">
+      <section class="section no-top">
+        <h2 class="spaced-heading">5. Formale Anforderungen:</h2>
+        <div class="card">
+          <ul class="checklist">
+            <li>Mindestens <strong>4 Seiten Inhalt</strong> in Einzelarbeit.</li>
+            <li>Bei <strong>Partnerarbeit mindestens 6 Seiten Inhalt</strong>.</li>
+            <li>Ein <strong>Deckblatt</strong> ist <strong>freiwillig</strong> und zählt <strong>nicht</strong> zur Seitenzahl dazu.</li>
+            <li><strong>Mehr als die Mindestseitenzahl</strong> ist ausdrücklich erlaubt.</li>
+            <li>Wenn besonders <strong>ausführlich, sinnvoll und schön gestaltet</strong> gearbeitet wird, kann das <strong>positiv in die Bewertung einfließen</strong>.</li>
+            <li>Sinnvolle Überschriften und klare Kapitel.</li>
+            <li>Leserliche Schrift bzw. gut lesbares digitales Layout.</li>
+            <li>Fachbegriffe richtig verwenden.</li>
+            <li>Eigenständig formulieren, nicht einfach abschreiben.</li>
+          </ul>
+        </div>
+
+        <h2 class="spaced-heading">6. Bewertung:</h2>
+        <table class="rubric">
+          <tr>
+            <th>Kriterium</th>
+            <th>Darauf wird geachtet</th>
+          </tr>
+          <tr>
+            <td>Inhalt</td>
+            <td>Fachlich richtige und passende Informationen zum gewählten Tier</td>
+          </tr>
+          <tr>
+            <td>Vollständigkeit</td>
+            <td>Alle geforderten Kapitel und Informationen sind enthalten</td>
+          </tr>
+          <tr>
+            <td>Erklärung von Mimikri/Mimese</td>
+            <td>Das Prinzip wird am eigenen Tier verständlich erklärt</td>
+          </tr>
+          <tr>
+            <td>Gestaltung</td>
+            <td>Ordnung, Sauberkeit, passende Bilder, leserliche Darstellung</td>
+          </tr>
+          <tr>
+            <td>Eigenleistung</td>
+            <td>Eigene Formulierungen, sinnvolle Auswahl und Bearbeitung</td>
+          </tr>
+          <tr>
+            <td>Kreativer Teil</td>
+            <td>Zusätzliche Vertiefung, z. B. Vergleich, Forscherseite oder Perspektivwechsel</td>
+          </tr>
+        </table>
+
+        <h2 class="spaced-heading">7. Ideen für geeignete Tiere:</h2>
+        <div class="card">
+          <p>Zum Beispiel könnten folgende Tiere geeignet sein:</p>
+          <p><strong>Mimikri:</strong> Schwebfliege, Königsnatter, Hornissenschwärmer</p>
+          <p><strong>Mimese:</strong> Stabheuschrecke, Wandelndes Blatt, Blattschwanzgecko</p>
+          <p class="mini">Du darfst auch ein anderes passendes Tier wählen.</p>
+        </div>
+      </section>
+
+      <div class="footer">
+        <strong>Tipp:</strong> Wähle ein Tier, das dich interessiert. Dann fällt es dir leichter, gute Bilder zu finden, verständlich zu erklären und ein spannendes Journal zu gestalten.
+      </div>
+    </section>
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz: Entstehung des Periodensystems</title>
+  <style>
+    :root{
+      --bg:#f6f7fb;
+      --card:#ffffff;
+      --text:#111827;
+      --muted:#6b7280;
+      --border:rgba(17,24,39,.12);
+      --ok:#16a34a;
+      --bad:#dc2626;
+      --accent:#2563eb;
+    }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+      line-height:1.4;
+    }
+    .wrap{
+      max-width: 920px;
+      margin: 0 auto;
+      padding: 18px;
+    }
+    header{
+      background: linear-gradient(180deg, rgba(37,99,235,.12), rgba(37,99,235,0));
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:16px 16px 12px;
+      margin-bottom:14px;
+    }
+    h1{
+      margin:0 0 6px;
+      font-size: 1.2rem;
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px;
+      margin:12px 0;
+      box-shadow: 0 10px 22px rgba(17,24,39,.05);
+    }
+    .qhead{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      margin-bottom:10px;
+    }
+    .qnum{
+      flex:0 0 auto;
+      width:30px;
+      height:30px;
+      border-radius:10px;
+      background: rgba(37,99,235,.12);
+      color: var(--accent);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
+      margin-top:2px;
+    }
+    .qtitle{
+      margin:0;
+      font-size:1.02rem;
+    }
+    .choices{
+      display:grid;
+      gap:8px;
+      margin-top:10px;
+    }
+    label.choice{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      border:1px solid var(--border);
+      border-radius:12px;
+      padding:10px 10px;
+      cursor:pointer;
+      transition: transform .06s ease, border-color .15s ease, background .15s ease;
+      user-select:none;
+    }
+    label.choice:hover{
+      transform: translateY(-1px);
+      border-color: rgba(37,99,235,.35);
+      background: rgba(37,99,235,.04);
+    }
+    input[type="radio"]{
+      margin-top:3px;
+      accent-color: var(--accent);
+    }
+    .feedback{
+      margin-top:10px;
+      border-radius:12px;
+      padding:10px 10px;
+      border:1px solid var(--border);
+      background: #fafafa;
+      display:none;
+    }
+    .feedback.ok{
+      border-color: rgba(22,163,74,.35);
+      background: rgba(22,163,74,.06);
+    }
+    .feedback.bad{
+      border-color: rgba(220,38,38,.35);
+      background: rgba(220,38,38,.06);
+    }
+    .fbline{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      margin:0 0 6px;
+    }
+    .badge{
+      flex:0 0 auto;
+      font-weight:700;
+      font-size:.85rem;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#fff;
+    }
+    .badge.ok{ color: var(--ok); border-color: rgba(22,163,74,.35); }
+    .badge.bad{ color: var(--bad); border-color: rgba(220,38,38,.35); }
+    .explain{
+      margin:0;
+      color:#111827;
+      font-size:.95rem;
+    }
+    .correct{
+      margin:6px 0 0;
+      color: var(--muted);
+      font-size:.92rem;
+    }
+    .footer{
+      margin-top:14px;
+      color:var(--muted);
+      font-size:.9rem;
+      text-align:center;
+    }
+    .pill{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background:#fff;
+      margin:0 4px;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Quiz: Wie das Periodensystem entstand</h1>
+      <p class="sub">
+        Klick bei jeder Frage eine Antwort an – du bekommst sofort Rückmeldung (richtig/falsch) plus kurze Erklärung.
+      </p>
+    </header>
+
+    <div id="quiz"></div>
+
+    <p class="footer">
+      Tipp: Du darfst deine Auswahl ändern – die Rückmeldung passt sich direkt an.
+      <span class="pill">Chemie</span><span class="pill">Periodensystem</span>
+    </p>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        q: "Was erkannten Dmitri Mendelejew und Lothar Meyer als wichtigen Schlüssel zur Ordnung der Elemente?",
+        choices: [
+          "Die Farbe der Elemente",
+          "Das Atomgewicht (als Ordnungsprinzip)",
+          "Die Härte der Elemente",
+          "Den Aggregatzustand bei Raumtemperatur"
+        ],
+        correctIndex: 1,
+        why: "Beide sahen: Über das Atomgewicht (und die damit zusammenhängenden Muster) kann man Elemente sinnvoll ordnen."
+      },
+      {
+        q: "Wie ging Mendelejew bei seiner Einteilung praktisch vor?",
+        choices: [
+          "Er schrieb die Elemente auf Kärtchen und sortierte sie.",
+          "Er testete jedes Element im Labor in einer großen Versuchreihe.",
+          "Er ordnete Elemente nur nach ihrer Farbe.",
+          "Er würfelte die Reihenfolge aus."
+        ],
+        correctIndex: 0,
+        why: "Mendelejew notierte Atomgewichte und Grundeigenschaften auf Karten und sortierte dann, bis ein Muster sichtbar wurde."
+      },
+      {
+        q: "Welche Idee steckt hinter dem Begriff „periodisch“ bei den Elementen?",
+        choices: [
+          "Eigenschaften ändern sich völlig zufällig.",
+          "Eigenschaften wiederholen sich in bestimmten Abständen.",
+          "Alle Elemente sind gleich aufgebaut.",
+          "Es gibt nur eine einzige Eigenschaft bei allen Elementen."
+        ],
+        correctIndex: 1,
+        why: "„Periodisch“ bedeutet: Bestimmte Eigenschaften tauchen regelmäßig wieder auf, wenn man die Elemente in einer passenden Reihenfolge anordnet."
+      },
+      {
+        q: "Warum ließ Mendelejew in seiner Ordnung bewusst Lücken?",
+        choices: [
+          "Weil ihm einige Elemente nicht gefielen.",
+          "Weil er Platz für noch unentdeckte Elemente erwartete.",
+          "Weil die Tabelle sonst zu groß geworden wäre.",
+          "Weil er nur Metalle eintragen wollte."
+        ],
+        correctIndex: 1,
+        why: "Die Lücken waren ein starkes Zeichen: Es mussten Elemente existieren, die damals noch nicht gefunden waren."
+      },
+      {
+        q: "Was traute sich Mendelejew sogar zu, obwohl es riskant war?",
+        choices: [
+          "Die Existenz und Eigenschaften unbekannter Elemente vorherzusagen",
+          "Alle Elemente in Gold umzuwandeln",
+          "Die Gravitation abzuschaffen",
+          "Zu beweisen, dass es nur 10 Elemente gibt"
+        ],
+        correctIndex: 0,
+        why: "Er machte Vorhersagen zu Eigenschaften von Elementen, die erst später entdeckt wurden – das war damals sehr mutig."
+      },
+      {
+        q: "Wie ist das Periodensystem grundsätzlich aufgebaut?",
+        choices: [
+          "In Kreisen und Dreiecken",
+          "In Zeilen und Spalten",
+          "Nur als Liste ohne Struktur",
+          "Als Landkarte"
+        ],
+        correctIndex: 1,
+        why: "Das Periodensystem hat Zeilen (Perioden) und Spalten (Gruppen) – so werden Muster gut sichtbar."
+      },
+      {
+        q: "Was findet man typischerweise in einer Spalte (Gruppe) untereinander?",
+        choices: [
+          "Elemente mit ähnlichen Eigenschaften",
+          "Elemente mit zufälligen Eigenschaften",
+          "Nur Gase",
+          "Nur Elemente mit gleicher Farbe"
+        ],
+        correctIndex: 0,
+        why: "In einer Gruppe stehen Elemente, die sich in ihren Eigenschaften ähnlich sind (z. B. ähnliche Reaktivität)."
+      },
+      {
+        q: "Wer entdeckte 1886 das Element Germanium und bestätigte damit eine Vorhersage?",
+        choices: [
+          "Clemens Winkler",
+          "Marie Curie",
+          "Albert Einstein",
+          "Antoine Lavoisier"
+        ],
+        correctIndex: 0,
+        why: "1886 entdeckte Clemens Winkler Germanium – die Eigenschaften passten zu dem, was Mendelejew erwartet hatte."
+      }
+    ];
+
+    const quizEl = document.getElementById("quiz");
+
+    function makeQuestionCard(item, idx){
+      const card = document.createElement("section");
+      card.className = "card";
+
+      const head = document.createElement("div");
+      head.className = "qhead";
+
+      const num = document.createElement("div");
+      num.className = "qnum";
+      num.textContent = (idx + 1);
+
+      const title = document.createElement("h2");
+      title.className = "qtitle";
+      title.textContent = item.q;
+
+      head.appendChild(num);
+      head.appendChild(title);
+
+      const choices = document.createElement("div");
+      choices.className = "choices";
+
+      const name = "q_" + idx;
+
+      item.choices.forEach((text, cidx) => {
+        const lab = document.createElement("label");
+        lab.className = "choice";
+
+        const input = document.createElement("input");
+        input.type = "radio";
+        input.name = name;
+        input.value = cidx;
+
+        const span = document.createElement("span");
+        span.textContent = text;
+
+        lab.appendChild(input);
+        lab.appendChild(span);
+
+        input.addEventListener("change", () => {
+          showFeedback(idx, cidx);
+        });
+
+        choices.appendChild(lab);
+      });
+
+      const fb = document.createElement("div");
+      fb.className = "feedback";
+      fb.id = "fb_" + idx;
+
+      const fbLine = document.createElement("p");
+      fbLine.className = "fbline";
+      fbLine.id = "fbline_" + idx;
+
+      const explain = document.createElement("p");
+      explain.className = "explain";
+      explain.id = "explain_" + idx;
+
+      const correct = document.createElement("p");
+      correct.className = "correct";
+      correct.id = "correct_" + idx;
+
+      fb.appendChild(fbLine);
+      fb.appendChild(explain);
+      fb.appendChild(correct);
+
+      card.appendChild(head);
+      card.appendChild(choices);
+      card.appendChild(fb);
+
+      return card;
+    }
+
+    function showFeedback(qIdx, chosenIdx){
+      const item = questions[qIdx];
+      const fb = document.getElementById("fb_" + qIdx);
+      const fbLine = document.getElementById("fbline_" + qIdx);
+      const explain = document.getElementById("explain_" + qIdx);
+      const correct = document.getElementById("correct_" + qIdx);
+
+      const isCorrect = chosenIdx === item.correctIndex;
+
+      fb.style.display = "block";
+      fb.classList.toggle("ok", isCorrect);
+      fb.classList.toggle("bad", !isCorrect);
+
+      // Badge + Kurztext
+      fbLine.innerHTML = "";
+      const badge = document.createElement("span");
+      badge.className = "badge " + (isCorrect ? "ok" : "bad");
+      badge.textContent = isCorrect ? "Richtig" : "Falsch";
+
+      const msg = document.createElement("span");
+      msg.textContent = isCorrect
+        ? "Gut gemacht!"
+        : "Fast – schau dir die richtige Antwort an.";
+
+      fbLine.appendChild(badge);
+      fbLine.appendChild(msg);
+
+      explain.textContent = item.why;
+      correct.textContent = "Richtige Antwort: " + item.choices[item.correctIndex];
+    }
+
+    // Render
+    questions.forEach((q, i) => quizEl.appendChild(makeQuestionCard(q, i)));
+  </script>
+</body>
+</html>

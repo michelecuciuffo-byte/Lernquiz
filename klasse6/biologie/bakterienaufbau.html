@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bakterienzelle – Beschriftungsquiz</title>
+
+<style>
+:root{
+  --bg:#ffffff;
+  --card:#ffffff;
+  --line:#e2e8f0;
+  --accent:#2563eb;
+  --ok:#16a34a;
+  --bad:#dc2626;
+  --shadow:0 10px 25px rgba(0,0,0,.08);
+  --radius:18px;
+  font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+}
+
+.wrap{
+  max-width:1100px;
+  margin:auto;
+  padding:24px;
+}
+
+h1{
+  margin:0 0 10px;
+  font-size:22px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap:24px;
+}
+
+@media(max-width:900px){
+  .grid{grid-template-columns:1fr;}
+}
+
+.panel{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:16px;
+  box-shadow:var(--shadow);
+}
+
+img{
+  width:100%;
+  border-radius:12px;
+  border:1px solid var(--line);
+}
+
+.labels{
+  display:grid;
+  gap:10px;
+}
+
+.label{
+  padding:10px;
+  border:1px solid var(--line);
+  border-radius:12px;
+  background:#f8fafc;
+  cursor:grab;
+  font-weight:600;
+}
+
+.label:active{
+  cursor:grabbing;
+}
+
+.dropzone{
+  border:2px dashed var(--line);
+  border-radius:12px;
+  padding:10px;
+  min-height:50px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#fafafa;
+}
+
+.dropzone.correct{
+  border-color:var(--ok);
+}
+
+.dropzone.wrong{
+  border-color:var(--bad);
+}
+
+.buttons{
+  margin-top:15px;
+  display:flex;
+  gap:10px;
+}
+
+button{
+  padding:8px 14px;
+  border-radius:12px;
+  border:1px solid var(--line);
+  cursor:pointer;
+  font-weight:600;
+}
+
+button.primary{
+  background:var(--accent);
+  color:white;
+  border:none;
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+<h1>🦠 Bau einer Bakterienzelle – Ziehe die Begriffe an die richtige Stelle</h1>
+
+<div class="grid">
+
+<!-- Bild -->
+<div class="panel">
+<img src="https://www.dropbox.com/scl/fi/awatj7u60bw9km3wmtb7a/Bakterien.png?raw=1" alt="Bakterienzelle">
+
+<h3>Drop-Zonen:</h3>
+
+<div class="dropzone" data-answer="Zellwand">Zellwand</div>
+<br>
+<div class="dropzone" data-answer="Geißel (Flagellum)">Geißel (Flagellum)</div>
+<br>
+<div class="dropzone" data-answer="Cytoplasma">Cytoplasma</div>
+<br>
+<div class="dropzone" data-answer="DNA (Erbinformation)">DNA (Erbinformation)</div>
+<br>
+<div class="dropzone" data-answer="Zellmembran">Zellmembran</div>
+
+<div class="buttons">
+<button class="primary" onclick="check()">Prüfen</button>
+<button onclick="location.reload()">Reset</button>
+</div>
+
+</div>
+
+<!-- Begriffe -->
+<div class="panel">
+<h3>Begriffe:</h3>
+
+<div class="labels" id="labels">
+<div class="label" draggable="true">Zellwand</div>
+<div class="label" draggable="true">Geißel (Flagellum)</div>
+<div class="label" draggable="true">Cytoplasma</div>
+<div class="label" draggable="true">DNA (Erbinformation)</div>
+<div class="label" draggable="true">Zellmembran</div>
+</div>
+
+<p style="margin-top:20px;font-size:14px;color:#475569">
+Tipp: Überlege dir die Funktion jedes Bestandteils.
+</p>
+</div>
+
+</div>
+</div>
+
+<script>
+let dragged;
+
+document.querySelectorAll('.label').forEach(label=>{
+  label.addEventListener('dragstart',e=>{
+    dragged = e.target;
+  });
+});
+
+document.querySelectorAll('.dropzone').forEach(zone=>{
+  zone.addEventListener('dragover',e=>{
+    e.preventDefault();
+  });
+
+  zone.addEventListener('drop',e=>{
+    e.preventDefault();
+    if(zone.children.length === 0){
+      zone.textContent="";
+      zone.appendChild(dragged);
+    }
+  });
+});
+
+function check(){
+  document.querySelectorAll('.dropzone').forEach(zone=>{
+    const correct = zone.dataset.answer;
+    const placed = zone.textContent.trim();
+
+    zone.classList.remove("correct","wrong");
+
+    if(placed === correct){
+      zone.classList.add("correct");
+    }else{
+      zone.classList.add("wrong");
+    }
+  });
+}
+</script>
+
+</body>
+</html>

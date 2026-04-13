@@ -1,0 +1,285 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Bakterienzelle – Drag & Drop Beschriftungsquiz</title>
+<style>
+  :root{
+    --bg:#ffffff; --card:#ffffff; --line:#e2e8f0; --soft:#f8fafc;
+    --accent:#2563eb; --ok:#16a34a; --bad:#dc2626;
+    --shadow:0 10px 25px rgba(15,23,42,.08); --radius:18px;
+    --font: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);font-family:var(--font);color:#0f172a}
+  .wrap{max-width:1100px;margin:0 auto;padding:24px}
+  header{
+    border:1px solid var(--line); border-radius:var(--radius);
+    background:var(--card); box-shadow:var(--shadow); padding:16px;
+  }
+  h1{margin:0;font-size:20px}
+  .sub{margin:6px 0 0;color:#475569;font-size:13px}
+  .grid{display:grid;grid-template-columns:1.2fr 1fr;gap:18px;margin-top:16px}
+  @media (max-width:900px){.grid{grid-template-columns:1fr}}
+  .panel{
+    border:1px solid var(--line); border-radius:var(--radius);
+    background:var(--card); box-shadow:var(--shadow); padding:14px;
+  }
+  img{width:100%;border:1px solid var(--line);border-radius:14px;display:block}
+  .hint{margin:10px 0 0;color:#475569;font-size:13px}
+  .zones{display:grid;gap:10px;margin-top:12px}
+  .zone{
+    border:2px dashed var(--line); border-radius:14px; padding:10px;
+    background:linear-gradient(0deg,var(--soft),#fff);
+    min-height:56px; display:flex; align-items:center; gap:10px;
+  }
+  .znum{
+    width:28px;height:28px;border-radius:999px;display:grid;place-items:center;
+    border:1px solid var(--line); background:#fff; font-weight:800; color:#0f172a;
+    flex:0 0 28px;
+  }
+  .zslot{flex:1; display:flex; flex-wrap:wrap; gap:8px; align-items:center}
+  .placeholder{color:#94a3b8;font-size:13px}
+  .chip{
+    display:inline-flex; align-items:center; gap:8px;
+    border:1px solid var(--line); background:#fff; padding:8px 10px;
+    border-radius:999px; font-weight:700; font-size:13px;
+    box-shadow:0 6px 16px rgba(15,23,42,.06);
+    cursor:grab; user-select:none;
+  }
+  .chip:active{cursor:grabbing}
+  .zone.correct{border-color: rgba(22,163,74,.8)}
+  .zone.wrong{border-color: rgba(220,38,38,.8)}
+  .pool{display:grid;gap:10px}
+  .btnbar{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  button{
+    padding:10px 12px;border-radius:12px;border:1px solid var(--line);
+    background:var(--soft); font-weight:800; cursor:pointer;
+  }
+  button.primary{background:var(--accent);color:#fff;border-color:transparent}
+  .score{margin-top:10px;color:#475569;font-size:13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>🦠 Bakterienzelle – Beschrifte die Teile (Drag & Drop)</h1>
+  <p class="sub">Ziehe die Begriffe in die passenden Felder <strong>1–5</strong>. Danach auf <strong>Prüfen</strong> klicken.</p>
+</header>
+
+<div class="grid">
+
+  <section class="panel">
+    <img id="bakterienBild" alt="Bakterienzelle" />
+    <p class="hint">
+      Tipp: Schau auf die Nummern am Bild. Ordne die Begriffe den Nummern zu.
+    </p>
+
+    <div class="zones" id="zones">
+      <div class="zone" data-zone="1"><div class="znum">1</div><div class="zslot"><span class="placeholder">Begriff hier ablegen</span></div></div>
+      <div class="zone" data-zone="2"><div class="znum">2</div><div class="zslot"><span class="placeholder">Begriff hier ablegen</span></div></div>
+      <div class="zone" data-zone="3"><div class="znum">3</div><div class="zslot"><span class="placeholder">Begriff hier ablegen</span></div></div>
+      <div class="zone" data-zone="4"><div class="znum">4</div><div class="zslot"><span class="placeholder">Begriff hier ablegen</span></div></div>
+      <div class="zone" data-zone="5"><div class="znum">5</div><div class="zslot"><span class="placeholder">Begriff hier ablegen</span></div></div>
+    </div>
+
+    <div class="btnbar">
+      <button class="primary" id="checkBtn">✅ Prüfen</button>
+      <button id="resetBtn">↩️ Reset</button>
+    </div>
+    <div class="score" id="score"></div>
+  </section>
+
+  <section class="panel">
+    <h3 style="margin:0 0 10px;font-size:16px">Begriffe:</h3>
+    <div class="pool" id="pool"></div>
+    <p class="hint" style="margin-top:12px">
+      Bedienung: Ziehen & ablegen. (Auf Touch-Geräten klappt es meist auch per langem Tippen + Ziehen.)
+    </p>
+  </section>
+
+</div>
+</div>
+
+<script>
+/* ====== Bild (offline eingebettet) ======
+   Wenn du mir die unbeschriftete PNG hochlädst, ersetze ich diese Daten einfach. */
+const IMAGE_DATA_URI = "<img src="Bakterien.png">";base64,{{BASE64}}";
+
+/* ====== Lösungen (nur intern, nicht sichtbar) ======
+   Zuordnung nach deiner Nummerierung:
+   1 Zellwand, 2 Geißel, 3 Cytoplasma, 4 DNA, 5 Zellmembran */
+const ANSWERS = {
+  "1": "Zellwand",
+  "2": "Geißel (Flagellum)",
+  "3": "Cytoplasma",
+  "4": "DNA (Erbinformation)",
+  "5": "Zellmembran"
+};
+
+const TERMS = Object.values(ANSWERS); // Begriffe aus den Lösungen
+
+const img = document.getElementById("bakterienBild");
+img.src = IMAGE_DATA_URI;
+
+const pool = document.getElementById("pool");
+const zones = Array.from(document.querySelectorAll(".zone"));
+const scoreEl = document.getElementById("score");
+
+function makeChip(text){
+  const chip = document.createElement("div");
+  chip.className = "chip";
+  chip.draggable = true;
+  chip.textContent = text;
+  chip.dataset.term = text;
+
+  chip.addEventListener("dragstart", (e) => {
+    e.dataTransfer.setData("text/plain", text);
+    e.dataTransfer.effectAllowed = "move";
+    chip.classList.add("dragging");
+  });
+  chip.addEventListener("dragend", () => chip.classList.remove("dragging"));
+  return chip;
+}
+
+function renderPool(){
+  pool.innerHTML = "";
+  shuffle([...TERMS]).forEach(t => pool.appendChild(makeChip(t)));
+}
+
+function getZoneSlot(zone){
+  return zone.querySelector(".zslot");
+}
+
+function clearZone(zone){
+  const slot = getZoneSlot(zone);
+  slot.innerHTML = `<span class="placeholder">Begriff hier ablegen</span>`;
+}
+
+function placeInZone(zone, term){
+  const slot = getZoneSlot(zone);
+  slot.innerHTML = "";
+  const chip = makeChip(term);
+  slot.appendChild(chip);
+}
+
+function currentTermInZone(zone){
+  const chip = zone.querySelector(".chip");
+  return chip ? chip.dataset.term : null;
+}
+
+function removeChipEverywhere(term){
+  // Entfernt alle Chips mit dem Term (aus Pool oder anderen Zonen)
+  document.querySelectorAll(`.chip[data-term="${cssEscape(term)}"]`).forEach(el => el.remove());
+}
+
+function ensurePlaceholder(zone){
+  const slot = getZoneSlot(zone);
+  if(!slot.querySelector(".chip")){
+    slot.innerHTML = `<span class="placeholder">Begriff hier ablegen</span>`;
+  }
+}
+
+function setupDnD(){
+  // Drop in zones
+  zones.forEach(zone => {
+    zone.addEventListener("dragover", (e) => { e.preventDefault(); });
+    zone.addEventListener("drop", (e) => {
+      e.preventDefault();
+      const term = e.dataTransfer.getData("text/plain");
+      if(!term) return;
+
+      // Nur 1 Begriff pro Zone
+      // Wenn Zone schon belegt, tauschen wir zurück in den Pool
+      const existing = currentTermInZone(zone);
+      if(existing){
+        // existing zurück in den Pool
+        pool.appendChild(makeChip(existing));
+      }
+
+      // term aus allen Orten entfernen und hier platzieren
+      removeChipEverywhere(term);
+      placeInZone(zone, term);
+
+      // Nach Drop: Platzhalter in allen Zonen korrekt halten
+      zones.forEach(ensurePlaceholder);
+      clearCheckMarks();
+    });
+  });
+
+  // Drop back into pool
+  pool.addEventListener("dragover", (e) => { e.preventDefault(); });
+  pool.addEventListener("drop", (e) => {
+    e.preventDefault();
+    const term = e.dataTransfer.getData("text/plain");
+    if(!term) return;
+    removeChipEverywhere(term);
+    pool.appendChild(makeChip(term));
+    zones.forEach(ensurePlaceholder);
+    clearCheckMarks();
+  });
+}
+
+function clearCheckMarks(){
+  zones.forEach(z => z.classList.remove("correct","wrong"));
+  scoreEl.textContent = "";
+}
+
+function check(){
+  let correct = 0;
+  zones.forEach(zone => {
+    const z = zone.dataset.zone;
+    const placed = currentTermInZone(zone);
+    zone.classList.remove("correct","wrong");
+
+    if(placed && placed === ANSWERS[z]){
+      zone.classList.add("correct");
+      correct++;
+    }else{
+      zone.classList.add("wrong");
+    }
+  });
+  scoreEl.textContent = `Ergebnis: ${correct} / ${zones.length} richtig.`;
+}
+
+function resetAll(){
+  clearCheckMarks();
+  zones.forEach(clearZone);
+  renderPool();
+}
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+// CSS escape (simple)
+function cssEscape(s){
+  return s.replaceAll('"','\\"');
+}
+
+document.getElementById("checkBtn").addEventListener("click", check);
+document.getElementById("resetBtn").addEventListener("click", resetAll);
+
+resetAll();
+setupDnD();
+
+/* ====== Base64 einsetzen ======
+   Ich setze die Base64 unten automatisch in dieses Template ein.
+*/
+</script>
+
+<script>
+/* --- Auto-Insert Base64 (generated) --- */
+(function(){
+  const b64 = "iVBORw0KGgoAAAANSUhEUgAAA..."; // placeholder gets replaced below
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Biologie-Quiz 7. Klasse</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #ffffff;
+      color: #1f2937;
+      line-height: 1.5;
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 24px;
+    }
+    h1, h2, h3 {
+      color: #0f172a;
+      margin-top: 0;
+    }
+    .hero {
+      background: #f3f6fb;
+      border: 1px solid #dbe5f0;
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 22px;
+    }
+    .hero p {
+      margin: 8px 0 0 0;
+    }
+    .card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 18px;
+      box-shadow: 0 4px 18px rgba(15, 23, 42, 0.05);
+    }
+    .subtle {
+      color: #6b7280;
+      font-size: 0.96rem;
+    }
+    .pill {
+      display: inline-block;
+      padding: 5px 10px;
+      border-radius: 999px;
+      background: #eaf2ff;
+      color: #1d4ed8;
+      font-size: 0.9rem;
+      margin-right: 6px;
+      margin-bottom: 6px;
+    }
+    .label-bank, .dropzone-wrap, .choice-grid, .match-grid {
+      display: grid;
+      gap: 12px;
+    }
+    .label-bank {
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      margin-top: 16px;
+    }
+    .drag-item {
+      background: #eff6ff;
+      border: 2px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 10px 12px;
+      text-align: center;
+      cursor: grab;
+      user-select: none;
+      font-weight: 600;
+    }
+    .drag-item:active {
+      cursor: grabbing;
+    }
+    .dropzone-wrap {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      margin-top: 18px;
+    }
+    .dropzone {
+      min-height: 82px;
+      border: 2px dashed #93c5fd;
+      border-radius: 14px;
+      background: #f8fbff;
+      padding: 12px;
+      transition: 0.2s ease;
+    }
+    .dropzone.over {
+      background: #e0f2fe;
+      border-color: #2563eb;
+    }
+    .dropzone.correct {
+      background: #ecfdf5;
+      border-color: #10b981;
+    }
+    .dropzone.wrong {
+      background: #fef2f2;
+      border-color: #ef4444;
+    }
+    .drop-title {
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .drop-hint {
+      color: #6b7280;
+      font-size: 0.92rem;
+    }
+    .placed {
+      margin-top: 8px;
+      background: #dbeafe;
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-weight: 600;
+    }
+    .diagram {
+      position: relative;
+      width: 100%;
+      max-width: 760px;
+      margin: 18px auto;
+      background: linear-gradient(180deg, #f8fff5 0%, #eefbea 100%);
+      border: 1px solid #d9ead7;
+      border-radius: 24px;
+      min-height: 430px;
+      overflow: hidden;
+    }
+    .cell-wall {
+      position: absolute;
+      inset: 18px;
+      border: 7px solid #6b8e23;
+      border-radius: 26px;
+      background: #dff3d8;
+    }
+    .cell-membrane {
+      position: absolute;
+      inset: 40px;
+      border: 4px solid #8bc34a;
+      border-radius: 22px;
+    }
+    .vacuole {
+      position: absolute;
+      left: 170px;
+      top: 110px;
+      width: 360px;
+      height: 190px;
+      background: #d6f0ff;
+      border: 4px solid #7cc3e8;
+      border-radius: 24px;
+    }
+    .nucleus {
+      position: absolute;
+      left: 110px;
+      top: 120px;
+      width: 110px;
+      height: 110px;
+      background: #d8c4ff;
+      border: 4px solid #8b5cf6;
+      border-radius: 50%;
+    }
+    .nucleolus {
+      position: absolute;
+      left: 145px;
+      top: 155px;
+      width: 36px;
+      height: 36px;
+      background: #8b5cf6;
+      border-radius: 50%;
+    }
+    .chloroplast {
+      position: absolute;
+      width: 88px;
+      height: 42px;
+      background: #8fd36c;
+      border: 3px solid #3f8f2d;
+      border-radius: 999px;
+    }
+    .c1 { left: 90px; top: 285px; }
+    .c2 { left: 575px; top: 102px; }
+    .c3 { left: 565px; top: 305px; }
+    .c4 { left: 255px; top: 335px; }
+    .mitochondrion {
+      position: absolute;
+      left: 560px;
+      top: 210px;
+      width: 95px;
+      height: 48px;
+      background: #f6c38b;
+      border: 3px solid #d97706;
+      border-radius: 999px;
+    }
+    .cytoplasm-label {
+      position: absolute;
+      left: 270px;
+      top: 60px;
+      font-weight: 700;
+      color: #3f6212;
+      background: rgba(255,255,255,0.75);
+      padding: 4px 8px;
+      border-radius: 8px;
+    }
+    .line-label {
+      position: absolute;
+      background: rgba(255,255,255,0.95);
+      border: 1px solid #d1d5db;
+      border-radius: 10px;
+      padding: 6px 10px;
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+    .l1 { left: 15px; top: 18px; }
+    .l2 { right: 14px; top: 48px; }
+    .l3 { left: 20px; bottom: 24px; }
+    .l4 { right: 12px; bottom: 32px; }
+    .l5 { right: 18px; top: 170px; }
+    .l6 { left: 18px; top: 170px; }
+    .question {
+      margin-bottom: 16px;
+      padding: 14px;
+      border-radius: 14px;
+      background: #f9fafb;
+      border: 1px solid #e5e7eb;
+    }
+    .question p {
+      margin-top: 0;
+      font-weight: 700;
+    }
+    .choice-grid {
+      grid-template-columns: 1fr;
+    }
+    .choice {
+      display: block;
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid #d1d5db;
+      margin-bottom: 8px;
+      background: white;
+      cursor: pointer;
+    }
+    .choice input {
+      margin-right: 8px;
+    }
+    .match-grid {
+      grid-template-columns: 1.4fr 1fr;
+      align-items: center;
+    }
+    .match-grid select, .input, textarea {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: 1px solid #cbd5e1;
+      font: inherit;
+      background: white;
+    }
+    .btnbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+    button {
+      border: none;
+      border-radius: 12px;
+      padding: 12px 16px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .primary {
+      background: #2563eb;
+      color: white;
+    }
+    .secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+    .result {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: 14px;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      font-weight: 700;
+      display: none;
+    }
+    .feedback {
+      margin-top: 8px;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .ok { color: #047857; }
+    .bad { color: #b91c1c; }
+    .mini-note {
+      margin-top: 10px;
+      color: #475569;
+      font-size: 0.95rem;
+    }
+    .textarea-small {
+      min-height: 86px;
+      resize: vertical;
+    }
+    @media (max-width: 760px) {
+      .match-grid {
+        grid-template-columns: 1fr;
+      }
+      .diagram {
+        min-height: 520px;
+      }
+      .vacuole { left: 120px; top: 150px; width: 250px; height: 160px; }
+      .nucleus { left: 70px; top: 130px; width: 90px; height: 90px; }
+      .nucleolus { left: 100px; top: 160px; width: 28px; height: 28px; }
+      .c1 { left: 70px; top: 310px; }
+      .c2 { left: 390px; top: 100px; }
+      .c3 { left: 380px; top: 340px; }
+      .c4 { left: 185px; top: 355px; }
+      .mitochondrion { left: 375px; top: 230px; }
+      .l2, .l4, .l5 { right: 8px; }
+      .l1, .l3, .l6 { left: 8px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Biologie-Quiz für die 7. Klasse</h1>
+      <p>Übungen zu diesen Themen:</p>
+      <div style="margin-top:10px;">
+        <span class="pill">Pflanzenzelle</span>
+        <span class="pill">Organismusstufen</span>
+        <span class="pill">Blüte</span>
+        <span class="pill">Laubblatt</span>
+        <span class="pill">Mikroskop</span>
+      </div>
+      <p class="subtle">Für die Nachhilfe oder zum selbstständigen Üben. Am Ende kannst du deine Punkte auswerten.</p>
+    </section>
+
+    <section class="card" id="pflanzenzelle-card">
+      <h2>1. Pflanzenzelle: Aufbau und Funktion</h2>
+      <p class="subtle">Ziehe die Begriffe an die passende Stelle. Danach beantworte die Fragen.</p>
+
+      <div class="diagram">
+        <div class="cell-wall"></div>
+        <div class="cell-membrane"></div>
+        <div class="vacuole"></div>
+        <div class="nucleus"></div>
+        <div class="nucleolus"></div>
+        <div class="chloroplast c1"></div>
+        <div class="chloroplast c2"></div>
+        <div class="chloroplast c3"></div>
+        <div class="chloroplast c4"></div>
+        <div class="mitochondrion"></div>
+        <div class="cytoplasm-label">Zellplasma</div>
+
+        <div class="dropzone line-label l1" data-accept="Zellwand">
+          <div class="drop-title">A</div>
+          <div class="drop-hint">äußere feste Hülle</div>
+        </div>
+        <div class="dropzone line-label l2" data-accept="Zellmembran">
+          <div class="drop-title">B</div>
+          <div class="drop-hint">innere dünne Begrenzung</div>
+        </div>
+        <div class="dropzone line-label l3" data-accept="Chloroplasten">
+          <div class="drop-title">C</div>
+          <div class="drop-hint">grüne Zellbestandteile</div>
+        </div>
+        <div class="dropzone line-label l4" data-accept="Vakuole">
+          <div class="drop-title">D</div>
+          <div class="drop-hint">großer Zellsaftraum</div>
+        </div>
+        <div class="dropzone line-label l5" data-accept="Mitochondrien">
+          <div class="drop-title">E</div>
+          <div class="drop-hint">Energiegewinnung</div>
+        </div>
+        <div class="dropzone line-label l6" data-accept="Zellkern">
+          <div class="drop-title">F</div>
+          <div class="drop-hint">Steuerzentrale</div>
+        </div>
+      </div>
+
+      <div class="label-bank" id="labelBank">
+        <div class="drag-item" draggable="true" data-name="Zellwand">Zellwand</div>
+        <div class="drag-item" draggable="true" data-name="Zellmembran">Zellmembran</div>
+        <div class="drag-item" draggable="true" data-name="Chloroplasten">Chloroplasten</div>
+        <div class="drag-item" draggable="true" data-name="Vakuole">Vakuole</div>
+        <div class="drag-item" draggable="true" data-name="Mitochondrien">Mitochondrien</div>
+        <div class="drag-item" draggable="true" data-name="Zellkern">Zellkern</div>
+      </div>
+
+      <div class="btnbar">
+        <button class="secondary" type="button" onclick="checkDragTask()">Beschriftung prüfen</button>
+        <button class="secondary" type="button" onclick="resetDragTask()">Beschriftung zurücksetzen</button>
+      </div>
+      <div class="feedback" id="dragFeedback"></div>
+
+      <div class="question" data-points="1">
+        <p>1a) Welche Aufgabe haben Chloroplasten?</p>
+        <label class="choice"><input type="radio" name="q1" value="0"> Sie speichern nur Wasser.</label>
+        <label class="choice"><input type="radio" name="q1" value="1"> Sie sind wichtig für die Fotosynthese.</label>
+        <label class="choice"><input type="radio" name="q1" value="0"> Sie steuern die ganze Zelle.</label>
+        <div class="feedback" data-feedback-for="q1"></div>
+      </div>
+
+      <div class="question" data-points="1">
+        <p>1b) Welche Aufgabe hat die Vakuole?</p>
+        <label class="choice"><input type="radio" name="q2" value="1"> Sie speichert vor allem Wasser und gelöste Stoffe.</label>
+        <label class="choice"><input type="radio" name="q2" value="0"> Sie betreibt Fotosynthese.</label>
+        <label class="choice"><input type="radio" name="q2" value="0"> Sie baut Licht ab.</label>
+        <div class="feedback" data-feedback-for="q2"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>2. Organismusstufen</h2>
+      <p class="subtle">Ordne von klein nach groß.</p>
+
+      <div class="question" data-points="2">
+        <p>2a) Wähle die richtige Reihenfolge:</p>
+        <label class="choice"><input type="radio" name="q3" value="0"> Organ – Zelle – Gewebe – Organismus</label>
+        <label class="choice"><input type="radio" name="q3" value="1"> Zelle – Gewebe – Organ – Organismus</label>
+        <label class="choice"><input type="radio" name="q3" value="0"> Gewebe – Zelle – Organismus – Organ</label>
+        <div class="feedback" data-feedback-for="q3"></div>
+      </div>
+
+      <div class="question" data-points="4">
+        <p>2b) Verbinde die Begriffe mit der richtigen Erklärung:</p>
+        <div class="match-grid">
+          <div>Zelle</div>
+          <select id="m1">
+            <option value="">Bitte wählen</option>
+            <option value="a">besteht aus verschiedenen Organen</option>
+            <option value="b">kleinste lebende Baueinheit</option>
+            <option value="c">Gruppe ähnlicher Zellen</option>
+            <option value="d">besteht aus verschiedenen Geweben</option>
+          </select>
+
+          <div>Gewebe</div>
+          <select id="m2">
+            <option value="">Bitte wählen</option>
+            <option value="a">besteht aus verschiedenen Organen</option>
+            <option value="b">kleinste lebende Baueinheit</option>
+            <option value="c">Gruppe ähnlicher Zellen</option>
+            <option value="d">besteht aus verschiedenen Geweben</option>
+          </select>
+
+          <div>Organ</div>
+          <select id="m3">
+            <option value="">Bitte wählen</option>
+            <option value="a">besteht aus verschiedenen Organen</option>
+            <option value="b">kleinste lebende Baueinheit</option>
+            <option value="c">Gruppe ähnlicher Zellen</option>
+            <option value="d">besteht aus verschiedenen Geweben</option>
+          </select>
+
+          <div>Organismus</div>
+          <select id="m4">
+            <option value="">Bitte wählen</option>
+            <option value="a">besteht aus verschiedenen Organen</option>
+            <option value="b">kleinste lebende Baueinheit</option>
+            <option value="c">Gruppe ähnlicher Zellen</option>
+            <option value="d">besteht aus verschiedenen Geweben</option>
+          </select>
+        </div>
+        <div class="feedback" id="matchFeedback"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>3. Blüte</h2>
+      <p class="subtle">Hier geht es um wichtige Teile der Blüte und ihre Aufgaben.</p>
+
+      <div class="question" data-points="1">
+        <p>3a) Welche Aufgabe haben Blütenblätter oft?</p>
+        <label class="choice"><input type="radio" name="q4" value="1"> Sie locken Insekten an.</label>
+        <label class="choice"><input type="radio" name="q4" value="0"> Sie transportieren Wasser wie eine Wurzel.</label>
+        <label class="choice"><input type="radio" name="q4" value="0"> Sie sind der Speicherort der Erbinformation.</label>
+        <div class="feedback" data-feedback-for="q4"></div>
+      </div>
+
+      <div class="question" data-points="3">
+        <p>3b) Welche Begriffe passen zur Blüte?</p>
+        <label class="choice"><input type="checkbox" class="multi" data-group="q5" value="1"> Staubblatt</label>
+        <label class="choice"><input type="checkbox" class="multi" data-group="q5" value="1"> Stempel</label>
+        <label class="choice"><input type="checkbox" class="multi" data-group="q5" value="1"> Kelchblatt</label>
+        <label class="choice"><input type="checkbox" class="multi" data-group="q5" value="0"> Kiemenbogen</label>
+        <div class="feedback" data-feedback-for="q5"></div>
+      </div>
+
+      <div class="question" data-points="2">
+        <p>3c) Ergänze: Die Blüte dient der __________________ der Pflanze.</p>
+        <input class="input" id="q6" type="text" placeholder="Schreibe das passende Wort" />
+        <div class="mini-note">Mögliche Formulierung: Fortpflanzung</div>
+        <div class="feedback" data-feedback-for="q6"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>4. Laubblatt</h2>
+      <p class="subtle">Das Laubblatt ist für Pflanzen sehr wichtig.</p>
+
+      <div class="question" data-points="1">
+        <p>4a) Wofür ist das Laubblatt besonders wichtig?</p>
+        <label class="choice"><input type="radio" name="q7" value="1"> Für die Fotosynthese</label>
+        <label class="choice"><input type="radio" name="q7" value="0"> Für die Fortbewegung</label>
+        <label class="choice"><input type="radio" name="q7" value="0"> Für das Hören</label>
+        <div class="feedback" data-feedback-for="q7"></div>
+      </div>
+
+      <div class="question" data-points="1">
+        <p>4b) In welchem Teil des Blattes befinden sich viele Chloroplasten?</p>
+        <label class="choice"><input type="radio" name="q8" value="1"> Im Blattgewebe</label>
+        <label class="choice"><input type="radio" name="q8" value="0"> Nur im Blattstiel</label>
+        <label class="choice"><input type="radio" name="q8" value="0"> Nur in der Mittelrippe außen</label>
+        <div class="feedback" data-feedback-for="q8"></div>
+      </div>
+
+      <div class="question" data-points="2">
+        <p>4c) Nenne zwei Aufgaben des Laubblatts.</p>
+        <textarea id="q9" class="textarea-small" placeholder="Zum Beispiel in Stichpunkten"></textarea>
+        <div class="mini-note">Beispiele: Fotosynthese, Gasaustausch, Wasserverdunstung</div>
+        <div class="feedback" data-feedback-for="q9"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>5. Aufbau des Mikroskops</h2>
+      <p class="subtle">Grundwissen zum Lichtmikroskop.</p>
+
+      <div class="question" data-points="1">
+        <p>5a) Wodurch schaut man oben in ein Mikroskop hinein?</p>
+        <label class="choice"><input type="radio" name="q10" value="1"> Okular</label>
+        <label class="choice"><input type="radio" name="q10" value="0"> Objektträger</label>
+        <label class="choice"><input type="radio" name="q10" value="0"> Blütenblatt</label>
+        <div class="feedback" data-feedback-for="q10"></div>
+      </div>
+
+      <div class="question" data-points="1">
+        <p>5b) Wo liegt das Präparat?</p>
+        <label class="choice"><input type="radio" name="q11" value="0"> Im Okular</label>
+        <label class="choice"><input type="radio" name="q11" value="1"> Auf dem Objekttisch</label>
+        <label class="choice"><input type="radio" name="q11" value="0"> Auf dem Stativfuß</label>
+        <div class="feedback" data-feedback-for="q11"></div>
+      </div>
+
+      <div class="question" data-points="3">
+        <p>5c) Wähle die Teile eines Mikroskops aus:</p>
+        <label class="choice"><input type="checkbox" class="multi" data-group="q12" value="1"> Okular</label>
+        <label class="choice"><input type="checkbox" class="multi" data-group="q12" value="1"> Objektiv</label>
+        <label class="choice"><input type="checkbox" class="multi" data-group="q12" value="1"> Objekttisch</label>
+        <label class="choice"><input type="checkbox" class="multi" data-group="q12" value="0"> Flügel</label>
+        <div class="feedback" data-feedback-for="q12"></div>
+      </div>
+
+      <div class="question" data-points="2">
+        <p>5d) Was machen Grobtrieb und Feintrieb?</p>
+        <input class="input" id="q13" type="text" placeholder="Kurze Antwort" />
+        <div class="mini-note">Stichwort: scharf stellen / Fokus einstellen</div>
+        <div class="feedback" data-feedback-for="q13"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>6. Zusatzfrage: Fotosynthese</h2>
+      <div class="question" data-points="2">
+        <p>6a) Warum ist Sonnenlicht für die Pflanze wichtig?</p>
+        <label class="choice"><input type="radio" name="q14" value="1"> Es wird für die Fotosynthese benötigt.</label>
+        <label class="choice"><input type="radio" name="q14" value="0"> Es ersetzt die Wurzel.</label>
+        <label class="choice"><input type="radio" name="q14" value="0"> Es macht die Zellwand flüssig.</label>
+        <div class="feedback" data-feedback-for="q14"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Auswertung</h2>
+      <div class="btnbar">
+        <button class="primary" type="button" onclick="evaluateQuiz()">Alles auswerten</button>
+        <button class="secondary" type="button" onclick="resetQuiz()">Quiz zurücksetzen</button>
+      </div>
+      <div id="resultBox" class="result"></div>
+    </section>
+  </div>
+
+  <script>
+    let draggedName = null;
+
+    document.querySelectorAll('.drag-item').forEach(item => {
+      item.addEventListener('dragstart', e => {
+        draggedName = item.dataset.name;
+        e.dataTransfer.setData('text/plain', draggedName);
+      });
+    });
+
+    document.querySelectorAll('.dropzone').forEach(zone => {
+      zone.addEventListener('dragover', e => {
+        e.preventDefault();
+        zone.classList.add('over');
+      });
+      zone.addEventListener('dragleave', () => zone.classList.remove('over'));
+      zone.addEventListener('drop', e => {
+        e.preventDefault();
+        zone.classList.remove('over');
+        const name = e.dataTransfer.getData('text/plain') || draggedName;
+        if (!name) return;
+        zone.dataset.placed = name;
+        let placed = zone.querySelector('.placed');
+        if (!placed) {
+          placed = document.createElement('div');
+          placed.className = 'placed';
+          zone.appendChild(placed);
+        }
+        placed.textContent = name;
+      });
+    });
+
+    function checkDragTask() {
+      let correct = 0;
+      const zones = document.querySelectorAll('.dropzone');
+      zones.forEach(zone => {
+        zone.classList.remove('correct', 'wrong');
+        if (zone.dataset.placed === zone.dataset.accept) {
+          correct++;
+          zone.classList.add('correct');
+        } else {
+          zone.classList.add('wrong');
+        }
+      });
+      const fb = document.getElementById('dragFeedback');
+      fb.innerHTML = correct === zones.length
+        ? '<span class="ok">Super! Alle Beschriftungen sind richtig.</span>'
+        : '<span class="bad">Du hast ' + correct + ' von ' + zones.length + ' richtig.</span>';
+      return correct;
+    }
+
+    function resetDragTask() {
+      document.querySelectorAll('.dropzone').forEach(zone => {
+        zone.dataset.placed = '';
+        zone.classList.remove('correct', 'wrong', 'over');
+        const placed = zone.querySelector('.placed');
+        if (placed) placed.remove();
+      });
+      document.getElementById('dragFeedback').textContent = '';
+    }
+
+    function normalizeText(text) {
+      return (text || '')
+        .toLowerCase()
+        .trim()
+        .replace(/[ä]/g, 'ae')
+        .replace(/[ö]/g, 'oe')
+        .replace(/[ü]/g, 'ue')
+        .replace(/[ß]/g, 'ss');
+    }
+
+    function setFeedback(id, text, ok) {
+      const el = document.querySelector('[data-feedback-for="' + id + '"]');
+      if (!el) return;
+      el.textContent = text;
+      el.className = 'feedback ' + (ok ? 'ok' : 'bad');
+    }
+
+    function evaluateQuiz() {
+      let points = 0;
+      let maxPoints = 0;
+
+      const dragScore = checkDragTask();
+      points += dragScore;
+      maxPoints += 6;
+
+      const radioNames = ['q1','q2','q3','q4','q7','q8','q10','q11','q14'];
+      radioNames.forEach(name => {
+        maxPoints += Number(document.querySelector('[name="' + name + '"]')?.closest('.question')?.dataset.points || 1);
+        const checked = document.querySelector('[name="' + name + '"]:checked');
+        const ok = checked && checked.value === '1';
+        if (ok) points += 1;
+        setFeedback(name, ok ? 'Richtig.' : 'Noch nicht richtig.', ok);
+      });
+
+      maxPoints += 4;
+      const matches = { m1: 'b', m2: 'c', m3: 'd', m4: 'a' };
+      let matchPoints = 0;
+      Object.entries(matches).forEach(([id, val]) => {
+        const sel = document.getElementById(id);
+        if (sel.value === val) matchPoints++;
+      });
+      points += matchPoints;
+      const matchFb = document.getElementById('matchFeedback');
+      matchFb.textContent = matchPoints === 4 ? 'Alles richtig verbunden.' : matchPoints + ' von 4 Zuordnungen richtig.';
+      matchFb.className = 'feedback ' + (matchPoints === 4 ? 'ok' : 'bad');
+
+      const multiConfigs = {
+        q5: { total: 3 },
+        q12: { total: 3 }
+      };
+      Object.keys(multiConfigs).forEach(group => {
+        maxPoints += multiConfigs[group].total;
+        const boxes = Array.from(document.querySelectorAll('.multi[data-group="' + group + '"]'));
+        let groupPoints = 0;
+        let wrongChecked = false;
+        boxes.forEach(box => {
+          if (box.checked && box.value === '1') groupPoints++;
+          if (box.checked && box.value === '0') wrongChecked = true;
+        });
+        if (wrongChecked) groupPoints = Math.max(0, groupPoints - 1);
+        points += groupPoints;
+        const ok = groupPoints === multiConfigs[group].total;
+        setFeedback(group, ok ? 'Sehr gut.' : groupPoints + ' von ' + multiConfigs[group].total + ' Punkten.', ok);
+      });
+
+      maxPoints += 2;
+      const q6 = normalizeText(document.getElementById('q6').value);
+      const q6ok = q6.includes('fortpflanz');
+      if (q6ok) points += 2;
+      setFeedback('q6', q6ok ? 'Richtig.' : 'Gesucht war: Fortpflanzung.', q6ok);
+
+      maxPoints += 2;
+      const q9 = normalizeText(document.getElementById('q9').value);
+      let q9points = 0;
+      if (q9.includes('fotosynth')) q9points++;
+      if (q9.includes('gasaustausch') || q9.includes('wasserverdunst') || q9.includes('transpiration')) q9points++;
+      q9points = Math.min(q9points, 2);
+      points += q9points;
+      setFeedback('q9', q9points === 2 ? 'Gut beantwortet.' : 'Nenne z. B. Fotosynthese und Gasaustausch oder Wasserverdunstung.', q9points === 2);
+
+      maxPoints += 2;
+      const q13 = normalizeText(document.getElementById('q13').value);
+      const q13ok = q13.includes('scharf') || q13.includes('fokus') || q13.includes('einstell');
+      if (q13ok) points += 2;
+      setFeedback('q13', q13ok ? 'Richtig.' : 'Sie dienen zum Scharfstellen.', q13ok);
+
+      const percent = Math.round((points / maxPoints) * 100);
+      const box = document.getElementById('resultBox');
+      box.style.display = 'block';
+      let text = 'Du hast ' + points + ' von ' + maxPoints + ' Punkten erreicht (' + percent + '%).';
+      if (percent >= 85) {
+        text += ' Sehr starke Leistung!';
+      } else if (percent >= 65) {
+        text += ' Gut gemacht!';
+      } else {
+        text += ' Übe die Themen noch einmal in Ruhe.';
+      }
+      box.textContent = text;
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+    }
+
+    function resetQuiz() {
+      document.querySelectorAll('input[type="radio"], input[type="checkbox"]').forEach(el => el.checked = false);
+      document.querySelectorAll('input[type="text"], textarea, select').forEach(el => el.value = '');
+      document.querySelectorAll('.feedback').forEach(el => el.textContent = '');
+      document.getElementById('resultBox').style.display = 'none';
+      document.getElementById('resultBox').textContent = '';
+      resetDragTask();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>

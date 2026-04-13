@@ -1,0 +1,41 @@
+---
+layout: null
+permalink: /quiz-manifest.json
+---
+[
+{% assign subjects = "mathe|biologie|chemie|physik|englisch|franzoesisch" | split: "|" %}
+{% assign first = true %}
+{% for file in site.static_files %}
+  {% assign parts = file.path | split: "/" %}
+  {% assign count = parts | size %}
+  {% assign grade = parts[1] %}
+  {% assign subject = parts[2] %}
+  {% if subjects contains subject and grade contains "klasse" and file.extname == ".html" %}
+    {% assign include_quiz = false %}
+    {% assign slug = "" %}
+    {% assign direct_path = "" %}
+    {% if count == 4 and parts[3] != "index.html" %}
+      {% assign include_quiz = true %}
+      {% assign slug = file.basename %}
+      {% assign direct_path = file.path %}
+    {% elsif count == 5 and parts[4] == "index.html" %}
+      {% assign include_quiz = true %}
+      {% assign slug = parts[3] %}
+      {% capture direct_path %}/{{ grade }}/{{ subject }}/{{ slug }}/{% endcapture %}
+    {% endif %}
+    {% if include_quiz %}
+      {% assign title = slug | replace: "-", " " | replace: "_", " " | capitalize %}
+      {% unless first %},{% endunless %}
+      {
+        "grade": {{ grade | jsonify }},
+        "subject": {{ subject | jsonify }},
+        "slug": {{ slug | jsonify }},
+        "title": {{ title | jsonify }},
+        "url": {{ direct_path | relative_url | jsonify }},
+        "relativePath": {{ direct_path | jsonify }}
+      }
+      {% assign first = false %}
+    {% endif %}
+  {% endif %}
+{% endfor %}
+]
