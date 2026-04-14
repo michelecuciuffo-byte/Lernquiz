@@ -1,0 +1,1178 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pflanzenzelle – Interaktives Animationsquiz</title>
+<style>
+  :root{
+    --bg:#f5fbf7;
+    --card:#ffffff;
+    --line:#cfe6d6;
+    --text:#163126;
+    --muted:#557266;
+    --green:#7fcf7a;
+    --green-dark:#3f8b4c;
+    --leaf:#6fbf68;
+    --leaf-2:#8adf84;
+    --blue:#98d8f3;
+    --blue-2:#c8f0ff;
+    --gold:#f2d570;
+    --purple:#bea9ff;
+    --pink:#efb4d6;
+    --danger:#cf5858;
+    --ok:#2f8c49;
+    --shadow:0 14px 32px rgba(22,49,38,.10);
+    --radius:22px;
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    background:linear-gradient(180deg,#f7fcf8 0%, #edf7f0 100%);
+    color:var(--text);
+  }
+
+  .wrap{
+    max-width:1250px;
+    margin:0 auto;
+    padding:20px;
+  }
+
+  .hero, .card{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+
+  .hero{
+    padding:22px;
+    margin-bottom:18px;
+  }
+
+  h1,h2,h3{margin:0 0 10px}
+  p{line-height:1.5}
+  .sub{color:var(--muted)}
+
+  .toolbar{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:14px;
+  }
+
+  button{
+    border:none;
+    background:#1f7a41;
+    color:#fff;
+    padding:12px 16px;
+    border-radius:14px;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 8px 20px rgba(31,122,65,.16);
+  }
+  button.secondary{
+    background:#e9f6ec;
+    color:#1f6b39;
+    box-shadow:none;
+    border:1px solid var(--line);
+  }
+  button:hover:not(.marker){transform:translateY(-1px)}
+  button:active:not(.marker){transform:translateY(0)}
+
+  .grid{
+    display:grid;
+    grid-template-columns:minmax(0,1.1fr) minmax(340px,.9fr);
+    gap:18px;
+    align-items:start;
+  }
+
+  .card{
+    padding:18px;
+  }
+
+  .stage{
+    position:relative;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 20% 10%, #ffffff 0%, #f7fff8 35%, #ecf8ef 100%);
+  }
+
+  .stage h2{margin-bottom:14px}
+
+  .cell-zone{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    width:100%;
+    gap:16px;
+    margin-top:6px;
+  }
+
+  .cell-frame{
+    position:relative;
+    width:min(100%, 720px);
+    aspect-ratio:18 / 13;
+  }
+
+  /* Pflanzenzelle */
+  .cell{
+    position:relative;
+    width:100%;
+    height:100%;
+    border-radius:36px;
+    background:#cfecc7;
+    border:14px solid #7bb166;
+    box-shadow:inset 0 0 0 10px #aed7a2, inset 0 0 40px rgba(255,255,255,.35);
+  }
+
+  .membrane{
+    position:absolute;
+    inset:18px;
+    border-radius:28px;
+    border:5px solid #89cb7a;
+    background:linear-gradient(180deg,#daf4d2 0%, #d3efd6 100%);
+  }
+
+  .cytoplasm{
+    position:absolute;
+    inset:34px;
+    border-radius:24px;
+    overflow:hidden;
+    background:
+      radial-gradient(circle at 18% 22%, rgba(255,255,255,.45) 0 10px, transparent 11px),
+      radial-gradient(circle at 74% 20%, rgba(255,255,255,.40) 0 8px, transparent 9px),
+      radial-gradient(circle at 80% 74%, rgba(255,255,255,.35) 0 9px, transparent 10px),
+      radial-gradient(circle at 12% 82%, rgba(255,255,255,.35) 0 10px, transparent 11px),
+      linear-gradient(180deg,#dcf7df 0%, #cfeccf 100%);
+  }
+
+  .organelle-spot{
+    position:absolute;
+    z-index:3;
+  }
+
+  .organelle{
+    position:absolute;
+    inset:0;
+    cursor:pointer;
+    transition:filter .18s ease;
+  }
+
+  .organelle.active-part{
+    filter:drop-shadow(0 0 .35rem rgba(255,255,255,.95)) drop-shadow(0 0 1rem rgba(31,122,65,.35));
+  }
+
+  .wall-marker{
+    top:18px;
+    left:18px;
+  }
+
+  .membrane-marker{
+    top:14px;
+    right:14px;
+  }
+
+  .cyto-marker{
+    bottom:16px;
+    right:16px;
+  }
+
+  .spot-vacuole{
+    left:59%;
+    top:13%;
+    width:28%;
+    aspect-ratio:11 / 19;
+    z-index:1;
+  }
+
+  .spot-nucleus{
+    left:9%;
+    top:16%;
+    width:18%;
+    aspect-ratio:1;
+    z-index:5;
+  }
+
+  .spot-chloro-c{
+    left:11%;
+    top:74%;
+    width:18%;
+    aspect-ratio:61 / 36;
+  }
+
+  .spot-mito-a{
+    left:45%;
+    top:15%;
+    width:10%;
+    aspect-ratio:45 / 23;
+  }
+
+  .spot-mito-b{
+    left:37%;
+    top:74%;
+    width:11%;
+    aspect-ratio:45 / 23;
+  }
+
+  .spot-golgi{
+    left:31%;
+    top:39%;
+    width:11%;
+    aspect-ratio:24 / 19;
+    z-index:4;
+  }
+
+  .spot-er{
+    left:3%;
+    top:9%;
+    width:34%;
+    aspect-ratio:7 / 6;
+    z-index:2;
+  }
+
+  .vacuole{
+    width:100%;
+    height:100%;
+    border-radius:44% 56% 48% 52% / 28% 30% 70% 72%;
+    background:
+      radial-gradient(ellipse at 24% 16%, rgba(255,255,255,.74) 0 8%, transparent 9%),
+      linear-gradient(180deg, #eefcff 0%, #d4f6ff 18%, #a7e4f8 62%, #77c7de 100%);
+    border:5px solid #69b5cf;
+    box-shadow:
+      inset 0 0 32px rgba(255,255,255,.58),
+      inset -18px -10px 26px rgba(92,161,182,.22),
+      inset 10px 0 16px rgba(255,255,255,.2);
+    animation:floaty 6.5s ease-in-out infinite;
+  }
+
+  @keyframes floaty{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-5px)}
+  }
+
+  .nucleus{
+    width:100%;
+    height:100%;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #efdfff 0%, #d6bdfb 52%, #b498ef 100%);
+    border:5px solid #8e73d2;
+    box-shadow:inset 0 0 20px rgba(255,255,255,.35);
+  }
+  .nucleolus{
+    position:absolute;
+    left:32.8%;
+    top:34.4%;
+    width:26.6%;
+    height:26.6%;
+    border-radius:50%;
+    background:#8d5ed0;
+    opacity:.9;
+  }
+
+  .chloroplast{
+    width:100%;
+    height:100%;
+    border-radius:46px;
+    background:linear-gradient(180deg, var(--leaf-2), var(--leaf));
+    border:4px solid var(--green-dark);
+    overflow:hidden;
+    box-shadow:inset 0 0 16px rgba(255,255,255,.35);
+    animation:tilt 7s ease-in-out infinite;
+  }
+  @keyframes tilt{
+    0%,100%{transform:rotate(-8deg)}
+    50%{transform:rotate(-3deg)}
+  }
+  .thylakoid{
+    position:absolute;
+    left:15%;
+    right:15%;
+    height:11%;
+    border-radius:999px;
+    background:#3f924a;
+    box-shadow:0 1px 0 rgba(255,255,255,.25);
+  }
+  .th1{top:22%}
+  .th2{top:39%}
+  .th3{top:56%}
+  .th4{top:73%}
+
+  .mitochondrion{
+    position:relative;
+    width:100%;
+    height:100%;
+    border-radius:42px;
+    background:linear-gradient(180deg,#f9d7a5 0%, #f1bb78 54%, #e39d53 100%);
+    border:4px solid #b6742c;
+    overflow:hidden;
+    box-shadow:
+      inset 0 0 12px rgba(255,255,255,.35),
+      0 6px 12px rgba(166,105,37,.14);
+    animation:tilt2 6s ease-in-out infinite;
+  }
+  .mitochondrion::before{
+    content:"";
+    position:absolute;
+    inset:10% 8%;
+    border-radius:999px;
+    border:2px solid #d18a43;
+    background:linear-gradient(180deg,rgba(255,248,233,.52),rgba(230,165,87,.18));
+    z-index:0;
+  }
+  @keyframes tilt2{
+    0%,100%{transform:rotate(8deg)}
+    50%{transform:rotate(3deg)}
+  }
+  .cristae{
+    position:absolute;
+    inset:22% 17% 18% 17%;
+    z-index:1;
+  }
+  .cristae span{
+    position:absolute;
+    width:78%;
+    height:16%;
+    border:2px solid #9a571b;
+    border-color:#9f5d1d transparent transparent transparent;
+    border-radius:50%;
+  }
+  .cristae span:nth-child(1){top:0; left:4%}
+  .cristae span:nth-child(2){top:25%; left:14%}
+  .cristae span:nth-child(3){top:50%; left:4%}
+  .cristae span:nth-child(4){top:75%; left:14%}
+
+  .golgi{
+    width:100%;
+    height:100%;
+  }
+  .golgi .arc{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    height:18%;
+    border-radius:999px;
+    background:linear-gradient(180deg,#f9d1e4 0%, #ef9fc2 100%);
+    border:3px solid #c979a1;
+    box-shadow:0 3px 6px rgba(201,121,161,.12), inset 0 1px 0 rgba(255,255,255,.45);
+  }
+  .golgi .arc:nth-child(1){top:0; width:88%}
+  .golgi .arc:nth-child(2){top:17%; width:100%}
+  .golgi .arc:nth-child(3){top:35%; width:90%}
+  .golgi .arc:nth-child(4){top:53%; width:80%}
+  .golgi .arc:nth-child(5){top:71%; width:68%}
+  .golgi .vesicle{
+    position:absolute;
+    border-radius:50%;
+    background:#f7c2dc;
+    border:2px solid #c979a1;
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.4);
+  }
+  .golgi .v1{right:2%; top:12%; width:14%; aspect-ratio:1}
+  .golgi .v2{right:6%; top:56%; width:11%; aspect-ratio:1}
+  .golgi .v3{right:14%; top:82%; width:9%; aspect-ratio:1}
+
+  .er{
+    width:100%;
+    height:100%;
+    opacity:.98;
+  }
+  .er svg{width:100%;height:100%}
+  .ribosome{
+    position:absolute;
+    width:3.3%;
+    height:7.1%;
+    min-width:4px;
+    min-height:4px;
+    border-radius:50%;
+    background:#8157c7;
+  }
+
+  .marker{
+    position:absolute;
+    width:36px;
+    height:36px;
+    padding:0;
+    border-radius:50%;
+    background:#134f2f;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    border:3px solid #fff;
+    box-shadow:0 8px 18px rgba(19,79,47,.16);
+    z-index:6;
+    transition:transform .16s ease, background .16s ease, filter .16s ease;
+  }
+
+  .marker:hover{
+    filter:brightness(1.06);
+  }
+
+  .marker-top-left{
+    top:-16px;
+    left:-16px;
+  }
+
+  .marker-top-right{
+    top:-16px;
+    right:-16px;
+  }
+
+  .marker-bottom-left{
+    bottom:-16px;
+    left:-16px;
+  }
+
+  .marker-bottom-right{
+    bottom:-16px;
+    right:-16px;
+  }
+
+  .marker-left-middle{
+    top:50%;
+    left:-18px;
+    transform:translateY(-50%);
+  }
+
+  .marker-right-middle{
+    top:50%;
+    right:-18px;
+    transform:translateY(-50%);
+  }
+
+  .marker-vacuole{
+    top:50%;
+    left:-18px;
+    transform:translateY(-50%);
+  }
+
+  .marker.active{
+    background:#b84c4c;
+  }
+
+  .marker.active.wall-marker,
+  .marker.active.membrane-marker,
+  .marker.active.cyto-marker,
+  .marker-top-left.active,
+  .marker-top-right.active,
+  .marker-bottom-left.active,
+  .marker-bottom-right.active{
+    transform:scale(1.12);
+  }
+
+  .marker-left-middle.active{
+    transform:translateY(-50%) scale(1.12);
+  }
+
+  .marker-right-middle.active{
+    transform:translateY(-50%) scale(1.12);
+  }
+
+  .marker-vacuole.active{
+    transform:translateY(-50%) scale(1.12);
+  }
+
+  .callout{
+    position:relative;
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:14px;
+    padding:10px 12px;
+    box-shadow:var(--shadow);
+    width:min(100%, 720px);
+    z-index:5;
+  }
+  .callout h3{font-size:1rem;margin-bottom:6px}
+  .callout p{margin:0;font-size:.96rem}
+
+  .hint{
+    font-size:.95rem;
+    color:var(--muted);
+    margin-top:12px;
+  }
+
+  .legend{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:10px;
+    margin-top:14px;
+  }
+
+  .legend-item{
+    background:#f8fcf9;
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:12px;
+    font-size:.96rem;
+  }
+
+  .taskBox{
+    background:#f8fcf9;
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:14px;
+    margin-bottom:16px;
+  }
+
+  .match-card{
+    align-self:start;
+  }
+
+  .quiz-wide{
+    grid-column:1 / -1;
+    width:min(100%, 980px);
+    justify-self:center;
+    margin-bottom:0;
+  }
+
+  .quiz-wide h2,
+  .quiz-wide > .small,
+  .quiz-wide .score,
+  .quiz-wide .footer-note{
+    text-align:center;
+  }
+
+  #quiz{
+    max-width:900px;
+    margin:0 auto;
+  }
+
+  .draggables{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:12px;
+  }
+
+  .chip{
+    padding:10px 12px;
+    background:#ebf8ee;
+    border:2px solid #bfe0c8;
+    color:#175533;
+    border-radius:14px;
+    font-weight:700;
+    cursor:grab;
+    user-select:none;
+  }
+  .chip.used{
+    opacity:.38;
+    cursor:not-allowed;
+  }
+
+  .dropRow{
+    display:grid;
+    grid-template-columns:58px 1fr;
+    gap:10px;
+    align-items:center;
+    margin:10px 0;
+  }
+
+  .numBox{
+    width:50px;
+    height:44px;
+    border-radius:12px;
+    background:#175533;
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+  }
+
+  .dropzone{
+    min-height:46px;
+    border:2px dashed #8ec29b;
+    background:#fff;
+    border-radius:14px;
+    display:flex;
+    align-items:center;
+    padding:8px 10px;
+    color:#5e7a6d;
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  .dropzone.filled{
+    border-style:solid;
+    color:#153825;
+  }
+
+  .dropzone.correct{
+    border-color:#2f8c49;
+    background:#edf9f0;
+  }
+
+  .dropzone.wrong{
+    border-color:#c95d5d;
+    background:#fff2f2;
+  }
+
+  .small{
+    font-size:.92rem;
+    color:var(--muted);
+  }
+
+  .q{
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:14px;
+    margin:12px 0;
+    background:#fcfffd;
+    transition:border-color .18s ease, background .18s ease, box-shadow .18s ease;
+  }
+
+  .q.correct{
+    border-color:#7dc793;
+    background:#f3fcf5;
+    box-shadow:inset 0 0 0 1px rgba(47,140,73,.08);
+  }
+
+  .q.wrong{
+    border-color:#e3aaaa;
+    background:#fff8f8;
+  }
+
+  .answers{
+    display:grid;
+    gap:8px;
+    margin-top:10px;
+  }
+
+  .answers label{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    border:1px solid #ddeee3;
+    border-radius:14px;
+    padding:10px;
+    background:#fff;
+    cursor:pointer;
+    transition:border-color .18s ease, background .18s ease;
+  }
+
+  .answers label.correct-answer{
+    border-color:#6db482;
+    background:#edf9f0;
+  }
+
+  .answers label.wrong-answer{
+    border-color:#dc9191;
+    background:#fff1f1;
+  }
+
+  .score{
+    font-size:1.05rem;
+    font-weight:700;
+    margin-top:10px;
+  }
+
+  .feedback{
+    min-height:26px;
+    margin-top:10px;
+    font-weight:700;
+  }
+
+  .feedback.success{
+    color:#21663a;
+  }
+
+  .feedback.error{
+    color:#b84c4c;
+  }
+
+  .trophy{
+    margin-right:6px;
+  }
+
+  .footer-note{
+    margin-top:14px;
+    color:var(--muted);
+    font-size:.95rem;
+  }
+
+  @media (max-width:1100px){
+    .grid{grid-template-columns:1fr}
+  }
+
+  @media (max-width:760px){
+    .wrap{padding:12px}
+    .hero,.card{padding:14px}
+    .marker{
+      width:32px;
+      height:32px;
+      font-size:.92rem;
+    }
+    .wall-marker{top:12px; left:12px}
+    .membrane-marker{top:10px; right:10px}
+    .cyto-marker{bottom:10px; right:10px}
+    .marker-top-left{top:-12px; left:-12px}
+    .marker-top-right{top:-12px; right:-12px}
+    .marker-bottom-left{bottom:-12px; left:-12px}
+    .marker-bottom-right{bottom:-12px; right:-12px}
+    .marker-left-middle{left:-14px}
+    .marker-right-middle{right:-14px}
+    .marker-vacuole{left:-14px}
+    .legend{grid-template-columns:1fr}
+    .dropRow{grid-template-columns:48px 1fr}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <h1>Pflanzenzelle – Interaktives Animationsquiz</h1>
+    <p class="sub">Für die 6. Klasse Biologie: Entdecke den <strong>Aufbau</strong> und die <strong>Funktion</strong> der Pflanzenzelle. Klicke auf die Nummern, starte die Animation und löse danach die Aufgaben.</p>
+    <div class="toolbar">
+      <button id="startTour">Animation starten</button>
+      <button class="secondary" id="stopTour">Animation stoppen</button>
+      <button class="secondary" id="resetAll">Alles zurücksetzen</button>
+    </div>
+  </section>
+
+  <div class="grid">
+    <section class="card stage">
+      <h2>1. Pflanzenzelle ansehen</h2>
+      <p class="small">Tipp: Klicke auf eine Nummer oder starte die Animation. Darunter erscheint eine kurze Erklärung.</p>
+
+      <div class="cell-zone">
+        <div class="cell-frame">
+          <div class="cell" id="cell">
+            <button class="marker wall-marker" data-target="1" type="button">1</button>
+            <div class="membrane">
+              <button class="marker membrane-marker" data-target="2" type="button">2</button>
+              <div class="cytoplasm">
+                <button class="marker cyto-marker" data-target="3" type="button">3</button>
+
+                <div class="organelle-spot spot-vacuole">
+                  <button class="marker marker-vacuole" data-target="5" type="button">5</button>
+                  <div class="vacuole organelle" data-id="5"></div>
+                </div>
+
+                <div class="organelle-spot spot-nucleus">
+                  <button class="marker marker-left-middle" data-target="4" type="button">4</button>
+                  <div class="nucleus organelle" data-id="4">
+                    <div class="nucleolus"></div>
+                  </div>
+                </div>
+
+                <div class="organelle-spot spot-chloro-c">
+                  <button class="marker marker-top-right" data-target="6" type="button">6</button>
+                  <div class="chloroplast organelle" data-id="6">
+                    <div class="thylakoid th1"></div><div class="thylakoid th2"></div><div class="thylakoid th3"></div><div class="thylakoid th4"></div>
+                  </div>
+                </div>
+
+                <div class="organelle-spot spot-mito-a">
+                  <div class="mitochondrion organelle" data-id="7">
+                    <div class="cristae"><span></span><span></span><span></span><span></span></div>
+                  </div>
+                </div>
+                <div class="organelle-spot spot-mito-b">
+                  <button class="marker marker-right-middle" data-target="7" type="button">7</button>
+                  <div class="mitochondrion organelle" data-id="7">
+                    <div class="cristae"><span></span><span></span><span></span><span></span></div>
+                  </div>
+                </div>
+
+                <div class="organelle-spot spot-golgi">
+                  <button class="marker marker-top-right" data-target="8" type="button">8</button>
+                  <div class="golgi organelle" data-id="8">
+                    <div class="arc"></div><div class="arc"></div><div class="arc"></div><div class="arc"></div><div class="arc"></div>
+                    <div class="vesicle v1"></div><div class="vesicle v2"></div><div class="vesicle v3"></div>
+                  </div>
+                </div>
+
+                <div class="organelle-spot spot-er">
+                  <button class="marker marker-bottom-left" data-target="9" type="button">9</button>
+                  <div class="er organelle" data-id="9">
+                    <svg viewBox="0 0 260 210" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <path d="M20 58 C48 18, 94 8, 130 22 C168 6, 212 18, 240 58" fill="none" stroke="#9f84da" stroke-width="6" stroke-linecap="round"/>
+                      <path d="M26 86 C56 56, 98 46, 130 58 C164 44, 206 54, 234 86" fill="none" stroke="#9f84da" stroke-width="6" stroke-linecap="round"/>
+                      <path d="M26 122 C58 100, 100 92, 130 100 C164 92, 206 100, 234 124" fill="none" stroke="#9f84da" stroke-width="6" stroke-linecap="round"/>
+                      <path d="M32 154 C64 174, 102 180, 130 166 C160 180, 200 176, 228 152" fill="none" stroke="#9f84da" stroke-width="6" stroke-linecap="round"/>
+                      <path d="M28 58 C12 84, 12 126, 30 154" fill="none" stroke="#b393eb" stroke-width="4" stroke-linecap="round"/>
+                      <path d="M232 58 C248 84, 248 126, 230 152" fill="none" stroke="#b393eb" stroke-width="4" stroke-linecap="round"/>
+                      <path d="M48 76 C34 96, 34 118, 48 138" fill="none" stroke="#c3acef" stroke-width="3.2" stroke-linecap="round"/>
+                      <path d="M212 76 C226 96, 226 118, 212 138" fill="none" stroke="#c3acef" stroke-width="3.2" stroke-linecap="round"/>
+                    </svg>
+                    <div class="ribosome" style="left:8%; top:21%"></div>
+                    <div class="ribosome" style="left:17%; top:39%"></div>
+                    <div class="ribosome" style="left:29%; top:12%"></div>
+                    <div class="ribosome" style="left:24%; top:66%"></div>
+                    <div class="ribosome" style="left:58%; top:11%"></div>
+                    <div class="ribosome" style="left:72%; top:28%"></div>
+                    <div class="ribosome" style="left:82%; top:18%"></div>
+                    <div class="ribosome" style="left:76%; top:64%"></div>
+                    <div class="ribosome" style="left:45%; top:73%"></div>
+                    <div class="ribosome" style="left:63%; top:80%"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout" id="callout">
+          <h3>So geht's:</h3>
+          <p>Klicke auf eine Nummer. Dann siehst du, wie das Zellteil heißt und was es macht.</p>
+        </div>
+      </div>
+
+      <div class="legend">
+        <div class="legend-item"><strong>1–9:</strong> Nummern zeigen wichtige Teile der Pflanzenzelle.</div>
+        <div class="legend-item"><strong>Animation:</strong> Die Organellen werden nacheinander erklärt.</div>
+        <div class="legend-item"><strong>Chloroplasten:</strong> Ort der Fotosynthese.</div>
+        <div class="legend-item"><strong>Mitochondrien:</strong> Liefern Energie für die Zelle.</div>
+        <div class="legend-item"><strong>Zusatz:</strong> Tüpfel sind kleine Öffnungen in der Zellwand, durch die Pflanzenzellen Stoffe austauschen können.</div>
+      </div>
+    </section>
+
+      <div class="card taskBox match-card">
+        <h2>2. Nummern zuordnen</h2>
+        <p class="small">Ziehe die Begriffe in die passenden Kästchen. Ein Klick auf ein belegtes Kästchen leert es wieder.</p>
+
+        <div id="matchArea">
+          <div class="dropRow"><div class="numBox">1</div><div class="dropzone" data-accept="Zellwand">Begriff hier ablegen</div></div>
+          <div class="dropRow"><div class="numBox">2</div><div class="dropzone" data-accept="Zellmembran">Begriff hier ablegen</div></div>
+          <div class="dropRow"><div class="numBox">3</div><div class="dropzone" data-accept="Cytoplasma">Begriff hier ablegen</div></div>
+          <div class="dropRow"><div class="numBox">4</div><div class="dropzone" data-accept="Zellkern">Begriff hier ablegen</div></div>
+          <div class="dropRow"><div class="numBox">5</div><div class="dropzone" data-accept="Vakuole">Begriff hier ablegen</div></div>
+          <div class="dropRow"><div class="numBox">6</div><div class="dropzone" data-accept="Chloroplast">Begriff hier ablegen</div></div>
+          <div class="dropRow"><div class="numBox">7</div><div class="dropzone" data-accept="Mitochondrium">Begriff hier ablegen</div></div>
+          <div class="dropRow"><div class="numBox">8</div><div class="dropzone" data-accept="Golgi-Apparat">Begriff hier ablegen</div></div>
+          <div class="dropRow"><div class="numBox">9</div><div class="dropzone" data-accept="Endoplasmatisches Retikulum">Begriff hier ablegen</div></div>
+        </div>
+
+        <div class="draggables" id="chips">
+          <div class="chip" draggable="true">Zellkern</div>
+          <div class="chip" draggable="true">Chloroplast</div>
+          <div class="chip" draggable="true">Mitochondrium</div>
+          <div class="chip" draggable="true">Vakuole</div>
+          <div class="chip" draggable="true">Zellwand</div>
+          <div class="chip" draggable="true">Golgi-Apparat</div>
+          <div class="chip" draggable="true">Cytoplasma</div>
+          <div class="chip" draggable="true">Zellmembran</div>
+          <div class="chip" draggable="true">Endoplasmatisches Retikulum</div>
+        </div>
+
+        <div class="toolbar">
+          <button class="secondary" id="checkMatch">Zuordnung prüfen</button>
+          <button class="secondary" id="solveMatch">Lösung zeigen</button>
+        </div>
+        <div class="score" id="matchScore"></div>
+      </div>
+
+      <div class="card taskBox quiz-wide">
+        <h2>3. Quizfragen</h2>
+        <p class="small">Wähle jeweils die richtige Antwort aus. Du bekommst sofort eine Rückmeldung.</p>
+
+        <div id="quiz">
+          <div class="q">
+            <strong>1. Wofür braucht die Pflanzenzelle Chloroplasten?</strong>
+            <div class="answers">
+              <label><input type="radio" name="q1" value="0"> Zum Schutz wie eine Wand</label>
+              <label><input type="radio" name="q1" value="1"> Für die Fotosynthese</label>
+              <label><input type="radio" name="q1" value="0"> Zum Speichern der Erbinformation</label>
+            </div>
+          </div>
+
+          <div class="q">
+            <strong>2. Welches Zellteil ist bei Pflanzenzellen besonders groß und mit Flüssigkeit gefüllt?</strong>
+            <div class="answers">
+              <label><input type="radio" name="q2" value="0"> Mitochondrium</label>
+              <label><input type="radio" name="q2" value="0"> Golgi-Apparat</label>
+              <label><input type="radio" name="q2" value="1"> Vakuole</label>
+            </div>
+          </div>
+
+          <div class="q">
+            <strong>3. Was ist die Aufgabe der Mitochondrien?</strong>
+            <div class="answers">
+              <label><input type="radio" name="q3" value="1"> Sie liefern Energie</label>
+              <label><input type="radio" name="q3" value="0"> Sie bauen die Zellwand auf</label>
+              <label><input type="radio" name="q3" value="0"> Sie machen den Zellsaft grün</label>
+            </div>
+          </div>
+
+          <div class="q">
+            <strong>4. Was gibt der Zelle zusätzliche Festigkeit?</strong>
+            <div class="answers">
+              <label><input type="radio" name="q4" value="1"> Die Zellwand</label>
+              <label><input type="radio" name="q4" value="0"> Der Zellkern</label>
+              <label><input type="radio" name="q4" value="0"> Das Cytoplasma</label>
+            </div>
+          </div>
+
+          <div class="q">
+            <strong>5. Wo liegt das meiste Zellinnere, in dem viele Vorgänge ablaufen?</strong>
+            <div class="answers">
+              <label><input type="radio" name="q5" value="0"> In der Zellwand</label>
+              <label><input type="radio" name="q5" value="1"> Im Cytoplasma</label>
+              <label><input type="radio" name="q5" value="0"> Nur in den Chloroplasten</label>
+            </div>
+          </div>
+
+          <div class="q">
+            <strong>6. Was enthält die Erbinformation der Zelle?</strong>
+            <div class="answers">
+              <label><input type="radio" name="q6" value="1"> Der Zellkern</label>
+              <label><input type="radio" name="q6" value="0"> Die Vakuole</label>
+              <label><input type="radio" name="q6" value="0"> Das Mitochondrium</label>
+            </div>
+          </div>
+
+          <div class="q">
+            <strong>7. Welche Struktur haben Tierzellen normalerweise nicht?</strong>
+            <div class="answers">
+              <label><input type="radio" name="q7" value="1"> Zellwand</label>
+              <label><input type="radio" name="q7" value="0"> Zellmembran</label>
+              <label><input type="radio" name="q7" value="0"> Zellkern</label>
+            </div>
+          </div>
+
+          <div class="q">
+            <strong>8. Was macht die Zellmembran?</strong>
+            <div class="answers">
+              <label><input type="radio" name="q8" value="0"> Sie färbt die Pflanze grün</label>
+              <label><input type="radio" name="q8" value="1"> Sie grenzt die Zelle ab und regelt den Stoffaustausch</label>
+              <label><input type="radio" name="q8" value="0"> Sie speichert nur Wasser</label>
+            </div>
+          </div>
+        </div>
+
+        <div class="score" id="quizScore">Richtig beantwortet: 0 von 8</div>
+      </div>
+  </div>
+</div>
+
+<script>
+const organelleInfo = {
+  1: {
+    name: "Zellwand",
+    text: "Die Zellwand ist die feste äußere Hülle. Sie gibt der Pflanzenzelle Form, Schutz und Stabilität."
+  },
+  2: {
+    name: "Zellmembran",
+    text: "Die Zellmembran liegt direkt innen an der Zellwand. Sie grenzt die Zelle ab und regelt, was hinein und hinaus gelangt."
+  },
+  3: {
+    name: "Cytoplasma",
+    text: "Das Cytoplasma ist die Grundsubstanz der Zelle. Hier liegen die Organellen, und viele Stoffwechselvorgänge laufen hier ab."
+  },
+  4: {
+    name: "Zellkern",
+    text: "Der Zellkern ist die Steuerzentrale der Zelle. Er enthält die Erbinformation."
+  },
+  5: {
+    name: "Vakuole",
+    text: "Die Vakuole ist bei Pflanzenzellen sehr groß. Sie speichert vor allem Wasser und gelöste Stoffe und hilft, die Zelle prall zu halten."
+  },
+  6: {
+    name: "Chloroplast",
+    text: "Im Chloroplasten findet die Fotosynthese statt. Dort kann die Pflanze mit Licht, Wasser und Kohlenstoffdioxid Zucker herstellen."
+  },
+  7: {
+    name: "Mitochondrium",
+    text: "Mitochondrien liefern der Zelle Energie. Deshalb nennt man sie oft die Kraftwerke der Zelle."
+  },
+  8: {
+    name: "Golgi-Apparat",
+    text: "Der Golgi-Apparat sortiert, verändert und verpackt Stoffe, die in der Zelle gebraucht oder weitertransportiert werden."
+  },
+  9: {
+    name: "Endoplasmatisches Retikulum",
+    text: "Das endoplasmatische Retikulum ist ein Membransystem. Es hilft beim Stofftransport und bei der Herstellung bestimmter Stoffe."
+  }
+};
+
+const defaultCallout = `<h3>So geht's:</h3><p>Klicke auf eine Nummer. Dann siehst du, wie das Zellteil heißt und was es macht.</p>`;
+const markers = document.querySelectorAll(".marker");
+const organelles = document.querySelectorAll(".organelle[data-id]");
+const callout = document.getElementById("callout");
+const quizQuestions = Array.from(document.querySelectorAll("#quiz .q"));
+const quizScore = document.getElementById("quizScore");
+let tourTimer = null;
+let tourIndex = 0;
+const order = [1,2,3,4,5,6,7,8,9];
+
+function showInfo(id){
+  const numericId = Number(id);
+  markers.forEach(marker => marker.classList.toggle("active", Number(marker.dataset.target) === numericId));
+  organelles.forEach(organelle => organelle.classList.toggle("active-part", Number(organelle.dataset.id) === numericId));
+  const data = organelleInfo[numericId];
+  callout.innerHTML = `<h3>${numericId}. ${data.name}</h3><p>${data.text}</p>`;
+}
+
+markers.forEach(marker => {
+  marker.addEventListener("click", () => showInfo(marker.dataset.target));
+});
+
+organelles.forEach(organelle => {
+  organelle.addEventListener("click", () => showInfo(organelle.dataset.id));
+});
+
+document.getElementById("startTour").addEventListener("click", () => {
+  clearInterval(tourTimer);
+  tourIndex = 0;
+  showInfo(order[tourIndex]);
+  tourTimer = setInterval(() => {
+    tourIndex = (tourIndex + 1) % order.length;
+    showInfo(order[tourIndex]);
+  }, 2600);
+});
+
+document.getElementById("stopTour").addEventListener("click", () => {
+  clearInterval(tourTimer);
+});
+
+document.getElementById("resetAll").addEventListener("click", () => {
+  clearInterval(tourTimer);
+  tourIndex = 0;
+  markers.forEach(m => m.classList.remove("active"));
+  organelles.forEach(organelle => organelle.classList.remove("active-part"));
+  callout.innerHTML = defaultCallout;
+  document.querySelectorAll(".dropzone").forEach(z => {
+    z.textContent = "Begriff hier ablegen";
+    z.className = "dropzone";
+    z.dataset.value = "";
+  });
+  document.querySelectorAll(".chip").forEach(c => c.classList.remove("used"));
+  document.getElementById("matchScore").textContent = "";
+  quizQuestions.forEach(question => {
+    question.classList.remove("correct", "wrong", "solved");
+    question.querySelectorAll("label").forEach(label => label.classList.remove("correct-answer", "wrong-answer"));
+    question.querySelectorAll('input[type="radio"]').forEach(input => {
+      input.checked = false;
+      input.disabled = false;
+    });
+    const feedback = question.querySelector(".feedback");
+    if(feedback){
+      feedback.className = "feedback";
+      feedback.textContent = "";
+    }
+  });
+  updateQuizScore();
+});
+
+// Drag & drop
+let draggedText = "";
+function setChipUsage(text, used){
+  document.querySelectorAll(".chip").forEach(chip => {
+    if(chip.textContent.trim() === text){
+      chip.classList.toggle("used", used);
+    }
+  });
+}
+
+document.querySelectorAll(".chip").forEach(chip => {
+  chip.addEventListener("dragstart", e => {
+    if(chip.classList.contains("used")){
+      e.preventDefault();
+      return;
+    }
+    draggedText = chip.textContent.trim();
+  });
+});
+
+document.querySelectorAll(".dropzone").forEach(zone => {
+  zone.addEventListener("dragover", e => e.preventDefault());
+  zone.addEventListener("drop", e => {
+    e.preventDefault();
+    if(!draggedText) return;
+    const previousValue = zone.dataset.value || "";
+    if(previousValue && previousValue !== draggedText){
+      setChipUsage(previousValue, false);
+    }
+    zone.textContent = draggedText;
+    zone.classList.add("filled");
+    zone.dataset.value = draggedText;
+    setChipUsage(draggedText, true);
+    draggedText = "";
+  });
+  zone.addEventListener("click", () => {
+    const currentValue = zone.dataset.value || "";
+    if(!currentValue) return;
+    setChipUsage(currentValue, false);
+    zone.textContent = "Begriff hier ablegen";
+    zone.className = "dropzone";
+    zone.dataset.value = "";
+  });
+});
+
+document.getElementById("checkMatch").addEventListener("click", () => {
+  let correct = 0;
+  const zones = document.querySelectorAll(".dropzone");
+  zones.forEach(zone => {
+    zone.classList.remove("correct", "wrong");
+    const answer = (zone.dataset.value || "").trim();
+    const expected = zone.dataset.accept.trim();
+    if(answer === expected){
+      zone.classList.add("correct");
+      correct++;
+    }else{
+      zone.classList.add("wrong");
+    }
+  });
+  document.getElementById("matchScore").textContent = `Richtig: ${correct} von ${zones.length}`;
+});
+
+document.getElementById("solveMatch").addEventListener("click", () => {
+  document.querySelectorAll(".dropzone").forEach(zone => {
+    zone.textContent = zone.dataset.accept;
+    zone.classList.add("filled", "correct");
+    zone.classList.remove("wrong");
+    zone.dataset.value = zone.dataset.accept;
+  });
+  document.querySelectorAll(".chip").forEach(c => c.classList.add("used"));
+  document.getElementById("matchScore").textContent = "Lösung eingetragen.";
+});
+
+function updateQuizScore(){
+  const solvedQuestions = quizQuestions.filter(question => question.classList.contains("solved")).length;
+  if(solvedQuestions === quizQuestions.length){
+    quizScore.textContent = `Richtig beantwortet: ${solvedQuestions} von ${quizQuestions.length}. Alles geschafft!`;
+    return;
+  }
+  quizScore.textContent = `Richtig beantwortet: ${solvedQuestions} von ${quizQuestions.length}`;
+}
+
+quizQuestions.forEach(question => {
+  const feedback = document.createElement("div");
+  feedback.className = "feedback";
+  feedback.setAttribute("aria-live", "polite");
+  question.appendChild(feedback);
+
+  question.querySelectorAll('input[type="radio"]').forEach(input => {
+    input.addEventListener("change", () => {
+      if(question.classList.contains("solved")) return;
+
+      question.classList.remove("correct", "wrong");
+      question.querySelectorAll("label").forEach(label => label.classList.remove("correct-answer", "wrong-answer"));
+
+      const selectedLabel = input.closest("label");
+      if(input.value === "1"){
+        question.classList.add("correct", "solved");
+        selectedLabel.classList.add("correct-answer");
+        feedback.className = "feedback success";
+        feedback.innerHTML = `<span class="trophy" aria-hidden="true">🏆</span>Richtig!`;
+        question.querySelectorAll('input[type="radio"]').forEach(option => option.disabled = true);
+      }else{
+        question.classList.add("wrong");
+        selectedLabel.classList.add("wrong-answer");
+        feedback.className = "feedback error";
+        feedback.textContent = "Das war leider falsch: Versuch es noch einmal.";
+      }
+
+      updateQuizScore();
+    });
+  });
+});
+
+updateQuizScore();
+</script>
+</body>
+</html>
