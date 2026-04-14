@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Alkoholische Gärung – Interaktive Lernwerkstatt</title>
+<style>
+:root{
+  --bg-a:#fff7ed;
+  --bg-b:#eefcf6;
+  --panel:rgba(255,255,255,0.9);
+  --ink:#1f2937;
+  --muted:#596579;
+  --line:#d7dee7;
+  --accent:#f59e0b;
+  --accent-2:#10b981;
+  --accent-3:#8b5cf6;
+  --sugar:#fde68a;
+  --sugar-stroke:#d97706;
+  --yeast:#f5d0fe;
+  --yeast-stroke:#a21caf;
+  --ethanol:#bfdbfe;
+  --ethanol-stroke:#2563eb;
+  --co2:#dcfce7;
+  --co2-stroke:#16a34a;
+  --atp:#fecaca;
+  --atp-stroke:#dc2626;
+  --carbon:#334155;
+  --carbon-fill:#e2e8f0;
+  --oxygen-fill:#fecaca;
+  --oxygen-stroke:#dc2626;
+  --hydrogen-fill:#ffffff;
+  --hydrogen-stroke:#94a3b8;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:"Trebuchet MS","Segoe UI",sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 14% 12%, #fff1c7 0, rgba(255,241,199,0) 36%),
+    radial-gradient(circle at 88% 8%, #dcfce7 0, rgba(220,252,231,0) 36%),
+    linear-gradient(135deg,var(--bg-a),var(--bg-b));
+}
+.wrap{
+  max-width:1260px;
+  margin:0 auto;
+  padding:24px 16px 40px;
+}
+.hero{
+  display:grid;
+  grid-template-columns:1.45fr .95fr;
+  gap:18px;
+  align-items:stretch;
+}
+.hero-card,.formula-card,.stage-card,.quiz-card{
+  background:var(--panel);
+  border:1px solid rgba(148,163,184,0.32);
+  box-shadow:0 18px 44px rgba(15,23,42,0.08);
+  backdrop-filter:blur(12px);
+}
+.hero-card,.formula-card,.quiz-card{border-radius:24px;padding:20px 22px}
+.stage-card{border-radius:28px;padding:16px;margin-top:18px}
+h1{
+  margin:0 0 10px;
+  font-size:clamp(2rem,4vw,3rem);
+  line-height:1.05;
+}
+.intro{margin:0;color:var(--muted);line-height:1.6;font-size:1.03rem}
+.formula-card{display:flex;flex-direction:column;justify-content:center;gap:10px;text-align:center}
+.formula-card .label{
+  font-size:.86rem;
+  text-transform:uppercase;
+  letter-spacing:.14em;
+  color:#b45309;
+  font-weight:900;
+}
+.formula-card .formula{
+  font-size:clamp(1.2rem,2.5vw,1.9rem);
+  font-weight:900;
+  line-height:1.35;
+}
+.formula-card .hint{color:var(--muted);line-height:1.55}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{
+  border:1px solid rgba(148,163,184,.5);
+  background:rgba(255,255,255,.9);
+  color:var(--ink);
+  font:inherit;
+  font-weight:800;
+  padding:10px 14px;
+  border-radius:999px;
+  cursor:pointer;
+  transition:transform .18s ease, box-shadow .18s ease, background .18s ease;
+}
+button:hover{transform:translateY(-1px);box-shadow:0 10px 20px rgba(15,23,42,.08)}
+button.primary{background:linear-gradient(135deg,#fff7cc,#e7fff3);border-color:#fbbf24}
+button:disabled{opacity:.5;cursor:default;transform:none;box-shadow:none}
+.step-status{
+  min-width:160px;
+  padding:10px 14px;
+  border-radius:999px;
+  background:linear-gradient(135deg,rgba(255,247,204,.95),rgba(236,253,245,.95));
+  border:1px solid rgba(251,191,36,.85);
+  color:#92400e;
+  font-weight:900;
+  text-align:center;
+}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 12px}
+.legend span{
+  display:inline-flex;
+  align-items:center;
+  gap:9px;
+  padding:8px 12px;
+  border-radius:999px;
+  background:rgba(248,250,252,.92);
+  border:1px solid rgba(203,213,225,.9);
+  color:var(--muted);
+  font-size:.95rem;
+}
+.swatch{width:16px;height:16px;border-radius:50%;display:inline-block;flex:0 0 auto}
+.swatch.sugar{background:var(--sugar);border:2px solid var(--sugar-stroke)}
+.swatch.yeast{background:var(--yeast);border:2px solid var(--yeast-stroke)}
+.swatch.ethanol{background:var(--ethanol);border:2px solid var(--ethanol-stroke)}
+.swatch.co2{background:var(--co2);border:2px solid var(--co2-stroke)}
+.swatch.energy{background:linear-gradient(180deg,#fecaca,#ef4444);border-radius:6px}
+.stage{
+  border-radius:24px;
+  overflow:hidden;
+  border:1px solid rgba(203,213,225,.9);
+  background:linear-gradient(180deg,#fffdfa 0%,#eefcf6 100%);
+}
+svg{display:block;width:100%;height:auto}
+.note-panel{
+  position:relative;
+  display:flex;
+  align-items:flex-start;
+  gap:16px;
+  margin-top:14px;
+  padding:16px 18px;
+  border-radius:24px;
+  background:linear-gradient(135deg,rgba(255,251,235,.97),rgba(236,253,245,.97));
+  border:1px solid rgba(253,230,138,.95);
+  box-shadow:0 14px 28px rgba(15,23,42,.08);
+  overflow:hidden;
+}
+.note-panel::before{
+  content:"";
+  position:absolute;
+  inset:0 auto 0 0;
+  width:6px;
+  background:linear-gradient(180deg,#f59e0b,#10b981);
+}
+.note-panel.reveal{animation:noteReveal .45s ease}
+.note-icon{
+  width:58px;height:58px;border-radius:18px;flex:0 0 auto;display:grid;place-items:center;
+  background:linear-gradient(135deg,rgba(254,243,199,.98),rgba(220,252,231,.98));
+  border:1px solid rgba(251,191,36,.95);
+  box-shadow:0 10px 24px rgba(245,158,11,.18);
+}
+.note-icon svg{width:30px;height:30px;overflow:visible}
+.note-copy{flex:1}
+.note-kicker{margin-bottom:4px;color:#b45309;font-size:.82rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase}
+.note-panel strong{display:block;margin-bottom:5px;font-size:1.05rem;line-height:1.35}
+.note-panel span{display:block;color:var(--muted);line-height:1.55}
+@keyframes noteReveal{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+
+.tank{fill:url(#tankFill);stroke:#fff;stroke-width:3}
+.label-pill{fill:rgba(255,255,255,.86);stroke:#d1d5db;stroke-width:1.2}
+.scene-label{font-size:16px;font-weight:900;fill:#334155}
+.scene-small{font-size:13px;font-weight:800;fill:#475569}
+.flask-neck{fill:#e2e8f0;stroke:#94a3b8;stroke-width:2}
+.flask-glass{fill:rgba(255,255,255,.38);stroke:#94a3b8;stroke-width:3}
+.liquid{fill:url(#liquidFill)}
+.bubble{fill:rgba(255,255,255,.75);stroke:#bbf7d0;stroke-width:1}
+.sugar{fill:var(--sugar);stroke:var(--sugar-stroke);stroke-width:2}
+.sugar-line{stroke:#d97706;stroke-width:2.6;stroke-linecap:round}
+.yeast-wall{fill:#f0abfc;stroke:#a21caf;stroke-width:2.6}
+.yeast-cyto{fill:#fdf4ff;stroke:#d946ef;stroke-width:1.4}
+.yeast-vacuole{fill:#f5d0fe;stroke:#c026d3;stroke-width:1.4}
+.yeast-nucleus{fill:#86198f}
+.yeast-grain{fill:#d946ef;opacity:.45}
+.yeast-bud-bridge{stroke:#c026d3;stroke-width:5;stroke-linecap:round}
+.ethanol-bond{stroke:#64748b;stroke-width:4;stroke-linecap:round}
+.ethanol-group-carbon{fill:var(--carbon-fill);stroke:var(--carbon);stroke-width:2.2}
+.ethanol-group-oxygen{fill:var(--oxygen-fill);stroke:var(--oxygen-stroke);stroke-width:2.2}
+.ethanol-group-hydrogen{fill:var(--hydrogen-fill);stroke:var(--hydrogen-stroke);stroke-width:1.8}
+.ethanol-group-text{font-size:14px;font-weight:900;fill:#0f172a}
+.ethanol-caption{font-size:13px;font-weight:800;fill:#475569}
+.co2{fill:var(--co2);stroke:var(--co2-stroke);stroke-width:2}
+.energy{fill:var(--atp);stroke:var(--atp-stroke);stroke-width:1.8}
+.arrow-path{stroke:#f59e0b;stroke-width:4;fill:none;stroke-linecap:round;stroke-linejoin:round}
+.arrow-head{fill:#f59e0b}
+.sparkle{fill:rgba(255,255,255,.52)}
+.fade-in{animation:fadeIn .65s ease both}
+.floaty{animation:floaty 3.4s ease-in-out infinite}
+.pulse{animation:pulse 1.6s ease-in-out infinite}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+@keyframes floaty{0%,100%{transform:translateY(0)}50%{transform:translateY(-6px)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+
+.quiz-card{margin-top:18px}
+.quiz-title{margin:0 0 8px;font-size:1.4rem}
+.quiz-sub{margin:0 0 16px;color:var(--muted);line-height:1.55}
+.quiz-grid{display:grid;gap:14px}
+.question{
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:14px;
+  background:rgba(255,255,255,.75);
+}
+.question h3{margin:0 0 10px;font-size:1rem;line-height:1.45}
+.options{display:grid;gap:8px}
+.option{
+  display:flex;gap:10px;align-items:flex-start;
+  padding:10px 12px;border:1px solid #dbe3ed;border-radius:14px;background:#fff;cursor:pointer;
+}
+.option input{margin-top:3px}
+.option.correct-answer{border-color:#86efac;background:#f0fdf4}
+.option.wrong-answer{border-color:#fca5a5;background:#fff1f2}
+.option.reveal-answer{border-color:#86efac;background:#ecfdf5}
+.match-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.match-item{display:grid;gap:6px}
+select{
+  width:100%;padding:10px 12px;border-radius:12px;border:1px solid #cbd5e1;background:#fff;font:inherit;
+}
+select.correct-select{border-color:#86efac;background:#f0fdf4}
+select.wrong-select{border-color:#fca5a5;background:#fff1f2}
+.quiz-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;align-items:center}
+.result-pill{
+  padding:10px 14px;border-radius:999px;background:linear-gradient(135deg,#fff7cc,#e7fff3);
+  border:1px solid #fbbf24;font-weight:900;color:#92400e;min-width:180px;text-align:center;
+}
+.result-pill.done{background:linear-gradient(135deg,#dcfce7,#fef3c7)}
+.feedback{
+  margin-top:12px;padding:12px 14px;border-radius:16px;background:rgba(248,250,252,.9);border:1px solid #dbe3ed;
+  color:#334155;line-height:1.55;
+}
+.inline-feedback{
+  margin-top:12px;
+  padding:10px 12px;
+  border-radius:14px;
+  line-height:1.55;
+  font-size:.96rem;
+}
+.inline-feedback.success{background:#ecfdf5;border:1px solid #86efac;color:#166534}
+.inline-feedback.error{background:#fff1f2;border:1px solid #fca5a5;color:#9f1239}
+.inline-feedback.info{background:#fffbeb;border:1px solid #fcd34d;color:#92400e}
+.correct{border-color:#86efac;background:#f0fdf4}
+.wrong{border-color:#fca5a5;background:#fff1f2}
+.pending{border-color:#fcd34d;background:#fffdf1}
+.small-note{font-size:.94rem;color:var(--muted)}
+
+@media (max-width:960px){.hero{grid-template-columns:1fr}}
+@media (max-width:760px){
+  .wrap{padding:16px 12px 28px}
+  .hero-card,.formula-card,.quiz-card{padding:18px;border-radius:20px}
+  .note-panel{flex-direction:column}
+  .legend span{width:100%;justify-content:flex-start}
+  .match-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="hero-card">
+      <h1>Alkoholische Gärung</h1>
+      <p class="intro">
+        In dieser interaktiven Lernwerkstatt siehst du Schritt für Schritt, wie Hefezellen Zucker abbauen.
+        Dabei entstehen <strong>Ethanol</strong>, <strong>Kohlenstoffdioxid</strong> und etwas <strong>Energie</strong>.
+        Unten kannst du zusätzlich Quizfragen lösen und dein Wissen prüfen.
+      </p>
+    </div>
+
+    <div class="formula-card">
+      <div class="label">Gesamtreaktion vereinfacht</div>
+      <div class="formula">C<sub>6</sub>H<sub>12</sub>O<sub>6</sub> → 2 C<sub>2</sub>H<sub>5</sub>OH + 2 CO<sub>2</sub> + Energie</div>
+      <div class="hint">
+        Traubenzucker wird durch Hefe ohne Sauerstoff abgebaut. Dabei bilden sich Alkohol und Gasblasen.
+      </div>
+    </div>
+  </section>
+
+  <section class="stage-card">
+    <div class="controls">
+      <button id="prevBtn" onclick="goPrev()">Zurück</button>
+      <div class="step-status" id="stepStatus">Schritt 1 von 5</div>
+      <button id="nextBtn" class="primary" onclick="goNext()">Weiter</button>
+      <button onclick="resetAll()">Neu starten</button>
+    </div>
+
+    <div class="legend">
+      <span><i class="swatch sugar"></i> Glucose / Traubenzucker</span>
+      <span><i class="swatch yeast"></i> Hefezellen</span>
+      <span><i class="swatch ethanol"></i> Ethanol</span>
+      <span><i class="swatch co2"></i> CO<sub>2</sub></span>
+      <span><i class="swatch energy"></i> frei werdende Energie</span>
+    </div>
+
+    <div class="stage">
+      <svg id="scene" viewBox="0 0 1100 620" aria-label="Animation zur alkoholischen Gärung">
+        <defs>
+          <linearGradient id="tankFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ffffff"></stop>
+            <stop offset="100%" stop-color="#eefcf6"></stop>
+          </linearGradient>
+          <linearGradient id="liquidFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#fde68a"></stop>
+            <stop offset="100%" stop-color="#fcd34d"></stop>
+          </linearGradient>
+          <filter id="softShadow" x="-40%" y="-40%" width="180%" height="180%">
+            <feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#94a3b8" flood-opacity="0.22"></feDropShadow>
+          </filter>
+        </defs>
+
+        <rect x="26" y="22" width="1048" height="576" rx="34" fill="rgba(255,255,255,0.55)"></rect>
+        <g filter="url(#softShadow)">
+          <rect x="410" y="72" width="280" height="52" rx="18" class="flask-neck"></rect>
+          <path class="flask-glass" d="M450 124 L450 185 C450 220 405 275 375 430 C365 478 397 530 456 548 L644 548 C703 530 735 478 725 430 C695 275 650 220 650 185 L650 124 Z"></path>
+          <path id="liquidShape" class="liquid" d="M396 332 C460 320 640 320 704 332 L724 462 C731 496 702 525 650 538 L450 538 C398 525 369 496 376 462 Z"></path>
+        </g>
+
+        <g id="bubbleLayer"></g>
+        <g id="reactionLayer"></g>
+        <g id="labelLayer"></g>
+
+        <g id="fixedLabels">
+          <g>
+            <rect x="62" y="74" width="230" height="42" rx="18" class="label-pill"></rect>
+            <text x="177" y="100" class="scene-label" text-anchor="middle">Gärgefäß mit Hefe und Zucker</text>
+          </g>
+          <g>
+            <rect x="788" y="74" width="250" height="42" rx="18" class="label-pill"></rect>
+            <text x="913" y="100" class="scene-label" text-anchor="middle">ohne Sauerstoffzufuhr</text>
+          </g>
+        </g>
+
+        <g id="sparkles">
+          <circle cx="134" cy="188" r="5" class="sparkle"></circle>
+          <circle cx="252" cy="470" r="4" class="sparkle"></circle>
+          <circle cx="546" cy="132" r="6" class="sparkle"></circle>
+          <circle cx="836" cy="442" r="5" class="sparkle"></circle>
+          <circle cx="972" cy="220" r="4" class="sparkle"></circle>
+        </g>
+      </svg>
+    </div>
+
+    <div class="note-panel" id="notePanel">
+      <div class="note-icon" aria-hidden="true">
+        <svg viewBox="0 0 32 32" role="img" aria-hidden="true">
+          <circle cx="16" cy="16" r="15" fill="rgba(255,255,255,0.45)"></circle>
+          <path d="M11.5 13.5a4.5 4.5 0 1 1 9 0c0 1.7-.76 2.75-1.88 3.88-.86.86-1.32 1.55-1.32 2.62h-2.6c0-1.08-.47-1.77-1.32-2.62-1.12-1.13-1.88-2.18-1.88-3.88Z" fill="#facc15" stroke="#eab308" stroke-width="1.3"></path>
+          <path d="M13.4 22.1h5.2" stroke="#334155" stroke-width="1.6" stroke-linecap="round"></path>
+          <path d="M14 24.7h4" stroke="#334155" stroke-width="1.6" stroke-linecap="round"></path>
+          <path d="M16 4.2v2.6M7.9 8.1l1.8 1.8M24.1 8.1l-1.8 1.8" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"></path>
+        </svg>
+      </div>
+      <div class="note-copy">
+        <div class="note-kicker">Erklärung</div>
+        <strong id="mainText"></strong>
+        <span id="subText"></span>
+      </div>
+    </div>
+  </section>
+
+  <section class="quiz-card">
+    <h2 class="quiz-title">Quiz zur alkoholischen Gärung</h2>
+    <p class="quiz-sub">
+      Du bekommst nach jeder Auswahl sofort eine Rückmeldung. Wenn alles beantwortet ist, siehst du unten deinen Gesamtstand.
+    </p>
+
+    <div class="quiz-grid">
+      <div class="question" id="q1box">
+        <h3>1. Was wird bei der alkoholischen Gärung abgebaut?</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q1" value="a"> Sauerstoff</label>
+          <label class="option"><input type="radio" name="q1" value="b"> Traubenzucker / Glucose</label>
+          <label class="option"><input type="radio" name="q1" value="c"> Wasser</label>
+        </div>
+      </div>
+
+      <div class="question" id="q2box">
+        <h3>2. Welche Produkte entstehen?</h3>
+        <div class="options">
+          <label class="option"><input type="checkbox" name="q2" value="ethanol"> Ethanol</label>
+          <label class="option"><input type="checkbox" name="q2" value="co2"> Kohlenstoffdioxid</label>
+          <label class="option"><input type="checkbox" name="q2" value="salt"> Kochsalz</label>
+          <label class="option"><input type="checkbox" name="q2" value="energy"> Energie</label>
+        </div>
+        <div class="small-note">Mehrere Antworten sind richtig.</div>
+      </div>
+
+      <div class="question" id="q3box">
+        <h3>3. Welche Aussage passt am besten?</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q3" value="a"> Hefe ist ein Pilz und kann Zucker vergären.</label>
+          <label class="option"><input type="radio" name="q3" value="b"> Hefe ist ein Metall und bildet Strom.</label>
+          <label class="option"><input type="radio" name="q3" value="c"> Hefe ist ein Gas in der Luft.</label>
+        </div>
+      </div>
+
+      <div class="question" id="q4box">
+        <h3>4. Ordne zu:</h3>
+        <div class="match-grid">
+          <div class="match-item">
+            <label>Glucose</label>
+            <select id="m1">
+              <option value="">Bitte wählen</option>
+              <option value="gas">Gasbläschen</option>
+              <option value="start">Ausgangsstoff</option>
+              <option value="alcohol">Trinkalkohol</option>
+            </select>
+          </div>
+          <div class="match-item">
+            <label>CO₂</label>
+            <select id="m2">
+              <option value="">Bitte wählen</option>
+              <option value="gas">Gasbläschen</option>
+              <option value="start">Ausgangsstoff</option>
+              <option value="alcohol">Trinkalkohol</option>
+            </select>
+          </div>
+          <div class="match-item">
+            <label>Ethanol</label>
+            <select id="m3">
+              <option value="">Bitte wählen</option>
+              <option value="gas">Gasbläschen</option>
+              <option value="start">Ausgangsstoff</option>
+              <option value="alcohol">Trinkalkohol</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <div class="question" id="q5box">
+        <h3>5. Warum sieht man bei der Gärung oft Bläschen?</h3>
+        <div class="options">
+          <label class="option"><input type="radio" name="q5" value="a"> Weil CO₂ entsteht</label>
+          <label class="option"><input type="radio" name="q5" value="b"> Weil Eisen schmilzt</label>
+          <label class="option"><input type="radio" name="q5" value="c"> Weil Hefe leuchtet</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="quiz-actions">
+      <button onclick="resetQuiz()">Quiz zurücksetzen</button>
+      <div class="result-pill" id="resultPill">Noch nicht ausgewertet</div>
+    </div>
+    <div class="feedback" id="feedbackBox">Hier erscheint sofort eine Rückmeldung zu deinem aktuellen Stand.</div>
+  </section>
+</div>
+
+<script>
+const svgNs = 'http://www.w3.org/2000/svg';
+const reactionLayer = document.getElementById('reactionLayer');
+const bubbleLayer = document.getElementById('bubbleLayer');
+const labelLayer = document.getElementById('labelLayer');
+const notePanel = document.getElementById('notePanel');
+const mainText = document.getElementById('mainText');
+const subText = document.getElementById('subText');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const stepStatus = document.getElementById('stepStatus');
+const TOTAL_STEPS = 5;
+let currentStep = 1;
+
+function svgEl(tag, attrs={}){
+  const el = document.createElementNS(svgNs, tag);
+  for(const [k,v] of Object.entries(attrs)) el.setAttribute(k,v);
+  return el;
+}
+
+function setTexts(main, sub){
+  mainText.textContent = main;
+  subText.textContent = sub;
+  notePanel.classList.remove('reveal');
+  void notePanel.offsetWidth;
+  notePanel.classList.add('reveal');
+}
+
+function updateNavigation(){
+  stepStatus.textContent = `Schritt ${currentStep} von ${TOTAL_STEPS}`;
+  prevBtn.disabled = currentStep === 1;
+  nextBtn.textContent = currentStep === TOTAL_STEPS ? 'Noch einmal' : 'Weiter';
+}
+
+function goPrev(){
+  if(currentStep > 1) showStep(currentStep - 1);
+}
+
+function goNext(){
+  if(currentStep < TOTAL_STEPS) showStep(currentStep + 1);
+  else showStep(1);
+}
+
+function resetAll(){
+  showStep(1);
+}
+
+function clearScene(){
+  reactionLayer.innerHTML = '';
+  bubbleLayer.innerHTML = '';
+  labelLayer.innerHTML = '';
+}
+
+function drawGlucose(x,y,scale=1){
+  const g = svgEl('g',{transform:`translate(${x} ${y}) scale(${scale})`});
+  const pts = [[0,-24],[22,-12],[22,12],[0,24],[-22,12],[-22,-12]];
+  for(let i=0;i<pts.length;i++){
+    const a = pts[i], b = pts[(i+1)%pts.length];
+    g.appendChild(svgEl('line',{x1:a[0],y1:a[1],x2:b[0],y2:b[1],class:'sugar-line'}));
+  }
+  pts.forEach(p=>g.appendChild(svgEl('circle',{cx:p[0],cy:p[1],r:'6',class:'sugar'})));
+  const t = svgEl('text',{x:'0',y:'0',class:'scene-small','text-anchor':'middle'});
+  t.textContent='Glucose';
+  g.appendChild(t);
+  return g;
+}
+
+function drawYeast(x,y,scale=1,bud=false){
+  const g = svgEl('g',{transform:`translate(${x} ${y}) scale(${scale})`});
+  g.appendChild(svgEl('ellipse',{cx:'0',cy:'0',rx:'28',ry:'34',class:'yeast-wall'}));
+  g.appendChild(svgEl('ellipse',{cx:'0',cy:'0',rx:'23',ry:'29',class:'yeast-cyto'}));
+  g.appendChild(svgEl('ellipse',{cx:'-6',cy:'7',rx:'10',ry:'12',class:'yeast-vacuole'}));
+  g.appendChild(svgEl('circle',{cx:'10',cy:'-7',r:'7',class:'yeast-nucleus'}));
+  [[-12,-4],[6,9],[-1,14],[11,-12],[-14,10]].forEach(p=>g.appendChild(svgEl('circle',{cx:p[0],cy:p[1],r:'2.6',class:'yeast-grain'})));
+  if(bud){
+    g.appendChild(svgEl('line',{x1:'18',y1:'-10',x2:'28',y2:'-20',class:'yeast-bud-bridge'}));
+    g.appendChild(svgEl('ellipse',{cx:'38',cy:'-28',rx:'15',ry:'18',class:'yeast-wall'}));
+    g.appendChild(svgEl('ellipse',{cx:'38',cy:'-28',rx:'12',ry:'15',class:'yeast-cyto'}));
+    g.appendChild(svgEl('circle',{cx:'39',cy:'-29',r:'4.6',class:'yeast-nucleus'}));
+    g.appendChild(svgEl('ellipse',{cx:'33',cy:'-22',rx:'5.5',ry:'7',class:'yeast-vacuole'}));
+  }
+  return g;
+}
+
+function drawCO2(x,y,scale=1){
+  const g = svgEl('g',{transform:`translate(${x} ${y}) scale(${scale})`,class:'floaty'});
+  g.appendChild(svgEl('circle',{cx:'0',cy:'0',r:'18',class:'co2'}));
+  const t = svgEl('text',{x:'0',y:'1',class:'scene-small','text-anchor':'middle'});
+  t.textContent='CO₂';
+  g.appendChild(t);
+  return g;
+}
+
+function drawEthanol(x,y,scale=1){
+  const g = svgEl('g',{transform:`translate(${x} ${y}) scale(${scale})`});
+  g.appendChild(svgEl('line',{x1:'-34',y1:'0',x2:'-6',y2:'0',class:'ethanol-bond'}));
+  g.appendChild(svgEl('line',{x1:'22',y1:'0',x2:'50',y2:'0',class:'ethanol-bond'}));
+  g.appendChild(svgEl('line',{x1:'78',y1:'0',x2:'98',y2:'0',class:'ethanol-bond'}));
+
+  g.appendChild(svgEl('rect',{x:'-68',y:'-18',width:'34',height:'36',rx:'16',class:'ethanol-group-carbon'}));
+  g.appendChild(svgEl('rect',{x:'-6',y:'-18',width:'34',height:'36',rx:'16',class:'ethanol-group-carbon'}));
+  g.appendChild(svgEl('rect',{x:'50',y:'-18',width:'28',height:'36',rx:'14',class:'ethanol-group-oxygen'}));
+  g.appendChild(svgEl('rect',{x:'98',y:'-15',width:'24',height:'30',rx:'12',class:'ethanol-group-hydrogen'}));
+
+  const c1 = svgEl('text',{x:'-51',y:'5',class:'ethanol-group-text','text-anchor':'middle'});
+  c1.textContent = 'CH₃';
+  g.appendChild(c1);
+  const c2 = svgEl('text',{x:'11',y:'5',class:'ethanol-group-text','text-anchor':'middle'});
+  c2.textContent = 'CH₂';
+  g.appendChild(c2);
+  const o = svgEl('text',{x:'64',y:'5',class:'ethanol-group-text','text-anchor':'middle'});
+  o.textContent = 'O';
+  g.appendChild(o);
+  const h = svgEl('text',{x:'110',y:'5',class:'ethanol-group-text','text-anchor':'middle'});
+  h.textContent = 'H';
+  g.appendChild(h);
+
+  const t = svgEl('text',{x:'26',y:'36',class:'ethanol-caption','text-anchor':'middle'});
+  t.textContent='CH₃–CH₂–OH';
+  g.appendChild(t);
+  return g;
+}
+
+function drawEnergy(x,y,scale=1){
+  const g = svgEl('g',{transform:`translate(${x} ${y}) scale(${scale})`,class:'pulse'});
+  g.appendChild(svgEl('polygon',{points:'0,-24 12,-4 2,-4 18,20 -2,4 8,4',class:'energy'}));
+  const t = svgEl('text',{x:'0',y:'33',class:'scene-small','text-anchor':'middle'});
+  t.textContent='Energie';
+  g.appendChild(t);
+  return g;
+}
+
+function drawArrow(x1,y1,x2,y2,label=''){
+  const g = svgEl('g',{});
+  g.appendChild(svgEl('path',{d:`M ${x1} ${y1} Q ${(x1+x2)/2} ${Math.min(y1,y2)-30} ${x2} ${y2}`,class:'arrow-path'}));
+  g.appendChild(svgEl('polygon',{points:`${x2-14},${y2-8} ${x2},${y2} ${x2-12},${y2+10}`,class:'arrow-head'}));
+  if(label){
+    const tx = (x1+x2)/2;
+    const ty = Math.min(y1,y2)-40;
+    const bg = svgEl('rect',{x:tx-72,y:ty-18,width:144,height:28,rx:14,class:'label-pill'});
+    const text = svgEl('text',{x:tx,y:ty,class:'scene-small','text-anchor':'middle'});
+    text.textContent = label;
+    g.appendChild(bg);
+    g.appendChild(text);
+  }
+  return g;
+}
+
+function addBubble(x,y,r,delay){
+  const c = svgEl('circle',{cx:x,cy:y,r:r,class:'bubble'});
+  c.innerHTML = `<animate attributeName="cy" from="${y}" to="150" dur="${2.4 + delay}s" repeatCount="indefinite" /><animate attributeName="opacity" from="0" to="1" dur="0.5s" begin="0s" repeatCount="indefinite" />`;
+  bubbleLayer.appendChild(c);
+}
+
+function addLabel(x,y,text){
+  const g = svgEl('g',{});
+  g.appendChild(svgEl('rect',{x:x-70,y:y-18,width:140,height:34,rx:16,class:'label-pill'}));
+  const t = svgEl('text',{x,y:y+1,class:'scene-small','text-anchor':'middle'});
+  t.textContent = text;
+  g.appendChild(t);
+  labelLayer.appendChild(g);
+}
+
+function showStep(step){
+  currentStep = step;
+  updateNavigation();
+  clearScene();
+
+  if(step === 1){
+    reactionLayer.appendChild(drawGlucose(460,390,1.15));
+    reactionLayer.appendChild(drawYeast(605,400,1.1,true));
+    addLabel(460,468,'Traubenzucker');
+    addLabel(605,478,'Hefezelle');
+    setTexts(
+      'Am Anfang befinden sich Zucker und Hefe im Gärgefäß.',
+      'Die Hefe nutzt den Traubenzucker als Nährstoff. Wenn wenig oder kein Sauerstoff vorhanden ist, startet die alkoholische Gärung.'
+    );
+    return;
+  }
+
+  if(step === 2){
+    reactionLayer.appendChild(drawGlucose(438,388,1.15));
+    reactionLayer.appendChild(drawYeast(610,398,1.12,true));
+    reactionLayer.appendChild(drawArrow(500,350,585,348,'Abbau in der Hefe'));
+    addLabel(438,468,'Glucose');
+    addLabel(610,478,'Hefezelle');
+    setTexts(
+      'Die Hefe nimmt den Zucker auf und beginnt ihn abzubauen.',
+      'Vereinfacht gesagt: In der Hefezelle wird Glucose in mehreren Schritten umgewandelt. Dabei wird etwas Energie für die Zelle frei.'
+    );
+    return;
+  }
+
+  if(step === 3){
+    reactionLayer.appendChild(drawYeast(535,400,1.14,true));
+    reactionLayer.appendChild(drawCO2(410,305,.95));
+    reactionLayer.appendChild(drawCO2(520,275,.88));
+    reactionLayer.appendChild(drawEthanol(662,320,.95));
+    reactionLayer.appendChild(drawEnergy(565,272,.85));
+    reactionLayer.appendChild(drawArrow(468,374,422,324,'CO₂ entsteht'));
+    reactionLayer.appendChild(drawArrow(584,374,652,334,'Ethanol entsteht'));
+    addLabel(535,482,'Hefezelle');
+    addLabel(662,390,'Alkohol');
+    setTexts(
+      'Bei der Gärung entstehen Ethanol, Kohlenstoffdioxid und Energie.',
+      'Das CO₂ ist gasförmig und bildet Bläschen. Ethanol bleibt in der Flüssigkeit. Die frei werdende Energie nutzt die Hefe für ihre Lebensvorgänge.'
+    );
+    return;
+  }
+
+  if(step === 4){
+    reactionLayer.appendChild(drawYeast(520,410,1.05,true));
+    reactionLayer.appendChild(drawEthanol(655,338,.95));
+    reactionLayer.appendChild(drawCO2(420,318,.9));
+    for(let i=0;i<7;i++) addBubble(525 + (i%3)*24 - 24, 450 - i*18, 7 + (i%2), i*0.16);
+    reactionLayer.appendChild(drawArrow(520,390,520,275,'Gas steigt nach oben'));
+    addLabel(420,382,'CO₂-Bläschen');
+    addLabel(655,406,'Ethanol');
+    setTexts(
+      'Das entstehende Kohlenstoffdioxid steigt als Bläschen auf.',
+      'Genau diese Gasblasen kann man bei einem Gärversuch oft beobachten. Sie sind ein sichtbares Zeichen dafür, dass die Gärung abläuft.'
+    );
+    return;
+  }
+
+  if(step === 5){
+    reactionLayer.appendChild(drawGlucose(240,320,1));
+    reactionLayer.appendChild(drawArrow(310,320,465,320,'Hefe vergärt Zucker'));
+    reactionLayer.appendChild(drawYeast(540,320,1.05,true));
+    reactionLayer.appendChild(drawArrow(615,320,770,280,''));
+    reactionLayer.appendChild(drawArrow(615,320,770,365,''));
+    reactionLayer.appendChild(drawCO2(840,270,.9));
+    reactionLayer.appendChild(drawEthanol(858,365,.85));
+    reactionLayer.appendChild(drawEnergy(690,214,.75));
+    addLabel(240,388,'Glucose');
+    addLabel(540,392,'Hefe');
+    addLabel(840,334,'CO₂');
+    addLabel(858,436,'Ethanol');
+    setTexts(
+      'Merksatz: Hefe vergärt Zucker zu Ethanol und Kohlenstoffdioxid.',
+      'Die vereinfachte Reaktionsgleichung lautet: C₆H₁₂O₆ → 2 C₂H₅OH + 2 CO₂ + Energie. Diese Form wird häufig im Unterricht verwendet.'
+    );
+    return;
+  }
+}
+
+const quizData = {
+  q1:{
+    type:'radio',
+    boxId:'q1box',
+    correct:'b',
+    correctText:'Richtig. Bei der alkoholischen Gärung wird Traubenzucker beziehungsweise Glucose abgebaut.',
+    wrongText:'Nicht richtig. Ausgangsstoff ist Glucose bzw. Traubenzucker.'
+  },
+  q2:{
+    type:'checkbox',
+    boxId:'q2box',
+    correct:['ethanol','co2','energy'],
+    correctText:'Richtig. Es entstehen Ethanol, Kohlenstoffdioxid und etwas Energie.',
+    wrongText:'Nicht richtig. Produkte der alkoholischen Gärung sind Ethanol, Kohlenstoffdioxid und Energie.',
+    incompleteText:'Fast richtig. Es fehlen noch richtige Produkte oder die Auswahl ist noch nicht vollständig.'
+  },
+  q3:{
+    type:'radio',
+    boxId:'q3box',
+    correct:'a',
+    correctText:'Genau. Hefe ist ein Pilz und kann Zucker vergären.',
+    wrongText:'Nicht richtig. Hefe ist ein Pilz, kein Metall und kein Gas.'
+  },
+  q4:{
+    type:'match',
+    boxId:'q4box',
+    correct:{m1:'start',m2:'gas',m3:'alcohol'},
+    correctText:'Richtig zugeordnet: Glucose = Ausgangsstoff, CO₂ = Gasbläschen, Ethanol = Trinkalkohol.',
+    wrongText:'Nicht richtig. Richtig ist: Glucose = Ausgangsstoff, CO₂ = Gasbläschen, Ethanol = Trinkalkohol.',
+    incompleteText:'Noch nicht vollständig. Wähle für alle drei Begriffe eine Zuordnung aus.'
+  },
+  q5:{
+    type:'radio',
+    boxId:'q5box',
+    correct:'a',
+    correctText:'Richtig. Die sichtbaren Bläschen entstehen durch Kohlenstoffdioxid.',
+    wrongText:'Nicht richtig. Die Bläschen entstehen, weil CO₂ gebildet wird.'
+  }
+};
+
+function clearQuestionBox(box){
+  box.classList.remove('correct','wrong','pending');
+  box.dataset.status = 'unanswered';
+  box.querySelectorAll('.option').forEach(option => option.classList.remove('correct-answer','wrong-answer','reveal-answer'));
+  box.querySelectorAll('select').forEach(select => select.classList.remove('correct-select','wrong-select'));
+  const oldFeedback = box.querySelector('.inline-feedback');
+  if(oldFeedback) oldFeedback.remove();
+}
+
+function showQuestionFeedback(box, type, text){
+  const info = document.createElement('div');
+  info.className = `inline-feedback ${type}`;
+  info.textContent = text;
+  box.appendChild(info);
+}
+
+function setBoxStatus(box, status){
+  box.dataset.status = status;
+  if(status === 'correct') box.classList.add('correct');
+  if(status === 'wrong') box.classList.add('wrong');
+  if(status === 'pending') box.classList.add('pending');
+}
+
+function evaluateRadioQuestion(questionId){
+  const data = quizData[questionId];
+  const box = document.getElementById(data.boxId);
+  clearQuestionBox(box);
+
+  const selected = document.querySelector(`input[name="${questionId}"]:checked`);
+  if(!selected) return;
+
+  const selectedLabel = selected.closest('.option');
+  const correctLabel = document.querySelector(`input[name="${questionId}"][value="${data.correct}"]`)?.closest('.option');
+
+  if(selected.value === data.correct){
+    setBoxStatus(box,'correct');
+    selectedLabel?.classList.add('correct-answer');
+    showQuestionFeedback(box,'success',data.correctText);
+  }else{
+    setBoxStatus(box,'wrong');
+    selectedLabel?.classList.add('wrong-answer');
+    correctLabel?.classList.add('reveal-answer');
+    showQuestionFeedback(box,'error',data.wrongText);
+  }
+}
+
+function evaluateCheckboxQuestion(questionId){
+  const data = quizData[questionId];
+  const box = document.getElementById(data.boxId);
+  clearQuestionBox(box);
+
+  const selectedInputs = [...document.querySelectorAll(`input[name="${questionId}"]:checked`)];
+  const selectedValues = selectedInputs.map(input => input.value);
+  const correctValues = data.correct;
+
+  if(selectedValues.length === 0) return;
+
+  selectedInputs.forEach(input => {
+    const label = input.closest('.option');
+    if(correctValues.includes(input.value)) label?.classList.add('correct-answer');
+    else label?.classList.add('wrong-answer');
+  });
+
+  const hasWrongSelection = selectedValues.some(value => !correctValues.includes(value));
+  const missingValues = correctValues.filter(value => !selectedValues.includes(value));
+
+  if(!hasWrongSelection && missingValues.length === 0){
+    setBoxStatus(box,'correct');
+    showQuestionFeedback(box,'success',data.correctText);
+    return;
+  }
+
+  if(!hasWrongSelection && missingValues.length > 0){
+    setBoxStatus(box,'pending');
+    showQuestionFeedback(box,'info',data.incompleteText);
+    return;
+  }
+
+  correctValues.forEach(value => {
+    const input = document.querySelector(`input[name="${questionId}"][value="${value}"]`);
+    if(input && !selectedValues.includes(value)){
+      input.closest('.option')?.classList.add('reveal-answer');
+    }
+  });
+  setBoxStatus(box,'wrong');
+  showQuestionFeedback(box,'error',data.wrongText);
+}
+
+function evaluateMatchQuestion(questionId){
+  const data = quizData[questionId];
+  const box = document.getElementById(data.boxId);
+  clearQuestionBox(box);
+
+  const selections = Object.fromEntries(
+    Object.keys(data.correct).map(key => [key, document.getElementById(key).value])
+  );
+
+  const values = Object.values(selections);
+  const allEmpty = values.every(value => value === '');
+  if(allEmpty) return;
+
+  let allFilled = true;
+  let allCorrect = true;
+
+  Object.entries(data.correct).forEach(([key, expected]) => {
+    const select = document.getElementById(key);
+    const value = selections[key];
+    if(value === ''){
+      allFilled = false;
+      return;
+    }
+    if(value === expected){
+      select.classList.add('correct-select');
+    }else{
+      allCorrect = false;
+      select.classList.add('wrong-select');
+    }
+  });
+
+  if(!allFilled){
+    setBoxStatus(box,'pending');
+    showQuestionFeedback(box,'info',data.incompleteText);
+    return;
+  }
+
+  if(allCorrect){
+    setBoxStatus(box,'correct');
+    showQuestionFeedback(box,'success',data.correctText);
+  }else{
+    Object.entries(data.correct).forEach(([key, expected]) => {
+      const select = document.getElementById(key);
+      if(select.value === expected){
+        select.classList.remove('wrong-select');
+        select.classList.add('correct-select');
+      }
+    });
+    setBoxStatus(box,'wrong');
+    showQuestionFeedback(box,'error',data.wrongText);
+  }
+}
+
+function evaluateQuestion(questionId){
+  const type = quizData[questionId].type;
+  if(type === 'radio') evaluateRadioQuestion(questionId);
+  if(type === 'checkbox') evaluateCheckboxQuestion(questionId);
+  if(type === 'match') evaluateMatchQuestion(questionId);
+}
+
+function updateQuizSummary(){
+  const total = Object.keys(quizData).length;
+  const boxes = Object.values(quizData).map(data => document.getElementById(data.boxId));
+  const correctCount = boxes.filter(box => box.dataset.status === 'correct').length;
+  const completedCount = boxes.filter(box => box.dataset.status === 'correct' || box.dataset.status === 'wrong').length;
+  const resultPill = document.getElementById('resultPill');
+  const feedbackBox = document.getElementById('feedbackBox');
+
+  resultPill.classList.toggle('done', completedCount === total);
+
+  if(correctCount === 0 && completedCount === 0 && boxes.every(box => (box.dataset.status || 'unanswered') === 'unanswered')){
+    resultPill.textContent = 'Noch nicht ausgewertet';
+    feedbackBox.textContent = 'Hier erscheint sofort eine Rückmeldung zu deinem aktuellen Stand.';
+    return;
+  }
+
+  if(completedCount === total){
+    resultPill.textContent = `Fertig: ${correctCount} von ${total} richtig`;
+
+    let summary = '';
+    if(correctCount === total) summary = 'Sehr stark! Du hast die alkoholische Gärung sicher verstanden.';
+    else if(correctCount >= 3) summary = 'Gut gemacht! Die wichtigsten Punkte sind schon klar.';
+    else summary = 'Noch nicht alles sicher. Schau dir die Animation ruhig noch einmal Schritt für Schritt an.';
+
+    feedbackBox.innerHTML = `<strong>${summary}</strong><br>Abschlussstand: ${correctCount} von ${total} Aufgaben richtig.`;
+    return;
+  }
+
+  const openCount = total - completedCount;
+  resultPill.textContent = `Aktueller Stand: ${correctCount} von ${total} richtig`;
+  feedbackBox.innerHTML = `<strong>Du bekommst direkt Rückmeldung.</strong><br>Bisher sind ${correctCount} Aufgabe(n) richtig. Noch ${openCount} Aufgabe(n) sind nicht vollständig richtig gelöst.`;
+}
+
+function resetQuiz(){
+  document.querySelectorAll('.quiz-card input[type="radio"], .quiz-card input[type="checkbox"]').forEach(i=>i.checked = false);
+  document.querySelectorAll('.quiz-card select').forEach(s=>s.value = '');
+  document.querySelectorAll('.question').forEach(clearQuestionBox);
+  document.getElementById('resultPill').classList.remove('done');
+  document.getElementById('resultPill').textContent = 'Noch nicht ausgewertet';
+  document.getElementById('feedbackBox').textContent = 'Hier erscheint sofort eine Rückmeldung zu deinem aktuellen Stand.';
+}
+
+document.querySelectorAll('.quiz-card input[type="radio"], .quiz-card input[type="checkbox"]').forEach(input => {
+  input.addEventListener('change', () => {
+    evaluateQuestion(input.name);
+    updateQuizSummary();
+  });
+});
+
+document.querySelectorAll('.quiz-card select').forEach(select => {
+  select.addEventListener('change', () => {
+    evaluateQuestion('q4');
+    updateQuizSummary();
+  });
+});
+
+document.querySelectorAll('.question').forEach(box => {
+  box.dataset.status = 'unanswered';
+});
+
+showStep(1);
+updateQuizSummary();
+</script>
+</body>
+</html>
