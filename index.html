@@ -7,6 +7,11 @@
   <style>
     :root {
       --paper: #f7f1e3;
+      --paper-2: #fffaf2;
+      --paper-3: #fffdf9;
+      --paper-line: rgba(118, 109, 136, 0.10);
+      --paper-dots: rgba(118, 109, 136, 0.12);
+
       --card: rgba(255, 251, 242, 0.94);
       --ink: #18202a;
       --muted: #5b6470;
@@ -16,11 +21,15 @@
       --ok-soft: rgba(85, 145, 123, 0.14);
       --line: rgba(24, 32, 42, 0.12);
       --shadow: 0 22px 50px rgba(24, 32, 42, 0.12);
+      --tab-shadow: 0 14px 28px rgba(44, 34, 60, 0.10);
+      --tab-shadow-hover: 0 18px 34px rgba(44, 34, 60, 0.16);
+
       --radius-xl: 28px;
       --radius-lg: 18px;
       --hero: linear-gradient(135deg, #ffd27d 0%, #f7f1e3 50%, #b8d6cc 100%);
       --warn-soft: rgba(217, 93, 57, 0.10);
       --success-soft: rgba(85, 145, 123, 0.16);
+      --soft-ring: rgba(255,255,255,0.7);
 
       --sticker-stroke: #6a6478;
       --sticker-text: #544d62;
@@ -201,14 +210,48 @@
     .panel,
     .card {
       padding: 24px;
-      background: var(--card);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,251,242,0.94));
       backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before,
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(transparent 27px, var(--paper-line) 28px),
+        radial-gradient(circle at 18px 18px, rgba(255,255,255,0.55) 0 2px, transparent 2px);
+      background-size: 100% 28px, 120px 120px;
+      opacity: 0.55;
+      z-index: 0;
+    }
+
+    .panel > *,
+    .card > * {
+      position: relative;
+      z-index: 1;
     }
 
     .panel h2,
     .card h2,
     .card h3 {
       margin: 0 0 8px;
+    }
+
+    .panel h3 {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.72);
+      box-shadow: 0 8px 18px rgba(45, 36, 56, 0.06);
+      border: 1px solid rgba(24, 32, 42, 0.06);
     }
 
     .muted {
@@ -234,8 +277,9 @@
     }
 
     .quiz-grid {
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       margin-top: 16px;
+      gap: 14px;
     }
 
     .option,
@@ -253,16 +297,54 @@
     }
 
     .option {
+      position: relative;
       display: flex;
       align-items: center;
       gap: 14px;
-      min-height: 104px;
-      padding: 16px 16px;
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.88));
+      min-height: 108px;
+      padding: 18px 16px 16px;
+      border: 1px solid rgba(24, 32, 42, 0.10);
+      border-radius: 26px;
+      background:
+        linear-gradient(180deg, var(--paper-3), var(--paper-2));
       text-align: left;
-      box-shadow: 0 12px 28px rgba(24, 32, 42, 0.07);
+      box-shadow: var(--tab-shadow);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .option::before {
+      content: "";
+      position: absolute;
+      top: 10px;
+      left: 18px;
+      width: 54px;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255, 217, 125, 0.72);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.65) inset,
+        0 2px 6px rgba(97, 77, 32, 0.08);
+      transform: rotate(-4deg);
+      z-index: 0;
+    }
+
+    .option::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle at 16px 18px, var(--paper-dots) 0 1.5px, transparent 1.6px),
+        linear-gradient(transparent 30px, rgba(118, 109, 136, 0.07) 31px);
+      background-size: 26px 26px, 100% 31px;
+      opacity: 0.42;
+      z-index: 0;
+    }
+
+    .option > * {
+      position: relative;
+      z-index: 1;
     }
 
     .option:hover,
@@ -271,14 +353,15 @@
     .action:focus-visible,
     .inline-link:hover,
     .inline-link:focus-visible {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 28px rgba(24, 32, 42, 0.13);
+      transform: translateY(-3px) rotate(-0.4deg);
+      box-shadow: var(--tab-shadow-hover);
     }
 
     .option strong {
       display: block;
       font-size: 1rem;
       margin-bottom: 4px;
+      color: #2d2438;
     }
 
     .option span {
@@ -289,18 +372,32 @@
     }
 
     .option.active {
-      border-color: color-mix(in srgb, var(--option-accent, var(--accent)) 38%, white);
-      background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.99),
-        color-mix(in srgb, var(--option-accent, var(--accent)) 12%, white)
-      );
-      box-shadow: 0 16px 34px color-mix(in srgb, var(--option-accent, var(--accent)) 12%, rgba(24, 32, 42, 0.06));
+      border-color: color-mix(in srgb, var(--option-accent, var(--accent)) 34%, white);
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255,255,255,0.99),
+          color-mix(in srgb, var(--option-accent, var(--accent)) 10%, #fffdf7)
+        );
+      box-shadow:
+        0 18px 36px color-mix(in srgb, var(--option-accent, var(--accent)) 14%, rgba(24, 32, 42, 0.07)),
+        0 0 0 3px color-mix(in srgb, var(--option-accent, var(--accent)) 12%, transparent);
+    }
+
+    .option.active::before {
+      background: color-mix(in srgb, var(--option-accent, var(--accent)) 42%, #ffe59b);
+      width: 62px;
     }
 
     .option-copy {
       min-width: 0;
       flex: 1;
+    }
+
+    .option-copy strong::after {
+      content: " ✦";
+      color: rgba(217, 93, 57, 0.55);
+      font-size: 0.9em;
     }
 
     .option-icon,
@@ -313,8 +410,16 @@
     }
 
     .option-icon {
-      width: 72px;
-      height: 72px;
+      width: 74px;
+      height: 74px;
+      padding: 2px;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 30% 24%, rgba(255,255,255,0.9), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,250,242,0.52));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.8),
+        0 6px 16px rgba(42, 31, 56, 0.08);
     }
 
     .mini-icon {
@@ -379,13 +484,6 @@
       fill: none;
       stroke: rgba(106, 100, 120, 0.42);
       stroke-width: 1.15;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .sticker-accent-fill {
-      stroke: var(--sticker-stroke);
-      stroke-width: 1.5;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
@@ -496,17 +594,21 @@
       position: relative;
       overflow: hidden;
       background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(248, 243, 228, 0.96));
+        linear-gradient(180deg, rgba(255,255,255,0.99), rgba(248,243,228,0.96));
     }
 
-    .card::before {
+    .card::after {
       content: "";
       position: absolute;
-      inset: auto -46px -46px auto;
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      background: rgba(217, 93, 57, 0.08);
+      top: 14px;
+      right: 24px;
+      width: 70px;
+      height: 16px;
+      border-radius: 999px;
+      background: rgba(186, 220, 208, 0.76);
+      transform: rotate(7deg);
+      box-shadow: 0 2px 6px rgba(44, 34, 60, 0.08);
+      z-index: 0;
     }
 
     .tag-row {
@@ -1317,8 +1419,10 @@
       subjectTag.style.color = subject
         ? `color-mix(in srgb, ${subject.accent} 78%, #4f5a66)`
         : "var(--accent-strong)";
+
       detailsIcon.innerHTML = subject ? subject.icon : (gradeIcons[state.selectedGrade] || iconMarkup.class5);
       detailsIcon.style.setProperty("--detail-accent", subject ? subject.accent : (gradeAccents[state.selectedGrade] || "var(--accent)"));
+
       selectionTitle.textContent = subject
         ? `${formatGrade(state.selectedGrade)} · ${subject.label}`
         : formatGrade(state.selectedGrade);
