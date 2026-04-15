@@ -7,20 +7,23 @@
   <style>
     :root {
       --paper: #f7f1e3;
-      --card: rgba(255, 251, 242, 0.94);
+      --card: rgba(255, 251, 242, 0.92);
       --ink: #18202a;
       --muted: #5b6470;
       --accent: #d95d39;
       --accent-strong: #a53f24;
       --accent-soft: rgba(217, 93, 57, 0.12);
       --ok-soft: rgba(85, 145, 123, 0.14);
-      --line: rgba(24, 32, 42, 0.10);
-      --shadow: 0 22px 50px rgba(24, 32, 42, 0.10);
+      --line: rgba(24, 32, 42, 0.12);
+      --shadow: 0 22px 50px rgba(24, 32, 42, 0.12);
       --radius-xl: 28px;
       --radius-lg: 18px;
-      --hero: linear-gradient(135deg, #ffd27d 0%, #f7f1e3 52%, #b8d6cc 100%);
+      --hero: linear-gradient(135deg, #ffd27d 0%, #f7f1e3 50%, #b8d6cc 100%);
       --warn-soft: rgba(217, 93, 57, 0.10);
       --success-soft: rgba(85, 145, 123, 0.16);
+      --sticker-stroke: #655c73;
+      --sticker-paper: #fffdf8;
+      --sticker-shadow: drop-shadow(0 7px 10px rgba(34, 25, 46, 0.12));
     }
 
     * {
@@ -36,8 +39,8 @@
       min-height: 100vh;
       color: var(--ink);
       background:
-        radial-gradient(circle at top left, rgba(217, 93, 57, 0.14), transparent 24rem),
-        radial-gradient(circle at bottom right, rgba(85, 145, 123, 0.16), transparent 26rem),
+        radial-gradient(circle at top left, rgba(217, 93, 57, 0.16), transparent 24rem),
+        radial-gradient(circle at bottom right, rgba(85, 145, 123, 0.18), transparent 26rem),
         linear-gradient(180deg, #fffaf0 0%, #f3ead3 100%);
       font-family: "Trebuchet MS", Verdana, sans-serif;
     }
@@ -48,8 +51,8 @@
       inset: 0;
       pointer-events: none;
       background-image:
-        linear-gradient(rgba(24, 32, 42, 0.028) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(24, 32, 42, 0.028) 1px, transparent 1px);
+        linear-gradient(rgba(24, 32, 42, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(24, 32, 42, 0.03) 1px, transparent 1px);
       background-size: 28px 28px;
       mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.45), transparent 92%);
     }
@@ -108,7 +111,7 @@
       width: 240px;
       height: 240px;
       border-radius: 50%;
-      background: rgba(24, 32, 42, 0.055);
+      background: rgba(24, 32, 42, 0.06);
       filter: blur(1px);
     }
 
@@ -257,12 +260,12 @@
       align-items: center;
       gap: 14px;
       min-height: 102px;
-      padding: 16px;
+      padding: 16px 16px;
       border: 1px solid var(--line);
-      border-radius: 26px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.88));
+      border-radius: 24px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(255, 255, 255, 0.86));
       text-align: left;
-      box-shadow: 0 12px 28px rgba(24, 32, 42, 0.06);
+      box-shadow: 0 12px 28px rgba(24, 32, 42, 0.07);
     }
 
     .option:hover,
@@ -272,7 +275,7 @@
     .inline-link:hover,
     .inline-link:focus-visible {
       transform: translateY(-2px);
-      box-shadow: 0 12px 28px rgba(24, 32, 42, 0.12);
+      box-shadow: 0 12px 28px rgba(24, 32, 42, 0.13);
     }
 
     .option strong {
@@ -289,13 +292,13 @@
     }
 
     .option.active {
-      border-color: color-mix(in srgb, var(--option-accent, var(--accent)) 34%, white);
+      border-color: color-mix(in srgb, var(--option-accent, var(--accent)) 40%, white);
       background: linear-gradient(
         180deg,
         rgba(255, 255, 255, 0.99),
-        color-mix(in srgb, var(--option-accent, var(--accent)) 11%, white)
+        color-mix(in srgb, var(--option-accent, var(--accent)) 12%, white)
       );
-      box-shadow: 0 16px 34px color-mix(in srgb, var(--option-accent, var(--accent)) 12%, rgba(24, 32, 42, 0.06));
+      box-shadow: 0 16px 34px color-mix(in srgb, var(--option-accent, var(--accent)) 14%, rgba(24, 32, 42, 0.06));
     }
 
     .option-copy {
@@ -306,139 +309,90 @@
     .option-icon,
     .mini-icon,
     .details-icon {
-      position: relative;
-      overflow: hidden;
       display: grid;
       place-items: center;
       flex: 0 0 auto;
-      padding: 0;
       line-height: 0;
-      isolation: isolate;
     }
 
     .option-icon {
-      width: 62px;
-      height: 62px;
-      border-radius: 20px;
-      background:
-        radial-gradient(circle at 28% 24%, rgba(255,255,255,0.98), rgba(255,255,255,0.64) 28%, transparent 29%),
-        linear-gradient(
-          145deg,
-          color-mix(in srgb, var(--option-accent, var(--accent)) 11%, white),
-          color-mix(in srgb, var(--option-accent, var(--accent)) 24%, white)
-        );
-      border: 1px solid color-mix(in srgb, var(--option-accent, var(--accent)) 18%, white);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.92),
-        inset 0 -8px 16px rgba(255,255,255,0.18),
-        0 10px 22px color-mix(in srgb, var(--option-accent, var(--accent)) 10%, transparent);
+      width: 68px;
+      height: 68px;
     }
 
     .mini-icon {
       width: 42px;
       height: 42px;
-      border-radius: 16px;
-      background:
-        radial-gradient(circle at 28% 24%, rgba(255,255,255,0.98), rgba(255,255,255,0.58) 30%, transparent 31%),
-        linear-gradient(145deg, rgba(255,255,255,0.98), rgba(245,237,224,0.96));
-      color: #606978;
-      border: 1px solid rgba(24, 32, 42, 0.08);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.84),
-        0 8px 18px rgba(24, 32, 42, 0.06);
     }
 
     .details-icon {
-      width: 72px;
-      height: 72px;
+      width: 84px;
+      height: 84px;
       margin-bottom: 16px;
-      border-radius: 24px;
-      background:
-        radial-gradient(circle at 28% 24%, rgba(255,255,255,0.98), rgba(255,255,255,0.56) 30%, transparent 31%),
-        linear-gradient(
-          145deg,
-          color-mix(in srgb, var(--detail-accent, var(--accent)) 11%, white),
-          color-mix(in srgb, var(--detail-accent, var(--accent)) 24%, white)
-        );
-      border: 1px solid color-mix(in srgb, var(--detail-accent, var(--accent)) 18%, white);
-      box-shadow:
-        inset 0 1px 0 rgba(255,255,255,0.84),
-        inset 0 -8px 16px rgba(255,255,255,0.16),
-        0 12px 24px color-mix(in srgb, var(--detail-accent, var(--accent)) 14%, transparent);
-    }
-
-    .option-icon::before,
-    .mini-icon::before,
-    .details-icon::before {
-      content: "";
-      position: absolute;
-      inset: 8px;
-      border-radius: 50%;
-      background: rgba(255,255,255,0.34);
-      z-index: 0;
-    }
-
-    .option-icon::after,
-    .mini-icon::after,
-    .details-icon::after {
-      content: "";
-      position: absolute;
-      top: 7px;
-      left: 9px;
-      width: 20px;
-      height: 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.58);
-      transform: rotate(-18deg);
-      z-index: 0;
-      pointer-events: none;
     }
 
     .option-icon svg,
     .mini-icon svg,
     .details-icon svg {
-      position: relative;
-      z-index: 1;
       display: block;
-      width: 34px;
-      height: 34px;
       overflow: visible;
-      vector-effect: non-scaling-stroke;
+      filter: var(--sticker-shadow);
+    }
+
+    .option-icon svg {
+      width: 58px;
+      height: 58px;
     }
 
     .mini-icon svg {
-      width: 22px;
-      height: 22px;
+      width: 24px;
+      height: 24px;
     }
 
     .details-icon svg {
-      width: 38px;
-      height: 38px;
+      width: 72px;
+      height: 72px;
     }
 
-    .sticker-stroke {
-      stroke: #616976;
+    .sticker-paper {
+      fill: var(--sticker-paper);
+      stroke: var(--sticker-stroke);
       stroke-width: 1.9;
       stroke-linecap: round;
       stroke-linejoin: round;
-      fill: none;
     }
 
-    .sticker-fill-soft {
-      fill: rgba(255, 255, 255, 0.74);
-      stroke: #616976;
-      stroke-width: 1.7;
+    .sticker-paper-thin {
+      fill: rgba(255,255,255,0.82);
+      stroke: var(--sticker-stroke);
+      stroke-width: 1.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .sticker-stroke {
+      fill: none;
+      stroke: var(--sticker-stroke);
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .sticker-soft-line {
+      fill: none;
+      stroke: rgba(101, 92, 115, 0.45);
+      stroke-width: 1.2;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
 
     .class-number-svg text {
-      fill: #525966;
+      fill: #5a5267;
       font-family: "Trebuchet MS", Verdana, sans-serif;
-      font-weight: 800;
+      font-weight: 900;
       text-anchor: middle;
       dominant-baseline: middle;
-      stroke: none;
+      letter-spacing: 0.03em;
     }
 
     .viewer {
@@ -575,6 +529,7 @@
     .tag svg {
       width: 16px;
       height: 16px;
+      filter: none;
     }
 
     .card-title {
@@ -724,10 +679,11 @@
         <article class="hero-highlight">
           <span class="mini-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24">
-              <rect x="4.6" y="4.6" width="14.8" height="14.8" rx="4.3" class="sticker-fill-soft"></rect>
-              <path d="M8 9h8" class="sticker-stroke"></path>
-              <path d="M8 12h6" class="sticker-stroke"></path>
-              <path d="M8 15h4.5" class="sticker-stroke"></path>
+              <path d="M6 5.8c0-.9.7-1.6 1.6-1.6h8.4l2.6 2.6v10.1c0 .9-.7 1.6-1.6 1.6H7.6c-.9 0-1.6-.7-1.6-1.6Z" class="sticker-paper"></path>
+              <path d="M16 4.2v2.2c0 .3.2.5.5.5h2.1" class="sticker-stroke"></path>
+              <path d="M9 9.3h6" class="sticker-stroke"></path>
+              <path d="M9 12.2h5.2" class="sticker-stroke"></path>
+              <path d="M9 15h3.7" class="sticker-stroke"></path>
             </svg>
           </span>
           <strong>Lernen & Teilen</strong>
@@ -737,9 +693,9 @@
         <article class="hero-highlight">
           <span class="mini-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24">
-              <circle cx="12" cy="12" r="2.1" class="sticker-fill-soft"></circle>
-              <ellipse cx="12" cy="12" rx="7.2" ry="3.1" transform="rotate(60 12 12)" class="sticker-stroke"></ellipse>
-              <ellipse cx="12" cy="12" rx="7.2" ry="3.1" transform="rotate(-60 12 12)" class="sticker-stroke"></ellipse>
+              <path d="M12 18.7V12" class="sticker-stroke"></path>
+              <path d="M12 12c0-3.1 2.5-5.7 5.7-5.7 0 3.2-2.5 5.7-5.7 5.7Z" class="sticker-paper"></path>
+              <path d="M12 14.7c0-2.2-1.8-4-4-4 0 2.2 1.8 4 4 4Z" class="sticker-paper-thin"></path>
             </svg>
           </span>
           <strong>Naturwissenschaften</strong>
@@ -749,9 +705,9 @@
         <article class="hero-highlight">
           <span class="mini-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24">
-              <path d="M6.2 18 9.2 7.2h5.6L17.8 18" class="sticker-stroke"></path>
-              <path d="M8.8 12.7h6.4" class="sticker-stroke"></path>
-              <path d="M5 18h14" class="sticker-stroke"></path>
+              <path d="M7.2 5.3h9.6c.8 0 1.4.6 1.4 1.4v10.6c0 .8-.6 1.4-1.4 1.4H7.2c-.8 0-1.4-.6-1.4-1.4V6.7c0-.8.6-1.4 1.4-1.4Z" class="sticker-paper"></path>
+              <path d="M9.3 12h5.4" class="sticker-stroke"></path>
+              <path d="M12 9.3v5.4" class="sticker-stroke"></path>
             </svg>
           </span>
           <strong>Mathe & Struktur</strong>
@@ -790,8 +746,8 @@
               <button class="action primary" id="copyLinkButton" type="button">
                 <span class="mini-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24">
-                    <rect x="8.2" y="7.8" width="10" height="10.4" rx="2.4" class="sticker-fill-soft"></rect>
-                    <rect x="5.2" y="4.8" width="10" height="10.4" rx="2.4" class="sticker-fill-soft"></rect>
+                    <path d="M9 7.2h8.1c.9 0 1.6.7 1.6 1.6v8.2c0 .9-.7 1.6-1.6 1.6H9c-.9 0-1.6-.7-1.6-1.6V8.8c0-.9.7-1.6 1.6-1.6Z" class="sticker-paper"></path>
+                    <path d="M6.9 5.2H15c.9 0 1.6.7 1.6 1.6" class="sticker-stroke"></path>
                   </svg>
                 </span>
                 Link kopieren
@@ -803,7 +759,7 @@
                     <path d="M16 4h4v4" class="sticker-stroke"></path>
                     <path d="M20 16v4h-4" class="sticker-stroke"></path>
                     <path d="M4 16v4h4" class="sticker-stroke"></path>
-                    <rect x="8.4" y="8.4" width="7.2" height="7.2" rx="1.7" class="sticker-fill-soft"></rect>
+                    <path d="M9.2 9.2h5.6v5.6H9.2z" class="sticker-paper"></path>
                   </svg>
                 </span>
                 Link markieren
@@ -860,10 +816,10 @@
             <a class="action secondary hidden" id="openIndexViewButton" href="#" target="_blank" rel="noopener noreferrer">
               <span class="mini-icon" aria-hidden="true">
                 <svg viewBox="0 0 24 24">
-                  <rect x="3.2" y="4" width="7" height="7" rx="2" class="sticker-fill-soft"></rect>
-                  <rect x="13.8" y="4" width="7" height="7" rx="2" class="sticker-fill-soft"></rect>
-                  <rect x="3.2" y="14.2" width="7" height="6.3" rx="2" class="sticker-fill-soft"></rect>
-                  <rect x="13.8" y="14.2" width="7" height="6.3" rx="2" class="sticker-fill-soft"></rect>
+                  <path d="M4.6 5.1h5.7v5.7H4.6z" class="sticker-paper"></path>
+                  <path d="M13.7 5.1h5.7v5.7h-5.7z" class="sticker-paper"></path>
+                  <path d="M4.6 13.2h5.7v5.7H4.6z" class="sticker-paper"></path>
+                  <path d="M13.7 13.2h5.7v5.7h-5.7z" class="sticker-paper"></path>
                 </svg>
               </span>
               Ansicht mit Auswahl öffnen
@@ -898,12 +854,17 @@
     const grades = Array.from({ length: 8 }, (_, index) => `klasse${index + 5}`);
 
     function makeClassSticker(number) {
-      const fontSize = String(number).length > 1 ? 7.8 : 10.4;
+      const fontSize = String(number).length > 1 ? 7.4 : 10.2;
       return `
         <svg class="class-number-svg" viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="8.1" fill="rgba(255,255,255,0.80)" stroke="#68707d" stroke-width="1.55"></circle>
-          <circle cx="12" cy="12" r="6.65" fill="rgba(255,255,255,0.38)" stroke="rgba(104,112,125,0.14)" stroke-width="0.7"></circle>
-          <text x="12" y="12.15" font-size="${fontSize}">${number}</text>
+          <path d="M6.1 5.2h11.8c1 0 1.8.8 1.8 1.8v10c0 1-.8 1.8-1.8 1.8H6.1c-1 0-1.8-.8-1.8-1.8V7c0-1 .8-1.8 1.8-1.8Z" class="sticker-paper"></path>
+          <path d="M7.7 4.2h8.6" class="sticker-soft-line"></path>
+          <path d="M8.4 8.2h1.2" class="sticker-soft-line"></path>
+          <path d="M14.4 8.2h1.2" class="sticker-soft-line"></path>
+          <circle cx="7.3" cy="7.5" r="1" class="sticker-paper-thin"></circle>
+          <circle cx="16.7" cy="7.5" r="1" class="sticker-paper-thin"></circle>
+          <text x="12" y="13.25" font-size="${fontSize}">${number}</text>
+          <path d="M8.1 16.8h7.8" class="sticker-soft-line"></path>
         </svg>
       `;
     }
@@ -920,57 +881,69 @@
 
       quiz: `
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <rect x="4.7" y="5" width="14.6" height="14" rx="4.1" class="sticker-fill-soft"></rect>
-          <path d="m12 8.15 1.05 2.12 2.34.34-1.69 1.65.4 2.3L12 13.53l-2.1 1.03.4-2.3-1.69-1.65 2.34-.34Z" class="sticker-stroke"></path>
+          <path d="M6 4.8h9l3 3v9.3c0 1-.8 1.8-1.8 1.8H7.8c-1 0-1.8-.8-1.8-1.8Z" class="sticker-paper"></path>
+          <path d="M15 4.8v2.4c0 .4.3.7.7.7H18" class="sticker-stroke"></path>
+          <path d="M9 9.4h5.8" class="sticker-stroke"></path>
+          <path d="M9 12.3h4.7" class="sticker-stroke"></path>
+          <circle cx="14.9" cy="15.4" r="1.5" class="sticker-paper-thin"></circle>
+          <path d="m14.3 15.4.45.45.9-.9" class="sticker-stroke"></path>
         </svg>
       `,
       mathe: `
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6.5 17.8 9.3 7.4h5.4l2.8 10.4" class="sticker-stroke"></path>
-          <path d="M8.8 12.6h6.4" class="sticker-stroke"></path>
-          <path d="M5.2 17.8h13.6" class="sticker-stroke"></path>
+          <path d="M6.2 5.2h11.6c1 0 1.8.8 1.8 1.8v10c0 1-.8 1.8-1.8 1.8H6.2c-1 0-1.8-.8-1.8-1.8V7c0-1 .8-1.8 1.8-1.8Z" class="sticker-paper"></path>
+          <path d="M12 8.4v7.2" class="sticker-stroke"></path>
+          <path d="M8.4 12h7.2" class="sticker-stroke"></path>
+          <circle cx="8.3" cy="8.2" r="1.1" class="sticker-paper-thin"></circle>
+          <circle cx="15.7" cy="15.8" r="1.1" class="sticker-paper-thin"></circle>
         </svg>
       `,
       biologie: `
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 19v-5.6" class="sticker-stroke"></path>
-          <path d="M12 13.6c0-3.2 2.6-5.8 5.8-5.8 0 3.2-2.6 5.8-5.8 5.8Z" class="sticker-fill-soft"></path>
-          <path d="M12 15.4c0-2.5-2-4.5-4.5-4.5 0 2.5 2 4.5 4.5 4.5Z" class="sticker-fill-soft"></path>
-          <path d="M12 13.6c.85-.2 1.65-.68 2.3-1.35" class="sticker-stroke"></path>
+          <path d="M12 19v-6" class="sticker-stroke"></path>
+          <path d="M12.2 13.1c0-3.6 2.9-6.5 6.5-6.5 0 3.6-2.9 6.5-6.5 6.5Z" class="sticker-paper"></path>
+          <path d="M11.8 15.5c0-2.6-2.1-4.6-4.6-4.6 0 2.5 2 4.6 4.6 4.6Z" class="sticker-paper-thin"></path>
+          <path d="M12.3 12.9c1-.3 1.8-.9 2.5-1.7" class="sticker-stroke"></path>
         </svg>
       `,
       chemie: `
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M10 4.5v3.9l-4.25 7.2A1.85 1.85 0 0 0 7.3 18.8h9.4a1.85 1.85 0 0 0 1.55-2.8L14 8.4V4.5" class="sticker-stroke"></path>
-          <path d="M8.55 13.1c.95.78 2.1 1.15 3.45 1.15s2.5-.37 3.45-1.15" class="sticker-stroke"></path>
-          <path d="M9.25 9.15h5.5" class="sticker-stroke"></path>
+          <path d="M9.5 4.6v3.9L5.8 15a2.1 2.1 0 0 0 1.8 3.1h8.8a2.1 2.1 0 0 0 1.8-3.1l-3.7-6.5V4.6" class="sticker-paper"></path>
+          <path d="M9 8.8h6" class="sticker-stroke"></path>
+          <circle cx="9" cy="15.2" r="1.1" class="sticker-paper-thin"></circle>
+          <circle cx="12" cy="16.1" r="1" class="sticker-paper-thin"></circle>
+          <circle cx="15.1" cy="14.9" r="1.1" class="sticker-paper-thin"></circle>
         </svg>
       `,
       physik: `
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="2.05" class="sticker-fill-soft"></circle>
-          <ellipse cx="12" cy="12" rx="7.15" ry="3.05" transform="rotate(60 12 12)" class="sticker-stroke"></ellipse>
-          <ellipse cx="12" cy="12" rx="7.15" ry="3.05" transform="rotate(-60 12 12)" class="sticker-stroke"></ellipse>
+          <circle cx="12" cy="12" r="2.1" class="sticker-paper-thin"></circle>
+          <ellipse cx="12" cy="12" rx="7.1" ry="3.1" transform="rotate(60 12 12)" class="sticker-stroke"></ellipse>
+          <ellipse cx="12" cy="12" rx="7.1" ry="3.1" transform="rotate(-60 12 12)" class="sticker-stroke"></ellipse>
+          <circle cx="17.3" cy="8.7" r="1" class="sticker-paper"></circle>
         </svg>
       `,
       englisch: `
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 7.5h12a2.45 2.45 0 0 1 2.45 2.45v3.95A2.45 2.45 0 0 1 18 16.35h-6.5L7.4 19v-2.65H6A2.45 2.45 0 0 1 3.55 13.9V9.95A2.45 2.45 0 0 1 6 7.5Z" class="sticker-fill-soft"></path>
-          <path d="M8.5 10.8h6.9" class="sticker-stroke"></path>
-          <path d="M8.5 13.9h4.6" class="sticker-stroke"></path>
+          <path d="M6.2 7.1h11.2c1.7 0 3 1.2 3 2.8v3.7c0 1.6-1.3 2.8-3 2.8h-5.8l-3.6 2.2v-2.2H6.2c-1.7 0-3-1.2-3-2.8V9.9c0-1.6 1.3-2.8 3-2.8Z" class="sticker-paper"></path>
+          <path d="M8.5 10.4h6.8" class="sticker-stroke"></path>
+          <path d="M8.5 13.5h4.6" class="sticker-stroke"></path>
         </svg>
       `,
       franzoesisch: `
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M6 4.25v15.5" class="sticker-stroke"></path>
-          <path d="M6 5.7c1.9 0 2.65 1.35 4.5 1.35 1.95 0 2.75-1.35 4.65-1.35 1.7 0 2.55 1.05 4 1.3v9.45c-1.45-.25-2.3-1.3-4-1.3-1.9 0-2.7 1.35-4.65 1.35-1.85 0-2.6-1.35-4.5-1.35" class="sticker-stroke"></path>
+          <path d="M6.2 4.5v14.8" class="sticker-stroke"></path>
+          <path d="M6.2 6c1.7 0 2.5 1.2 4.2 1.2 1.8 0 2.7-1.2 4.5-1.2 1.3 0 2.3.6 3.4 1v9.2c-1.1-.4-2.1-1-3.4-1-1.8 0-2.7 1.2-4.5 1.2-1.7 0-2.5-1.2-4.2-1.2" class="sticker-paper"></path>
+          <circle cx="6.2" cy="4.5" r="0.95" class="sticker-paper-thin"></circle>
         </svg>
       `,
       share: `
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M10.7 13.3 13.3 10.7" class="sticker-stroke"></path>
-          <path d="M8.4 15.6a3.25 3.25 0 0 1 0-4.6l2.1-2.1a3.25 3.25 0 0 1 4.6 0" class="sticker-stroke"></path>
-          <path d="M15.6 8.4a3.25 3.25 0 0 1 0 4.6l-2.1 2.1a3.25 3.25 0 0 1-4.6 0" class="sticker-stroke"></path>
+          <circle cx="7" cy="12" r="2" class="sticker-paper"></circle>
+          <circle cx="17" cy="7" r="2" class="sticker-paper"></circle>
+          <circle cx="17" cy="17" r="2" class="sticker-paper"></circle>
+          <path d="M8.9 11.1 15.1 7.9" class="sticker-stroke"></path>
+          <path d="M8.9 12.9 15.1 16.1" class="sticker-stroke"></path>
         </svg>
       `
     };
@@ -988,22 +961,22 @@
 
     const gradeAccents = {
       klasse5: "#f0a64b",
-      klasse6: "#87c26e",
-      klasse7: "#7ac7db",
-      klasse8: "#e7a1c0",
-      klasse9: "#b9afea",
-      klasse10: "#f0ca73",
-      klasse11: "#b8ccef",
-      klasse12: "#e0c3b4"
+      klasse6: "#82be6f",
+      klasse7: "#60bfd1",
+      klasse8: "#e68bb0",
+      klasse9: "#b3a2f0",
+      klasse10: "#f1c15e",
+      klasse11: "#9bb9f0",
+      klasse12: "#ddb39a"
     };
 
     const subjects = [
-      { id: "mathe", label: "Mathe", title: "MATHE", icon: iconMarkup.mathe, accent: "#e6af58" },
-      { id: "biologie", label: "Biologie", title: "BIOLOGIE", icon: iconMarkup.biologie, accent: "#9bc9a7" },
-      { id: "chemie", label: "Chemie", title: "CHEMIE", icon: iconMarkup.chemie, accent: "#9ecad2" },
-      { id: "physik", label: "Physik", title: "PHYSIK", icon: iconMarkup.physik, accent: "#a8bbec" },
-      { id: "englisch", label: "Englisch", title: "ENGLISCH", icon: iconMarkup.englisch, accent: "#e8b8da" },
-      { id: "franzoesisch", label: "Französisch", title: "FRANZÖSISCH", icon: iconMarkup.franzoesisch, accent: "#dcc7b9" }
+      { id: "mathe", label: "Mathe", title: "MATHE", icon: iconMarkup.mathe, accent: "#e39b31" },
+      { id: "biologie", label: "Biologie", title: "BIOLOGIE", icon: iconMarkup.biologie, accent: "#62af72" },
+      { id: "chemie", label: "Chemie", title: "CHEMIE", icon: iconMarkup.chemie, accent: "#48a9ad" },
+      { id: "physik", label: "Physik", title: "PHYSIK", icon: iconMarkup.physik, accent: "#7b97ee" },
+      { id: "englisch", label: "Englisch", title: "ENGLISCH", icon: iconMarkup.englisch, accent: "#d68ac2" },
+      { id: "franzoesisch", label: "Französisch", title: "FRANZÖSISCH", icon: iconMarkup.franzoesisch, accent: "#c9a18d" }
     ];
 
     const subjectText = {
@@ -1078,12 +1051,29 @@
         .replace(/oe/g, "ö")
         .replace(/ue/g, "ü");
 
-      if (/^olm\d*$/.test(restored)) return restored.toUpperCase();
-      if (restored === "pse") return "PSE";
-      if (restored === "naoh") return "NaOH";
-      if (/^html$/.test(restored)) return restored.toUpperCase();
-      if (/^v\d+$/.test(restored)) return restored.toUpperCase();
-      if (index > 0 && lowercaseTitleWords.has(restored)) return restored;
+      if (/^olm\d*$/.test(restored)) {
+        return restored.toUpperCase();
+      }
+
+      if (restored === "pse") {
+        return "PSE";
+      }
+
+      if (restored === "naoh") {
+        return "NaOH";
+      }
+
+      if (/^html$/.test(restored)) {
+        return restored.toUpperCase();
+      }
+
+      if (/^v\d+$/.test(restored)) {
+        return restored.toUpperCase();
+      }
+
+      if (index > 0 && lowercaseTitleWords.has(restored)) {
+        return restored;
+      }
 
       return restored.charAt(0).toUpperCase() + restored.slice(1);
     }
@@ -1095,7 +1085,9 @@
         .replace(/\s+/g, " ")
         .trim();
 
-      if (!source) return "Quiz";
+      if (!source) {
+        return "Quiz";
+      }
 
       return source
         .split(" ")
@@ -1152,7 +1144,9 @@
 
     function getDirectShareUrl() {
       const selectedQuiz = getSelectedQuiz();
-      if (!selectedQuiz) return getIndexShareUrl();
+      if (!selectedQuiz) {
+        return getIndexShareUrl();
+      }
 
       try {
         const path = normalizeUrlPath(selectedQuiz.url || selectedQuiz.relativePath || "");
@@ -1212,7 +1206,10 @@
           }
         });
 
-        if (grade === state.selectedGrade) button.classList.add("active");
+        if (grade === state.selectedGrade) {
+          button.classList.add("active");
+        }
+
         gradeGrid.appendChild(button);
       });
     }
@@ -1233,7 +1230,10 @@
           }
         });
 
-        if (subject.id === state.selectedSubject) button.classList.add("active");
+        if (subject.id === state.selectedSubject) {
+          button.classList.add("active");
+        }
+
         subjectGrid.appendChild(button);
       });
     }
@@ -1263,7 +1263,10 @@
           }
         });
 
-        if (quiz.slug === state.selectedQuizSlug) button.classList.add("active");
+        if (quiz.slug === state.selectedQuizSlug) {
+          button.classList.add("active");
+        }
+
         quizGrid.appendChild(button);
       });
     }
@@ -1280,15 +1283,13 @@
 
       subjectTag.innerHTML = `${subject ? subject.icon : gradeIcons[state.selectedGrade]}<span>${subject ? subject.title : "Startseite"}</span>`;
       subjectTag.style.background = subject
-        ? `color-mix(in srgb, ${subject.accent} 16%, white)`
+        ? `color-mix(in srgb, ${subject.accent} 14%, white)`
         : "var(--accent-soft)";
       subjectTag.style.color = subject
-        ? `color-mix(in srgb, ${subject.accent} 82%, #4f5a66)`
+        ? `color-mix(in srgb, ${subject.accent} 78%, #4f5a66)`
         : "var(--accent-strong)";
-
       detailsIcon.innerHTML = subject ? subject.icon : (gradeIcons[state.selectedGrade] || iconMarkup.class5);
       detailsIcon.style.setProperty("--detail-accent", subject ? subject.accent : (gradeAccents[state.selectedGrade] || "var(--accent)"));
-
       selectionTitle.textContent = subject
         ? `${formatGrade(state.selectedGrade)} · ${subject.label}`
         : formatGrade(state.selectedGrade);
@@ -1377,11 +1378,15 @@
         .split("/")
         .filter(Boolean)
         .map(decodeHashPart);
-
       const [grade, subject, quizSlug] = parts;
 
-      if (grades.includes(grade)) state.selectedGrade = grade;
-      if (subjects.some((entry) => entry.id === subject)) state.selectedSubject = subject;
+      if (grades.includes(grade)) {
+        state.selectedGrade = grade;
+      }
+
+      if (subjects.some((entry) => entry.id === subject)) {
+        state.selectedSubject = subject;
+      }
 
       state.selectedQuizSlug = quizSlug || null;
       render();
@@ -1427,14 +1432,18 @@
         }
 
         setStatus(
-          state.selectedQuizSlug ? "Direkter Quiz-Link wurde kopiert." : "Fach-Link wurde kopiert.",
+          state.selectedQuizSlug
+            ? "Direkter Quiz-Link wurde kopiert."
+            : "Fach-Link wurde kopiert.",
           "success"
         );
       } catch (error) {
         try {
           fallbackCopyText(link);
           setStatus(
-            state.selectedQuizSlug ? "Direkter Quiz-Link wurde kopiert." : "Fach-Link wurde kopiert.",
+            state.selectedQuizSlug
+              ? "Direkter Quiz-Link wurde kopiert."
+              : "Fach-Link wurde kopiert.",
             "success"
           );
         } catch (fallbackError) {
@@ -1445,7 +1454,9 @@
 
     async function loadManifest() {
       try {
-        const response = await fetch("./quiz-manifest.json", { cache: "no-store" });
+        const response = await fetch("./quiz-manifest.json", {
+          cache: "no-store"
+        });
 
         if (!response.ok) {
           throw new Error(`Manifest nicht gefunden: ${response.status}`);
