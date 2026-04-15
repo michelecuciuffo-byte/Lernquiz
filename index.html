@@ -7,7 +7,7 @@
   <style>
     :root {
       --paper: #f7f1e3;
-      --card: rgba(255, 251, 242, 0.9);
+      --card: rgba(255, 251, 242, 0.92);
       --ink: #18202a;
       --muted: #5b6470;
       --accent: #d95d39;
@@ -146,7 +146,7 @@
       padding: 16px 18px;
       border: 1px solid rgba(24, 32, 42, 0.08);
       border-radius: 22px;
-      background: rgba(255, 255, 255, 0.7);
+      background: rgba(255, 255, 255, 0.72);
       backdrop-filter: blur(10px);
       box-shadow: 0 16px 34px rgba(24, 32, 42, 0.08);
     }
@@ -259,7 +259,7 @@
       padding: 16px;
       border: 1px solid var(--line);
       border-radius: 24px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.84));
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.97), rgba(255, 255, 255, 0.86));
       text-align: left;
       box-shadow: 0 12px 28px rgba(24, 32, 42, 0.07);
     }
@@ -302,15 +302,69 @@
     }
 
     .option-icon,
-    .mini-icon {
+    .mini-icon,
+    .details-icon {
       position: relative;
       overflow: hidden;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
+      display: inline-grid;
+      place-items: center;
       flex: 0 0 auto;
-      border-radius: 20px;
+      padding: 0;
+      line-height: 0;
       isolation: isolate;
+    }
+
+    .option-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 20px;
+      background:
+        radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.56) 29%, transparent 30%),
+        linear-gradient(
+          145deg,
+          color-mix(in srgb, var(--option-accent, var(--accent)) 10%, white),
+          color-mix(in srgb, var(--option-accent, var(--accent)) 30%, white)
+        );
+      color: color-mix(in srgb, var(--option-accent, var(--accent-strong)) 84%, #36404c);
+      border: 1px solid color-mix(in srgb, var(--option-accent, var(--accent)) 18%, white);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.84),
+        inset 0 -6px 14px rgba(255, 255, 255, 0.16),
+        0 10px 22px color-mix(in srgb, var(--option-accent, var(--accent)) 14%, transparent);
+    }
+
+    .mini-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 16px;
+      background:
+        radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.58) 30%, transparent 31%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(245, 237, 224, 0.96));
+      color: #606978;
+      border: 1px solid rgba(24, 32, 42, 0.08);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.82),
+        0 8px 18px rgba(24, 32, 42, 0.06);
+    }
+
+    .details-icon {
+      width: 68px;
+      height: 68px;
+      margin-bottom: 16px;
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.54) 30%, transparent 31%),
+        linear-gradient(
+          145deg,
+          color-mix(in srgb, var(--detail-accent, var(--accent)) 10%, white),
+          color-mix(in srgb, var(--detail-accent, var(--accent)) 30%, white)
+        );
+      color: color-mix(in srgb, var(--detail-accent, var(--accent-strong)) 84%, #36404c);
+      border: 1px solid color-mix(in srgb, var(--detail-accent, var(--accent)) 18%, white);
+      box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.84),
+        inset 0 -8px 16px rgba(255, 255, 255, 0.16),
+        0 12px 24px color-mix(in srgb, var(--detail-accent, var(--accent)) 14%, transparent);
     }
 
     .option-icon::before,
@@ -320,7 +374,7 @@
       position: absolute;
       inset: 7px;
       border-radius: 50%;
-      background: rgba(255, 255, 255, 0.32);
+      background: rgba(255, 255, 255, 0.28);
       filter: blur(2px);
       z-index: 0;
     }
@@ -341,48 +395,31 @@
       pointer-events: none;
     }
 
-    .option-icon {
-      width: 54px;
-      height: 54px;
-      background:
-        radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.54) 30%, transparent 31%),
-        linear-gradient(
-          145deg,
-          color-mix(in srgb, var(--option-accent, var(--accent)) 10%, white),
-          color-mix(in srgb, var(--option-accent, var(--accent)) 30%, white)
-        );
-      color: color-mix(in srgb, var(--option-accent, var(--accent-strong)) 82%, #3c4856);
-      border: 1px solid color-mix(in srgb, var(--option-accent, var(--accent)) 18%, white);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.82),
-        inset 0 -6px 14px rgba(255, 255, 255, 0.16),
-        0 10px 22px color-mix(in srgb, var(--option-accent, var(--accent)) 14%, transparent);
-    }
-
-    .mini-icon {
-      width: 42px;
-      height: 42px;
-      background:
-        radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.58) 30%, transparent 31%),
-        linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(245, 237, 224, 0.96));
-      color: #606978;
-      border: 1px solid rgba(24, 32, 42, 0.08);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.82),
-        0 8px 18px rgba(24, 32, 42, 0.06);
-    }
-
     .option-icon svg,
     .mini-icon svg,
     .details-icon svg {
       position: relative;
       z-index: 1;
-      width: 24px;
-      height: 24px;
+      display: block;
+      width: 26px;
+      height: 26px;
+      margin: 0;
+      overflow: visible;
       stroke: currentColor;
       stroke-width: 1.9;
       fill: none;
       vector-effect: non-scaling-stroke;
+    }
+
+    .option-icon svg text,
+    .mini-icon svg text,
+    .details-icon svg text {
+      fill: currentColor;
+      stroke: none;
+      font-family: "Trebuchet MS", Verdana, sans-serif;
+      font-weight: 800;
+      text-anchor: middle;
+      dominant-baseline: central;
     }
 
     .viewer {
@@ -537,37 +574,6 @@
       line-height: 1.02;
     }
 
-    .details-icon {
-      position: relative;
-      z-index: 1;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 66px;
-      height: 66px;
-      margin-bottom: 16px;
-      border-radius: 24px;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at 28% 24%, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.54) 30%, transparent 31%),
-        linear-gradient(
-          145deg,
-          color-mix(in srgb, var(--detail-accent, var(--accent)) 10%, white),
-          color-mix(in srgb, var(--detail-accent, var(--accent)) 30%, white)
-        );
-      color: color-mix(in srgb, var(--detail-accent, var(--accent-strong)) 82%, #3c4856);
-      border: 1px solid color-mix(in srgb, var(--detail-accent, var(--accent)) 18%, white);
-      box-shadow:
-        inset 0 1px 0 rgba(255, 255, 255, 0.82),
-        inset 0 -8px 16px rgba(255, 255, 255, 0.16),
-        0 12px 24px color-mix(in srgb, var(--detail-accent, var(--accent)) 14%, transparent);
-    }
-
-    .details-icon svg {
-      width: 30px;
-      height: 30px;
-    }
-
     .card p,
     .card li {
       position: relative;
@@ -707,10 +713,10 @@
         <article class="hero-highlight">
           <span class="mini-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6.2 18.5V7.6a1.8 1.8 0 0 1 1.8-1.8h8a1.8 1.8 0 0 1 1.8 1.8v10.9"></path>
-              <path d="M8.6 9.4h6.8"></path>
-              <path d="M8.6 12.5h4.9"></path>
-              <path d="M5.3 18.5h13.4"></path>
+              <rect x="5.2" y="5.2" width="13.6" height="13.6" rx="3.2"></rect>
+              <path d="M8.3 9.2h7.4"></path>
+              <path d="M8.3 12.1h5.2"></path>
+              <path d="M8.3 15h4"></path>
             </svg>
           </span>
           <strong>Lernen & Teilen</strong>
@@ -720,7 +726,7 @@
         <article class="hero-highlight">
           <span class="mini-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="2.15"></circle>
+              <circle cx="12" cy="12" r="2.1"></circle>
               <ellipse cx="12" cy="12" rx="8.1" ry="3.4" transform="rotate(60 12 12)"></ellipse>
               <ellipse cx="12" cy="12" rx="8.1" ry="3.4" transform="rotate(-60 12 12)"></ellipse>
             </svg>
@@ -732,9 +738,9 @@
         <article class="hero-highlight">
           <span class="mini-icon" aria-hidden="true">
             <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M6.2 18.7 9.6 7.1h4.8l3.4 11.6"></path>
-              <path d="M8.9 13.2h6.2"></path>
-              <path d="M4.8 18.7h14.4"></path>
+              <path d="M6.3 18.4 9.6 7.4h4.8l3.3 11"></path>
+              <path d="M8.9 13.1h6.2"></path>
+              <path d="M4.9 18.4h14.2"></path>
             </svg>
           </span>
           <strong>Mathe & Struktur</strong>
@@ -773,8 +779,8 @@
               <button class="action primary" id="copyLinkButton" type="button">
                 <span class="mini-icon" aria-hidden="true">
                   <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="9" y="8" width="10" height="11" rx="2.5"></rect>
-                    <path d="M6 15H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v1"></path>
+                    <rect x="8.8" y="8.2" width="10.2" height="10.8" rx="2.3"></rect>
+                    <rect x="5" y="5" width="10.2" height="10.8" rx="2.3"></rect>
                   </svg>
                 </span>
                 Link kopieren
@@ -786,7 +792,7 @@
                     <path d="M16 4h4v4"></path>
                     <path d="M20 16v4h-4"></path>
                     <path d="M4 16v4h4"></path>
-                    <rect x="8.5" y="8.5" width="7" height="7" rx="1.5"></rect>
+                    <rect x="8.3" y="8.3" width="7.4" height="7.4" rx="1.5"></rect>
                   </svg>
                 </span>
                 Link markieren
@@ -878,73 +884,104 @@
   </main>
 
   <script>
-    const grades = Array.from({ length: 9 }, (_, index) => `klasse${index + 5}`);
+    const grades = Array.from({ length: 8 }, (_, index) => `klasse${index + 5}`);
+
+    function makeNumberBadge(number) {
+      return `
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="12" r="8.4"></circle>
+          <text x="12" y="12" font-size="${String(number).length > 1 ? 8.2 : 10.2}">${number}</text>
+        </svg>
+      `;
+    }
 
     const iconMarkup = {
-      school: `
-        <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M4.9 19H19.1"></path>
-          <path d="M6.2 9.2 12 5.4l5.8 3.8v8.1a1.5 1.5 0 0 1-1.5 1.5H7.7a1.5 1.5 0 0 1-1.5-1.5Z"></path>
-          <path d="M10.3 19v-4.2h3.4V19"></path>
-          <path d="M9.2 11.2h.01"></path>
-          <path d="M14.8 11.2h.01"></path>
-        </svg>
-      `,
+      class5: makeNumberBadge("5"),
+      class6: makeNumberBadge("6"),
+      class7: makeNumberBadge("7"),
+      class8: makeNumberBadge("8"),
+      class9: makeNumberBadge("9"),
+      class10: makeNumberBadge("10"),
+      class11: makeNumberBadge("11"),
+      class12: makeNumberBadge("12"),
+
       quiz: `
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="4" y="5" width="16" height="14" rx="3.2"></rect>
-          <path d="m12 8.3 1.05 2.1 2.35.34-1.7 1.66.4 2.28L12 13.72l-2.1.99.4-2.28-1.7-1.66 2.35-.34Z"></path>
+          <rect x="4.5" y="5" width="15" height="14" rx="3.3"></rect>
+          <path d="m12 8.2 1 2 2.25.33-1.62 1.58.38 2.2L12 13.35l-2.01.98.38-2.2-1.62-1.58 2.25-.33Z"></path>
         </svg>
       `,
       mathe: `
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6.4 17.8h11.2"></path>
-          <path d="M8 17.8 9.7 8.6h4.6l1.7 9.2"></path>
-          <path d="M10 12.8h4"></path>
+          <path d="M6.3 18.4 9.6 7.4h4.8l3.3 11"></path>
+          <path d="M8.9 13.1h6.2"></path>
+          <path d="M4.9 18.4h14.2"></path>
         </svg>
       `,
       biologie: `
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M12 20v-6"></path>
-          <path d="M12 14c0-3.5 2.8-6.3 6.3-6.3 0 3.5-2.8 6.3-6.3 6.3Z"></path>
-          <path d="M12 15.9c0-2.8-2.2-5-5-5 0 2.8 2.2 5 5 5Z"></path>
-          <path d="M12 14c.9-.2 1.8-.8 2.6-1.6"></path>
+          <path d="M12 19.8v-5.8"></path>
+          <path d="M12 14c0-3.4 2.7-6.1 6.1-6.1 0 3.4-2.7 6.1-6.1 6.1Z"></path>
+          <path d="M12 15.7c0-2.7-2.2-4.9-4.9-4.9 0 2.7 2.2 4.9 4.9 4.9Z"></path>
+          <path d="M12 14c.9-.2 1.8-.8 2.5-1.5"></path>
         </svg>
       `,
       chemie: `
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10 4.2v4.5l-4.7 7.7A1.8 1.8 0 0 0 6.8 19h10.4a1.8 1.8 0 0 0 1.5-2.6L14 8.7V4.2"></path>
-          <path d="M8.4 13.5c1 .8 2.2 1.2 3.6 1.2s2.6-.4 3.6-1.2"></path>
-          <path d="M9 9.5h6"></path>
+          <path d="M10 4.4v4.2l-4.5 7.5A1.8 1.8 0 0 0 7 18.8h10a1.8 1.8 0 0 0 1.5-2.7L14 8.6V4.4"></path>
+          <path d="M8.5 13.2c.9.8 2.1 1.2 3.5 1.2s2.6-.4 3.5-1.2"></path>
+          <path d="M9 9.3h6"></path>
         </svg>
       `,
       physik: `
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
           <circle cx="12" cy="12" r="2.1"></circle>
-          <ellipse cx="12" cy="12" rx="8.2" ry="3.5" transform="rotate(60 12 12)"></ellipse>
-          <ellipse cx="12" cy="12" rx="8.2" ry="3.5" transform="rotate(-60 12 12)"></ellipse>
+          <ellipse cx="12" cy="12" rx="8.1" ry="3.4" transform="rotate(60 12 12)"></ellipse>
+          <ellipse cx="12" cy="12" rx="8.1" ry="3.4" transform="rotate(-60 12 12)"></ellipse>
         </svg>
       `,
       englisch: `
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 7.6h12a2.5 2.5 0 0 1 2.5 2.5v4.2A2.5 2.5 0 0 1 18 16.8h-6.9l-4.1 2.9v-2.9H6a2.5 2.5 0 0 1-2.5-2.5v-4.2A2.5 2.5 0 0 1 6 7.6Z"></path>
-          <path d="M8.8 11.1h6.4"></path>
-          <path d="M8.8 14.1h4.5"></path>
+          <path d="M6 7.4h12a2.6 2.6 0 0 1 2.6 2.6v4.1a2.6 2.6 0 0 1-2.6 2.6h-6.8l-4.2 2.8v-2.8H6a2.6 2.6 0 0 1-2.6-2.6V10A2.6 2.6 0 0 1 6 7.4Z"></path>
+          <path d="M8.7 11h6.5"></path>
+          <path d="M8.7 14h4.4"></path>
         </svg>
       `,
       franzoesisch: `
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M6 4v16"></path>
-          <path d="M6 5.5c2 0 2.8 1.4 4.8 1.4s2.8-1.4 4.8-1.4 2.8 1.4 4.4 1.4v10.1c-1.6 0-2.4-1.4-4.4-1.4s-2.8 1.4-4.8 1.4-2.8-1.4-4.8-1.4"></path>
+          <path d="M6 4.2v15.6"></path>
+          <path d="M6 5.6c2 0 2.7 1.4 4.6 1.4 2 0 2.7-1.4 4.7-1.4 1.9 0 2.7 1.4 4.3 1.4v9.8c-1.6 0-2.4-1.4-4.3-1.4-2 0-2.7 1.4-4.7 1.4-1.9 0-2.6-1.4-4.6-1.4"></path>
         </svg>
       `,
       share: `
         <svg viewBox="0 0 24 24" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M10.6 13.4 13.4 10.6"></path>
-          <path d="M8.3 15.7a3.25 3.25 0 0 1 0-4.6l2.2-2.2a3.25 3.25 0 0 1 4.6 0"></path>
-          <path d="M15.7 8.3a3.25 3.25 0 0 1 0 4.6l-2.2 2.2a3.25 3.25 0 0 1-4.6 0"></path>
+          <path d="M10.7 13.3 13.3 10.7"></path>
+          <path d="M8.4 15.6a3.25 3.25 0 0 1 0-4.6l2.1-2.1a3.25 3.25 0 0 1 4.6 0"></path>
+          <path d="M15.6 8.4a3.25 3.25 0 0 1 0 4.6l-2.1 2.1a3.25 3.25 0 0 1-4.6 0"></path>
         </svg>
       `
+    };
+
+    const gradeIcons = {
+      klasse5: iconMarkup.class5,
+      klasse6: iconMarkup.class6,
+      klasse7: iconMarkup.class7,
+      klasse8: iconMarkup.class8,
+      klasse9: iconMarkup.class9,
+      klasse10: iconMarkup.class10,
+      klasse11: iconMarkup.class11,
+      klasse12: iconMarkup.class12
+    };
+
+    const gradeAccents = {
+      klasse5: "#f0a64b",
+      klasse6: "#82be6f",
+      klasse7: "#60bfd1",
+      klasse8: "#e68bb0",
+      klasse9: "#9e8de0",
+      klasse10: "#f1b34b",
+      klasse11: "#76a6ea",
+      klasse12: "#d58b60"
     };
 
     const subjects = [
@@ -1174,8 +1211,8 @@
         const button = createOptionButton({
           label: formatGrade(grade),
           detail: grade === state.selectedGrade ? "Aktiv ausgewählt" : "Öffnen",
-          icon: iconMarkup.school,
-          accent: "#b48762",
+          icon: gradeIcons[grade] || iconMarkup.class5,
+          accent: gradeAccents[grade] || "#b48762",
           onClick: () => {
             state.selectedGrade = grade;
             state.selectedQuizSlug = null;
@@ -1258,15 +1295,15 @@
       const subject = getSubject(state.selectedSubject);
       const selectedQuiz = getSelectedQuiz();
 
-      subjectTag.innerHTML = `${subject ? subject.icon : iconMarkup.school}<span>${subject ? subject.title : "Startseite"}</span>`;
+      subjectTag.innerHTML = `${subject ? subject.icon : gradeIcons[state.selectedGrade]}<span>${subject ? subject.title : "Startseite"}</span>`;
       subjectTag.style.background = subject
         ? `color-mix(in srgb, ${subject.accent} 14%, white)`
         : "var(--accent-soft)";
       subjectTag.style.color = subject
         ? `color-mix(in srgb, ${subject.accent} 78%, #4f5a66)`
         : "var(--accent-strong)";
-      detailsIcon.innerHTML = subject ? subject.icon : iconMarkup.school;
-      detailsIcon.style.setProperty("--detail-accent", subject ? subject.accent : "var(--accent)");
+      detailsIcon.innerHTML = subject ? subject.icon : (gradeIcons[state.selectedGrade] || iconMarkup.class5);
+      detailsIcon.style.setProperty("--detail-accent", subject ? subject.accent : (gradeAccents[state.selectedGrade] || "var(--accent)"));
       selectionTitle.textContent = subject
         ? `${formatGrade(state.selectedGrade)} · ${subject.label}`
         : formatGrade(state.selectedGrade);
