@@ -7,6 +7,11 @@
   <style>
     :root {
       --paper: #f7f1e3;
+      --paper-2: #fffaf2;
+      --paper-3: #fffdf9;
+      --paper-line: rgba(118, 109, 136, 0.10);
+      --paper-dots: rgba(118, 109, 136, 0.12);
+
       --card: rgba(255, 251, 242, 0.94);
       --ink: #18202a;
       --muted: #5b6470;
@@ -16,6 +21,9 @@
       --ok-soft: rgba(85, 145, 123, 0.14);
       --line: rgba(24, 32, 42, 0.12);
       --shadow: 0 22px 50px rgba(24, 32, 42, 0.12);
+      --tab-shadow: 0 14px 28px rgba(44, 34, 60, 0.10);
+      --tab-shadow-hover: 0 18px 34px rgba(44, 34, 60, 0.16);
+
       --radius-xl: 28px;
       --radius-lg: 18px;
       --hero: linear-gradient(135deg, #ffd27d 0%, #f7f1e3 50%, #b8d6cc 100%);
@@ -74,8 +82,7 @@
     }
 
     .hero,
-    .panel,
-    .card {
+    .panel {
       border: 1px solid var(--line);
       border-radius: var(--radius-xl);
       box-shadow: var(--shadow);
@@ -133,51 +140,16 @@
       gap: 18px;
     }
 
-    .hero-highlights {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 24px;
-    }
-
-    .hero-highlight {
-      padding: 16px 18px;
-      border: 1px solid rgba(24, 32, 42, 0.08);
-      border-radius: 22px;
-      background: rgba(255, 255, 255, 0.72);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 16px 34px rgba(24, 32, 42, 0.08);
-    }
-
-    .hero-highlight strong,
-    .hero-highlight span {
-      display: block;
-    }
-
-    .hero-highlight strong {
-      margin-top: 10px;
-      font-size: 1rem;
-    }
-
-    .hero-highlight span {
-      margin-top: 6px;
-      color: var(--muted);
-      line-height: 1.55;
-      font-size: 0.93rem;
-    }
-
     h1 {
       margin: 0;
-      max-width: 12ch;
-      font-size: clamp(2.2rem, 4vw, 4.5rem);
-      line-height: 0.98;
+      max-width: 14ch;
+      font-size: clamp(1.45rem, 2.5vw, 2.4rem);
+      line-height: 1.08;
     }
 
     .hero p {
       max-width: 68ch;
-      margin: 18px 0 0;
+      margin: 12px 0 0;
       font-size: 1.04rem;
       line-height: 1.68;
       color: rgba(24, 32, 42, 0.88);
@@ -198,17 +170,47 @@
       margin-top: 24px;
     }
 
-    .panel,
-    .card {
+    .panel {
       padding: 24px;
-      background: var(--card);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.96), rgba(255,251,242,0.94));
       backdrop-filter: blur(12px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        linear-gradient(transparent 27px, var(--paper-line) 28px),
+        radial-gradient(circle at 18px 18px, rgba(255,255,255,0.55) 0 2px, transparent 2px);
+      background-size: 100% 28px, 120px 120px;
+      opacity: 0.55;
+      z-index: 0;
+    }
+
+    .panel > * {
+      position: relative;
+      z-index: 1;
     }
 
     .panel h2,
-    .card h2,
-    .card h3 {
+    .panel h3 {
       margin: 0 0 8px;
+    }
+
+    .panel h3 {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.72);
+      box-shadow: 0 8px 18px rgba(45, 36, 56, 0.06);
+      border: 1px solid rgba(24, 32, 42, 0.06);
     }
 
     .muted {
@@ -234,8 +236,9 @@
     }
 
     .quiz-grid {
-      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       margin-top: 16px;
+      gap: 14px;
     }
 
     .option,
@@ -253,16 +256,56 @@
     }
 
     .option {
+      position: relative;
       display: flex;
+      flex-direction: column;
+      justify-content: center;
       align-items: center;
-      gap: 14px;
-      min-height: 104px;
-      padding: 16px 16px;
-      border: 1px solid var(--line);
-      border-radius: 24px;
-      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.88));
-      text-align: left;
-      box-shadow: 0 12px 28px rgba(24, 32, 42, 0.07);
+      gap: 10px;
+      min-height: 108px;
+      padding: 18px 12px 16px;
+      border: 1px solid rgba(24, 32, 42, 0.10);
+      border-radius: 26px;
+      background:
+        linear-gradient(180deg, var(--paper-3), var(--paper-2));
+      text-align: center;
+      box-shadow: var(--tab-shadow);
+      overflow: hidden;
+      isolation: isolate;
+    }
+
+    .option::before {
+      content: "";
+      position: absolute;
+      top: 10px;
+      left: 18px;
+      width: 54px;
+      height: 12px;
+      border-radius: 999px;
+      background: rgba(255, 217, 125, 0.72);
+      box-shadow:
+        0 1px 0 rgba(255,255,255,0.65) inset,
+        0 2px 6px rgba(97, 77, 32, 0.08);
+      transform: rotate(-4deg);
+      z-index: 0;
+    }
+
+    .option::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle at 16px 18px, var(--paper-dots) 0 1.5px, transparent 1.6px),
+        linear-gradient(transparent 30px, rgba(118, 109, 136, 0.07) 31px);
+      background-size: 26px 26px, 100% 31px;
+      opacity: 0.42;
+      z-index: 0;
+    }
+
+    .option > * {
+      position: relative;
+      z-index: 1;
     }
 
     .option:hover,
@@ -271,41 +314,75 @@
     .action:focus-visible,
     .inline-link:hover,
     .inline-link:focus-visible {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 28px rgba(24, 32, 42, 0.13);
+      transform: translateY(-3px) rotate(-0.4deg);
+      box-shadow: var(--tab-shadow-hover);
     }
 
     .option strong {
       display: block;
       font-size: 1rem;
-      margin-bottom: 4px;
+      margin: 4px 0 0;
+      font-weight: 700;
+      color: #2d2438;
+      line-height: 1.25;
+      text-align: center;
     }
 
     .option span {
-      display: block;
-      font-size: 0.92rem;
-      color: var(--muted);
-      line-height: 1.35;
+      display: none;
     }
 
     .option.active {
-      border-color: color-mix(in srgb, var(--option-accent, var(--accent)) 38%, white);
-      background: linear-gradient(
-        180deg,
-        rgba(255, 255, 255, 0.99),
-        color-mix(in srgb, var(--option-accent, var(--accent)) 12%, white)
-      );
-      box-shadow: 0 16px 34px color-mix(in srgb, var(--option-accent, var(--accent)) 12%, rgba(24, 32, 42, 0.06));
+      border-color: color-mix(in srgb, var(--option-accent, var(--accent)) 34%, white);
+      background:
+        linear-gradient(
+          180deg,
+          rgba(255,255,255,0.99),
+          color-mix(in srgb, var(--option-accent, var(--accent)) 10%, #fffdf7)
+        );
+      box-shadow:
+        0 18px 36px color-mix(in srgb, var(--option-accent, var(--accent)) 14%, rgba(24, 32, 42, 0.07)),
+        0 0 0 3px color-mix(in srgb, var(--option-accent, var(--accent)) 12%, transparent);
+    }
+
+    .option.active::before {
+      background: color-mix(in srgb, var(--option-accent, var(--accent)) 42%, #ffe59b);
+      width: 62px;
     }
 
     .option-copy {
       min-width: 0;
-      flex: 1;
+      flex: 0 0 auto;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .grade-grid .option {
+      min-height: 100px;
+      padding: 16px 10px;
+    }
+
+    .grade-grid .option strong {
+      display: none;
+    }
+
+    .subject-grid .option {
+      gap: 12px;
+      min-height: 132px;
+      padding-top: 20px;
+      padding-bottom: 18px;
+    }
+
+    .subject-grid .option strong {
+      display: block;
+      font-size: 1rem;
     }
 
     .option-icon,
-    .mini-icon,
-    .details-icon {
+    .mini-icon {
       display: grid;
       place-items: center;
       flex: 0 0 auto;
@@ -313,8 +390,16 @@
     }
 
     .option-icon {
-      width: 72px;
-      height: 72px;
+      width: 74px;
+      height: 74px;
+      padding: 2px;
+      border-radius: 22px;
+      background:
+        radial-gradient(circle at 30% 24%, rgba(255,255,255,0.9), transparent 30%),
+        linear-gradient(180deg, rgba(255,255,255,0.82), rgba(255,250,242,0.52));
+      box-shadow:
+        inset 0 1px 0 rgba(255,255,255,0.8),
+        0 6px 16px rgba(42, 31, 56, 0.08);
     }
 
     .mini-icon {
@@ -322,15 +407,8 @@
       height: 42px;
     }
 
-    .details-icon {
-      width: 88px;
-      height: 88px;
-      margin-bottom: 16px;
-    }
-
     .option-icon svg,
-    .mini-icon svg,
-    .details-icon svg {
+    .mini-icon svg {
       display: block;
       overflow: visible;
       filter: var(--sticker-shadow);
@@ -346,21 +424,16 @@
       height: 24px;
     }
 
-    .details-icon svg {
-      width: 76px;
-      height: 76px;
-    }
-
     .sticker-outline {
       fill: var(--sticker-paper);
       stroke: var(--sticker-stroke);
-      stroke-width: 1.9;
+      stroke-width: 1.8;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
 
     .sticker-outline-thin {
-      fill: rgba(255,255,255,0.84);
+      fill: rgba(255,255,255,0.88);
       stroke: var(--sticker-stroke);
       stroke-width: 1.35;
       stroke-linecap: round;
@@ -370,22 +443,15 @@
     .sticker-line {
       fill: none;
       stroke: var(--sticker-stroke);
-      stroke-width: 1.8;
+      stroke-width: 1.65;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
 
     .sticker-light-line {
       fill: none;
-      stroke: rgba(106, 100, 120, 0.42);
-      stroke-width: 1.15;
-      stroke-linecap: round;
-      stroke-linejoin: round;
-    }
-
-    .sticker-accent-fill {
-      stroke: var(--sticker-stroke);
-      stroke-width: 1.5;
+      stroke: rgba(106, 100, 120, 0.34);
+      stroke-width: 1.05;
       stroke-linecap: round;
       stroke-linejoin: round;
     }
@@ -449,13 +515,6 @@
       border-color: var(--line);
     }
 
-    .action-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 18px;
-    }
-
     .share-preview,
     .status-text {
       min-height: 1.2em;
@@ -490,71 +549,6 @@
     .share-link-box:focus {
       outline: 2px solid rgba(217, 93, 57, 0.28);
       outline-offset: 2px;
-    }
-
-    .card {
-      position: relative;
-      overflow: hidden;
-      background:
-        linear-gradient(180deg, rgba(255, 255, 255, 0.99), rgba(248, 243, 228, 0.96));
-    }
-
-    .card::before {
-      content: "";
-      position: absolute;
-      inset: auto -46px -46px auto;
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      background: rgba(217, 93, 57, 0.08);
-    }
-
-    .tag-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .tag {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 9px 14px;
-      border-radius: 999px;
-      background: var(--accent-soft);
-      color: var(--accent-strong);
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      font-size: 0.84rem;
-    }
-
-    .tag svg {
-      width: 16px;
-      height: 16px;
-      filter: none;
-    }
-
-    .card-title {
-      position: relative;
-      z-index: 1;
-      margin: 0;
-      font-size: clamp(2rem, 4vw, 3rem);
-      line-height: 1.02;
-    }
-
-    .card p,
-    .card li {
-      position: relative;
-      z-index: 1;
-      line-height: 1.7;
-      font-size: 1.03rem;
-    }
-
-    .card ul {
-      padding-left: 22px;
-      margin: 14px 0 0;
     }
 
     .quiz-list-empty {
@@ -614,8 +608,7 @@
       }
 
       .hero,
-      .panel,
-      .card {
+      .panel {
         padding: 22px;
       }
 
@@ -635,10 +628,6 @@
 
       .share-link-box {
         width: 100%;
-      }
-
-      .hero-highlights {
-        grid-template-columns: 1fr;
       }
     }
 
@@ -665,7 +654,7 @@
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow">Lernquiz Plattform</p>
-        <h1>Direktlinks zu jedem Quiz an einem Ort.</h1>
+        <h1>Direktlinks zu jedem Quiz an einem Ort</h1>
         <p>
           Diese Startseite bündelt Klassen, Fächer und einzelne Quizze in einer ruhigen Übersicht.
           Neue Quiz-Seiten werden auf GitHub Pages automatisch erkannt, wenn sie direkt im Fachordner
@@ -678,53 +667,13 @@
           in der Vorschau öffnen. So landen die Kinder direkt im Quiz und nicht in einer Dateiansicht.
         </p>
       </div>
-
-      <div class="hero-highlights" aria-label="Bereiche der Lernquiz-Plattform">
-        <article class="hero-highlight">
-          <span class="mini-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M5.7 5.6h9.7l2.8 2.8v9c0 .9-.7 1.6-1.6 1.6H7.3c-.9 0-1.6-.7-1.6-1.6Z" class="sticker-outline"></path>
-              <path d="M15.4 5.6v2.1c0 .4.3.7.7.7h2.1" class="sticker-line"></path>
-              <path d="M8.6 10.1h6" class="sticker-line"></path>
-              <path d="M8.6 12.9h5" class="sticker-line"></path>
-              <path d="M8.6 15.7h3.8" class="sticker-line"></path>
-            </svg>
-          </span>
-          <strong>Lernen & Teilen</strong>
-          <span>Direktlinks machen einzelne Quizze schnell auffindbar und sofort versendbar.</span>
-        </article>
-
-        <article class="hero-highlight">
-          <span class="mini-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 18.8v-5.7" class="sticker-line"></path>
-              <path d="M12 13.1c0-3.2 2.6-5.8 5.8-5.8 0 3.3-2.6 5.8-5.8 5.8Z" class="sticker-outline"></path>
-              <path d="M12 15.6c0-2.3-1.8-4.2-4.2-4.2 0 2.4 1.9 4.2 4.2 4.2Z" class="sticker-outline-thin"></path>
-            </svg>
-          </span>
-          <strong>Naturwissenschaften</strong>
-          <span>Biologie, Chemie und Physik bekommen eine klar erkennbare, gemeinsame Bildsprache.</span>
-        </article>
-
-        <article class="hero-highlight">
-          <span class="mini-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M6.2 5.8h11.6c.9 0 1.6.7 1.6 1.6v9.2c0 .9-.7 1.6-1.6 1.6H6.2c-.9 0-1.6-.7-1.6-1.6V7.4c0-.9.7-1.6 1.6-1.6Z" class="sticker-outline"></path>
-              <path d="M9 12h6" class="sticker-line"></path>
-              <path d="M12 9v6" class="sticker-line"></path>
-            </svg>
-          </span>
-          <strong>Mathe & Struktur</strong>
-          <span>Fächer und Quizkarten werden klarer getrennt, damit man schneller zum richtigen Thema springt.</span>
-        </article>
-      </div>
     </section>
 
     <section class="layout">
       <aside class="panel stack">
         <div>
           <h2>Auswahl</h2>
-          <p class="muted">Zuerst Klasse wählen, dann Fach. Danach erscheinen darunter die einzelnen Quizzes.</p>
+          <p class="muted">Zuerst Klasse wählen, dann Fach. Danach erscheinen darunter die einzelnen Quizze.</p>
         </div>
 
         <div>
@@ -796,41 +745,6 @@
           </div>
         </section>
 
-        <article class="card" id="detailsCard">
-          <div class="tag-row">
-            <span class="tag" id="subjectTag">Startseite</span>
-            <span class="tag ok hidden" id="quizTag">Direkt teilbar</span>
-          </div>
-          <div class="details-icon" id="detailsIcon" aria-hidden="true"></div>
-          <h2 class="card-title" id="contentTitle">Willkommen bei Lernquiz</h2>
-          <p id="contentParagraph1">Wähle eine Klasse und ein Fach, damit passende Quiz-Seiten angezeigt werden.</p>
-          <p id="contentParagraph2">Wenn du ein einzelnes Quiz auswählst, lädt die Vorschau direkt hier im Browser.</p>
-          <p id="contentParagraph3">Mit dem Kopier-Button erhältst du den direkten Link zur Quiz-Seite.</p>
-          <div class="action-row">
-            <a class="action secondary hidden" id="openQuizButton" href="#" target="_blank" rel="noopener noreferrer">
-              <span class="mini-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M14 4h6v6" class="sticker-line"></path>
-                  <path d="M10 14 20 4" class="sticker-line"></path>
-                  <path d="M20 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h4" class="sticker-line"></path>
-                </svg>
-              </span>
-              Quiz direkt öffnen
-            </a>
-            <a class="action secondary hidden" id="openIndexViewButton" href="#" target="_blank" rel="noopener noreferrer">
-              <span class="mini-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24">
-                  <path d="M4.5 4.8h6v6h-6z" class="sticker-outline"></path>
-                  <path d="M13.5 4.8h6v6h-6z" class="sticker-outline"></path>
-                  <path d="M4.5 13.8h6v5.7h-6z" class="sticker-outline"></path>
-                  <path d="M13.5 13.8h6v5.7h-6z" class="sticker-outline"></path>
-                </svg>
-              </span>
-              Ansicht mit Auswahl öffnen
-            </a>
-          </div>
-        </article>
-
         <section class="panel preview-shell hidden" id="previewSection">
           <div class="preview-header">
             <div>
@@ -877,19 +791,53 @@
       `;
     }
 
-    function makeBlobSticker(inner, color = "#ffe5a8", rotation = -5) {
+    function makeBlobSticker(inner, color = "#ffe5a8", rotation = -3) {
       return `
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <g transform="rotate(${rotation} 12 12)">
-            <path d="M7.1 4.9c1.7-.5 4-.4 5.9 0 1.2.3 2.3.9 3.4 1.7 1.4 1.1 2.3 2.8 2.1 4.5-.2 1.6-.3 3-.8 4.1-.5 1.1-1.4 2.1-2.7 2.9-1 .6-2.4 1-3.8 1.2-1.7.2-3.3.1-4.8-.5-1.6-.7-2.8-1.8-3.4-3.3-.6-1.5-.7-3.1-.5-4.7.2-1.8 1.3-3.2 2.7-4.2.7-.5 1.4-1.3 1.9-1.7Z"
-                  fill="${color}" stroke="#6a6478" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"></path>
-            <path d="M6.3 5.5h4.7" class="sticker-light-line"></path>
-            <path d="M15 17.9h2.1" class="sticker-light-line"></path>
+            <path d="M7.2 5.1c1.5-.4 3.8-.4 5.5 0 1.4.3 2.7.8 3.8 1.7 1.4 1.1 2.2 2.7 2.1 4.3-.1 1.6-.4 3-.9 4-.6 1.1-1.5 2.1-2.8 2.8-1 .5-2.3.9-3.7 1-1.6.2-3.1.1-4.5-.4-1.6-.6-2.7-1.7-3.4-3.1-.6-1.4-.8-2.9-.6-4.4.2-1.8 1.2-3.3 2.7-4.3.6-.4 1.1-1 1.8-1.6Z"
+              fill="${color}" stroke="#6a6478" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
             ${inner}
           </g>
         </svg>
       `;
     }
+
+    const cleanSubjectIcons = {
+      mathe: makeBlobSticker(`
+        <path d="M12 8v8" class="sticker-line"></path>
+        <path d="M8 12h8" class="sticker-line"></path>
+      `, "#ffe3a3", -2),
+
+      biologie: makeBlobSticker(`
+        <path d="M12 18v-6" class="sticker-line"></path>
+        <path d="M12 12c3-3 5-4 6-4 0 3-3 6-6 6Z" class="sticker-outline-thin"></path>
+        <path d="M12 13c-2-2-3-3-4-3 0 2 2 4 4 4Z" class="sticker-outline-thin"></path>
+      `, "#d8f0b7", 3),
+
+      chemie: makeBlobSticker(`
+        <path d="M10 7v3l-3 5a1.5 1.5 0 0 0 1.3 2h7.4a1.5 1.5 0 0 0 1.3-2l-3-5V7" class="sticker-outline"></path>
+        <circle cx="10" cy="14" r="0.8" class="sticker-outline-thin"></circle>
+        <circle cx="13" cy="15" r="0.8" class="sticker-outline-thin"></circle>
+      `, "#cdefff", -3),
+
+      physik: makeBlobSticker(`
+        <circle cx="12" cy="12" r="1.6" class="sticker-outline"></circle>
+        <ellipse cx="12" cy="12" rx="6" ry="2.5" transform="rotate(60 12 12)" class="sticker-line"></ellipse>
+        <ellipse cx="12" cy="12" rx="6" ry="2.5" transform="rotate(-60 12 12)" class="sticker-line"></ellipse>
+      `, "#d8dcff", 2),
+
+      englisch: makeBlobSticker(`
+        <rect x="7" y="8" width="10" height="6" rx="1.2" class="sticker-outline"></rect>
+        <path d="M7 11h10" class="sticker-line"></path>
+        <path d="M12 8v6" class="sticker-line"></path>
+      `, "#ffd6e6", -2),
+
+      franzoesisch: makeBlobSticker(`
+        <path d="M7 6v12" class="sticker-line"></path>
+        <path d="M7 7c2 0 3 1 5 1s3-1 5-1v10c-2 0-3-1-5-1s-3 1-5 1Z" class="sticker-outline"></path>
+      `, "#ffe4cc", 2)
+    };
 
     const iconMarkup = {
       class5: makeClassSticker("5"),
@@ -901,78 +849,19 @@
       class11: makeClassSticker("11"),
       class12: makeClassSticker("12"),
 
+      mathe: cleanSubjectIcons.mathe,
+      biologie: cleanSubjectIcons.biologie,
+      chemie: cleanSubjectIcons.chemie,
+      physik: cleanSubjectIcons.physik,
+      englisch: cleanSubjectIcons.englisch,
+      franzoesisch: cleanSubjectIcons.franzoesisch,
+
       quiz: `
         <svg viewBox="0 0 24 24" aria-hidden="true">
-          <g transform="rotate(-6 12 12)">
-            <path d="M6.4 5.3h8.7l2.8 2.8v8.2c0 1-.8 1.8-1.8 1.8H8.2c-1 0-1.8-.8-1.8-1.8Z" class="sticker-outline"></path>
-            <path d="M15.1 5.3V7c0 .4.3.8.8.8h2" class="sticker-line"></path>
-            <path d="M9 10h5.2" class="sticker-line"></path>
-            <path d="M9 12.8h4.3" class="sticker-line"></path>
-            <path d="M9 15.5h2.9" class="sticker-line"></path>
-            <circle cx="14.8" cy="15.2" r="1.4" class="sticker-outline-thin"></circle>
-            <path d="m14.25 15.2.4.4.8-.8" class="sticker-line"></path>
-          </g>
-        </svg>
-      `,
-
-      mathe: makeBlobSticker(`
-        <path d="M12 8.4v7.2" class="sticker-line"></path>
-        <path d="M8.4 12h7.2" class="sticker-line"></path>
-        <path d="M9 8.8l1 .9" class="sticker-line"></path>
-        <path d="M14 14.3l1 .9" class="sticker-line"></path>
-      `, "#ffe3a3", -4),
-
-      biologie: makeBlobSticker(`
-        <path d="M12 18.2v-5.6" class="sticker-line"></path>
-        <path d="M12.1 12.5c0-3 2.4-5.4 5.4-5.4 0 3-2.4 5.4-5.4 5.4Z" class="sticker-outline"></path>
-        <path d="M11.9 14.9c0-2.1-1.7-3.8-3.8-3.8 0 2.1 1.7 3.8 3.8 3.8Z" class="sticker-outline-thin"></path>
-      `, "#d8f0b7", 5),
-
-      chemie: makeBlobSticker(`
-        <path d="M10 7v3l-3.2 5.2a1.7 1.7 0 0 0 1.5 2.5h7.4a1.7 1.7 0 0 0 1.5-2.5L14 10V7" class="sticker-outline"></path>
-        <path d="M9.6 10.2h4.8" class="sticker-line"></path>
-        <circle cx="9.4" cy="15.1" r="1" class="sticker-outline-thin"></circle>
-        <circle cx="12" cy="15.8" r="0.9" class="sticker-outline-thin"></circle>
-        <circle cx="14.6" cy="14.9" r="1" class="sticker-outline-thin"></circle>
-      `, "#cdefff", -6),
-
-      physik: makeBlobSticker(`
-        <circle cx="12" cy="12" r="1.9" class="sticker-outline-thin"></circle>
-        <ellipse cx="12" cy="12" rx="6.2" ry="2.8" transform="rotate(60 12 12)" class="sticker-line"></ellipse>
-        <ellipse cx="12" cy="12" rx="6.2" ry="2.8" transform="rotate(-60 12 12)" class="sticker-line"></ellipse>
-        <circle cx="16.5" cy="8.7" r="0.9" class="sticker-outline"></circle>
-      `, "#d8dcff", 4),
-
-      englisch: `
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <g transform="rotate(-4 12 12)">
-            <path d="M6.2 7.2h11c1.6 0 2.8 1.2 2.8 2.7v3.5c0 1.5-1.2 2.7-2.8 2.7h-5.4l-3.3 2v-2H6.2c-1.6 0-2.8-1.2-2.8-2.7V9.9c0-1.5 1.2-2.7 2.8-2.7Z" class="sticker-outline"></path>
-            <path d="M8.5 10.4h6.7" class="sticker-line"></path>
-            <path d="M8.5 13.2h4.7" class="sticker-line"></path>
-            <path d="M16.7 6.5h2.1" class="sticker-light-line"></path>
-          </g>
-        </svg>
-      `,
-
-      franzoesisch: `
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <g transform="rotate(4 12 12)">
-            <path d="M6.1 4.8v14.5" class="sticker-line"></path>
-            <path d="M6.1 6.4c1.6 0 2.4 1.1 4.1 1.1 1.7 0 2.6-1.1 4.3-1.1 1.3 0 2.2.6 3.3 1v8.8c-1.1-.4-2-1-3.3-1-1.7 0-2.6 1.1-4.3 1.1-1.7 0-2.5-1.1-4.1-1.1" class="sticker-outline"></path>
-            <circle cx="6.1" cy="4.8" r="0.9" class="sticker-outline-thin"></circle>
-          </g>
-        </svg>
-      `,
-
-      share: `
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <g transform="rotate(-8 12 12)">
-            <circle cx="7" cy="12" r="1.9" class="sticker-outline"></circle>
-            <circle cx="17" cy="7" r="1.9" class="sticker-outline"></circle>
-            <circle cx="17" cy="17" r="1.9" class="sticker-outline"></circle>
-            <path d="M8.8 11.1 15.2 7.9" class="sticker-line"></path>
-            <path d="M8.8 12.9 15.2 16.1" class="sticker-line"></path>
-          </g>
+          <path d="M6 5h9l3 3v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" class="sticker-outline"></path>
+          <path d="M15 5v3h3" class="sticker-line"></path>
+          <path d="M9 11h6" class="sticker-line"></path>
+          <path d="M9 14h4" class="sticker-line"></path>
         </svg>
       `
     };
@@ -1000,22 +889,13 @@
     };
 
     const subjects = [
-      { id: "mathe", label: "Mathe", title: "MATHE", icon: iconMarkup.mathe, accent: "#e39b31" },
-      { id: "biologie", label: "Biologie", title: "BIOLOGIE", icon: iconMarkup.biologie, accent: "#62af72" },
-      { id: "chemie", label: "Chemie", title: "CHEMIE", icon: iconMarkup.chemie, accent: "#48a9ad" },
-      { id: "physik", label: "Physik", title: "PHYSIK", icon: iconMarkup.physik, accent: "#7b97ee" },
-      { id: "englisch", label: "Englisch", title: "ENGLISCH", icon: iconMarkup.englisch, accent: "#d68ac2" },
-      { id: "franzoesisch", label: "Französisch", title: "FRANZÖSISCH", icon: iconMarkup.franzoesisch, accent: "#c9a18d" }
+      { id: "mathe", label: "Mathe", icon: iconMarkup.mathe, accent: "#e39b31" },
+      { id: "biologie", label: "Biologie", icon: iconMarkup.biologie, accent: "#62af72" },
+      { id: "chemie", label: "Chemie", icon: iconMarkup.chemie, accent: "#48a9ad" },
+      { id: "physik", label: "Physik", icon: iconMarkup.physik, accent: "#7b97ee" },
+      { id: "englisch", label: "Englisch", icon: iconMarkup.englisch, accent: "#d68ac2" },
+      { id: "franzoesisch", label: "Französisch", icon: iconMarkup.franzoesisch, accent: "#c9a18d" }
     ];
-
-    const subjectText = {
-      title: "Lernquiz Navigator",
-      paragraphs: [
-        "Hier sammelst du alle Direktlinks zu deinen Quizzen übersichtlich an einem Ort.",
-        "Wähle links eine Klasse und ein Fach, um passende Themen schneller zu finden.",
-        "Für einzelne Quizze erscheint automatisch ein sofort teilbarer Direktlink mit Vorschau."
-      ]
-    };
 
     const state = {
       selectedGrade: grades[0],
@@ -1035,15 +915,6 @@
     const copyStatus = document.getElementById("copyStatus");
     const copyLinkButton = document.getElementById("copyLinkButton");
     const selectLinkButton = document.getElementById("selectLinkButton");
-    const subjectTag = document.getElementById("subjectTag");
-    const quizTag = document.getElementById("quizTag");
-    const detailsIcon = document.getElementById("detailsIcon");
-    const contentTitle = document.getElementById("contentTitle");
-    const contentParagraph1 = document.getElementById("contentParagraph1");
-    const contentParagraph2 = document.getElementById("contentParagraph2");
-    const contentParagraph3 = document.getElementById("contentParagraph3");
-    const openQuizButton = document.getElementById("openQuizButton");
-    const openIndexViewButton = document.getElementById("openIndexViewButton");
     const previewSection = document.getElementById("previewSection");
     const previewOpenButton = document.getElementById("previewOpenButton");
     const quizFrame = document.getElementById("quizFrame");
@@ -1053,7 +924,7 @@
     }
 
     function getSubject(subjectId) {
-      return subjects.find((subject) => subject.id === subjectId);
+      return subjects.find((subject) => subject.id === subjectId) || null;
     }
 
     function normalizePath(path) {
@@ -1080,29 +951,12 @@
         .replace(/oe/g, "ö")
         .replace(/ue/g, "ü");
 
-      if (/^olm\d*$/.test(restored)) {
-        return restored.toUpperCase();
-      }
-
-      if (restored === "pse") {
-        return "PSE";
-      }
-
-      if (restored === "naoh") {
-        return "NaOH";
-      }
-
-      if (/^html$/.test(restored)) {
-        return restored.toUpperCase();
-      }
-
-      if (/^v\d+$/.test(restored)) {
-        return restored.toUpperCase();
-      }
-
-      if (index > 0 && lowercaseTitleWords.has(restored)) {
-        return restored;
-      }
+      if (/^olm\d*$/.test(restored)) return restored.toUpperCase();
+      if (restored === "pse") return "PSE";
+      if (restored === "naoh") return "NaOH";
+      if (/^html$/.test(restored)) return restored.toUpperCase();
+      if (/^v\d+$/.test(restored)) return restored.toUpperCase();
+      if (index > 0 && lowercaseTitleWords.has(restored)) return restored;
 
       return restored.charAt(0).toUpperCase() + restored.slice(1);
     }
@@ -1114,9 +968,7 @@
         .replace(/\s+/g, " ")
         .trim();
 
-      if (!source) {
-        return "Quiz";
-      }
+      if (!source) return "Quiz";
 
       return source
         .split(" ")
@@ -1173,9 +1025,7 @@
 
     function getDirectShareUrl() {
       const selectedQuiz = getSelectedQuiz();
-      if (!selectedQuiz) {
-        return getIndexShareUrl();
-      }
+      if (!selectedQuiz) return getIndexShareUrl();
 
       try {
         const path = normalizeUrlPath(selectedQuiz.url || selectedQuiz.relativePath || "");
@@ -1193,7 +1043,7 @@
         .sort((left, right) => left.displayTitle.localeCompare(right.displayTitle, "de"));
     }
 
-    function createOptionButton({ label, detail, onClick, icon = iconMarkup.quiz, accent = "var(--accent)" }) {
+    function createOptionButton({ label, detail = "", onClick, icon = iconMarkup.quiz, accent = "var(--accent)" }) {
       const button = document.createElement("button");
       button.type = "button";
       button.className = "option";
@@ -1202,20 +1052,21 @@
       const iconBox = document.createElement("span");
       iconBox.className = "option-icon";
       iconBox.setAttribute("aria-hidden", "true");
-      iconBox.innerHTML = icon;
+      iconBox.innerHTML = icon || iconMarkup.quiz;
 
       const copy = document.createElement("div");
       copy.className = "option-copy";
 
       const strong = document.createElement("strong");
-      strong.textContent = label;
+      strong.textContent = label || "";
 
       const span = document.createElement("span");
-      span.textContent = detail;
+      span.textContent = detail || "";
 
       copy.append(strong, span);
       button.append(iconBox, copy);
       button.addEventListener("click", onClick);
+
       return button;
     }
 
@@ -1224,8 +1075,8 @@
 
       grades.forEach((grade) => {
         const button = createOptionButton({
-          label: formatGrade(grade),
-          detail: grade === state.selectedGrade ? "Aktiv ausgewählt" : "Öffnen",
+          label: "",
+          detail: "",
           icon: gradeIcons[grade] || iconMarkup.class5,
           accent: gradeAccents[grade] || "#b48762",
           onClick: () => {
@@ -1234,6 +1085,8 @@
             syncHash();
           }
         });
+
+        button.setAttribute("aria-label", formatGrade(grade));
 
         if (grade === state.selectedGrade) {
           button.classList.add("active");
@@ -1249,8 +1102,8 @@
       subjects.forEach((subject) => {
         const button = createOptionButton({
           label: subject.label,
-          detail: subject.id === state.selectedSubject ? "Aktiv ausgewählt" : formatGrade(state.selectedGrade),
-          icon: subject.icon,
+          detail: "",
+          icon: subject.icon || iconMarkup.quiz,
           accent: subject.accent,
           onClick: () => {
             state.selectedSubject = subject.id;
@@ -1282,13 +1135,13 @@
       quizzes.forEach((quiz) => {
         const button = createOptionButton({
           label: quiz.displayTitle,
-          detail: quiz.slug === state.selectedQuizSlug ? "Aktiv ausgewählt" : "Einzelnes Quiz öffnen",
+          detail: "",
           icon: iconMarkup.quiz,
           accent: subject ? subject.accent : "#d95d39",
           onClick: () => {
             state.selectedQuizSlug = quiz.slug;
             replaceSubjectHashSilently();
-            render();
+            safeRender();
           }
         });
 
@@ -1310,60 +1163,22 @@
       const subject = getSubject(state.selectedSubject);
       const selectedQuiz = getSelectedQuiz();
 
-      subjectTag.innerHTML = `${subject ? subject.icon : gradeIcons[state.selectedGrade]}<span>${subject ? subject.title : "Startseite"}</span>`;
-      subjectTag.style.background = subject
-        ? `color-mix(in srgb, ${subject.accent} 14%, white)`
-        : "var(--accent-soft)";
-      subjectTag.style.color = subject
-        ? `color-mix(in srgb, ${subject.accent} 78%, #4f5a66)`
-        : "var(--accent-strong)";
-      detailsIcon.innerHTML = subject ? subject.icon : (gradeIcons[state.selectedGrade] || iconMarkup.class5);
-      detailsIcon.style.setProperty("--detail-accent", subject ? subject.accent : (gradeAccents[state.selectedGrade] || "var(--accent)"));
       selectionTitle.textContent = subject
         ? `${formatGrade(state.selectedGrade)} · ${subject.label}`
         : formatGrade(state.selectedGrade);
 
       if (!selectedQuiz) {
         const indexUrl = getIndexShareUrl();
-
-        quizTag.classList.add("hidden");
-        contentTitle.textContent = subjectText.title;
-        contentParagraph1.textContent = subjectText.paragraphs[0];
-        contentParagraph2.textContent = subjectText.paragraphs[1];
-        contentParagraph3.textContent = subjectText.paragraphs[2];
         selectionSubtitle.textContent = "Der Fach-Link ist bereits teilbar. Für einen direkten Sprung ins Quiz wähle unten ein einzelnes Quiz aus.";
-
         updateShareUi(indexUrl);
-
-        openQuizButton.classList.add("hidden");
-        openQuizButton.removeAttribute("href");
-
-        openIndexViewButton.classList.add("hidden");
-        openIndexViewButton.removeAttribute("href");
-
         previewSection.classList.add("hidden");
         quizFrame.removeAttribute("src");
         return;
       }
 
       const directUrl = getDirectShareUrl();
-      const indexUrl = getIndexShareUrl();
-
-      quizTag.classList.remove("hidden");
-      quizTag.innerHTML = `${iconMarkup.share}<span>Direkt teilbar</span>`;
-      contentTitle.textContent = selectedQuiz.displayTitle;
-      contentParagraph1.textContent = `${formatGrade(state.selectedGrade)} · ${subject.label}`;
-      contentParagraph2.textContent = "Dieses einzelne Quiz kann direkt geteilt werden. Beim Öffnen landet man sofort auf der Quiz-Seite.";
-      contentParagraph3.textContent = `Dateipfad im Projekt: ${selectedQuiz.relativePath}`;
       selectionSubtitle.textContent = "Direkter Quiz-Link ist aktiv und kann sofort kopiert werden.";
-
       updateShareUi(directUrl);
-
-      openQuizButton.href = directUrl;
-      openQuizButton.classList.remove("hidden");
-
-      openIndexViewButton.href = indexUrl;
-      openIndexViewButton.classList.remove("hidden");
 
       previewOpenButton.href = directUrl;
       previewSection.classList.remove("hidden");
@@ -1380,14 +1195,19 @@
         state.selectedQuizSlug = null;
       }
 
-      if (!state.selectedQuizSlug) {
-        quizTag.innerHTML = "Direkt teilbar";
-      }
-
       renderGradeButtons();
       renderSubjectButtons();
       renderQuizButtons();
       renderDetails();
+    }
+
+    function safeRender() {
+      try {
+        render();
+      } catch (error) {
+        console.error("Render-Fehler:", error);
+        setStatus("Beim Anzeigen ist ein Fehler aufgetreten.", "warning");
+      }
     }
 
     function syncHash() {
@@ -1398,7 +1218,7 @@
         return;
       }
 
-      render();
+      safeRender();
     }
 
     function readHash() {
@@ -1407,6 +1227,7 @@
         .split("/")
         .filter(Boolean)
         .map(decodeHashPart);
+
       const [grade, subject, quizSlug] = parts;
 
       if (grades.includes(grade)) {
@@ -1418,7 +1239,7 @@
       }
 
       state.selectedQuizSlug = quizSlug || null;
-      render();
+      safeRender();
     }
 
     function selectShareLink() {
@@ -1504,11 +1325,12 @@
               }))
           : [];
       } catch (error) {
+        console.error("Manifest-Fehler:", error);
         state.manifest = [];
         setStatus("Quiz-Liste konnte gerade nicht geladen werden.", "warning");
       }
 
-      readHash();
+      safeRender();
     }
 
     copyLinkButton.addEventListener("click", copyShareLink);
@@ -1516,6 +1338,8 @@
     shareLinkBox.addEventListener("click", selectShareLink);
     window.addEventListener("hashchange", readHash);
 
+    safeRender();
+    readHash();
     loadManifest();
   </script>
 </body>
