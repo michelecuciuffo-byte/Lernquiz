@@ -133,45 +133,10 @@
       gap: 18px;
     }
 
-    .hero-highlights {
-      position: relative;
-      z-index: 1;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-      margin-top: 24px;
-    }
-
-    .hero-highlight {
-      padding: 16px 18px;
-      border: 1px solid rgba(24, 32, 42, 0.08);
-      border-radius: 22px;
-      background: rgba(255, 255, 255, 0.72);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 16px 34px rgba(24, 32, 42, 0.08);
-    }
-
-    .hero-highlight strong,
-    .hero-highlight span {
-      display: block;
-    }
-
-    .hero-highlight strong {
-      margin-top: 10px;
-      font-size: 1rem;
-    }
-
-    .hero-highlight span {
-      margin-top: 6px;
-      color: var(--muted);
-      line-height: 1.55;
-      font-size: 0.93rem;
-    }
-
     h1 {
       margin: 0;
       max-width: 12ch;
-      font-size: clamp(2.2rem, 4vw, 4.5rem);
+      font-size: clamp(2rem, 3.5vw, 3.9rem);
       line-height: 0.98;
     }
 
@@ -636,10 +601,6 @@
       .share-link-box {
         width: 100%;
       }
-
-      .hero-highlights {
-        grid-template-columns: 1fr;
-      }
     }
 
     @media (max-width: 620px) {
@@ -665,7 +626,7 @@
     <section class="hero">
       <div class="hero-copy">
         <p class="eyebrow">Lernquiz Plattform</p>
-        <h1>Direktlinks zu jedem Quiz an einem Ort.</h1>
+        <h1>Direktlinks zu jedem Quiz an einem Ort</h1>
         <p>
           Diese Startseite bündelt Klassen, Fächer und einzelne Quizze in einer ruhigen Übersicht.
           Neue Quiz-Seiten werden auf GitHub Pages automatisch erkannt, wenn sie direkt im Fachordner
@@ -677,46 +638,6 @@
           Sobald du ein Quiz auswählst, kannst du den Direktlink sofort kopieren, markieren oder
           in der Vorschau öffnen. So landen die Kinder direkt im Quiz und nicht in einer Dateiansicht.
         </p>
-      </div>
-
-      <div class="hero-highlights" aria-label="Bereiche der Lernquiz-Plattform">
-        <article class="hero-highlight">
-          <span class="mini-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M5.7 5.6h9.7l2.8 2.8v9c0 .9-.7 1.6-1.6 1.6H7.3c-.9 0-1.6-.7-1.6-1.6Z" class="sticker-outline"></path>
-              <path d="M15.4 5.6v2.1c0 .4.3.7.7.7h2.1" class="sticker-line"></path>
-              <path d="M8.6 10.1h6" class="sticker-line"></path>
-              <path d="M8.6 12.9h5" class="sticker-line"></path>
-              <path d="M8.6 15.7h3.8" class="sticker-line"></path>
-            </svg>
-          </span>
-          <strong>Lernen & Teilen</strong>
-          <span>Direktlinks machen einzelne Quizze schnell auffindbar und sofort versendbar.</span>
-        </article>
-
-        <article class="hero-highlight">
-          <span class="mini-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M12 18.8v-5.7" class="sticker-line"></path>
-              <path d="M12 13.1c0-3.2 2.6-5.8 5.8-5.8 0 3.3-2.6 5.8-5.8 5.8Z" class="sticker-outline"></path>
-              <path d="M12 15.6c0-2.3-1.8-4.2-4.2-4.2 0 2.4 1.9 4.2 4.2 4.2Z" class="sticker-outline-thin"></path>
-            </svg>
-          </span>
-          <strong>Naturwissenschaften</strong>
-          <span>Biologie, Chemie und Physik bekommen eine klar erkennbare, gemeinsame Bildsprache.</span>
-        </article>
-
-        <article class="hero-highlight">
-          <span class="mini-icon" aria-hidden="true">
-            <svg viewBox="0 0 24 24">
-              <path d="M6.2 5.8h11.6c.9 0 1.6.7 1.6 1.6v9.2c0 .9-.7 1.6-1.6 1.6H6.2c-.9 0-1.6-.7-1.6-1.6V7.4c0-.9.7-1.6 1.6-1.6Z" class="sticker-outline"></path>
-              <path d="M9 12h6" class="sticker-line"></path>
-              <path d="M12 9v6" class="sticker-line"></path>
-            </svg>
-          </span>
-          <strong>Mathe & Struktur</strong>
-          <span>Fächer und Quizkarten werden klarer getrennt, damit man schneller zum richtigen Thema springt.</span>
-        </article>
       </div>
     </section>
 
