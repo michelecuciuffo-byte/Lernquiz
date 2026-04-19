@@ -1,0 +1,656 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mediation Trainer – Quali</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --ink:#1f2937;
+      --muted:#667085;
+      --line:#d9e2ef;
+      --accent:#2f5aa8;
+      --accent-dark:#21427d;
+      --green:#4e8f5b;
+      --green-dark:#2f6a3b;
+      --orange:#c9852f;
+      --soft-blue:#eaf1ff;
+      --soft-green:#edf8ef;
+      --soft-orange:#fff4e8;
+      --soft-red:#fff1f1;
+      --shadow:0 10px 28px rgba(24,39,75,0.08);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:linear-gradient(180deg,#f8faff 0%, #eef3fb 100%);
+      color:var(--ink);
+      line-height:1.5;
+    }
+
+    .wrap{
+      max-width:1180px;
+      margin:0 auto;
+      padding:26px 18px 38px;
+    }
+
+    .hero{
+      background:linear-gradient(135deg,#2f5aa8 0%, #4b77c8 100%);
+      color:#fff;
+      border-radius:24px;
+      padding:28px 26px;
+      box-shadow:var(--shadow);
+      margin-bottom:20px;
+    }
+
+    .hero h1{
+      margin:0 0 8px;
+      font-size:2rem;
+    }
+
+    .hero p{
+      margin:0;
+      max-width:980px;
+      font-size:1.02rem;
+    }
+
+    .tabs{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:18px;
+    }
+
+    .tab-btn{
+      border:none;
+      background:#dfe9fb;
+      color:#183b78;
+      padding:12px 16px;
+      border-radius:12px;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:0 4px 10px rgba(24,59,120,0.08);
+    }
+
+    .tab-btn.active{
+      background:var(--accent);
+      color:#fff;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:20px;
+      margin-bottom:18px;
+    }
+
+    h2{
+      margin:0 0 12px;
+      font-size:1.38rem;
+      color:var(--accent);
+    }
+
+    h3{
+      margin:0 0 10px;
+      font-size:1.08rem;
+      color:var(--accent-dark);
+    }
+
+    h4{
+      margin:0 0 8px;
+      font-size:1rem;
+      color:var(--accent-dark);
+    }
+
+    p{margin:8px 0}
+    ul{margin:8px 0 0 18px}
+    li{margin:6px 0}
+
+    .muted{color:var(--muted)}
+
+    .grid-2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+    }
+
+    .grid-3{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:14px;
+    }
+
+    .hint-box{
+      background:#f8fbff;
+      border:1px solid #d7e5ff;
+      border-radius:14px;
+      padding:14px;
+    }
+
+    .tip{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+    }
+
+    .scenario{
+      display:none;
+    }
+
+    .scenario.active{
+      display:block;
+    }
+
+    .subtask{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:16px;
+      margin-top:16px;
+      background:#fbfcfe;
+    }
+
+    .direction{
+      display:inline-block;
+      padding:7px 12px;
+      border-radius:999px;
+      font-size:0.88rem;
+      font-weight:700;
+      margin-bottom:10px;
+    }
+
+    .de-to-en{
+      background:var(--soft-blue);
+      color:#21427d;
+    }
+
+    .en-to-de{
+      background:var(--soft-green);
+      color:var(--green-dark);
+    }
+
+    .source-box{
+      background:#fff;
+      border:1px solid #e4ebf5;
+      border-radius:14px;
+      padding:14px;
+      margin-top:8px;
+    }
+
+    .task-box{
+      background:#fff9ef;
+      border:1px solid #f2dfbb;
+      border-radius:14px;
+      padding:14px;
+      margin-top:12px;
+    }
+
+    .notes{
+      margin-top:12px;
+    }
+
+    textarea{
+      width:100%;
+      min-height:120px;
+      resize:vertical;
+      border:1px solid #cfd8e6;
+      border-radius:12px;
+      padding:12px;
+      font:inherit;
+      background:#fff;
+    }
+
+    .row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    button{
+      border:none;
+      background:var(--accent);
+      color:#fff;
+      padding:11px 15px;
+      border-radius:12px;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:0 6px 14px rgba(47,90,168,0.2);
+    }
+
+    button.secondary{
+      background:#6b7280;
+      box-shadow:0 6px 14px rgba(107,114,128,0.18);
+    }
+
+    button.green{
+      background:var(--green);
+      box-shadow:0 6px 14px rgba(78,143,91,0.2);
+    }
+
+    .solution{
+      display:none;
+      margin-top:12px;
+      padding:14px;
+      border-radius:14px;
+      background:#eef8f0;
+      border:1px solid #cbe8d1;
+    }
+
+    .solution.visible{
+      display:block;
+    }
+
+    .checklist{
+      background:#f8fbff;
+      border:1px solid #dce8ff;
+      border-radius:14px;
+      padding:14px;
+    }
+
+    .badge-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .badge{
+      padding:9px 12px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:0.9rem;
+    }
+
+    .badge.blue{background:var(--soft-blue); color:#21427d}
+    .badge.green{background:var(--soft-green); color:#245d33}
+    .badge.orange{background:var(--soft-orange); color:#8a5d1d}
+
+    .footer{
+      text-align:center;
+      color:var(--muted);
+      margin-top:24px;
+      font-size:0.95rem;
+    }
+
+    @media (max-width:900px){
+      .grid-2,.grid-3{
+        grid-template-columns:1fr;
+      }
+      .hero h1{
+        font-size:1.65rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Mediation Trainer – Quali</h1>
+      <p>
+        Wähle eine Situation aus und bearbeite die Mediationsaufgaben. 
+        Du übst hier <strong>Deutsch → Englisch</strong> und <strong>Englisch → Deutsch</strong>.
+        Wichtig: Du sollst <strong>sinngemäß vermitteln</strong>, also nicht Wort für Wort übersetzen.
+      </p>
+    </section>
+
+    <div class="tabs">
+      <button class="tab-btn active" onclick="showScenario('winter', this)">Winter Activities</button>
+      <button class="tab-btn" onclick="showScenario('free', this)">Free Time</button>
+      <button class="tab-btn" onclick="showScenario('animals', this)">Wild Animals</button>
+    </div>
+
+    <section class="card">
+      <h2>So gehst du bei Mediation vor</h2>
+      <div class="grid-3">
+        <div class="tip">
+          <h4>1. Wichtiges finden:</h4>
+          Nenne die Hauptinformationen: <br>
+          <span class="muted">Wer? Was? Wann? Warum? Problem oder Wunsch?</span>
+        </div>
+        <div class="tip">
+          <h4>2. Sinngemäß formulieren:</h4>
+          Verwende einfache, klare Sätze. Lasse unnötige Details weg, wenn sie nicht wichtig sind.
+        </div>
+        <div class="tip">
+          <h4>3. Freundlich bleiben:</h4>
+          Besonders in Dialogen: höflich fragen, erklären, empfehlen oder warnen.
+        </div>
+      </div>
+
+      <div class="badge-row">
+        <span class="badge blue">do not translate word for word</span>
+        <span class="badge green">focus on the message</span>
+        <span class="badge orange">keep your language clear and simple</span>
+      </div>
+    </section>
+
+    <!-- WINTER -->
+    <section id="winter" class="scenario active">
+      <div class="card">
+        <h2>Situation 1: Winter Activities</h2>
+        <p class="muted">Du bist mit einer Austauschgruppe in einem Wintersportort. Du hilfst beim Vermitteln zwischen deutschen und englischsprachigen Personen.</p>
+
+        <div class="grid-2">
+          <div class="hint-box">
+            <h3>Nützliche Wörter:</h3>
+            <ul>
+              <li>ski equipment = Skiausrüstung</li>
+              <li>to rent = ausleihen / mieten</li>
+              <li>snowshoe tour = Schneeschuhwanderung</li>
+              <li>slope = Skipiste</li>
+              <li>helmet = Helm</li>
+              <li>guided tour = geführte Tour</li>
+            </ul>
+          </div>
+          <div class="checklist">
+            <h3>Checkliste:</h3>
+            <ul>
+              <li>Hast du den Wunsch oder das Problem genannt?</li>
+              <li>Hast du Preis, Zeit oder Zusatzinfo erwähnt?</li>
+              <li>Hast du höflich formuliert?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="subtask">
+          <span class="direction de-to-en">Deutsch → Englisch</span>
+          <div class="source-box">
+            Unsere Gruppe möchte morgen etwas im Schnee unternehmen. Zwei von uns würden gern Ski fahren, aber die anderen haben noch nie auf Skiern gestanden und suchen deshalb lieber eine einfachere Aktivität. Außerdem möchten wir wissen, ob man die Ausrüstung vor Ort ausleihen kann und ob es Ermäßigungen für Jugendliche gibt.
+          </div>
+          <div class="task-box">
+            <strong>Dein Auftrag:</strong> Erkläre die Anfrage einer Mitarbeiterin im Tourismusbüro auf Englisch.
+          </div>
+          <div class="notes">
+            <textarea placeholder="Schreibe hier deine englische Mediation ..."></textarea>
+          </div>
+          <div class="row">
+            <button class="green" onclick="toggleSolution('winter-sol-1')">Lösungsvorschlag anzeigen</button>
+          </div>
+          <div id="winter-sol-1" class="solution">
+            Our group would like to do a winter activity tomorrow. Two of us want to go skiing, but the others have never skied before and would prefer something easier. We would also like to know if it is possible to rent the equipment here and whether there are any discounts for teenagers.
+          </div>
+        </div>
+
+        <div class="subtask">
+          <span class="direction en-to-de">Englisch → Deutsch</span>
+          <div class="source-box">
+            You can rent skis, boots and helmets at the sports shop next to the cable car station. If some students are beginners, I would recommend a snowshoe walk or ice skating instead. There is also a reduced price for young people under eighteen, but you should book early because weekends are usually very busy.
+          </div>
+          <div class="task-box">
+            <strong>Dein Auftrag:</strong> Gib die Informationen der Gruppe auf Deutsch weiter.
+          </div>
+          <div class="notes">
+            <textarea placeholder="Schreibe hier deine deutsche Mediation ..."></textarea>
+          </div>
+          <div class="row">
+            <button class="green" onclick="toggleSolution('winter-sol-2')">Lösungsvorschlag anzeigen</button>
+          </div>
+          <div id="winter-sol-2" class="solution">
+            Man kann Skier, Schuhe und Helme im Sportgeschäft neben der Seilbahnstation ausleihen. Wenn einige Schüler Anfänger sind, würde sie eher eine Schneeschuhwanderung oder Eislaufen empfehlen. Für Jugendliche unter achtzehn Jahren gibt es auch einen ermäßigten Preis, aber man sollte früh reservieren, weil es am Wochenende meistens sehr voll ist.
+          </div>
+        </div>
+
+        <div class="subtask">
+          <span class="direction de-to-en">Deutsch → Englisch</span>
+          <div class="source-box">
+            Ein Schüler aus unserer Gruppe hat leider keinen warmen Handschuh mehr, weil er einen im Bus verloren hat. Deshalb möchten wir fragen, ob es in der Nähe ein Geschäft gibt, in dem man schnell Winterkleidung kaufen kann. Wichtig wäre auch, wie lange das Geschäft heute geöffnet hat.
+          </div>
+          <div class="task-box">
+            <strong>Dein Auftrag:</strong> Stelle die Frage im Hotel auf Englisch.
+          </div>
+          <div class="notes">
+            <textarea placeholder="Schreibe hier deine englische Mediation ..."></textarea>
+          </div>
+          <div class="row">
+            <button class="green" onclick="toggleSolution('winter-sol-3')">Lösungsvorschlag anzeigen</button>
+          </div>
+          <div id="winter-sol-3" class="solution">
+            One student in our group has lost one of his warm gloves on the bus, so we would like to ask if there is a shop nearby where he can buy winter clothes quickly. We also need to know how long the shop is open today.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FREE TIME -->
+    <section id="free" class="scenario">
+      <div class="card">
+        <h2>Situation 2: Free Time</h2>
+        <p class="muted">Du hilfst bei einem Schüleraustausch. Dabei vermittelst du Informationen über Freizeit, Hobbys und gemeinsame Aktivitäten.</p>
+
+        <div class="grid-2">
+          <div class="hint-box">
+            <h3>Nützliche Wörter:</h3>
+            <ul>
+              <li>free time = Freizeit</li>
+              <li>to hang out with friends = Zeit mit Freunden verbringen</li>
+              <li>board game = Brettspiel</li>
+              <li>to join a club = einem Verein beitreten</li>
+              <li>outdoor activity = Aktivität im Freien</li>
+              <li>screen time = Bildschirmzeit</li>
+            </ul>
+          </div>
+          <div class="checklist">
+            <h3>Checkliste:</h3>
+            <ul>
+              <li>Hast du Vorlieben und Abneigungen genannt?</li>
+              <li>Hast du Häufigkeit ausgedrückt? (often, sometimes, usually)</li>
+              <li>Hast du Vorschläge verständlich wiedergegeben?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="subtask">
+          <span class="direction de-to-en">Deutsch → Englisch</span>
+          <div class="source-box">
+            In meiner Freizeit spiele ich nicht nur Fußball, sondern ich treffe mich auch oft mit Freunden im Park oder in der Stadt. Wenn das Wetter schlecht ist, höre ich meistens Musik oder schaue mir Serien an. Trotzdem möchte ich nicht zu viel Zeit am Handy verbringen, deshalb suche ich nach neuen Hobbys, die man zusammen mit anderen machen kann.
+          </div>
+          <div class="task-box">
+            <strong>Dein Auftrag:</strong> Erzähle einem englischen Austauschpartner auf Englisch, was die Person in ihrer Freizeit macht und was sie sich wünscht.
+          </div>
+          <div class="notes">
+            <textarea placeholder="Schreibe hier deine englische Mediation ..."></textarea>
+          </div>
+          <div class="row">
+            <button class="green" onclick="toggleSolution('free-sol-1')">Lösungsvorschlag anzeigen</button>
+          </div>
+          <div id="free-sol-1" class="solution">
+            In their free time, this person not only plays football but also often meets friends in the park or in town. When the weather is bad, they usually listen to music or watch series. However, they do not want to spend too much time on their phone, so they are looking for new hobbies they can do together with other people.
+          </div>
+        </div>
+
+        <div class="subtask">
+          <span class="direction en-to-de">Englisch → Deutsch</span>
+          <div class="source-box">
+            If you are looking for something new to do, you could join the school drama club or try a photography course. Some students also meet every Friday afternoon to play basketball in the sports hall. It is a good way to stay active and get to know new people at the same time.
+          </div>
+          <div class="task-box">
+            <strong>Dein Auftrag:</strong> Gib den Vorschlag auf Deutsch weiter.
+          </div>
+          <div class="notes">
+            <textarea placeholder="Schreibe hier deine deutsche Mediation ..."></textarea>
+          </div>
+          <div class="row">
+            <button class="green" onclick="toggleSolution('free-sol-2')">Lösungsvorschlag anzeigen</button>
+          </div>
+          <div id="free-sol-2" class="solution">
+            Wenn du etwas Neues suchst, könntest du der Theatergruppe in der Schule beitreten oder einen Fotokurs ausprobieren. Einige Schüler treffen sich auch jeden Freitag nachmittags in der Sporthalle zum Basketballspielen. Das ist eine gute Möglichkeit, aktiv zu bleiben und gleichzeitig neue Leute kennenzulernen.
+          </div>
+        </div>
+
+        <div class="subtask">
+          <span class="direction en-to-de">Englisch → Deutsch</span>
+          <div class="source-box">
+            Many teenagers spend several hours a day online, especially on social media or gaming platforms. On the other hand, free time should also include real-life activities such as meeting friends, doing sports or simply going for a walk. A healthy balance is important because too much screen time can make people tired and less active.
+          </div>
+          <div class="task-box">
+            <strong>Dein Auftrag:</strong> Fasse die Aussage auf Deutsch für eine Freundin oder einen Freund zusammen.
+          </div>
+          <div class="notes">
+            <textarea placeholder="Schreibe hier deine deutsche Mediation ..."></textarea>
+          </div>
+          <div class="row">
+            <button class="green" onclick="toggleSolution('free-sol-3')">Lösungsvorschlag anzeigen</button>
+          </div>
+          <div id="free-sol-3" class="solution">
+            Viele Jugendliche verbringen jeden Tag mehrere Stunden online, vor allem in sozialen Medien oder auf Gaming-Plattformen. Andererseits sollte Freizeit auch echte Aktivitäten beinhalten, zum Beispiel Freunde treffen, Sport machen oder einfach spazieren gehen. Ein gutes Gleichgewicht ist wichtig, weil zu viel Bildschirmzeit müde machen kann und man dadurch weniger aktiv ist.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ANIMALS -->
+    <section id="animals" class="scenario">
+      <div class="card">
+        <h2>Situation 3: Wild Animals</h2>
+        <p class="muted">Du besuchst mit deiner Klasse ein Naturzentrum. Dort musst du Informationen über Wildtiere, Schutz und Verhalten in der Natur vermitteln.</p>
+
+        <div class="grid-2">
+          <div class="hint-box">
+            <h3>Nützliche Wörter:</h3>
+            <ul>
+              <li>wild animal = Wildtier</li>
+              <li>to protect = schützen</li>
+              <li>safe distance = Sicherheitsabstand</li>
+              <li>to feel threatened = sich bedroht fühlen</li>
+              <li>national park = Nationalpark</li>
+              <li>to feed animals = Tiere füttern</li>
+            </ul>
+          </div>
+          <div class="checklist">
+            <h3>Checkliste:</h3>
+            <ul>
+              <li>Hast du Gefahr oder Regeln klar genannt?</li>
+              <li>Hast du Ursache und Folge verständlich gemacht?</li>
+              <li>Hast du ruhig und sachlich formuliert?</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="subtask">
+          <span class="direction de-to-en">Deutsch → Englisch</span>
+          <div class="source-box">
+            Ich finde Wildtiere sehr spannend, besonders Wölfe, Füchse und Bären. Trotzdem weiß ich, dass man in der Natur vorsichtig sein muss. Wenn man einem wilden Tier zu nahe kommt oder es füttert, kann das für Menschen und Tiere gefährlich werden. Deshalb möchten wir wissen, wie man sich bei einer Wanderung richtig verhält.
+          </div>
+          <div class="task-box">
+            <strong>Dein Auftrag:</strong> Erkläre die Frage einem Ranger auf Englisch.
+          </div>
+          <div class="notes">
+            <textarea placeholder="Schreibe hier deine englische Mediation ..."></textarea>
+          </div>
+          <div class="row">
+            <button class="green" onclick="toggleSolution('animals-sol-1')">Lösungsvorschlag anzeigen</button>
+          </div>
+          <div id="animals-sol-1" class="solution">
+            We are very interested in wild animals, especially wolves, foxes and bears. However, we know that people have to be careful in nature. If someone gets too close to a wild animal or feeds it, this can be dangerous for both people and animals. That is why we would like to know how to behave properly during a hike.
+          </div>
+        </div>
+
+        <div class="subtask">
+          <span class="direction en-to-de">Englisch → Deutsch</span>
+          <div class="source-box">
+            Wild animals usually avoid humans, but they may react aggressively if they feel threatened or if they are protecting their young. Visitors should never leave food behind and should always stay on the marked paths. In addition, it is important to speak calmly and not to make sudden movements when an animal is nearby.
+          </div>
+          <div class="task-box">
+            <strong>Dein Auftrag:</strong> Gib die Hinweise auf Deutsch weiter.
+          </div>
+          <div class="notes">
+            <textarea placeholder="Schreibe hier deine deutsche Mediation ..."></textarea>
+          </div>
+          <div class="row">
+            <button class="green" onclick="toggleSolution('animals-sol-2')">Lösungsvorschlag anzeigen</button>
+          </div>
+          <div id="animals-sol-2" class="solution">
+            Wildtiere meiden Menschen normalerweise, aber sie können aggressiv reagieren, wenn sie sich bedroht fühlen oder ihre Jungen schützen. Besucher sollten niemals Essen zurücklassen und immer auf den markierten Wegen bleiben. Außerdem ist es wichtig, ruhig zu sprechen und keine plötzlichen Bewegungen zu machen, wenn ein Tier in der Nähe ist.
+          </div>
+        </div>
+
+        <div class="subtask">
+          <span class="direction de-to-en">Deutsch → Englisch</span>
+          <div class="source-box">
+            In vielen Ländern gibt es Nationalparks, damit Wildtiere einen geschützten Lebensraum haben. Manche Menschen möchten dort Urlaub machen, fotografieren oder seltene Tiere beobachten. Gleichzeitig muss man aber darauf achten, die Natur nicht zu stören. Deshalb interessiert uns, welche Regeln in diesem Park besonders wichtig sind.
+          </div>
+          <div class="task-box">
+            <strong>Dein Auftrag:</strong> Formuliere die Frage an das Besucherzentrum auf Englisch.
+          </div>
+          <div class="notes">
+            <textarea placeholder="Schreibe hier deine englische Mediation ..."></textarea>
+          </div>
+          <div class="row">
+            <button class="green" onclick="toggleSolution('animals-sol-3')">Lösungsvorschlag anzeigen</button>
+          </div>
+          <div id="animals-sol-3" class="solution">
+            In many countries, there are national parks to provide a protected habitat for wild animals. Some people want to spend their holidays there, take photos or observe rare animals. At the same time, it is important not to disturb nature. That is why we would like to know which rules are especially important in this park.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Sprachliche Hilfe für die Mediation</h2>
+      <div class="grid-3">
+        <div class="tip">
+          <h4>Zum Weitergeben:</h4>
+          <ul>
+            <li>He says that ...</li>
+            <li>She would like to know if ...</li>
+            <li>They are asking whether ...</li>
+            <li>Er sagt, dass ...</li>
+            <li>Sie möchte wissen, ob ...</li>
+          </ul>
+        </div>
+        <div class="tip">
+          <h4>Zum Erklären:</h4>
+          <ul>
+            <li>They are looking for ...</li>
+            <li>The problem is that ...</li>
+            <li>It is important because ...</li>
+            <li>Das Problem ist, dass ...</li>
+            <li>Wichtig ist, dass ...</li>
+          </ul>
+        </div>
+        <div class="tip">
+          <h4>Zum höflichen Fragen:</h4>
+          <ul>
+            <li>Could you tell us ... ?</li>
+            <li>We would like to know ...</li>
+            <li>Könnten Sie uns sagen ... ?</li>
+            <li>Wir würden gern wissen ...</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <div class="footer">
+      Mediation Trainer – Quali | Deutsch ↔ Englisch | Winter Activities, Free Time, Wild Animals
+    </div>
+  </div>
+
+  <script>
+    function showScenario(id, btn){
+      document.querySelectorAll('.scenario').forEach(section => {
+        section.classList.remove('active');
+      });
+      document.getElementById(id).classList.add('active');
+
+      document.querySelectorAll('.tab-btn').forEach(button => {
+        button.classList.remove('active');
+      });
+      btn.classList.add('active');
+    }
+
+    function toggleSolution(id){
+      const box = document.getElementById(id);
+      box.classList.toggle('visible');
+    }
+  </script>
+</body>
+</html>
