@@ -1,100 +1,88 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Quali Speaking Trainer</title>
   <style>
     :root{
-      --bg:#f6f7fb;
+      --bg:#f4f7fb;
       --card:#ffffff;
       --ink:#1f2937;
       --muted:#6b7280;
       --line:#d7deea;
       --accent:#2f5aa8;
-      --accent-2:#4e8f5b;
-      --accent-3:#c9852f;
-      --soft-blue:#eaf1ff;
-      --soft-green:#edf8ef;
-      --soft-orange:#fff5e8;
-      --soft-red:#fff0f0;
+      --accent-dark:#21427d;
+      --green-bg:#e8f6ec;
+      --orange-bg:#fff1df;
+      --red-bg:#ffe6e6;
+      --blue-bg:#e6edff;
       --ok:#1f8a46;
       --bad:#c0392b;
-      --shadow:0 10px 28px rgba(25,35,60,0.08);
+      --shadow:0 8px 24px rgba(25,35,60,0.08);
       --radius:18px;
     }
 
     *{box-sizing:border-box}
+
     body{
       margin:0;
       font-family:Arial, Helvetica, sans-serif;
-      background:linear-gradient(180deg,#f8f9fc 0%, #eef3fb 100%);
+      background:linear-gradient(180deg, #f7f9fd 0%, #eef3fb 100%);
       color:var(--ink);
       line-height:1.5;
     }
 
     .wrap{
-      max-width:1150px;
+      max-width:1120px;
       margin:0 auto;
-      padding:28px 18px 40px;
+      padding:24px 18px 36px;
     }
 
     .hero{
-      background:linear-gradient(135deg,#2f5aa8 0%, #4c77c5 100%);
+      background:linear-gradient(135deg, #2f5aa8 0%, #4d78c6 100%);
       color:#fff;
+      padding:26px 24px;
       border-radius:24px;
-      padding:28px 26px;
       box-shadow:var(--shadow);
-      margin-bottom:22px;
+      margin-bottom:20px;
     }
 
     .hero h1{
-      margin:0 0 10px;
+      margin:0 0 8px;
       font-size:2rem;
     }
 
     .hero p{
       margin:0;
       max-width:900px;
-      font-size:1.03rem;
-    }
-
-    .grid{
-      display:grid;
-      grid-template-columns:repeat(12,1fr);
-      gap:18px;
+      font-size:1.02rem;
     }
 
     .card{
-      grid-column:span 12;
       background:var(--card);
-      border:1px solid var(--line);
-      border-radius:var(--radius);
       padding:20px;
+      border-radius:var(--radius);
+      margin-bottom:18px;
       box-shadow:var(--shadow);
+      border:1px solid var(--line);
     }
-
-    .col-6{grid-column:span 6}
-    .col-4{grid-column:span 4}
-    .col-8{grid-column:span 8}
-    .col-12{grid-column:span 12}
 
     h2{
       margin:0 0 12px;
-      font-size:1.35rem;
       color:var(--accent);
+      font-size:1.35rem;
     }
 
     h3{
-      margin:18px 0 8px;
+      margin:16px 0 8px;
+      color:var(--accent-dark);
       font-size:1.05rem;
-      color:#21427d;
     }
 
-    p{margin:8px 0}
-    ul{margin:8px 0 0 18px}
-    li{margin:6px 0}
-    .muted{color:var(--muted)}
+    p{
+      margin:8px 0;
+    }
 
     .pill-row{
       display:flex;
@@ -107,27 +95,26 @@
       padding:10px 14px;
       border-radius:999px;
       font-weight:700;
-      border:1px solid transparent;
-      font-size:0.95rem;
+      font-size:0.92rem;
     }
 
-    .blue{background:var(--soft-blue); color:#21427d; border-color:#cfe0ff}
-    .green{background:var(--soft-green); color:#1f6a33; border-color:#caeccf}
-    .orange{background:var(--soft-orange); color:#8a5b1d; border-color:#f1ddb9}
-    .red{background:var(--soft-red); color:#992f2f; border-color:#f0caca}
+    .blue{background:var(--blue-bg)}
+    .green{background:var(--green-bg)}
+    .orange{background:var(--orange-bg)}
+    .red{background:var(--red-bg)}
 
     .example{
       background:#f8fbff;
-      border-left:5px solid var(--accent);
       padding:12px 14px;
+      margin-top:14px;
+      border-left:4px solid var(--accent);
       border-radius:12px;
-      margin-top:12px;
     }
 
-    .two-col{
+    .grid2{
       display:grid;
       grid-template-columns:1fr 1fr;
-      gap:14px;
+      gap:16px;
     }
 
     .mini{
@@ -138,29 +125,23 @@
     }
 
     .mini strong{
-      color:#163d7b;
+      color:var(--accent-dark);
     }
 
     .exercise{
-      background:#fbfcfe;
+      margin-top:14px;
+      padding:16px;
       border:1px solid var(--line);
       border-radius:16px;
-      padding:16px;
-      margin-top:14px;
-    }
-
-    .exercise-title{
-      font-weight:700;
-      margin-bottom:10px;
-      color:#1f3f76;
+      background:#fbfcfe;
     }
 
     .question{
-      padding:12px;
       background:#fff;
-      border:1px solid #e5ebf5;
+      padding:12px;
       border-radius:12px;
-      margin:12px 0;
+      border:1px solid #e5ebf5;
+      margin-top:12px;
     }
 
     .question label{
@@ -171,474 +152,455 @@
 
     input[type="text"], select{
       width:100%;
-      padding:11px 12px;
+      padding:10px 12px;
       border-radius:10px;
       border:1px solid #cfd8e6;
-      background:#fff;
+      margin-top:6px;
       font-size:1rem;
-      margin-top:8px;
-    }
-
-    .inline-input{
-      display:inline-block;
-      min-width:160px;
-      max-width:220px;
-      vertical-align:middle;
-      margin:0 6px;
+      background:#fff;
     }
 
     button{
-      border:none;
+      margin-top:10px;
+      padding:11px 15px;
       background:var(--accent);
       color:#fff;
-      padding:12px 16px;
-      border-radius:12px;
-      font-weight:700;
+      border:none;
+      border-radius:10px;
       cursor:pointer;
-      margin-top:10px;
-      margin-right:8px;
-      box-shadow:0 6px 16px rgba(47,90,168,0.25);
+      font-weight:700;
     }
 
-    button.secondary{
-      background:#64748b;
-      box-shadow:0 6px 16px rgba(100,116,139,0.22);
+    button:hover{
+      background:#244b8d;
     }
 
     .result{
-      margin-top:12px;
-      padding:12px 14px;
-      border-radius:12px;
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:10px;
       display:none;
       font-weight:700;
+      white-space:pre-line;
     }
 
     .ok{
-      background:#edf9f0;
-      color:var(--ok);
-      border:1px solid #bfe7c8;
       display:block;
+      background:#eaf8ee;
+      color:var(--ok);
+      border:1px solid #bfe4c8;
     }
 
     .bad{
-      background:#fff2f2;
-      color:var(--bad);
-      border:1px solid #efc1c1;
       display:block;
+      background:#fff1f1;
+      color:var(--bad);
+      border:1px solid #efc4c4;
     }
 
-    .score-box{
-      background:linear-gradient(135deg,#eef4ff 0%, #f8fbff 100%);
+    .note{
+      background:#eef4ff;
       border:1px solid #d7e5ff;
-      border-radius:18px;
-      padding:18px;
-      margin-top:18px;
+      border-radius:16px;
+      padding:16px;
+      margin-top:16px;
     }
 
-    .score{
-      font-size:1.4rem;
+    .big-note{
+      font-size:1.15rem;
       font-weight:800;
-      color:#21427d;
+      color:var(--accent-dark);
       margin-top:6px;
     }
 
-    .tips{
-      display:grid;
-      grid-template-columns:repeat(3,1fr);
-      gap:12px;
-      margin-top:12px;
+    ul{
+      margin:8px 0 0 18px;
     }
 
-    .tip{
-      border-radius:14px;
-      padding:14px;
-      border:1px solid var(--line);
-      background:#fff;
+    li{
+      margin:6px 0;
     }
 
-    .tip h4{
-      margin:0 0 6px;
-      color:#20427c;
-      font-size:1rem;
-    }
-
-    .highlight{
-      background:#fff8cf;
-      padding:2px 6px;
-      border-radius:6px;
-      font-weight:700;
-    }
-
-    .footer-note{
+    .footer{
       text-align:center;
       color:var(--muted);
-      margin-top:24px;
+      margin-top:20px;
       font-size:0.95rem;
     }
 
     @media (max-width:900px){
-      .col-6,.col-4,.col-8{grid-column:span 12}
-      .two-col,.tips{grid-template-columns:1fr}
-      .hero h1{font-size:1.6rem}
+      .grid2{
+        grid-template-columns:1fr;
+      }
+
+      .hero h1{
+        font-size:1.65rem;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <section class="hero">
-      <h1>Quali Speaking Trainer</h1>
-      <p>
-        Mit diesem Trainer kannst du wichtige Satzanfänge, Verbindungswörter und Zeitformen für den Speaking Test üben.
-        Besonders wichtig bei der Bildbeschreibung: <strong>Was man gerade im Bild sieht, beschreibt man meistens im Present Progressive</strong>.
-      </p>
-    </section>
 
-    <div class="grid">
-      <section class="card col-6">
-        <h2>1. Gute Satzanfänge für den Speaking Test</h2>
-        <p>Diese Satzanfänge helfen dir, sicher und flüssiger zu sprechen:</p>
+<div class="wrap">
 
-        <div class="pill-row">
-          <span class="pill blue">In the picture, I can see ...</span>
-          <span class="pill blue">I think that ...</span>
-          <span class="pill blue">In my opinion, ...</span>
-          <span class="pill green">Moreover, ...</span>
-          <span class="pill green">In addition, ...</span>
-          <span class="pill green">Besides, ...</span>
-          <span class="pill orange">However, ...</span>
-          <span class="pill orange">On the other hand, ...</span>
-          <span class="pill red">Therefore, ...</span>
-          <span class="pill red">That is why ...</span>
-        </div>
+  <section class="hero">
+    <h1>Quali Speaking Trainer</h1>
+    <p>
+      Übe wichtige Satzanfänge, linking words und Zeitformen für den Speaking Test.
+      Besonders bei der Bildbeschreibung gilt: <strong>Was gerade im Bild passiert, beschreibt man meistens im Present Progressive.</strong>
+    </p>
+  </section>
 
-        <div class="example">
-          <strong>Beispiel:</strong><br>
-          In the picture, I can see a family in a hotel room. <br>
-          <strong>Moreover</strong>, they seem to be happy. <br>
-          <strong>In addition</strong>, the room looks clean and modern.
-        </div>
-      </section>
+  <section class="card">
+    <h2>1. Satzanfänge und Linking Words</h2>
+    <p>Diese Formulierungen helfen dir, sicherer, klarer und flüssiger zu sprechen.</p>
 
-      <section class="card col-6">
-        <h2>2. Welche Zeitform brauche ich?</h2>
+    <div class="pill-row">
+      <span class="pill blue">In the picture, I can see ... (Auf dem Bild sehe ich ...)</span>
+      <span class="pill blue">The picture shows ... (Das Bild zeigt ...)</span>
+      <span class="pill blue">The picture depicts ... (Das Bild stellt dar / zeigt ...)</span>
+      <span class="pill blue">I think that ... (Ich denke, dass ...)</span>
+      <span class="pill blue">In my opinion, ... (Meiner Meinung nach ...)</span>
 
-        <div class="mini">
-          <strong>Present Progressive:</strong> für Handlungen, die gerade im Bild passieren.<br>
-          <span class="highlight">The boy is sitting on the bed.</span><br>
-          <span class="highlight">The mother is opening the suitcase.</span>
-        </div>
+      <span class="pill green">Moreover, ... (Außerdem / Darüber hinaus)</span>
+      <span class="pill green">In addition, ... (Zusätzlich)</span>
+      <span class="pill green">Besides, ... (Außerdem)</span>
 
-        <div class="mini" style="margin-top:10px;">
-          <strong>Simple Present:</strong> für allgemeine Aussagen oder Fakten.<br>
-          <span class="highlight">Hotels often offer breakfast.</span><br>
-          <span class="highlight">Many people travel during the summer.</span>
-        </div>
+      <span class="pill orange">However, ... (Jedoch / Allerdings)</span>
+      <span class="pill orange">On the other hand, ... (Auf der anderen Seite)</span>
 
-        <div class="mini" style="margin-top:10px;">
-          <strong>Past Simple:</strong> wenn du über Vergangenes sprichst.<br>
-          <span class="highlight">Last year, we stayed in a small hotel.</span>
-        </div>
+      <span class="pill red">Therefore, ... (Deshalb / Daher)</span>
+      <span class="pill red">That is why ... (Deshalb / Aus diesem Grund)</span>
+    </div>
 
-        <div class="mini" style="margin-top:10px;">
-          <strong>Future:</strong> wenn du Pläne oder Vermutungen nennst.<br>
-          <span class="highlight">They will probably check in soon.</span>
-        </div>
-      </section>
+    <div class="example">
+      <strong>Beispiel:</strong><br>
+      The picture depicts a group of travellers in the hotel lobby. <br>
+      Moreover, some of them are carrying heavy suitcases. <br>
+      However, they seem a little exhausted after the journey.
+    </div>
+  </section>
 
-      <section class="card col-12">
-        <h2>3. Bildbeschreibung: So klingt es besser</h2>
-        <div class="two-col">
-          <div class="mini">
-            <strong>Einfach:</strong><br>
-            The people are in a room.
-          </div>
-          <div class="mini">
-            <strong>Besser:</strong><br>
-            In the picture, I can see several people in a hotel room. They are probably getting ready for their stay.
-          </div>
-        </div>
+  <section class="card">
+    <h2>2. Welche Zeitform braucht man?</h2>
 
-        <div class="tips">
-          <div class="tip">
-            <h4>Schritt 1:</h4>
-            Sage zuerst, was du allgemein siehst.<br>
-            <strong>In the picture, I can see ...</strong>
-          </div>
-          <div class="tip">
-            <h4>Schritt 2:</h4>
-            Beschreibe Personen und Handlungen mit dem <strong>Present Progressive</strong>.
-          </div>
-          <div class="tip">
-            <h4>Schritt 3:</h4>
-            Ergänze Vermutungen oder deine Meinung.<br>
-            <strong>I think ... / Maybe ... / Perhaps ...</strong>
-          </div>
-        </div>
-      </section>
+    <div class="grid2">
+      <div class="mini">
+        <strong>Present Progressive:</strong> für Handlungen, die gerade im Bild passieren.<br><br>
+        The receptionist <strong>is checking</strong> the reservation.<br>
+        Two guests <strong>are waiting</strong> near the entrance.
+      </div>
 
-      <section class="card col-12">
-        <h2>4. Übungen</h2>
+      <div class="mini">
+        <strong>Simple Present:</strong> für allgemeine Aussagen oder Fakten.<br><br>
+        Many hotels <strong>serve</strong> breakfast in the morning.<br>
+        Tourists often <strong>book</strong> rooms online.
+      </div>
 
-        <div class="exercise" id="exercise1">
-          <div class="exercise-title">Übung A: Wähle den besseren Satz</div>
+      <div class="mini">
+        <strong>Past Simple:</strong> für Vergangenes.<br><br>
+        Last winter, we <strong>stayed</strong> in a mountain hotel.
+      </div>
 
-          <div class="question">
-            <p><strong>1.</strong> Welche Formulierung ist besser für eine Bildbeschreibung?</p>
-            <label><input type="radio" name="q1" value="0"> The people in room.</label>
-            <label><input type="radio" name="q1" value="1"> In the picture, I can see two people in a hotel room.</label>
-          </div>
-
-          <div class="question">
-            <p><strong>2.</strong> Welche Formulierung klingt besser verbunden?</p>
-            <label><input type="radio" name="q2" value="0"> The room is big. It has a balcony. It is expensive.</label>
-            <label><input type="radio" name="q2" value="1"> The room is big. Moreover, it has a balcony. However, it seems to be expensive.</label>
-          </div>
-
-          <div class="question">
-            <p><strong>3.</strong> Welche Form ist bei einer Bildbeschreibung meistens richtig?</p>
-            <label><input type="radio" name="q3" value="1"> The man is carrying a suitcase.</label>
-            <label><input type="radio" name="q3" value="0"> The man carry a suitcase.</label>
-          </div>
-
-          <button onclick="checkExercise1()">Auswerten</button>
-          <div id="result1" class="result"></div>
-        </div>
-
-        <div class="exercise" id="exercise2">
-          <div class="exercise-title">Übung B: Lückentext – passende linking words einsetzen</div>
-
-          <div class="question">
-            <p>
-              In the picture, I can see a family in a hotel lobby.
-              <select id="gap1">
-                <option value="">-- auswählen --</option>
-                <option value="Moreover">Moreover</option>
-                <option value="Yesterday">Yesterday</option>
-                <option value="Quickly">Quickly</option>
-              </select>
-              , they are carrying bags and suitcases.
-            </p>
-
-            <p>
-              The hotel looks modern.
-              <select id="gap2">
-                <option value="">-- auswählen --</option>
-                <option value="However">However</option>
-                <option value="Blue">Blue</option>
-                <option value="Running">Running</option>
-              </select>
-              , it may be expensive.
-            </p>
-
-            <p>
-              The staff seem friendly.
-              <select id="gap3">
-                <option value="">-- auswählen --</option>
-                <option value="In addition">In addition</option>
-                <option value="Ate">Ate</option>
-                <option value="Slow">Slow</option>
-              </select>
-              , the lobby is very clean.
-            </p>
-          </div>
-
-          <button onclick="checkExercise2()">Auswerten</button>
-          <div id="result2" class="result"></div>
-        </div>
-
-        <div class="exercise" id="exercise3">
-          <div class="exercise-title">Übung C: Welche Zeitform passt?</div>
-
-          <div class="question">
-            <p><strong>1.</strong> Look at the picture: The receptionist 
-              <select id="tense1">
-                <option value="">-- auswählen --</option>
-                <option value="is talking">is talking</option>
-                <option value="talk">talk</option>
-                <option value="talked">talked</option>
-              </select>
-              to a guest.
-            </p>
-
-            <p><strong>2.</strong> Hotels usually 
-              <select id="tense2">
-                <option value="">-- auswählen --</option>
-                <option value="offer">offer</option>
-                <option value="are offering">are offering</option>
-                <option value="offered">offered</option>
-              </select>
-              breakfast and Wi-Fi.
-            </p>
-
-            <p><strong>3.</strong> Last summer, we 
-              <select id="tense3">
-                <option value="">-- auswählen --</option>
-                <option value="stayed">stayed</option>
-                <option value="stay">stay</option>
-                <option value="are staying">are staying</option>
-              </select>
-              in a small guesthouse.
-            </p>
-
-            <p><strong>4.</strong> Tomorrow, they 
-              <select id="tense4">
-                <option value="">-- auswählen --</option>
-                <option value="will arrive">will arrive</option>
-                <option value="are arriving yesterday">are arriving yesterday</option>
-                <option value="arrived">arrived</option>
-              </select>
-              in London.
-            </p>
-          </div>
-
-          <button onclick="checkExercise3()">Auswerten</button>
-          <div id="result3" class="result"></div>
-        </div>
-
-        <div class="exercise" id="exercise4">
-          <div class="exercise-title">Übung D: Schreibe die bessere Formulierung</div>
-
-          <div class="question">
-            <p>Verbessere diese einfachen Sätze. Nutze möglichst einen guten Satzanfang oder ein linking word.</p>
-
-            <label>
-              1. People are in a hotel room.
-              <input type="text" id="free1" placeholder="z. B. In the picture, I can see ..." />
-            </label>
-
-            <label>
-              2. The girl has a suitcase. The room looks nice.
-              <input type="text" id="free2" placeholder="z. B. Moreover / In addition ..." />
-            </label>
-
-            <label>
-              3. The hotel is modern. It may be expensive.
-              <input type="text" id="free3" placeholder="z. B. However ..." />
-            </label>
-          </div>
-
-          <button onclick="showSampleAnswers()">Beispielantworten anzeigen</button>
-          <div id="result4" class="result"></div>
-        </div>
-
-        <div class="score-box">
-          <strong>Merksatz:</strong><br>
-          Bei der <strong>Bildbeschreibung</strong> brauchst du meistens:
-          <div class="score">Present Progressive</div>
-          <p class="muted">Beispiel: <strong>The woman is standing at the reception desk.</strong></p>
-        </div>
-      </section>
-
-      <section class="card col-12">
-        <h2>5. Mini-Spickzettel für den Speaking Test</h2>
-        <div class="two-col">
-          <div class="mini">
-            <strong>Für den Anfang:</strong>
-            <ul>
-              <li>In the picture, I can see ...</li>
-              <li>The photo shows ...</li>
-              <li>This picture was probably taken ...</li>
-            </ul>
-
-            <strong>Für Vermutungen:</strong>
-            <ul>
-              <li>I think ...</li>
-              <li>Maybe ...</li>
-              <li>Perhaps ...</li>
-              <li>It seems that ...</li>
-            </ul>
-          </div>
-
-          <div class="mini">
-            <strong>Zum Verbinden:</strong>
-            <ul>
-              <li>Moreover, ...</li>
-              <li>In addition, ...</li>
-              <li>Besides, ...</li>
-              <li>However, ...</li>
-              <li>On the other hand, ...</li>
-              <li>Therefore, ...</li>
-            </ul>
-
-            <strong>Für die Meinung:</strong>
-            <ul>
-              <li>In my opinion, ...</li>
-              <li>I personally think ...</li>
-              <li>I would say that ...</li>
-            </ul>
-          </div>
-        </div>
-      </section>
-
-      <div class="footer-note">
-        Quali-Speaking-Trainer – Satzanfänge, linking words und Zeitformen üben
+      <div class="mini">
+        <strong>Future:</strong> für Zukunft oder Vermutungen.<br><br>
+        They <strong>will leave</strong> the hotel tomorrow morning.
       </div>
     </div>
+
+    <div class="note">
+      <strong>Merksatz:</strong>
+      <div class="big-note">Bei der Bildbeschreibung brauchst du meistens das Present Progressive.</div>
+      <p>Beispiel: <strong>The woman is carrying a key card.</strong></p>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3. So klingt eine Bildbeschreibung besser</h2>
+
+    <div class="grid2">
+      <div class="mini">
+        <strong>Einfach:</strong><br>
+        There are guests in the lobby.
+      </div>
+
+      <div class="mini">
+        <strong>Besser:</strong><br>
+        In the picture, I can see several guests in the hotel lobby. They are probably arriving or checking in.
+      </div>
+    </div>
+
+    <div class="grid2" style="margin-top:14px;">
+      <div class="mini">
+        <strong>Einfach:</strong><br>
+        A hotel employee talks to a visitor.
+      </div>
+
+      <div class="mini">
+        <strong>Besser:</strong><br>
+        The hotel employee is talking to a visitor at the front desk. She seems to be giving him some information.
+      </div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>4. Übungen</h2>
+
+    <div class="exercise">
+      <h3>Übung A: Welche Formulierung ist besser?</h3>
+
+      <div class="question">
+        <p><strong>1.</strong> Welche Formulierung passt besser zu einer Bildbeschreibung?</p>
+        <label><input type="radio" name="q1" value="0"> Boy with backpack. Woman behind him.</label>
+        <label><input type="radio" name="q1" value="1"> In the picture, I can see a boy with a backpack and a woman standing behind him.</label>
+      </div>
+
+      <div class="question">
+        <p><strong>2.</strong> Welche Formulierung klingt besser verbunden?</p>
+        <label><input type="radio" name="q2" value="0"> The hotel is near the station. It has large rooms. It offers breakfast.</label>
+        <label><input type="radio" name="q2" value="1"> The hotel is near the station. In addition, it has large rooms and it offers breakfast.</label>
+      </div>
+
+      <div class="question">
+        <p><strong>3.</strong> Welche Form ist bei einer Bildbeschreibung meistens richtig?</p>
+        <label><input type="radio" name="q3" value="1"> The porter is carrying two heavy bags.</label>
+        <label><input type="radio" name="q3" value="0"> The porter carry two heavy bags.</label>
+      </div>
+
+      <button onclick="checkExercise1()">Auswerten</button>
+      <div id="result1" class="result"></div>
+    </div>
+
+    <div class="exercise">
+      <h3>Übung B: Setze das passende linking word ein</h3>
+
+      <div class="question">
+        <p>
+          The room is spacious and bright.
+          <select id="gap1">
+            <option value="">-- auswählen --</option>
+            <option value="Moreover">Moreover</option>
+            <option value="Yesterday">Yesterday</option>
+            <option value="Sleeping">Sleeping</option>
+          </select>
+          , it has a wonderful view of the mountains.
+        </p>
+
+        <p>
+          The guests look relaxed.
+          <select id="gap2">
+            <option value="">-- auswählen --</option>
+            <option value="However">However</option>
+            <option value="Yellow">Yellow</option>
+            <option value="Running">Running</option>
+          </select>
+          , they may be tired after a long flight.
+        </p>
+
+        <p>
+          The hotel is close to the old town.
+          <select id="gap3">
+            <option value="">-- auswählen --</option>
+            <option value="In addition">In addition</option>
+            <option value="Ate">Ate</option>
+            <option value="Fast">Fast</option>
+          </select>
+          , there is a bus stop right in front of the building.
+        </p>
+      </div>
+
+      <button onclick="checkExercise2()">Auswerten</button>
+      <div id="result2" class="result"></div>
+    </div>
+
+    <div class="exercise">
+      <h3>Übung C: Welche Zeitform ist richtig?</h3>
+
+      <div class="question">
+        <p><strong>1.</strong> In the picture, the receptionist
+          <select id="tense1">
+            <option value="">-- auswählen --</option>
+            <option value="is smiling">is smiling</option>
+            <option value="smile">smile</option>
+            <option value="smiled">smiled</option>
+          </select>
+          at the guests.
+        </p>
+
+        <p><strong>2.</strong> Many hotels
+          <select id="tense2">
+            <option value="">-- auswählen --</option>
+            <option value="serve">serve</option>
+            <option value="are serving">are serving</option>
+            <option value="served">served</option>
+          </select>
+          breakfast between 7 and 10 a.m.
+        </p>
+
+        <p><strong>3.</strong> Last year, my cousins
+          <select id="tense3">
+            <option value="">-- auswählen --</option>
+            <option value="stayed">stayed</option>
+            <option value="stay">stay</option>
+            <option value="are staying">are staying</option>
+          </select>
+          in a youth hostel near the beach.
+        </p>
+
+        <p><strong>4.</strong> Next Friday, they
+          <select id="tense4">
+            <option value="">-- auswählen --</option>
+            <option value="will visit">will visit</option>
+            <option value="visited yesterday">visited yesterday</option>
+            <option value="are visit">are visit</option>
+          </select>
+          Edinburgh again.
+        </p>
+      </div>
+
+      <button onclick="checkExercise3()">Auswerten</button>
+      <div id="result3" class="result"></div>
+    </div>
+
+    <div class="exercise">
+      <h3>Übung D: Formuliere die Sätze besser</h3>
+
+      <div class="question">
+        <label>
+          1. A family is in the breakfast room.
+          <input type="text" id="free1">
+        </label>
+
+        <label>
+          2. The receptionist is friendly. She is helping the guests.
+          <input type="text" id="free2">
+        </label>
+
+        <label>
+          3. The hotel is in the city centre. It is surprisingly quiet.
+          <input type="text" id="free3">
+        </label>
+      </div>
+
+      <button onclick="showSampleAnswers()">Beispielantworten anzeigen</button>
+      <div id="result4" class="result"></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>5. Mini-Spickzettel</h2>
+
+    <div class="grid2">
+      <div class="mini">
+        <strong>Für den Anfang:</strong>
+        <ul>
+          <li>In the picture, I can see ... (Auf dem Bild sehe ich ...)</li>
+          <li>The picture shows ... (Das Bild zeigt ...)</li>
+          <li>The picture depicts ... (Das Bild stellt dar / zeigt ...)</li>
+          <li>This photo was taken ... (Dieses Foto wurde aufgenommen ...)</li>
+        </ul>
+
+        <strong>Für Vermutungen:</strong>
+        <ul>
+          <li>I think ... (Ich denke ...)</li>
+          <li>Maybe ... (Vielleicht ...)</li>
+          <li>Perhaps ... (Möglicherweise ...)</li>
+          <li>It seems that ... (Es scheint, dass ...)</li>
+        </ul>
+      </div>
+
+      <div class="mini">
+        <strong>Zum Verbinden:</strong>
+        <ul>
+          <li>Moreover, ... (Außerdem / Darüber hinaus)</li>
+          <li>In addition, ... (Zusätzlich)</li>
+          <li>Besides, ... (Außerdem)</li>
+          <li>However, ... (Jedoch / Allerdings)</li>
+          <li>On the other hand, ... (Auf der anderen Seite)</li>
+          <li>Therefore, ... (Deshalb / Daher)</li>
+        </ul>
+
+        <strong>Für die Meinung:</strong>
+        <ul>
+          <li>In my opinion, ... (Meiner Meinung nach ...)</li>
+          <li>I personally think ... (Ich persönlich denke ...)</li>
+          <li>I would say that ... (Ich würde sagen, dass ...)</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <div class="footer">
+    Quali-Speaking-Trainer – Satzanfänge, linking words und Zeitformen üben
   </div>
 
-  <script>
-    function setResult(id, ok, text){
-      const el = document.getElementById(id);
-      el.className = "result " + (ok ? "ok" : "bad");
-      el.textContent = text;
+</div>
+
+<script>
+  function setResult(id, ok, text){
+    const el = document.getElementById(id);
+    el.className = "result " + (ok ? "ok" : "bad");
+    el.textContent = text;
+  }
+
+  function checkExercise1(){
+    let score = 0;
+    const q1 = document.querySelector('input[name="q1"]:checked');
+    const q2 = document.querySelector('input[name="q2"]:checked');
+    const q3 = document.querySelector('input[name="q3"]:checked');
+
+    if(!q1 || !q2 || !q3){
+      setResult("result1", false, "Bitte beantworte zuerst alle drei Fragen.");
+      return;
     }
 
-    function checkExercise1(){
-      let score = 0;
-      const q1 = document.querySelector('input[name="q1"]:checked');
-      const q2 = document.querySelector('input[name="q2"]:checked');
-      const q3 = document.querySelector('input[name="q3"]:checked');
+    score += Number(q1.value);
+    score += Number(q2.value);
+    score += Number(q3.value);
 
-      if(!q1 || !q2 || !q3){
-        setResult("result1", false, "Bitte beantworte zuerst alle drei Fragen.");
-        return;
-      }
-
-      score += Number(q1.value);
-      score += Number(q2.value);
-      score += Number(q3.value);
-
-      if(score === 3){
-        setResult("result1", true, "Sehr gut! Alle Antworten sind richtig.");
-      } else {
-        setResult("result1", false, "Du hast " + score + " von 3 Punkten. Achte besonders auf vollständige Sätze und Present Progressive.");
-      }
+    if(score === 3){
+      setResult("result1", true, "Sehr gut! Alle Antworten sind richtig.");
+    } else {
+      setResult("result1", false, "Du hast " + score + " von 3 Punkten. Achte auf vollständige Sätze und passende Verbformen.");
     }
+  }
 
-    function checkExercise2(){
-      let score = 0;
-      if(document.getElementById("gap1").value === "Moreover") score++;
-      if(document.getElementById("gap2").value === "However") score++;
-      if(document.getElementById("gap3").value === "In addition") score++;
+  function checkExercise2(){
+    let score = 0;
+    if(document.getElementById("gap1").value === "Moreover") score++;
+    if(document.getElementById("gap2").value === "However") score++;
+    if(document.getElementById("gap3").value === "In addition") score++;
 
-      if(score === 3){
-        setResult("result2", true, "Super! Du kannst linking words schon gut einsetzen.");
-      } else {
-        setResult("result2", false, "Du hast " + score + " von 3 Punkten. Tipp: 'Moreover' und 'In addition' ergänzen, 'However' zeigt einen Gegensatz.");
-      }
+    if(score === 3){
+      setResult("result2", true, "Super! Du kannst linking words schon gut einsetzen.");
+    } else {
+      setResult("result2", false, "Du hast " + score + " von 3 Punkten. 'Moreover' und 'In addition' ergänzen, 'However' zeigt einen Gegensatz.");
     }
+  }
 
-    function checkExercise3(){
-      let score = 0;
-      if(document.getElementById("tense1").value === "is talking") score++;
-      if(document.getElementById("tense2").value === "offer") score++;
-      if(document.getElementById("tense3").value === "stayed") score++;
-      if(document.getElementById("tense4").value === "will arrive") score++;
+  function checkExercise3(){
+    let score = 0;
+    if(document.getElementById("tense1").value === "is smiling") score++;
+    if(document.getElementById("tense2").value === "serve") score++;
+    if(document.getElementById("tense3").value === "stayed") score++;
+    if(document.getElementById("tense4").value === "will visit") score++;
 
-      if(score === 4){
-        setResult("result3", true, "Perfekt! Du hast die Zeitformen richtig erkannt.");
-      } else {
-        setResult("result3", false, "Du hast " + score + " von 4 Punkten. Merke dir: Bildbeschreibung meist Present Progressive, allgemeine Fakten Simple Present.");
-      }
+    if(score === 4){
+      setResult("result3", true, "Perfekt! Du hast die Zeitformen richtig erkannt.");
+    } else {
+      setResult("result3", false, "Du hast " + score + " von 4 Punkten. Bei Bildbeschreibungen brauchst du meistens das Present Progressive.");
     }
+  }
 
-    function showSampleAnswers(){
-      const sampleText =
-        "Beispielantworten: 1. In the picture, I can see some people in a hotel room. " +
-        "2. The girl has a suitcase. Moreover, the room looks nice. " +
-        "3. The hotel is modern. However, it may be expensive.";
-      setResult("result4", true, sampleText);
-    }
-  </script>
+  function showSampleAnswers(){
+    const text =
+      "Beispielantworten:\n" +
+      "1. In the picture, I can see a family in the breakfast room.\n" +
+      "2. The receptionist is friendly. Moreover, she is helping the guests.\n" +
+      "3. The hotel is in the city centre. However, it is surprisingly quiet.";
+    setResult("result4", true, text);
+  }
+</script>
+
 </body>
 </html>
