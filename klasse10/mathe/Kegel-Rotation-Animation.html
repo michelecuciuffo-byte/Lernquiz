@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Entstehung eines Kegels durch Rotation</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --card:#f7f9fc;
+      --line:#d7deea;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --accent:#2563eb;
+      --accent-soft:#dbeafe;
+      --cone:#93c5fd;
+      --cone-line:#1d4ed8;
+      --tri:#f59e0b;
+      --axis:#dc2626;
+      --shadow:0 12px 30px rgba(0,0,0,.08);
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:var(--bg);
+      color:var(--text);
+    }
+
+    .wrap{
+      max-width:1100px;
+      margin:0 auto;
+      padding:24px;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:22px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .top{
+      padding:22px 24px 12px;
+      border-bottom:1px solid var(--line);
+      background:linear-gradient(180deg,#ffffff 0%, #f7f9fc 100%);
+    }
+
+    h1{
+      margin:0 0 8px;
+      font-size:clamp(1.6rem, 2.5vw, 2.3rem);
+      line-height:1.15;
+    }
+
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:1rem;
+      line-height:1.5;
+      max-width:850px;
+    }
+
+    .main{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:18px;
+      padding:18px;
+    }
+
+    .panel{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+    }
+
+    .panel h2{
+      margin:0 0 10px;
+      font-size:1.08rem;
+    }
+
+    canvas{
+      width:100%;
+      height:auto;
+      display:block;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+    }
+
+    .controls{
+      display:grid;
+      gap:14px;
+    }
+
+    .row{
+      display:grid;
+      gap:8px;
+    }
+
+    label{
+      font-weight:700;
+      font-size:.96rem;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:var(--accent);
+      cursor:pointer;
+    }
+
+    .btns{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    button{
+      appearance:none;
+      border:none;
+      border-radius:999px;
+      padding:11px 16px;
+      font-size:.96rem;
+      font-weight:700;
+      cursor:pointer;
+      background:var(--accent);
+      color:#fff;
+      box-shadow:0 6px 16px rgba(37,99,235,.18);
+    }
+
+    button.secondary{
+      background:var(--accent-soft);
+      color:#1e3a8a;
+      box-shadow:none;
+    }
+
+    .info{
+      display:grid;
+      gap:10px;
+      margin-top:4px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background:#fff;
+      font-size:.94rem;
+      width:fit-content;
+    }
+
+    .dot{
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      display:inline-block;
+    }
+
+    .explain{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px 16px;
+      line-height:1.6;
+      font-size:.98rem;
+    }
+
+    .mini{
+      color:var(--muted);
+      font-size:.92rem;
+    }
+
+    @media (max-width:900px){
+      .main{grid-template-columns:1fr;}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="top">
+        <h1>Wie entsteht ein Kegel durch Rotation?</h1>
+        <p class="sub">
+          Das rechtwinklige Dreieck rotiert um seine Höhe. Dabei bildet die schräge Seite die Mantellinie des Kegels,
+          und die waagrechte Seite erzeugt den Kreis der Grundfläche.
+        </p>
+      </div>
+
+      <div class="main">
+        <div class="panel">
+          <h2>Animation</h2>
+          <canvas id="scene" width="760" height="540" aria-label="Animation zur Kegelentstehung"></canvas>
+        </div>
+
+        <div class="controls">
+          <div class="panel">
+            <h2>Steuerung</h2>
+
+            <div class="row">
+              <label for="speed">Drehgeschwindigkeit: <span id="speedValue">1.0</span></label>
+              <input id="speed" type="range" min="0.2" max="3" step="0.1" value="1.0" />
+            </div>
+
+            <div class="row">
+              <label for="fade">Kegel stärker sichtbar: <span id="fadeValue">0.70</span></label>
+              <input id="fade" type="range" min="0.15" max="1" step="0.05" value="0.70" />
+            </div>
+
+            <div class="btns">
+              <button id="toggleBtn">Pause</button>
+              <button id="resetBtn" class="secondary">Zurücksetzen</button>
+            </div>
+
+            <div class="info">
+              <div class="pill"><span class="dot" style="background: var(--axis);"></span> Rot: Drehachse = Höhe</div>
+              <div class="pill"><span class="dot" style="background: var(--tri);"></span> Orange: rotierendes Dreieck</div>
+              <div class="pill"><span class="dot" style="background: var(--cone-line);"></span> Blau: entstehender Kegel</div>
+            </div>
+          </div>
+
+          <div class="explain">
+            <strong>Merke:</strong><br>
+            Ein Kegel entsteht, wenn ein rechtwinkliges Dreieck um eine Kathete rotiert.<br><br>
+            <strong>Hier gilt:</strong><br>
+            – die <strong>Höhe des Dreiecks</strong> ist die <strong>Drehachse</strong><br>
+            – die <strong>Grundseite des Dreiecks</strong> wird zum <strong>Radius</strong> des Kegels<br>
+            – die <strong>schräge Seite</strong> wird zur <strong>Mantellinie</strong>
+          </div>
+
+          <div class="mini">
+            Tipp: Besonders gut sieht man den Effekt, wenn du die Animation laufen lässt und dabei auf die blaue Außenform achtest.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('scene');
+    const ctx = canvas.getContext('2d');
+
+    const speedInput = document.getElementById('speed');
+    const speedValue = document.getElementById('speedValue');
+    const fadeInput = document.getElementById('fade');
+    const fadeValue = document.getElementById('fadeValue');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let running = true;
+    let angle = 0;
+    let lastTime = 0;
+
+    const centerX = 265;
+    const apexY = 95;
+    const baseY = 425;
+    const axisX = centerX;
+    const radius = 165;
+    const ellipseY = 38;
+
+    function drawArrow(x1, y1, x2, y2, color){
+      const head = 10;
+      const dx = x2 - x1;
+      const dy = y2 - y1;
+      const a = Math.atan2(dy, dx);
+      ctx.strokeStyle = color;
+      ctx.fillStyle = color;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(x1, y1);
+      ctx.lineTo(x2, y2);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(x2, y2);
+      ctx.lineTo(x2 - head * Math.cos(a - Math.PI / 7), y2 - head * Math.sin(a - Math.PI / 7));
+      ctx.lineTo(x2 - head * Math.cos(a + Math.PI / 7), y2 - head * Math.sin(a + Math.PI / 7));
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    function ellipsePoint(cx, cy, rx, ry, t){
+      return {
+        x: cx + rx * Math.cos(t),
+        y: cy + ry * Math.sin(t)
+      };
+    }
+
+    function drawCone(alpha){
+      ctx.save();
+      ctx.globalAlpha = alpha;
+
+      const left = {x: axisX - radius, y: baseY};
+      const right = {x: axisX + radius, y: baseY};
+
+      ctx.fillStyle = 'rgba(147,197,253,0.22)';
+      ctx.beginPath();
+      ctx.moveTo(axisX, apexY);
+      ctx.lineTo(right.x, right.y);
+      ctx.ellipse(axisX, baseY, radius, ellipseY, 0, 0, Math.PI, false);
+      ctx.lineTo(axisX, apexY);
+      ctx.fill();
+
+      ctx.strokeStyle = '#1d4ed8';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(axisX, apexY);
+      ctx.lineTo(left.x, left.y);
+      ctx.moveTo(axisX, apexY);
+      ctx.lineTo(right.x, right.y);
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.ellipse(axisX, baseY, radius, ellipseY, 0, 0, Math.PI, false);
+      ctx.stroke();
+
+      ctx.setLineDash([7,7]);
+      ctx.beginPath();
+      ctx.ellipse(axisX, baseY, radius, ellipseY, 0, Math.PI, 2 * Math.PI, false);
+      ctx.stroke();
+      ctx.setLineDash([]);
+
+      ctx.restore();
+    }
+
+    function drawTriangle(theta){
+      const pBase = ellipsePoint(axisX, baseY, radius, ellipseY, theta);
+
+      ctx.fillStyle = 'rgba(245,158,11,0.26)';
+      ctx.strokeStyle = '#d97706';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(axisX, apexY);
+      ctx.lineTo(axisX, baseY);
+      ctx.lineTo(pBase.x, pBase.y);
+      ctx.closePath();
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#d97706';
+      ctx.beginPath();
+      ctx.arc(pBase.x, pBase.y, 5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawAxis(){
+      ctx.strokeStyle = '#dc2626';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.moveTo(axisX, apexY - 16);
+      ctx.lineTo(axisX, baseY + 24);
+      ctx.stroke();
+
+      drawArrow(axisX, apexY - 30, axisX, apexY - 2, '#dc2626');
+
+      ctx.fillStyle = '#b91c1c';
+      ctx.font = 'bold 20px Arial';
+      ctx.fillText('Drehachse = Höhe', axisX + 16, apexY + 8);
+    }
+
+    function drawLabels(){
+      ctx.fillStyle = '#374151';
+      ctx.font = '18px Arial';
+      ctx.fillText('Spitze', axisX - 24, apexY - 20);
+      ctx.fillText('Grundfläche des Kegels', axisX + radius - 80, baseY + 52);
+
+      ctx.fillStyle = '#6b7280';
+      ctx.font = '16px Arial';
+      ctx.fillText('Das Dreieck rotiert um die rote Achse.', 34, 40);
+      ctx.fillText('Die blaue Form zeigt den entstehenden Kegel.', 34, 66);
+    }
+
+    function drawRotationHint(theta){
+      const r = 62;
+      const cx = axisX + 235;
+      const cy = 120;
+
+      ctx.strokeStyle = '#2563eb';
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.arc(cx, cy, r, 0.35, 5.65);
+      ctx.stroke();
+
+      const tip = {
+        x: cx + r * Math.cos(5.65),
+        y: cy + r * Math.sin(5.65)
+      };
+      const angleArrow = 5.65;
+      ctx.fillStyle = '#2563eb';
+      ctx.beginPath();
+      ctx.moveTo(tip.x, tip.y);
+      ctx.lineTo(tip.x - 13 * Math.cos(angleArrow - 0.55), tip.y - 13 * Math.sin(angleArrow - 0.55));
+      ctx.lineTo(tip.x - 13 * Math.cos(angleArrow + 0.2), tip.y - 13 * Math.sin(angleArrow + 0.2));
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = '#2563eb';
+      ctx.font = 'bold 18px Arial';
+      ctx.fillText('Rotation', cx - 34, cy + 6);
+    }
+
+    function drawScene(){
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      const coneAlpha = parseFloat(fadeInput.value);
+      drawCone(coneAlpha);
+      drawTriangle(angle);
+      drawAxis();
+      drawRotationHint(angle);
+      drawLabels();
+    }
+
+    function animate(timestamp){
+      if (!lastTime) lastTime = timestamp;
+      const dt = (timestamp - lastTime) / 1000;
+      lastTime = timestamp;
+
+      if (running){
+        angle += dt * parseFloat(speedInput.value) * 1.6;
+      }
+
+      drawScene();
+      requestAnimationFrame(animate);
+    }
+
+    speedInput.addEventListener('input', () => {
+      speedValue.textContent = Number(speedInput.value).toFixed(1);
+    });
+
+    fadeInput.addEventListener('input', () => {
+      fadeValue.textContent = Number(fadeInput.value).toFixed(2);
+    });
+
+    toggleBtn.addEventListener('click', () => {
+      running = !running;
+      toggleBtn.textContent = running ? 'Pause' : 'Start';
+    });
+
+    resetBtn.addEventListener('click', () => {
+      angle = 0;
+      drawScene();
+    });
+
+    speedValue.textContent = Number(speedInput.value).toFixed(1);
+    fadeValue.textContent = Number(fadeInput.value).toFixed(2);
+    drawScene();
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>
