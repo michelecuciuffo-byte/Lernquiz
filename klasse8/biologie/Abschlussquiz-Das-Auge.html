@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wiederholung – Das Auge</title>
+  <style>
+    :root{
+      --bg:#f8fbff;
+      --card:#ffffff;
+      --ink:#223046;
+      --muted:#667085;
+      --line:#d9e4f2;
+
+      --accent:#5b8def;
+      --accent-2:#477be3;
+      --accent-3:#eaf2ff;
+
+      --good:#1f8a4c;
+      --bad:#c0392b;
+      --goodbg:#eefcf3;
+      --badbg:#fff1f1;
+
+      --soft:#f4f8ff;
+      --soft-2:#fffdf7;
+      --warn:#fff8e8;
+
+      --shadow:0 10px 28px rgba(91,141,239,.10);
+      --shadow-soft:0 6px 18px rgba(31,48,70,.06);
+      --radius-xl:24px;
+      --radius-lg:18px;
+      --radius-md:14px;
+    }
+
+    *{box-sizing:border-box}
+
+    html{
+      scroll-behavior:smooth;
+    }
+
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, #eef5ff 0%, transparent 28%),
+        radial-gradient(circle at top right, #fef6ff 0%, transparent 22%),
+        linear-gradient(180deg,#f2f7ff 0%, #f9fbff 170px, #f8fbff 100%);
+      color:var(--ink);
+      line-height:1.6;
+    }
+
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:28px 22px 34px;
+    }
+
+    .hero,.panel,.section,.question{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius-xl);
+      box-shadow:var(--shadow-soft);
+    }
+
+    .hero{
+      padding:30px 28px;
+      margin-bottom:22px;
+      position:relative;
+      overflow:hidden;
+      background:
+        linear-gradient(135deg, rgba(234,242,255,.95) 0%, rgba(255,255,255,1) 55%, rgba(255,248,232,.85) 100%);
+      box-shadow:var(--shadow);
+    }
+
+    .hero::after{
+      content:"👁️";
+      position:absolute;
+      right:24px;
+      top:18px;
+      font-size:3rem;
+      opacity:.14;
+      pointer-events:none;
+    }
+
+    .panel{padding:18px}
+    .section{
+      padding:24px;
+      margin-bottom:20px;
+    }
+    .question{
+      padding:18px;
+      margin-top:16px;
+      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+      border-radius:20px;
+    }
+
+    h1,h2,h3{margin:0 0 10px 0}
+    h1{
+      font-size:2rem;
+      letter-spacing:.2px;
+    }
+    h2{
+      font-size:1.35rem;
+      margin-bottom:14px;
+      color:#274267;
+    }
+    h3{
+      font-size:1.05rem;
+      color:#223046;
+    }
+
+    p{margin:8px 0}
+    .sub{color:var(--muted)}
+
+    .layout{
+      display:grid;
+      grid-template-columns:320px 1fr;
+      gap:22px;
+      align-items:start;
+    }
+
+    .sidebar{
+      position:sticky;
+      top:16px;
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+    }
+
+    .score{
+      font-size:1.08rem;
+      font-weight:bold;
+      margin-top:10px;
+    }
+
+    .scorebar{
+      width:100%;
+      height:15px;
+      background:#e8eef8;
+      border-radius:999px;
+      overflow:hidden;
+      margin-top:10px;
+      border:1px solid #dbe6f5;
+    }
+
+    .scorefill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,#8bb6ff,#5b8def,#477be3);
+      transition:width .35s ease;
+      border-radius:999px;
+    }
+
+    button{
+      border:none;
+      background:linear-gradient(135deg,var(--accent) 0%, var(--accent-2) 100%);
+      color:#fff;
+      padding:10px 14px;
+      border-radius:14px;
+      cursor:pointer;
+      font-weight:bold;
+      font-size:.95rem;
+      transition:transform .08s ease, box-shadow .2s ease, filter .2s ease;
+      box-shadow:0 6px 14px rgba(91,141,239,.22);
+    }
+
+    button:hover{
+      transform:translateY(-1px);
+      box-shadow:0 10px 18px rgba(91,141,239,.26);
+      filter:brightness(1.03);
+    }
+
+    button:active{
+      transform:translateY(0);
+    }
+
+    .secondary{
+      background:linear-gradient(135deg,#7a8aa3 0%, #65748b 100%);
+      box-shadow:0 6px 14px rgba(101,116,139,.16);
+    }
+
+    .secondary:hover{
+      box-shadow:0 10px 18px rgba(101,116,139,.20);
+    }
+
+    .navlist a{
+      display:block;
+      text-decoration:none;
+      color:var(--ink);
+      padding:9px 11px;
+      border-radius:12px;
+      background:#fcfdff;
+      margin-bottom:7px;
+      border:1px solid transparent;
+      transition:background .2s ease, transform .08s ease, border-color .2s ease;
+    }
+
+    .navlist a:hover{
+      background:#eef5ff;
+      border-color:#cfe0fb;
+      transform:translateX(2px);
+    }
+
+    .choices{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    label.option{
+      display:block;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:11px 12px;
+      background:linear-gradient(180deg,#fcfdff 0%, #f8fbff 100%);
+      cursor:pointer;
+      transition:background .2s ease, border-color .2s ease, transform .08s ease, box-shadow .2s ease;
+    }
+
+    label.option:hover{
+      background:#f2f7ff;
+      border-color:#bfd4fb;
+      transform:translateY(-1px);
+      box-shadow:0 6px 14px rgba(91,141,239,.08);
+    }
+
+    .feedback{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:16px;
+      font-weight:bold;
+      display:none;
+    }
+
+    .feedback.good{
+      display:block;
+      background:linear-gradient(135deg,#eefcf3 0%, #dff8e9 100%);
+      color:var(--good);
+      border:1px solid #b8e8c8;
+      box-shadow:0 6px 14px rgba(31,138,76,.08);
+      position:relative;
+      padding-left:48px;
+    }
+
+    .feedback.good::before{
+      content:"🏆";
+      position:absolute;
+      left:14px;
+      top:50%;
+      transform:translateY(-50%);
+      font-size:1.2rem;
+    }
+
+    .feedback.bad{
+      display:block;
+      background:linear-gradient(135deg,#fff2f2 0%, #ffe9e9 100%);
+      color:var(--bad);
+      border:1px solid #f3caca;
+      box-shadow:0 6px 14px rgba(192,57,43,.06);
+      position:relative;
+    }
+
+    .feedback.bad::before{
+      content:"💡";
+      margin-right:8px;
+    }
+
+    .mini{
+      font-size:.94rem;
+      color:var(--muted);
+    }
+
+    input[type="text"], select{
+      width:100%;
+      padding:10px 12px;
+      border:1px solid #cfd9e6;
+      border-radius:12px;
+      font-size:1rem;
+      background:#fff;
+      transition:border-color .2s ease, box-shadow .2s ease, background .2s ease;
+      color:var(--ink);
+    }
+
+    input[type="text"]:focus, select:focus{
+      outline:none;
+      border-color:#7aa7ff;
+      box-shadow:0 0 0 4px rgba(122,167,255,.14);
+      background:#fcfeff;
+    }
+
+    .inline-input{
+      display:inline-block;
+      width:170px !important;
+      margin:0 4px;
+      vertical-align:middle;
+      background:#ffffff;
+    }
+
+    .blank-block{
+      background:linear-gradient(180deg,#fbfdff 0%, #f7faff 100%);
+      border:1px solid #e5edf8;
+      border-radius:16px;
+      padding:15px;
+      margin-top:12px;
+    }
+
+    .match-row{
+      display:grid;
+      grid-template-columns:1.2fr 1fr auto;
+      gap:10px;
+      align-items:center;
+      padding:11px 0;
+      border-bottom:1px dashed #e5e7eb;
+    }
+
+    .match-row:last-child{border-bottom:none}
+
+    .tag{
+      display:inline-block;
+      padding:5px 11px;
+      border-radius:999px;
+      background:#f4f6f8;
+      border:1px solid #e5e7eb;
+      font-size:.84rem;
+      font-weight:bold;
+      color:#5b6473;
+    }
+
+    .goodtag{
+      background:#ecfdf3;
+      color:var(--good);
+      border-color:#b9e7c8;
+    }
+
+    .badtag{
+      background:#fff1f1;
+      color:var(--bad);
+      border-color:#f4c7c7;
+    }
+
+    .sequence{
+      display:grid;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .seq-item{
+      padding:13px 14px;
+      border:1px solid var(--line);
+      border-radius:14px;
+      background:linear-gradient(180deg,#fcfdff 0%, #f8fbff 100%);
+    }
+
+    .callout{
+      background:linear-gradient(135deg,#fff9ea 0%, #fffdf6 100%);
+      border:1px solid #f6d79b;
+      padding:15px;
+      border-radius:16px;
+    }
+
+    .smalllist{margin:8px 0 0 18px}
+
+    .smalllist li{
+      margin-bottom:6px;
+    }
+
+    .footer{
+      color:var(--muted);
+      text-align:center;
+      padding:22px 0 10px;
+      font-size:.95rem;
+    }
+
+    .solution{
+      margin-top:10px;
+      font-size:.93rem;
+      color:#475569;
+      display:none;
+    }
+
+    .solution.show{
+      display:block;
+      animation:fadeIn .22s ease;
+    }
+
+    .wordbox{
+      background:linear-gradient(135deg,#eef4ff 0%, #ddeafe 100%);
+      border:2px solid #78a8ff;
+      border-radius:14px;
+      padding:12px 14px;
+      font-weight:bold;
+      color:#23458a;
+      box-shadow:0 5px 12px rgba(91,141,239,.10);
+    }
+
+    .wordbox-title{
+      margin-bottom:8px;
+      display:block;
+      font-size:.95rem;
+    }
+
+    .btnrow{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+
+    .hero p,
+    .panel p,
+    .section > p{
+      max-width:900px;
+    }
+
+    .panel h3,
+    .callout h3{
+      color:#304c70;
+    }
+
+    .panel{
+      background:linear-gradient(180deg,#ffffff 0%, #fbfdff 100%);
+    }
+
+    .question h3{
+      margin-bottom:8px;
+    }
+
+    input[type="radio"]{
+      margin-right:8px;
+      accent-color:#5b8def;
+      transform:translateY(1px);
+    }
+
+    @keyframes fadeIn{
+      from{opacity:0; transform:translateY(-3px)}
+      to{opacity:1; transform:translateY(0)}
+    }
+
+    @media (max-width:980px){
+      .layout{grid-template-columns:1fr}
+      .sidebar{position:static}
+      .match-row{grid-template-columns:1fr}
+      .inline-input{width:100% !important; margin:6px 0}
+      .hero::after{font-size:2.5rem}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>Wiederholung: Das Auge</h1>
+      <p>Hier kannst du dein Wissen zum Auge mit verschiedenen interaktiven Aufgaben üben und direkt überprüfen.</p>
+    </section>
+
+    <div class="layout">
+      <aside class="sidebar">
+        <div class="panel">
+          <h3>Fortschritt</h3>
+          <p>Bearbeitete Aufgaben: <span id="doneCount">0</span> / <span id="totalCount">0</span></p>
+          <div class="score">Punkte: <span id="points">0</span> / <span id="maxPoints">0</span></div>
+          <div class="scorebar"><div class="scorefill" id="scorefill"></div></div>
+          <p class="mini" id="scoreText">Los geht’s.</p>
+          <div class="btnrow">
+            <button onclick="resetAll()">Alles zurücksetzen</button>
+            <button class="secondary" onclick="scrollToTopSmooth()">Nach oben</button>
+          </div>
+        </div>
+
+        <div class="panel navlist">
+          <h3>Inhalte</h3>
+          <a href="#sec1">1. Schnellcheck</a>
+          <a href="#sec2">2. Vollständige Lückentexte</a>
+          <a href="#sec3">3. Zuordnungen</a>
+          <a href="#sec4">4. Reihenfolgen</a>
+          <a href="#sec5">5. Stäbchen und Zapfen</a>
+          <a href="#sec6">6. Sehfehler</a>
+          <a href="#sec7">7. Blinder Fleck</a>
+        </div>
+
+        <div class="panel callout">
+          <h3>Merkhilfe</h3>
+          <ul class="smalllist">
+            <li><strong>Hornhaut + Linse</strong>: brechen das Licht.</li>
+            <li><strong>Netzhaut</strong>: dort entsteht das Bild.</li>
+            <li><strong>Sehnerv</strong>: leitet elektrische Signale weiter.</li>
+            <li><strong>Stäbchen</strong>: sehen bei wenig Licht.</li>
+            <li><strong>Zapfen</strong>: ermöglichen das Farbsehen.</li>
+          </ul>
+        </div>
+      </aside>
+
+      <main>
+        <section class="section" id="sec1">
+          <h2>1. Schnellcheck – Multiple Choice</h2>
+
+          <div class="question" data-qid="q1" data-points="1">
+            <h3>1. Welche Aufgabe gehört zu den Funktionen des Auges?</h3>
+            <div class="choices">
+              <label class="option"><input type="radio" name="q1" value="a"> Hormone bilden</label>
+              <label class="option"><input type="radio" name="q1" value="b"> Farben unterscheiden</label>
+              <label class="option"><input type="radio" name="q1" value="c"> Blut pumpen</label>
+              <label class="option"><input type="radio" name="q1" value="d"> Nahrung verdauen</label>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkRadio('q1','b','Richtig: Zu den Aufgaben der Augen gehört unter anderem das Unterscheiden von Farben.')">Prüfen</button>
+            </div>
+            <div class="feedback" id="fb-q1"></div>
+          </div>
+
+          <div class="question" data-qid="q2" data-points="1">
+            <h3>2. Was trifft auf das Grubenauge zu?</h3>
+            <div class="choices">
+              <label class="option"><input type="radio" name="q2" value="a"> Es bildet besonders scharfe Bilder.</label>
+              <label class="option"><input type="radio" name="q2" value="b"> Es kann Licht und Schatten unterscheiden.</label>
+              <label class="option"><input type="radio" name="q2" value="c"> Es besitzt viele Ommatidien.</label>
+              <label class="option"><input type="radio" name="q2" value="d"> Es funktioniert mit Spiegeln statt Linse.</label>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkRadio('q2','b','Richtig: Das Grubenauge kann vor allem Licht und Schatten unterscheiden, aber keine Bilder formen.')">Prüfen</button>
+            </div>
+            <div class="feedback" id="fb-q2"></div>
+          </div>
+
+          <div class="question" data-qid="q3" data-points="1">
+            <h3>3. Warum entsteht auf der Netzhaut ein umgekehrtes Bild?</h3>
+            <div class="choices">
+              <label class="option"><input type="radio" name="q3" value="a"> Weil die Pupille das Bild dreht.</label>
+              <label class="option"><input type="radio" name="q3" value="b"> Weil sich die Lichtstrahlen hinter der Linse kreuzen.</label>
+              <label class="option"><input type="radio" name="q3" value="c"> Weil der Sehnerv das Bild kippt.</label>
+              <label class="option"><input type="radio" name="q3" value="d"> Weil die Iris das Licht spiegelt.</label>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkRadio('q3','b','Richtig: Die Linse wirkt wie eine Sammellinse. Dabei werden die Lichtstrahlen gebrochen und kreuzen sich hinter der Linse.')">Prüfen</button>
+            </div>
+            <div class="feedback" id="fb-q3"></div>
+          </div>
+
+          <div class="question" data-qid="q4" data-points="1">
+            <h3>4. Wofür sind Stäbchen besonders wichtig?</h3>
+            <div class="choices">
+              <label class="option"><input type="radio" name="q4" value="a"> Für das Farbsehen bei Tageslicht</label>
+              <label class="option"><input type="radio" name="q4" value="b"> Für das Sehen bei wenig Licht</label>
+              <label class="option"><input type="radio" name="q4" value="c"> Für das Scharfstellen der Linse</label>
+              <label class="option"><input type="radio" name="q4" value="d"> Für die Weiterleitung im Sehnerv</label>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkRadio('q4','b','Richtig: Stäbchen sind sehr lichtempfindlich und wichtig für das Sehen in der Dämmerung oder Dunkelheit.')">Prüfen</button>
+            </div>
+            <div class="feedback" id="fb-q4"></div>
+          </div>
+
+          <div class="question" data-qid="q5" data-points="1">
+            <h3>5. Was passiert bei Dunkeladaption?</h3>
+            <div class="choices">
+              <label class="option"><input type="radio" name="q5" value="a"> Die Pupille wird kleiner.</label>
+              <label class="option"><input type="radio" name="q5" value="b"> Die Linse wird flacher.</label>
+              <label class="option"><input type="radio" name="q5" value="c"> Die Pupille wird größer.</label>
+              <label class="option"><input type="radio" name="q5" value="d"> Der blinde Fleck verschwindet.</label>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkRadio('q5','c','Richtig: In Dunkelheit erweitert sich die Pupille, damit mehr Licht ins Auge gelangt.')">Prüfen</button>
+            </div>
+            <div class="feedback" id="fb-q5"></div>
+          </div>
+        </section>
+
+        <section class="section" id="sec2">
+          <h2>2. Vollständige Lückentexte</h2>
+          <p class="sub">Optional kannst du dir bei jedem Lückentext eine Wortbox als Hilfe einblenden.</p>
+
+          <div class="question" data-qid="gap1" data-points="1">
+            <h3>6. Der Sehvorgang – vollständiger Lückentext</h3>
+            <div class="btnrow">
+              <button class="secondary" type="button" onclick="toggleSolution('wb1', this, 'Wortbox anzeigen', 'Wortbox ausblenden')">Wortbox anzeigen</button>
+            </div>
+            <div class="solution wordbox" id="wb1">
+              <span class="wordbox-title"><strong>Wortbox:</strong></span>
+              Sehnerv, Linse, verarbeitet, Netzhaut, Lichtstrahlen, Hornhaut, scharfes
+            </div>
+            <div class="blank-block">
+              <p>Wenn wir einen Gegenstand anschauen, gelangen
+              <input class="inline-input" type="text" id="gap1a" placeholder="Begriff">
+              von diesem Gegenstand in unser Auge. Diese werden zuerst an der
+              <input class="inline-input" type="text" id="gap1b" placeholder="Begriff">
+              und dann an der
+              <input class="inline-input" type="text" id="gap1c" placeholder="Begriff">
+              gebrochen. Dadurch werden sie so gelenkt, dass sie sich auf der
+              <input class="inline-input" type="text" id="gap1d" placeholder="Begriff">
+              treffen. Dort entsteht ein
+              <input class="inline-input" type="text" id="gap1e" placeholder="Begriff">
+              Bild, das jedoch auf dem Kopf steht. Die Netzhaut sendet die Informationen über den
+              <input class="inline-input" type="text" id="gap1f" placeholder="Begriff">
+              an das Gehirn weiter. Erst dort wird das Bild richtig
+              <input class="inline-input" type="text" id="gap1g" placeholder="Begriff">
+              und wir sehen den Gegenstand richtig herum.</p>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkGaps('gap1',[
+                ['gap1a',['lichtstrahlen']],
+                ['gap1b',['hornhaut']],
+                ['gap1c',['linse']],
+                ['gap1d',['netzhaut']],
+                ['gap1e',['scharfes']],
+                ['gap1f',['sehnerv']],
+                ['gap1g',['verarbeitet']]
+              ],'Sehr gut! Du hast den vollständigen Sehvorgang richtig ergänzt.')">Prüfen</button>
+              <button class="secondary" type="button" onclick="toggleSolution('sol-gap1', this, 'Lösung anzeigen', 'Lösung ausblenden')">Lösung anzeigen</button>
+            </div>
+            <div class="feedback" id="fb-gap1"></div>
+            <div class="solution wordbox" id="sol-gap1">
+              <span class="wordbox-title"><strong>Lösung:</strong></span>
+              Lichtstrahlen – Hornhaut – Linse – Netzhaut – scharfes – Sehnerv – verarbeitet
+            </div>
+          </div>
+
+          <div class="question" data-qid="gap2" data-points="1">
+            <h3>7. Akkommodation – vollständiger Lückentext</h3>
+            <div class="btnrow">
+              <button class="secondary" type="button" onclick="toggleSolution('wb2', this, 'Wortbox anzeigen', 'Wortbox ausblenden')">Wortbox anzeigen</button>
+            </div>
+            <div class="solution wordbox" id="wb2">
+              <span class="wordbox-title"><strong>Wortbox:</strong></span>
+              flacher, stärker gebrochen, Ziliarmuskel, weniger stark, Linse, scharf
+            </div>
+            <div class="blank-block">
+              <p>Wenn wir ein nahes Objekt betrachten, spannt sich der
+              <input class="inline-input" type="text" id="gap2a" placeholder="Begriff">
+              an. Dadurch wird die
+              <input class="inline-input" type="text" id="gap2b" placeholder="Begriff">
+              dicker beziehungsweise kugelförmiger. So kann das Licht
+              <input class="inline-input" type="text" id="gap2c" placeholder="Begriff">
+              werden und das nahe Bild erscheint auf der Netzhaut
+              <input class="inline-input" type="text" id="gap2d" placeholder="Begriff">.</p>
+
+              <p>Wenn wir dagegen in die Ferne schauen, entspannt sich der
+              <input class="inline-input" type="text" id="gap2e" placeholder="Begriff">.
+              Die Linse wird dann
+              <input class="inline-input" type="text" id="gap2f" placeholder="Begriff">
+              und das Licht wird
+              <input class="inline-input" type="text" id="gap2g" placeholder="Begriff">
+              gebrochen. Dadurch wird auch ein weit entferntes Objekt
+              <input class="inline-input" type="text" id="gap2h" placeholder="Begriff">
+              gesehen.</p>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkGaps('gap2',[
+                ['gap2a',['ziliarmuskel']],
+                ['gap2b',['linse']],
+                ['gap2c',['stärker gebrochen','staerker gebrochen']],
+                ['gap2d',['scharf']],
+                ['gap2e',['ziliarmuskel']],
+                ['gap2f',['flacher']],
+                ['gap2g',['weniger stark','schwächer','weniger stark gebrochen','schwaecher']],
+                ['gap2h',['scharf']]
+              ],'Richtig: Die Akkommodation sorgt dafür, dass nahe und ferne Gegenstände scharf gesehen werden können.')">Prüfen</button>
+              <button class="secondary" type="button" onclick="toggleSolution('sol-gap2', this, 'Lösung anzeigen', 'Lösung ausblenden')">Lösung anzeigen</button>
+            </div>
+            <div class="feedback" id="fb-gap2"></div>
+            <div class="solution wordbox" id="sol-gap2">
+              <span class="wordbox-title"><strong>Lösung:</strong></span>
+              Ziliarmuskel – Linse – stärker gebrochen – scharf – Ziliarmuskel – flacher – weniger stark – scharf
+            </div>
+          </div>
+
+          <div class="question" data-qid="gap3" data-points="1">
+            <h3>8. Netzhaut – vollständiger Lückentext</h3>
+            <div class="btnrow">
+              <button class="secondary" type="button" onclick="toggleSolution('wb3', this, 'Wortbox anzeigen', 'Wortbox ausblenden')">Wortbox anzeigen</button>
+            </div>
+            <div class="solution wordbox" id="wb3">
+              <span class="wordbox-title"><strong>Wortbox:</strong></span>
+              Zapfen, blaues, Tageslicht, Stäbchen, grünes, rotes
+            </div>
+            <div class="blank-block">
+              <p>Die Netzhaut besitzt zwei wichtige Arten von Sinneszellen. Die
+              <input class="inline-input" type="text" id="gap3a" placeholder="Begriff">
+              sind sehr lichtempfindlich und helfen uns vor allem beim Sehen in der Dämmerung oder bei Nacht. Farben können sie jedoch nicht unterscheiden. Die
+              <input class="inline-input" type="text" id="gap3b" placeholder="Begriff">
+              ermöglichen dagegen das Farbsehen bei
+              <input class="inline-input" type="text" id="gap3c" placeholder="Begriff">.
+              Es gibt drei verschiedene Zapfentypen, die besonders auf
+              <input class="inline-input" type="text" id="gap3d" placeholder="Farbe">,
+              <input class="inline-input" type="text" id="gap3e" placeholder="Farbe">
+              und
+              <input class="inline-input" type="text" id="gap3f" placeholder="Farbe">
+              Licht reagieren.</p>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkGaps('gap3',[
+                ['gap3a',['stäbchen','staebchen']],
+                ['gap3b',['zapfen']],
+                ['gap3c',['tageslicht']],
+                ['gap3d',['rotes','rot']],
+                ['gap3e',['grünes','gruenes','grün','gruen']],
+                ['gap3f',['blaues','blau']]
+              ],'Sehr gut! Stäbchen und Zapfen hast du richtig unterschieden.')">Prüfen</button>
+              <button class="secondary" type="button" onclick="toggleSolution('sol-gap3', this, 'Lösung anzeigen', 'Lösung ausblenden')">Lösung anzeigen</button>
+            </div>
+            <div class="feedback" id="fb-gap3"></div>
+            <div class="solution wordbox" id="sol-gap3">
+              <span class="wordbox-title"><strong>Lösung:</strong></span>
+              Stäbchen – Zapfen – Tageslicht – rotes – grünes – blaues
+            </div>
+          </div>
+
+          <div class="question" data-qid="gap4" data-points="1">
+            <h3>9. Sehfehler – vollständiger Lückentext</h3>
+            <div class="btnrow">
+              <button class="secondary" type="button" onclick="toggleSolution('wb4', this, 'Wortbox anzeigen', 'Wortbox ausblenden')">Wortbox anzeigen</button>
+            </div>
+            <div class="solution wordbox" id="wb4">
+              <span class="wordbox-title"><strong>Wortbox:</strong></span>
+              vor der Netzhaut, Konkavlinse, scharf, hinter der Netzhaut, Konvexlinse
+            </div>
+            <div class="blank-block">
+              <p>Bei der Kurzsichtigkeit sieht man nahe Gegenstände
+              <input class="inline-input" type="text" id="gap4a" placeholder="Begriff">,
+              entfernte Gegenstände aber verschwommen. Das Bild entsteht dabei
+              <input class="inline-input" type="text" id="gap4b" placeholder="Ort">
+              der Netzhaut. Korrigiert wird dieser Sehfehler mit einer
+              <input class="inline-input" type="text" id="gap4c" placeholder="Linsenart">.</p>
+
+              <p>Bei der Weitsichtigkeit sieht man entfernte Gegenstände meist
+              <input class="inline-input" type="text" id="gap4d" placeholder="Begriff">,
+              nahe Gegenstände aber unscharf. Hier entsteht das Bild
+              <input class="inline-input" type="text" id="gap4e" placeholder="Ort">
+              der Netzhaut. Zur Korrektur verwendet man eine
+              <input class="inline-input" type="text" id="gap4f" placeholder="Linsenart">.</p>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkGaps('gap4',[
+                ['gap4a',['scharf']],
+                ['gap4b',['vor','vor der','vor der netzhaut']],
+                ['gap4c',['zerstreuungslinse','konkavlinse']],
+                ['gap4d',['scharf']],
+                ['gap4e',['hinter','hinter der','hinter der netzhaut']],
+                ['gap4f',['sammellinse','konvexlinse']]
+              ],'Richtig: Du hast Kurz- und Weitsichtigkeit sauber unterschieden.')">Prüfen</button>
+              <button class="secondary" type="button" onclick="toggleSolution('sol-gap4', this, 'Lösung anzeigen', 'Lösung ausblenden')">Lösung anzeigen</button>
+            </div>
+            <div class="feedback" id="fb-gap4"></div>
+            <div class="solution wordbox" id="sol-gap4">
+              <span class="wordbox-title"><strong>Lösung:</strong></span>
+              scharf – vor der Netzhaut – Zerstreuungslinse/Konkavlinse – scharf – hinter der Netzhaut – Sammellinse/Konvexlinse
+            </div>
+          </div>
+        </section>
+
+        <section class="section" id="sec3">
+          <h2>3. Zuordnungen</h2>
+
+          <div class="question" data-qid="match1" data-points="1">
+            <h3>10. Augentypen richtig zuordnen</h3>
+            <div class="match-row">
+              <div>Facettenauge</div>
+              <select id="match1a">
+                <option value="">Bitte wählen</option>
+                <option value="rudimentaer">rudimentäre Bildprojektion ohne Linse</option>
+                <option value="ommatidien">viele Einzelaugen / Ommatidien</option>
+                <option value="lichtschatten">nur Licht und Schatten</option>
+              </select>
+              <span id="tag-match1a" class="tag">offen</span>
+            </div>
+            <div class="match-row">
+              <div>Lochkameraauge</div>
+              <select id="match1b">
+                <option value="">Bitte wählen</option>
+                <option value="rudimentaer">rudimentäre Bildprojektion ohne Linse</option>
+                <option value="ommatidien">viele Einzelaugen / Ommatidien</option>
+                <option value="lichtschatten">nur Licht und Schatten</option>
+              </select>
+              <span id="tag-match1b" class="tag">offen</span>
+            </div>
+            <div class="match-row">
+              <div>Grubenauge</div>
+              <select id="match1c">
+                <option value="">Bitte wählen</option>
+                <option value="rudimentaer">rudimentäre Bildprojektion ohne Linse</option>
+                <option value="ommatidien">viele Einzelaugen / Ommatidien</option>
+                <option value="lichtschatten">nur Licht und Schatten</option>
+              </select>
+              <span id="tag-match1c" class="tag">offen</span>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkMatchGroup('match1',[
+                ['match1a','ommatidien'],
+                ['match1b','rudimentaer'],
+                ['match1c','lichtschatten']
+              ],'Perfekt! Die drei Augentypen sind richtig zugeordnet.')">Prüfen</button>
+            </div>
+            <div class="feedback" id="fb-match1"></div>
+          </div>
+
+          <div class="question" data-qid="match2" data-points="1">
+            <h3>11. Teile des Linsenauges zuordnen</h3>
+            <div class="match-row">
+              <div>Iris</div>
+              <select id="match2a">
+                <option value="">Bitte wählen</option>
+                <option value="lichtregler">regelt den Lichteinfall</option>
+                <option value="signal">leitet Signale ans Gehirn</option>
+                <option value="scharf">Ort des schärfsten Sehens</option>
+              </select>
+              <span id="tag-match2a" class="tag">offen</span>
+            </div>
+            <div class="match-row">
+              <div>Sehnerv</div>
+              <select id="match2b">
+                <option value="">Bitte wählen</option>
+                <option value="lichtregler">regelt den Lichteinfall</option>
+                <option value="signal">leitet Signale ans Gehirn</option>
+                <option value="scharf">Ort des schärfsten Sehens</option>
+              </select>
+              <span id="tag-match2b" class="tag">offen</span>
+            </div>
+            <div class="match-row">
+              <div>Gelber Fleck</div>
+              <select id="match2c">
+                <option value="">Bitte wählen</option>
+                <option value="lichtregler">regelt den Lichteinfall</option>
+                <option value="signal">leitet Signale ans Gehirn</option>
+                <option value="scharf">Ort des schärfsten Sehens</option>
+              </select>
+              <span id="tag-match2c" class="tag">offen</span>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkMatchGroup('match2',[
+                ['match2a','lichtregler'],
+                ['match2b','signal'],
+                ['match2c','scharf']
+              ],'Richtig zugeordnet: Iris, Sehnerv und Gelber Fleck.')">Prüfen</button>
+            </div>
+            <div class="feedback" id="fb-match2"></div>
+          </div>
+        </section>
+
+        <section class="section" id="sec4">
+          <h2>4. Reihenfolgen</h2>
+
+          <div class="question" data-qid="order1" data-points="1">
+            <h3>12. Bringe den Sehvorgang in die richtige Reihenfolge</h3>
+            <p class="mini">Trage die Zahlen 1–4 ein.</p>
+            <div class="sequence">
+              <div class="seq-item">Gehirn wertet die Signale aus. <input type="text" id="order1a" style="max-width:90px; margin-left:8px;"></div>
+              <div class="seq-item">Licht trifft auf Hornhaut und Linse. <input type="text" id="order1b" style="max-width:90px; margin-left:8px;"></div>
+              <div class="seq-item">Bild entsteht auf der Netzhaut. <input type="text" id="order1c" style="max-width:90px; margin-left:8px;"></div>
+              <div class="seq-item">Elektrische Signale werden über den Sehnerv weitergeleitet. <input type="text" id="order1d" style="max-width:90px; margin-left:8px;"></div>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkOrder('order1',[
+                ['order1a','4'],
+                ['order1b','1'],
+                ['order1c','2'],
+                ['order1d','3']
+              ],'Super! So läuft der Sehvorgang ab.')">Prüfen</button>
+            </div>
+            <div class="feedback" id="fb-order1"></div>
+          </div>
+
+          <div class="question" data-qid="order2" data-points="1">
+            <h3>13. Nahsehen – richtige Reihenfolge</h3>
+            <div class="sequence">
+              <div class="seq-item">Linse wird dicker. <input type="text" id="order2a" style="max-width:90px; margin-left:8px;"></div>
+              <div class="seq-item">Nahes Objekt wird scharf gesehen. <input type="text" id="order2b" style="max-width:90px; margin-left:8px;"></div>
+              <div class="seq-item">Ziliarmuskel spannt sich an. <input type="text" id="order2c" style="max-width:90px; margin-left:8px;"></div>
+              <div class="seq-item">Licht wird stärker gebrochen. <input type="text" id="order2d" style="max-width:90px; margin-left:8px;"></div>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkOrder('order2',[
+                ['order2a','2'],
+                ['order2b','4'],
+                ['order2c','1'],
+                ['order2d','3']
+              ],'Richtig: Muskel anspannen → Linse dicker → Licht stärker brechen → nahes Objekt scharf sehen.')">Prüfen</button>
+            </div>
+            <div class="feedback" id="fb-order2"></div>
+          </div>
+        </section>
+
+        <section class="section" id="sec5">
+          <h2>5. Stäbchen und Zapfen</h2>
+
+          <div class="question" data-qid="q6" data-points="1">
+            <h3>14. Welche Aussage ist richtig?</h3>
+            <div class="choices">
+              <label class="option"><input type="radio" name="q6" value="a"> Zapfen sind vor allem für das Sehen in der Nacht zuständig.</label>
+              <label class="option"><input type="radio" name="q6" value="b"> Stäbchen unterscheiden viele Farben.</label>
+              <label class="option"><input type="radio" name="q6" value="c"> Zapfen ermöglichen Farbsehen bei Tageslicht.</label>
+              <label class="option"><input type="radio" name="q6" value="d"> Stäbchen befinden sich nur im blinden Fleck.</label>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkRadio('q6','c','Richtig: Zapfen ermöglichen das Farbsehen bei Tageslicht.')">Prüfen</button>
+            </div>
+            <div class="feedback" id="fb-q6"></div>
+          </div>
+
+          <div class="question" data-qid="tf1" data-points="1">
+            <h3>15. Richtig oder falsch?</h3>
+            <p>Der blinde Fleck enthält keine Sehzellen.</p>
+            <div class="choices">
+              <label class="option"><input type="radio" name="tf1" value="richtig"> Richtig</label>
+              <label class="option"><input type="radio" name="tf1" value="falsch"> Falsch</label>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkRadio('tf1','richtig','Genau: Am blinden Fleck treten die Sehnerven aus. Dort gibt es keine Stäbchen und Zapfen.')">Prüfen</button>
+            </div>
+            <div class="feedback" id="fb-tf1"></div>
+          </div>
+        </section>
+
+        <section class="section" id="sec6">
+          <h2>6. Sehfehler</h2>
+
+          <div class="question" data-qid="q7" data-points="1">
+            <h3>16. Kurzsichtigkeit – was stimmt?</h3>
+            <div class="choices">
+              <label class="option"><input type="radio" name="q7" value="a"> Man sieht ferne Dinge scharf, nahe unscharf.</label>
+              <label class="option"><input type="radio" name="q7" value="b"> Das Bild entsteht hinter der Netzhaut.</label>
+              <label class="option"><input type="radio" name="q7" value="c"> Das Bild entsteht vor der Netzhaut.</label>
+              <label class="option"><input type="radio" name="q7" value="d"> Man korrigiert mit einer Sammellinse.</label>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkRadio('q7','c','Richtig: Bei Kurzsichtigkeit entsteht das Bild vor der Netzhaut.')">Prüfen</button>
+            </div>
+            <div class="feedback" id="fb-q7"></div>
+          </div>
+
+          <div class="question" data-qid="q8" data-points="1">
+            <h3>17. Welche Linse korrigiert Weitsichtigkeit?</h3>
+            <div class="choices">
+              <label class="option"><input type="radio" name="q8" value="a"> Zerstreuungslinse / Konkavlinse</label>
+              <label class="option"><input type="radio" name="q8" value="b"> Sammellinse / Konvexlinse</label>
+              <label class="option"><input type="radio" name="q8" value="c"> Spiegel</label>
+              <label class="option"><input type="radio" name="q8" value="d"> Keine Linse</label>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkRadio('q8','b','Richtig: Weitsichtigkeit wird mit einer Sammellinse beziehungsweise Konvexlinse korrigiert.')">Prüfen</button>
+            </div>
+            <div class="feedback" id="fb-q8"></div>
+          </div>
+        </section>
+
+        <section class="section" id="sec7">
+          <h2>7. Blinder Fleck</h2>
+
+          <div class="question" data-qid="exp1" data-points="1">
+            <h3>18. Warum verschwindet beim Experiment ein Symbol aus dem Sichtfeld?</h3>
+            <div class="choices">
+              <label class="option"><input type="radio" name="exp1" value="a"> Weil die Hornhaut an dieser Stelle undurchsichtig wird.</label>
+              <label class="option"><input type="radio" name="exp1" value="b"> Weil das Symbol auf den blinden Fleck fällt, wo keine Sehzellen sitzen.</label>
+              <label class="option"><input type="radio" name="exp1" value="c"> Weil die Iris das Bild vollständig verdeckt.</label>
+              <label class="option"><input type="radio" name="exp1" value="d"> Weil die Zapfen dort alle Farben löschen.</label>
+            </div>
+            <div class="btnrow">
+              <button onclick="checkRadio('exp1','b','Richtig: Das Symbol fällt auf den blinden Fleck. Dort befinden sich keine Sehzellen.')">Prüfen</button>
+            </div>
+            <div class="feedback" id="fb-exp1"></div>
+          </div>
+
+          <div class="question">
+            <h3>Zum Nachdenken:</h3>
+            <p>Warum fällt uns der blinde Fleck im Alltag meistens nicht auf?</p>
+            <p class="mini">Hinweis: Beide Augen ergänzen sich gegenseitig. Außerdem ergänzt das Gehirn fehlende Informationen aus der Umgebung.</p>
+          </div>
+        </section>
+
+        <section class="section">
+          <h2>Abschluss</h2>
+          <p>Wiederhole besonders die Aufgaben, die noch nicht richtig gelöst wurden.</p>
+          <div class="callout">
+            <strong>Tipp:</strong> Bearbeite zuerst alles ohne Lösungen. Nutze die Wortboxen und Lösungen erst danach zur Selbstkontrolle.
+          </div>
+        </section>
+
+        <div class="footer">Interaktive Wiederholung zum Thema „Das Auge“</div>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const state = {};
+    const allQuestions = Array.from(document.querySelectorAll('[data-qid]'));
+    const total = allQuestions.reduce((sum, q) => sum + Number(q.dataset.points || 1), 0);
+
+    document.getElementById('maxPoints').textContent = total;
+    document.getElementById('totalCount').textContent = allQuestions.length;
+
+    function normalize(s){
+      return (s || '')
+        .toString()
+        .trim()
+        .toLowerCase()
+        .replaceAll('ä','ae')
+        .replaceAll('ö','oe')
+        .replaceAll('ü','ue')
+        .replaceAll('ß','ss')
+        .replace(/\s+/g,' ');
+    }
+
+    function setFeedback(qid, ok, msg){
+      const fb = document.getElementById('fb-' + qid);
+      fb.className = 'feedback ' + (ok ? 'good' : 'bad');
+      fb.textContent = msg;
+    }
+
+    function registerResult(qid, ok, points = 1){
+      if(!state[qid]){
+        state[qid] = { done:false, correct:false, points:points };
+      }
+      state[qid].done = true;
+      state[qid].correct = !!ok;
+      updateScore();
+    }
+
+    function updateScore(){
+      let done = 0;
+      let pts = 0;
+      let max = 0;
+
+      for(const q of allQuestions){
+        const qid = q.dataset.qid;
+        const p = Number(q.dataset.points || 1);
+        max += p;
+        if(state[qid]?.done) done++;
+        if(state[qid]?.correct) pts += p;
+      }
+
+      document.getElementById('doneCount').textContent = done;
+      document.getElementById('points').textContent = pts;
+      document.getElementById('scorefill').style.width = max ? ((pts / max) * 100) + '%' : '0%';
+
+      const percent = max ? Math.round((pts / max) * 100) : 0;
+      let text = 'Los geht’s.';
+      if(done === 0) text = 'Starte mit dem Schnellcheck.';
+      else if(percent === 100) text = 'Perfekt! Alles richtig.';
+      else if(percent >= 80) text = 'Sehr stark – fast alles sitzt.';
+      else if(percent >= 60) text = 'Gut – noch ein wenig wiederholen.';
+      else text = 'Dranbleiben – das wird.';
+
+      document.getElementById('scoreText').textContent = text;
+    }
+
+    function checkRadio(qid, correct, successText){
+      const selected = document.querySelector(`input[name="${qid}"]:checked`);
+      const points = Number(document.querySelector(`[data-qid="${qid}"]`).dataset.points || 1);
+
+      if(!selected){
+        setFeedback(qid, false, 'Bitte wähle zuerst eine Antwort aus.');
+        registerResult(qid, false, points);
+        return;
+      }
+
+      const ok = selected.value === correct;
+      setFeedback(qid, ok, ok ? successText : 'Noch nicht richtig. Lies die Aufgabe noch einmal genau.');
+      registerResult(qid, ok, points);
+    }
+
+    function checkGaps(qid, config, successText){
+      let ok = true;
+      const points = Number(document.querySelector(`[data-qid="${qid}"]`).dataset.points || 1);
+
+      for(const [id, answers] of config){
+        const el = document.getElementById(id);
+        const val = normalize(el.value);
+        const local = answers.some(a => normalize(a) === val);
+        el.style.borderColor = local ? '#1f8a4c' : '#c0392b';
+        if(!local) ok = false;
+      }
+
+      setFeedback(qid, ok, ok ? successText : 'Einige Felder stimmen noch nicht. Falsche Eingaben sind rot markiert.');
+      registerResult(qid, ok, points);
+    }
+
+    function checkMatchGroup(qid, pairs, successText){
+      let ok = true;
+      const points = Number(document.querySelector(`[data-qid="${qid}"]`).dataset.points || 1);
+
+      for(const [id, expected] of pairs){
+        const el = document.getElementById(id);
+        const tag = document.getElementById('tag-' + id);
+        const local = el.value === expected;
+
+        tag.textContent = local ? 'richtig' : 'prüfen';
+        tag.className = 'tag ' + (local ? 'goodtag' : 'badtag');
+
+        if(!local) ok = false;
+      }
+
+      setFeedback(qid, ok, ok ? successText : 'Mindestens eine Zuordnung ist noch nicht richtig.');
+      registerResult(qid, ok, points);
+    }
+
+    function checkOrder(qid, pairs, successText){
+      let ok = true;
+      const points = Number(document.querySelector(`[data-qid="${qid}"]`).dataset.points || 1);
+
+      for(const [id, expected] of pairs){
+        const el = document.getElementById(id);
+        const local = normalize(el.value) === normalize(expected);
+        el.style.borderColor = local ? '#1f8a4c' : '#c0392b';
+        if(!local) ok = false;
+      }
+
+      setFeedback(qid, ok, ok ? successText : 'Die Reihenfolge stimmt noch nicht ganz.');
+      registerResult(qid, ok, points);
+    }
+
+    function toggleSolution(id, btn = null, showText = 'anzeigen', hideText = 'ausblenden'){
+      const el = document.getElementById(id);
+      if(!el) return;
+      const isNowShown = el.classList.toggle('show');
+      if(btn){
+        btn.textContent = isNowShown ? hideText : showText;
+      }
+    }
+
+    function resetAll(){
+      if(!confirm('Wirklich alle Eingaben und Bewertungen zurücksetzen?')) return;
+
+      document.querySelectorAll('input[type="radio"]').forEach(el => el.checked = false);
+
+      document.querySelectorAll('input[type="text"]').forEach(el => {
+        el.value = '';
+        el.style.borderColor = '#cfd9e6';
+      });
+
+      document.querySelectorAll('select').forEach(el => el.value = '');
+
+      document.querySelectorAll('.feedback').forEach(el => {
+        el.className = 'feedback';
+        el.textContent = '';
+      });
+
+      document.querySelectorAll('.tag').forEach(el => {
+        el.textContent = 'offen';
+        el.className = 'tag';
+      });
+
+      document.querySelectorAll('.solution').forEach(el => {
+        el.classList.remove('show');
+      });
+
+      document.querySelectorAll('button.secondary').forEach(btn => {
+        if(btn.textContent.includes('ausblenden')){
+          if(btn.textContent.toLowerCase().includes('wortbox')){
+            btn.textContent = 'Wortbox anzeigen';
+          } else if(btn.textContent.toLowerCase().includes('lösung')){
+            btn.textContent = 'Lösung anzeigen';
+          }
+        }
+      });
+
+      for(const key of Object.keys(state)){
+        delete state[key];
+      }
+
+      updateScore();
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+
+    function scrollToTopSmooth(){
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }
+
+    updateScore();
+  </script>
+</body>
+</html>
