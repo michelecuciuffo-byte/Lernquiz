@@ -1,0 +1,1988 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Topic Based Talk - Vokabeltrainer Quali</title>
+  <style>
+    :root{
+      --bg-1:#f3f7ff;
+      --bg-2:#eef8f3;
+      --card:#ffffff;
+      --text:#163047;
+      --muted:#5d7388;
+      --line:#d7e1ee;
+      --shadow:0 18px 50px rgba(20,42,67,0.10);
+      --radius-xl:30px;
+      --radius-lg:22px;
+      --radius-md:16px;
+      --winter-1:#1d4ed8;
+      --winter-2:#8dd3ff;
+      --animals-1:#0f766e;
+      --animals-2:#9adf86;
+      --freetime-1:#c2410c;
+      --freetime-2:#ffcb74;
+      --good:#18794e;
+      --good-bg:#ecfbf2;
+      --bad:#b42318;
+      --bad-bg:#fff1f1;
+      --soft:#f7fbff;
+    }
+
+    *{box-sizing:border-box;}
+
+    html{scroll-behavior:smooth;}
+
+    body{
+      margin:0;
+      font-family:"Trebuchet MS","Segoe UI",Verdana,sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(141,211,255,0.35), transparent 28%),
+        radial-gradient(circle at top right, rgba(154,223,134,0.22), transparent 25%),
+        linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+      min-height:100vh;
+    }
+
+    .shell{
+      max-width:1300px;
+      margin:0 auto;
+      padding:26px 18px 60px;
+    }
+
+    .hero{
+      position:relative;
+      overflow:hidden;
+      background:linear-gradient(135deg, rgba(255,255,255,0.95), rgba(240,248,255,0.92));
+      border:1px solid rgba(255,255,255,0.85);
+      box-shadow:var(--shadow);
+      border-radius:var(--radius-xl);
+      padding:30px;
+      margin-bottom:24px;
+    }
+
+    .hero::before,
+    .hero::after{
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      pointer-events:none;
+    }
+
+    .hero::before{
+      width:260px;
+      height:260px;
+      right:-80px;
+      top:-80px;
+      background:radial-gradient(circle, rgba(59,130,246,0.18), transparent 65%);
+    }
+
+    .hero::after{
+      width:220px;
+      height:220px;
+      left:-60px;
+      bottom:-110px;
+      background:radial-gradient(circle, rgba(245,158,11,0.14), transparent 65%);
+    }
+
+    h1,h2,h3,h4{margin:0;}
+
+    h1{
+      font-size:clamp(2rem, 3.5vw, 3.2rem);
+      line-height:1.08;
+      margin-bottom:14px;
+    }
+
+    h2{font-size:1.6rem; margin-bottom:8px;}
+    h3{font-size:1.15rem; margin-bottom:10px;}
+    h4{font-size:1rem; margin-bottom:8px;}
+
+    p{line-height:1.6; margin:0;}
+
+    .subtitle{
+      max-width:860px;
+      font-size:1.04rem;
+      color:var(--muted);
+    }
+
+    .info-card,
+    .mini-card,
+    .topic-stage,
+    .panel-card,
+    .side-card,
+    .exercise-card{
+      background:rgba(255,255,255,0.93);
+      border:1px solid rgba(214,226,240,0.95);
+      border-radius:var(--radius-lg);
+      box-shadow:var(--shadow);
+    }
+
+    .info-card{
+      padding:18px 20px;
+    }
+
+    .badge-row,
+    .stat-row,
+    .phase-nav,
+    .topic-nav{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:9px 12px;
+      border-radius:999px;
+      background:#f3f8ff;
+      color:#29517d;
+      border:1px solid #d7e6f8;
+      font-weight:700;
+      font-size:0.95rem;
+    }
+
+    .topic-nav{
+      margin:22px 0;
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));
+      gap:14px;
+    }
+
+    .topic-btn,
+    .phase-btn,
+    .action-btn,
+    .option-btn,
+    .chip,
+    .ghost-btn{
+      appearance:none;
+      border:none;
+      cursor:pointer;
+      font:inherit;
+      transition:transform 0.14s ease, box-shadow 0.18s ease, background 0.18s ease;
+    }
+
+    .topic-btn{
+      position:relative;
+      overflow:hidden;
+      padding:18px 18px 16px;
+      text-align:left;
+      border-radius:22px;
+      color:#fff;
+      min-height:118px;
+      box-shadow:var(--shadow);
+    }
+
+    .topic-btn::before{
+      content:"";
+      position:absolute;
+      inset:0;
+      background:linear-gradient(140deg, rgba(255,255,255,0.18), transparent 55%);
+      pointer-events:none;
+    }
+
+    .topic-btn span{
+      display:block;
+      position:relative;
+      z-index:1;
+    }
+
+    .topic-btn .emoji{
+      font-size:2rem;
+      margin-bottom:10px;
+    }
+
+    .topic-btn .title{
+      font-size:1.18rem;
+      font-weight:800;
+    }
+
+    .topic-btn .sub{
+      margin-top:6px;
+      font-size:0.93rem;
+      color:rgba(255,255,255,0.88);
+    }
+
+    .topic-btn:hover,
+    .phase-btn:hover,
+    .action-btn:hover,
+    .option-btn:hover,
+    .chip:hover,
+    .ghost-btn:hover{
+      transform:translateY(-2px);
+    }
+
+    .topic-btn.active{
+      outline:4px solid rgba(255,255,255,0.75);
+      outline-offset:-4px;
+    }
+
+    .topic-btn.winter{background:linear-gradient(135deg, var(--winter-1), var(--winter-2));}
+    .topic-btn.animals{background:linear-gradient(135deg, var(--animals-1), var(--animals-2));}
+    .topic-btn.freetime{background:linear-gradient(135deg, var(--freetime-1), var(--freetime-2));}
+
+    .topic-stage{
+      padding:22px;
+    }
+
+    .theme-winter{--theme-1:var(--winter-1);--theme-2:var(--winter-2);}
+    .theme-animals{--theme-1:var(--animals-1);--theme-2:var(--animals-2);}
+    .theme-freetime{--theme-1:var(--freetime-1);--theme-2:var(--freetime-2);}
+
+    .stage-banner{
+      padding:24px;
+      border-radius:26px;
+      background:linear-gradient(135deg, var(--theme-1), var(--theme-2));
+      color:#fff;
+      position:relative;
+      overflow:hidden;
+      min-height:240px;
+    }
+
+    .stage-banner::after{
+      content:"";
+      position:absolute;
+      width:210px;
+      height:210px;
+      right:-45px;
+      bottom:-80px;
+      border-radius:50%;
+      background:radial-gradient(circle, rgba(255,255,255,0.3), transparent 65%);
+    }
+
+    .stage-banner .label{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.18);
+      font-weight:700;
+      margin-bottom:16px;
+    }
+
+    .stage-banner h2{
+      font-size:clamp(1.7rem, 3vw, 2.4rem);
+      margin-bottom:10px;
+    }
+
+    .stage-banner p{
+      max-width:570px;
+      color:rgba(255,255,255,0.93);
+      margin-bottom:16px;
+    }
+
+    .stat-row{
+      margin-top:14px;
+    }
+
+    .stat-pill{
+      padding:9px 12px;
+      border-radius:999px;
+      background:rgba(255,255,255,0.15);
+      border:1px solid rgba(255,255,255,0.22);
+      font-weight:700;
+    }
+
+    .phase-nav{
+      margin:18px 0 20px;
+    }
+
+    .phase-btn{
+      padding:12px 16px;
+      border-radius:14px;
+      font-weight:800;
+      background:#eef5ff;
+      color:#2e4f74;
+      border:1px solid #d7e5f6;
+    }
+
+    .phase-btn.active{
+      background:linear-gradient(135deg, var(--theme-1), var(--theme-2));
+      color:#fff;
+      border-color:transparent;
+    }
+
+    .panel-grid{
+      display:grid;
+      grid-template-columns:1.1fr 0.9fr;
+      gap:18px;
+    }
+
+    .panel-card,
+    .side-card,
+    .exercise-card{
+      padding:20px;
+    }
+
+    .panel-card.soft{
+      background:linear-gradient(180deg, #ffffff, #f8fbff);
+    }
+
+    .progress-wrap{
+      margin:14px 0 8px;
+    }
+
+    .progress-head{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      margin-bottom:8px;
+      color:var(--muted);
+      font-size:0.95rem;
+      font-weight:700;
+    }
+
+    .progress-bar{
+      width:100%;
+      height:12px;
+      border-radius:999px;
+      background:#eaf1fb;
+      overflow:hidden;
+    }
+
+    .progress-bar > div{
+      height:100%;
+      width:0;
+      border-radius:999px;
+      background:linear-gradient(90deg, var(--theme-2), var(--theme-1));
+      transition:width 0.25s ease;
+    }
+
+    .flash-card .tiny{
+      color:var(--muted);
+      font-size:0.92rem;
+      margin-bottom:12px;
+      font-weight:700;
+      letter-spacing:0.03em;
+      text-transform:uppercase;
+    }
+
+    .flash-main{
+      font-size:clamp(2rem, 4vw, 3rem);
+      font-weight:900;
+      line-height:1.12;
+      margin-bottom:12px;
+    }
+
+    .flash-translation{
+      font-size:1.28rem;
+      min-height:1.5em;
+      color:var(--muted);
+      margin-bottom:16px;
+    }
+
+    .single-panel{
+      display:grid;
+      gap:18px;
+    }
+
+    .flip-shell{
+      perspective:1200px;
+      margin-top:14px;
+    }
+
+    .flip-card{
+      position:relative;
+      min-height:330px;
+      transform-style:preserve-3d;
+      transition:transform 0.7s ease;
+      cursor:pointer;
+    }
+
+    .flip-card.flipped{
+      transform:rotateY(180deg);
+    }
+
+    .flip-face{
+      position:absolute;
+      inset:0;
+      backface-visibility:hidden;
+      border-radius:24px;
+      border:1px dashed #cbdced;
+      padding:26px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      text-align:center;
+      background:
+        linear-gradient(180deg, #ffffff, #f7fbff),
+        radial-gradient(circle at top right, rgba(59,130,246,0.08), transparent 35%);
+    }
+
+    .flip-back{
+      transform:rotateY(180deg);
+      background:
+        linear-gradient(180deg, #ffffff, #f5fbf8),
+        radial-gradient(circle at top right, rgba(16,185,129,0.10), transparent 35%);
+    }
+
+    .flip-hint{
+      margin-top:14px;
+      color:var(--muted);
+      font-size:0.96rem;
+      font-weight:700;
+    }
+
+    .example-box{
+      width:100%;
+      max-width:660px;
+      background:#f6faff;
+      border:1px solid #d7e4f4;
+      border-radius:16px;
+      padding:14px 16px;
+      font-weight:700;
+      color:#33506c;
+    }
+
+    .control-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .action-btn,
+    .ghost-btn{
+      padding:11px 15px;
+      border-radius:14px;
+      font-weight:800;
+    }
+
+    .action-btn{
+      background:linear-gradient(135deg, var(--theme-1), var(--theme-2));
+      color:#fff;
+      box-shadow:0 14px 30px rgba(0,0,0,0.09);
+    }
+
+    .ghost-btn{
+      background:#ffffff;
+      color:#2d4c6b;
+      border:1px solid #d6e2f1;
+    }
+
+    .overview-grid,
+    .exercise-grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:18px;
+    }
+
+    .overview-list,
+    .speaking-list{
+      display:grid;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .overview-item,
+    .speaking-item{
+      padding:12px 14px;
+      border-radius:16px;
+      background:#f7fbff;
+      border:1px solid #dbe7f5;
+      font-weight:700;
+    }
+
+    .tip-box{
+      margin-top:14px;
+      padding:14px 16px;
+      border-radius:18px;
+      background:#fff9ec;
+      border:1px solid #f6dfab;
+      color:#7b5a13;
+      font-weight:700;
+    }
+
+    .exercise-grid{
+      margin-top:4px;
+    }
+
+    .question-head{
+      display:flex;
+      justify-content:space-between;
+      gap:10px;
+      align-items:center;
+      margin-bottom:12px;
+      color:var(--muted);
+      font-weight:700;
+    }
+
+    .question-title{
+      font-size:1.08rem;
+      font-weight:900;
+      color:var(--text);
+      line-height:1.4;
+      margin-bottom:12px;
+    }
+
+    .options{
+      display:grid;
+      gap:10px;
+    }
+
+    .option-btn{
+      width:100%;
+      text-align:left;
+      padding:12px 13px;
+      border-radius:14px;
+      background:#f7fbff;
+      color:#29455f;
+      border:1px solid #d6e3f1;
+      font-weight:700;
+    }
+
+    .option-btn.correct{
+      background:var(--good-bg);
+      color:var(--good);
+      border-color:#b9ebc9;
+    }
+
+    .option-btn.wrong{
+      background:var(--bad-bg);
+      color:var(--bad);
+      border-color:#f3c0c0;
+    }
+
+    .feedback{
+      margin-top:12px;
+      padding:12px 14px;
+      border-radius:14px;
+      font-weight:800;
+    }
+
+    .feedback.good{
+      background:var(--good-bg);
+      color:var(--good);
+      border:1px solid #b9ebc9;
+    }
+
+    .feedback.bad{
+      background:var(--bad-bg);
+      color:var(--bad);
+      border:1px solid #f3c0c0;
+    }
+
+    .match-table{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .match-row{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:10px;
+      align-items:center;
+    }
+
+    .match-label{
+      padding:11px 12px;
+      border-radius:14px;
+      background:#f7fbff;
+      border:1px solid #dae7f4;
+      font-weight:800;
+    }
+
+    .input,
+    .select{
+      width:100%;
+      padding:12px 13px;
+      border-radius:14px;
+      border:1px solid #cfddec;
+      background:#fff;
+      color:var(--text);
+      font:inherit;
+    }
+
+    .input:disabled{
+      background:#f4f8fc;
+      color:#688096;
+      cursor:not-allowed;
+    }
+
+    .tiny-note{
+      margin-top:8px;
+      color:var(--muted);
+      font-size:0.94rem;
+    }
+
+    .builder-area{
+      margin-top:12px;
+      display:grid;
+      gap:12px;
+    }
+
+    .word-bank,
+    .built-bank{
+      min-height:64px;
+      padding:12px;
+      border-radius:16px;
+      background:#fbfdff;
+      border:1px dashed #cddbea;
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      align-items:flex-start;
+    }
+
+    .chip{
+      padding:9px 12px;
+      border-radius:999px;
+      background:#fff;
+      color:#26435f;
+      border:1px solid #d7e4f3;
+      font-weight:800;
+    }
+
+    .built-bank.empty::before{
+      content:"Baue hier deinen Satz zusammen.";
+      color:#7b8da0;
+      font-weight:700;
+    }
+
+    .score-strip{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:16px;
+    }
+
+    .score-pill{
+      padding:9px 12px;
+      border-radius:999px;
+      background:#ffffff;
+      border:1px solid #d8e4f1;
+      font-weight:800;
+      color:#31506e;
+    }
+
+    .model-answer{
+      margin-top:14px;
+      padding:16px;
+      border-radius:18px;
+      background:#f8fbff;
+      border:1px solid #dce8f6;
+    }
+
+    .model-answer p + p{
+      margin-top:10px;
+    }
+
+    .speak-card{
+      max-width:760px;
+    }
+
+    .translate-prompt{
+      padding:16px 18px;
+      border-radius:18px;
+      background:#f7fbff;
+      border:1px solid #d8e5f3;
+      margin:12px 0 14px;
+    }
+
+    .translate-prompt strong{
+      display:block;
+      margin-bottom:6px;
+      font-size:1.05rem;
+    }
+
+    .simple-note{
+      margin-top:14px;
+      padding:14px 16px;
+      border-radius:16px;
+      background:#f8fbff;
+      border:1px solid #d9e5f3;
+      color:#32506e;
+      font-weight:700;
+    }
+
+    .footer{
+      text-align:center;
+      color:var(--muted);
+      margin-top:28px;
+      font-size:0.95rem;
+    }
+
+    @media (max-width:1050px){
+      .panel-grid,
+      .overview-grid,
+      .exercise-grid{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media (max-width:700px){
+      .shell{padding:18px 12px 46px;}
+      .hero{padding:22px 18px;}
+      .topic-stage,
+      .panel-card,
+      .side-card,
+      .exercise-card{padding:16px;}
+      .match-row{grid-template-columns:1fr;}
+      .flash-main{font-size:1.8rem;}
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+
+  <script>
+    const topics = [
+      {
+        id: "winter",
+        themeClass: "theme-winter",
+        buttonClass: "winter",
+        icon: "❄️",
+        title: "Winter",
+        subtitle: "weather, clothes, activities",
+        intro: "Dieses Thema hilft dir, ein Winterbild zu beschreiben, Winteraktivitaeten zu nennen und deine Meinung zum Winter auf Englisch auszudruecken.",
+        sceneTitle: "Bildideen fuer deinen Talk",
+        sceneItems: [
+          "a snowy park with children and sledges",
+          "warm clothes like a scarf, gloves and boots",
+          "winter sports and hot drinks"
+        ],
+        focusFields: [
+          "weather and temperature",
+          "winter clothes",
+          "winter sports and fun",
+          "feelings and opinions"
+        ],
+        talkSteps: [
+          "Name the season and the weather.",
+          "Describe what people are wearing.",
+          "Say what they are doing.",
+          "Add your own opinion about winter."
+        ],
+        examTip: "Verwende einfache Satzstarter wie: In the picture I can see..., The weather is..., They are wearing..., I like winter because...",
+        vocab: [
+          { de: "der Winter", en: "winter", example: "Winter is my favourite season." },
+          { de: "es schneit", en: "it is snowing", example: "It is snowing and the streets are white." },
+          { de: "kalt", en: "cold", example: "It is very cold in January." },
+          { de: "frostig", en: "frosty", example: "The morning is frosty and quiet." },
+          { de: "der Schnee", en: "snow", example: "The snow is clean and bright." },
+          { de: "das Eis", en: "ice", example: "Be careful, the ice is slippery." },
+          { de: "der Schneemann", en: "snowman", example: "The children are building a snowman." },
+          { de: "die Schneeballschlacht", en: "snowball fight", example: "My friends are having a snowball fight." },
+          { de: "Schlittschuh laufen", en: "to go ice skating", example: "At the weekend we go ice skating." },
+          { de: "Ski fahren", en: "to go skiing", example: "Some families go skiing in the mountains." },
+          { de: "der Schal", en: "scarf", example: "I always wear a warm scarf." },
+          { de: "die Handschuhe", en: "gloves", example: "My gloves keep my hands warm." },
+          { de: "die Winterjacke", en: "winter jacket", example: "Her winter jacket is blue." },
+          { de: "die Muetze", en: "woolly hat", example: "He is wearing a woolly hat." },
+          { de: "die Winterferien", en: "winter holidays", example: "We visit our grandparents during the winter holidays." },
+          { de: "die heisse Schokolade", en: "hot chocolate", example: "Hot chocolate tastes great after a walk." },
+          { de: "der Schlitten", en: "sledge", example: "The red sledge is next to the tree." },
+          { de: "die Stiefel", en: "boots", example: "Good boots are important in the snow." },
+          { de: "die Schneeflocke", en: "snowflake", example: "A snowflake lands on my glove." },
+          { de: "der Kamin", en: "fireplace", example: "The family is sitting near the fireplace." },
+          { de: "der Pullover", en: "jumper", example: "I wear a thick jumper in winter." },
+          { de: "der Schneeanzug", en: "snowsuit", example: "The little child is wearing a snowsuit." },
+          { de: "der Berg", en: "mountain", example: "The mountains are covered with snow." },
+          { de: "der Frost", en: "frost", example: "There is frost on the windows." },
+          { de: "der Eiszapfen", en: "icicle", example: "An icicle is hanging from the roof." },
+          { de: "rodeln", en: "to go sledging", example: "The children want to go sledging." },
+          { de: "frieren", en: "to freeze", example: "My hands freeze without gloves." },
+          { de: "gemuetlich", en: "cosy", example: "Our living room is cosy in winter." },
+          { de: "der Himmel", en: "sky", example: "The sky is grey and cloudy." },
+          { de: "bewoelkt", en: "cloudy", example: "It is cold and cloudy today." },
+          { de: "der Wintertag", en: "winter day", example: "It is a beautiful winter day." },
+          { de: "im Hintergrund", en: "in the background", example: "In the background I can see mountains." },
+          { de: "im Vordergrund", en: "in the foreground", example: "In the foreground there is a small child." },
+          { de: "draussen", en: "outside", example: "The children are playing outside." },
+          { de: "warm", en: "warm", example: "My jacket keeps me warm." },
+          { de: "der Schneeball", en: "snowball", example: "The boy is holding a snowball." }
+        ],
+        starterPhrases: [
+          "In the picture I can see a winter scene.",
+          "The weather looks cold and snowy.",
+          "The people are wearing warm winter clothes.",
+          "They are having fun in the snow.",
+          "I like winter because it is beautiful and exciting."
+        ],
+        questions: [
+          "What is the weather like in winter?",
+          "What do people usually wear in winter?",
+          "Which winter activity do you like most?",
+          "What can children do in the snow?",
+          "Do you prefer winter or summer? Why?"
+        ],
+        translationPractice: [
+          { de: "Auf dem Bild kann ich eine Winterszene sehen.", en: "In the picture I can see a winter scene." },
+          { de: "Das Wetter ist kalt und es schneit.", en: "The weather is cold and it is snowing." },
+          { de: "Die Kinder spielen im Schnee.", en: "The children are playing in the snow." },
+          { de: "Die Leute tragen warme Winterkleidung.", en: "The people are wearing warm winter clothes." },
+          { de: "Ich mag den Winter, weil ich Schlittschuh laufen kann.", en: "I like winter because I can go ice skating." },
+          { de: "Im Hintergrund kann ich einen verschneiten Berg sehen.", en: "In the background I can see a snowy mountain." },
+          { de: "Nach dem Spaziergang trinke ich gern heisse Schokolade.", en: "After the walk I like to drink hot chocolate." },
+          { de: "Viele Kinder fahren mit dem Schlitten den Huegel hinunter.", en: "Many children are going down the hill on a sledge." }
+        ],
+        modelAnswer: [
+          "In the picture I can see a snowy winter day. The weather is cold and it is snowing.",
+          "The people are wearing a scarf, gloves, boots and a winter jacket. Some children are playing in the snow and one child is pulling a sledge.",
+          "I like winter because I can drink hot chocolate and go ice skating with my friends."
+        ],
+        sentences: [
+          {
+            prompt: "Baue einen englischen Satz ueber Winter.",
+            words: ["In", "winter", "I", "often", "drink", "hot", "chocolate", "."],
+            solution: "In winter I often drink hot chocolate."
+          },
+          {
+            prompt: "Baue einen zweiten englischen Satz.",
+            words: ["The", "children", "are", "playing", "in", "the", "snow", "."],
+            solution: "The children are playing in the snow."
+          }
+        ]
+      },
+      {
+        id: "animals",
+        themeClass: "theme-animals",
+        buttonClass: "animals",
+        icon: "🦁",
+        title: "Wild animals",
+        subtitle: "habitats, description, protection",
+        intro: "Hier kannst du Vokabeln zu wilden Tieren lernen und ueben, damit du Tiere in Bildern beschreiben und ueber Schutz und Lebensraeume sprechen kannst.",
+        sceneTitle: "Bildideen fuer deinen Talk",
+        sceneItems: [
+          "a lion or tiger in nature",
+          "different habitats like the forest or savannah",
+          "strong animals that need protection"
+        ],
+        focusFields: [
+          "name of the animal",
+          "body and appearance",
+          "habitat and food",
+          "danger and protection"
+        ],
+        talkSteps: [
+          "Say which animal you can see.",
+          "Describe its body and colour.",
+          "Explain where it lives.",
+          "Say why people should protect it."
+        ],
+        examTip: "Hilfreiche Satzstarter sind: This is a..., It lives in..., It is strong / fast / dangerous..., We should protect wild animals because...",
+        vocab: [
+          { de: "das Wildtier", en: "wild animal", example: "A wild animal needs space and freedom." },
+          { de: "der Loewe", en: "lion", example: "The lion is a strong animal." },
+          { de: "der Elefant", en: "elephant", example: "An elephant is big and heavy." },
+          { de: "der Tiger", en: "tiger", example: "The tiger has orange and black stripes." },
+          { de: "die Giraffe", en: "giraffe", example: "A giraffe has a very long neck." },
+          { de: "der Baer", en: "bear", example: "The bear lives in the forest." },
+          { de: "der Wolf", en: "wolf", example: "The wolf often lives in a pack." },
+          { de: "der Lebensraum", en: "habitat", example: "Every animal needs a safe habitat." },
+          { de: "gefaehrlich", en: "dangerous", example: "Some wild animals can be dangerous." },
+          { de: "schnell", en: "fast", example: "A tiger is fast when it hunts." },
+          { de: "stark", en: "strong", example: "Bears are strong animals." },
+          { de: "die Pfote", en: "paw", example: "The animal leaves a paw print in the mud." },
+          { de: "das Fell", en: "fur", example: "Its fur keeps it warm." },
+          { de: "jagen", en: "to hunt", example: "Lions hunt in groups." },
+          { de: "geschuetzt", en: "protected", example: "Some animals are protected by law." },
+          { de: "aussterben", en: "to die out", example: "Without help, some species may die out." },
+          { de: "die Krallen", en: "claws", example: "The bear has sharp claws." },
+          { de: "die Streifen", en: "stripes", example: "The tiger's stripes are beautiful." },
+          { de: "die Savanne", en: "savannah", example: "Lions live in the savannah." },
+          { de: "der Wald", en: "forest", example: "Wolves and bears live in the forest." },
+          { de: "der Schwanz", en: "tail", example: "The lion has a long tail." },
+          { de: "die Zaehne", en: "teeth", example: "The animal shows its sharp teeth." },
+          { de: "das Maul", en: "mouth", example: "The tiger opens its mouth." },
+          { de: "das Zebra", en: "zebra", example: "A zebra often lives in the savannah." },
+          { de: "der Affe", en: "monkey", example: "The monkey climbs very fast." },
+          { de: "selten", en: "rare", example: "Some wild animals are very rare." },
+          { de: "bedroht", en: "endangered", example: "Many tigers are endangered." },
+          { de: "retten", en: "to save", example: "People want to save wild animals." },
+          { de: "riesig", en: "huge", example: "The elephant is huge." },
+          { de: "laut", en: "loud", example: "The lion can be very loud." },
+          { de: "ruhig", en: "quiet", example: "The animal looks quiet and calm." },
+          { de: "in der Natur", en: "in nature", example: "Wild animals should live in nature." },
+          { de: "die Herde", en: "herd", example: "The elephants are walking in a herd." },
+          { de: "klettern", en: "to climb", example: "Monkeys like to climb trees." },
+          { de: "fressen", en: "to eat", example: "The bear is eating fish." },
+          { de: "die Art", en: "species", example: "This species is endangered." }
+        ],
+        starterPhrases: [
+          "In the picture I can see a wild animal.",
+          "It lives in the forest / savannah.",
+          "The animal looks strong and dangerous.",
+          "It has fur, paws and sharp claws.",
+          "People should protect wild animals and their habitat."
+        ],
+        questions: [
+          "What is your favourite wild animal?",
+          "Where does this animal live?",
+          "What does it look like?",
+          "Why are some wild animals in danger?",
+          "How can we protect them?"
+        ],
+        translationPractice: [
+          { de: "Auf dem Bild kann ich ein wildes Tier sehen.", en: "In the picture I can see a wild animal." },
+          { de: "Das Tier lebt in der Savanne.", en: "The animal lives in the savannah." },
+          { de: "Es ist stark, schnell und gefaehrlich.", en: "It is strong, fast and dangerous." },
+          { de: "Es hat Fell, Pfoten und scharfe Krallen.", en: "It has fur, paws and sharp claws." },
+          { de: "Wir sollten wilde Tiere und ihren Lebensraum schuetzen.", en: "We should protect wild animals and their habitat." },
+          { de: "Der Tiger hat orangefarbenes Fell und schwarze Streifen.", en: "The tiger has orange fur and black stripes." },
+          { de: "Viele bedrohte Tiere brauchen unsere Hilfe.", en: "Many endangered animals need our help." },
+          { de: "Menschen muessen den Regenwald und andere Lebensraeume retten.", en: "People must save the rainforest and other habitats." }
+        ],
+        modelAnswer: [
+          "In the picture I can see a tiger in nature. It is a wild animal and it lives in Asia.",
+          "The tiger has orange fur, black stripes and strong paws. It is fast and dangerous, and it hunts other animals.",
+          "People should protect tigers because their habitat is getting smaller. I think wild animals are fascinating."
+        ],
+        sentences: [
+          {
+            prompt: "Baue einen englischen Satz ueber wilde Tiere.",
+            words: ["The", "tiger", "is", "a", "fast", "and", "strong", "animal", "."],
+            solution: "The tiger is a fast and strong animal."
+          },
+          {
+            prompt: "Baue einen zweiten englischen Satz.",
+            words: ["Wild", "animals", "need", "a", "safe", "habitat", "."],
+            solution: "Wild animals need a safe habitat."
+          }
+        ]
+      },
+      {
+        id: "freetime",
+        themeClass: "theme-freetime",
+        buttonClass: "freetime",
+        icon: "🎨",
+        title: "Freetime",
+        subtitle: "hobbies, friends, sports, media",
+        intro: "Mit diesem Thema kannst du deine Freizeit beschreiben, Hobbys nennen und sagen, was du gern oder nicht gern machst.",
+        sceneTitle: "Bildideen fuer deinen Talk",
+        sceneItems: [
+          "teenagers in a park or at home",
+          "sports, music, cinema or games",
+          "friends having fun together"
+        ],
+        focusFields: [
+          "activities after school",
+          "hobbies and interests",
+          "friends and weekends",
+          "opinions and reasons"
+        ],
+        talkSteps: [
+          "Say what people are doing.",
+          "Name hobbies and places.",
+          "Describe what you like to do.",
+          "Explain why free time is important."
+        ],
+        examTip: "Satzstarter helfen dir sehr: In my free time..., After school I usually..., At the weekend I like..., I enjoy ... because...",
+        vocab: [
+          { de: "die Freizeit", en: "free time", example: "Free time is important for teenagers." },
+          { de: "das Hobby", en: "hobby", example: "Playing football is my hobby." },
+          { de: "ein Buch lesen", en: "to read a book", example: "In the evening I like to read a book." },
+          { de: "Musik hoeren", en: "to listen to music", example: "I listen to music on the bus." },
+          { de: "Freunde treffen", en: "to meet friends", example: "I often meet friends after school." },
+          { de: "ins Kino gehen", en: "to go to the cinema", example: "At the weekend we go to the cinema." },
+          { de: "Sport treiben", en: "to do sports", example: "Doing sports keeps me fit." },
+          { de: "schwimmen", en: "to go swimming", example: "In summer I like to go swimming." },
+          { de: "Fussball spielen", en: "to play football", example: "My brother likes to play football." },
+          { de: "Videospiele spielen", en: "to play video games", example: "Some teenagers play video games every day." },
+          { de: "entspannend", en: "relaxing", example: "Reading is relaxing for me." },
+          { de: "spannend", en: "exciting", example: "Going to the cinema is exciting." },
+          { de: "langweilig", en: "boring", example: "I think waiting at home is boring." },
+          { de: "nach der Schule", en: "after school", example: "After school I do my homework first." },
+          { de: "am Wochenende", en: "at the weekend", example: "At the weekend I sleep longer." },
+          { de: "meistens", en: "mostly", example: "I mostly spend time with my friends." },
+          { de: "Fahrrad fahren", en: "to ride a bike", example: "I ride a bike in the park." },
+          { de: "online chatten", en: "to chat online", example: "My friends chat online in the evening." },
+          { de: "zeichnen", en: "to draw", example: "She likes to draw animals." },
+          { de: "Fotos machen", en: "to take photos", example: "I take photos on holiday." },
+          { de: "tanzen", en: "to dance", example: "She likes to dance with her friends." },
+          { de: "kochen", en: "to cook", example: "At the weekend I sometimes cook with my family." },
+          { de: "backen", en: "to bake", example: "My sister likes to bake cakes." },
+          { de: "spazieren gehen", en: "to go for a walk", example: "In the evening we go for a walk." },
+          { de: "faulenzen", en: "to chill", example: "On Sundays I like to chill at home." },
+          { de: "die Mannschaft", en: "team", example: "I play in a football team." },
+          { de: "fit", en: "fit", example: "Doing sports helps me stay fit." },
+          { de: "kreativ", en: "creative", example: "Drawing and taking photos are creative hobbies." },
+          { de: "zusammen", en: "together", example: "We often play basketball together." },
+          { de: "allein", en: "alone", example: "Sometimes I like to read alone." },
+          { de: "drinnen", en: "indoors", example: "When it rains, I stay indoors." },
+          { de: "draussen", en: "outdoors", example: "I enjoy spending time outdoors." },
+          { de: "spassig", en: "fun", example: "Playing games with friends is fun." },
+          { de: "Zeit verbringen", en: "to spend time", example: "I like to spend time with my family." },
+          { de: "das Handy", en: "mobile phone", example: "Some teenagers use their mobile phone a lot." },
+          { de: "abschalten", en: "to switch off", example: "Music helps me switch off after school." }
+        ],
+        starterPhrases: [
+          "In my free time I like to meet friends.",
+          "After school I often listen to music.",
+          "At the weekend I do sports or go to the cinema.",
+          "My favourite hobby is drawing / playing football.",
+          "Free time is important because it helps me relax."
+        ],
+        questions: [
+          "What do you usually do after school?",
+          "What is your favourite hobby?",
+          "Do you prefer indoor or outdoor activities?",
+          "What do you like doing with your friends?",
+          "Why is free time important for young people?"
+        ],
+        translationPractice: [
+          { de: "In meiner Freizeit treffe ich gern Freunde.", en: "In my free time I like to meet friends." },
+          { de: "Nach der Schule hoere ich oft Musik.", en: "After school I often listen to music." },
+          { de: "Am Wochenende gehe ich manchmal ins Kino.", en: "At the weekend I sometimes go to the cinema." },
+          { de: "Mein Lieblingshobby ist Fussball spielen.", en: "My favourite hobby is playing football." },
+          { de: "Freizeit ist wichtig, weil sie mir beim Entspannen hilft.", en: "Free time is important because it helps me relax." },
+          { de: "Manchmal fahre ich mit meinen Freunden Fahrrad.", en: "Sometimes I ride a bike with my friends." },
+          { de: "Zeichnen und Fotos machen sind kreative Hobbys.", en: "Drawing and taking photos are creative hobbies." },
+          { de: "Sport hilft mir, fit und gesund zu bleiben.", en: "Sport helps me stay fit and healthy." }
+        ],
+        modelAnswer: [
+          "In my free time I like to meet friends and listen to music. After school I often do my homework and then I relax.",
+          "At the weekend I sometimes go to the cinema or play football. I also like drawing and taking photos.",
+          "Free time is important because it helps me relax, have fun and spend time with other people."
+        ],
+        sentences: [
+          {
+            prompt: "Baue einen englischen Satz ueber Freizeit.",
+            words: ["At", "the", "weekend", "I", "often", "meet", "my", "friends", "."],
+            solution: "At the weekend I often meet my friends."
+          },
+          {
+            prompt: "Baue einen zweiten englischen Satz.",
+            words: ["After", "school", "I", "like", "to", "listen", "to", "music", "."],
+            solution: "After school I like to listen to music."
+          }
+        ]
+      }
+    ];
+
+    const phaseLabels = {
+      learn: "1. Vokabelkarten",
+      practice: "2. Ueben",
+      speak: "3. Sprechen & Uebersetzen"
+    };
+
+    const appState = {
+      activeTopic: topics[0].id,
+      topics: {}
+    };
+
+    function shuffle(array){
+      const copy = [...array];
+      for(let i = copy.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function uniqueValues(items){
+      return [...new Set(items)];
+    }
+
+    function normalize(text){
+      return text
+        .toLowerCase()
+        .trim()
+        .replace(/[.,!?]/g, "")
+        .replace(/\s+/g, " ");
+    }
+
+    function composeSentence(tokens){
+      return tokens.map(token => token.text).join(" ").replace(/\s([.,!?])/g, "$1");
+    }
+
+    function topicById(topicId){
+      return topics.find(topic => topic.id === topicId);
+    }
+
+    function createMcqState(topic){
+      const chosen = shuffle(topic.vocab).slice(0, 6).map(item => {
+        const direction = Math.random() > 0.5 ? "de-en" : "en-de";
+        const correct = direction === "de-en" ? item.en : item.de;
+        const pool = uniqueValues(
+          shuffle(topic.vocab.filter(entry => entry !== item)).map(entry => direction === "de-en" ? entry.en : entry.de)
+        ).slice(0, 3);
+        const prompt = direction === "de-en"
+          ? 'Wie heisst "' + item.de + '" auf Englisch?'
+          : 'Wie heisst "' + item.en + '" auf Deutsch?';
+
+        return {
+          prompt,
+          correct,
+          options: shuffle([correct, ...pool])
+        };
+      });
+
+      return {
+        items: chosen,
+        index: 0,
+        score: 0,
+        locked: false,
+        selected: "",
+        feedback: ""
+      };
+    }
+
+    function createMatchState(topic){
+      const pairs = shuffle(topic.vocab).slice(0, 6).map((item, index) => ({
+        id: topic.id + "-pair-" + index,
+        de: item.de,
+        en: item.en
+      }));
+
+      return {
+        pairs,
+        options: shuffle(pairs.map(pair => pair.en)),
+        selections: {},
+        checked: false,
+        resultText: "",
+        score: 0
+      };
+    }
+
+    function createTypingState(topic){
+      return {
+        items: shuffle(topic.vocab).slice(0, 5),
+        index: 0,
+        answer: "",
+        locked: false,
+        feedback: "",
+        score: 0
+      };
+    }
+
+    function buildSentenceRound(topic, sentenceIndex){
+      const sentence = topic.sentences[sentenceIndex];
+      return {
+        prompt: sentence.prompt,
+        solution: sentence.solution,
+        bank: shuffle(sentence.words.map((word, index) => ({
+          id: topic.id + "-word-" + sentenceIndex + "-" + index + "-" + Math.random().toString(36).slice(2, 7),
+          text: word
+        }))),
+        built: []
+      };
+    }
+
+    function createSentenceState(topic){
+      return {
+        index: 0,
+        score: 0,
+        checked: false,
+        correct: false,
+        message: "",
+        round: buildSentenceRound(topic, 0)
+      };
+    }
+
+    function createTranslateState(topic){
+      return {
+        items: topic.translationPractice,
+        index: 0,
+        answer: "",
+        locked: false,
+        feedback: "",
+        score: 0
+      };
+    }
+
+    function createTopicState(topic){
+      return {
+        phase: "learn",
+        vocabIndex: 0,
+        revealTranslation: false,
+        mcq: createMcqState(topic),
+        match: createMatchState(topic),
+        typing: createTypingState(topic),
+        sentence: createSentenceState(topic),
+        translate: createTranslateState(topic)
+      };
+    }
+
+    function initState(){
+      topics.forEach(topic => {
+        appState.topics[topic.id] = createTopicState(topic);
+      });
+    }
+
+    function resetTopicPractice(topicId){
+      const topic = topicById(topicId);
+      appState.topics[topicId].mcq = createMcqState(topic);
+      appState.topics[topicId].match = createMatchState(topic);
+      appState.topics[topicId].typing = createTypingState(topic);
+      appState.topics[topicId].sentence = createSentenceState(topic);
+      appState.topics[topicId].translate = createTranslateState(topic);
+    }
+
+    function renderHeader(){
+      return `
+        <section class="hero">
+          <h1>Topic Based Talk - Vokabeltrainer fuer den Quali</h1>
+          <p class="subtitle">
+            Lerne und uebe viele wichtige Vokabeln zu <strong>Winter</strong>, <strong>wild animals</strong> und <strong>freetime</strong>.
+            Die Seite ist jetzt bewusst einfacher aufgebaut: Thema waehlen, Vokabelkarten drehen, Uebungen loesen und dann typische Bildsaetze uebersetzen.
+          </p>
+          <div class="info-card" style="margin-top:18px;">
+            <div class="badge-row">
+              <span class="badge">1 Thema auswaehlen</span>
+              <span class="badge">2 Karte drehen</span>
+              <span class="badge">3 Uebungen loesen</span>
+              <span class="badge">4 Saetze uebersetzen</span>
+            </div>
+            <div class="simple-note">Tipp: Die Vokabelkarte zeigt zuerst Deutsch. Durch Drehen siehst du die englische Uebersetzung und einen Beispielsatz.</div>
+          </div>
+        </section>
+      `;
+    }
+
+    function renderTopicNav(activeTopic){
+      return `
+        <div class="topic-nav">
+          ${topics.map(topic => `
+            <button
+              class="topic-btn ${topic.buttonClass} ${topic.id === activeTopic.id ? "active" : ""}"
+              data-action="switch-topic"
+              data-topic="${topic.id}"
+            >
+              <span class="emoji">${topic.icon}</span>
+              <span class="title">${topic.title}</span>
+              <span class="sub">${topic.subtitle}</span>
+            </button>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function renderStageHeader(topic){
+      const state = appState.topics[topic.id];
+      return `
+        <div class="stage-banner">
+          <div class="label">${topic.icon} Topic Based Talk</div>
+          <h2>${topic.title}</h2>
+          <p>${topic.intro}</p>
+          <div class="stat-row">
+            <span class="stat-pill">${topic.vocab.length} Vokabeln</span>
+            <span class="stat-pill">${topic.translationPractice.length} Sprechsaetze</span>
+            <span class="stat-pill">${state.phase === "learn" ? "Karten drehen" : "Direkt ueben"}</span>
+          </div>
+        </div>
+        <div class="phase-nav">
+          ${Object.entries(phaseLabels).map(([phaseKey, label]) => `
+            <button
+              class="phase-btn ${state.phase === phaseKey ? "active" : ""}"
+              data-action="switch-phase"
+              data-topic="${topic.id}"
+              data-phase="${phaseKey}"
+            >
+              ${label}
+            </button>
+          `).join("")}
+        </div>
+      `;
+    }
+
+    function renderLearn(topic){
+      const state = appState.topics[topic.id];
+      const current = topic.vocab[state.vocabIndex];
+      const progress = ((state.vocabIndex + 1) / topic.vocab.length) * 100;
+
+      return `
+        <div class="single-panel">
+          <div class="panel-card">
+            <h3>Drehbare Vokabelkarte</h3>
+            <div class="progress-wrap">
+              <div class="progress-head">
+                <span>Vokabel ${state.vocabIndex + 1} von ${topic.vocab.length}</span>
+                <span>${Math.round(progress)}%</span>
+              </div>
+              <div class="progress-bar"><div style="width:${progress}%"></div></div>
+            </div>
+            <div class="flip-shell">
+              <div class="flip-card ${state.revealTranslation ? "flipped" : ""}" data-action="toggle-translation" data-topic="${topic.id}">
+                <div class="flip-face flip-front">
+                  <div class="tiny">Vorderseite - Deutsch</div>
+                  <div class="flash-main">${current.de}</div>
+                </div>
+                <div class="flip-face flip-back">
+                  <div class="tiny">Rueckseite - Englisch</div>
+                  <div class="flash-main">${current.en}</div>
+                  <div class="example-box">${current.example}</div>
+                </div>
+              </div>
+            </div>
+            <div class="control-row">
+              <button class="ghost-btn" data-action="prev-vocab" data-topic="${topic.id}">Vorherige</button>
+              <button class="action-btn" data-action="toggle-translation" data-topic="${topic.id}">
+                ${state.revealTranslation ? "Karte zurueckdrehen" : "Karte drehen"}
+              </button>
+              <button class="ghost-btn" data-action="next-vocab" data-topic="${topic.id}">Naechste</button>
+              <button class="ghost-btn" data-action="random-vocab" data-topic="${topic.id}">Zufallswort</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderMcq(topic){
+      const mcqState = appState.topics[topic.id].mcq;
+      const finished = mcqState.index >= mcqState.items.length;
+
+      if(finished){
+        return `
+          <div class="exercise-card">
+            <div class="question-head">
+              <span>Multiple Choice</span>
+              <span>${mcqState.score} / ${mcqState.items.length}</span>
+            </div>
+            <div class="feedback good">Geschafft! Du hast das Multiple-Choice-Quiz beendet.</div>
+            <div class="control-row">
+              <button class="ghost-btn" data-action="restart-mcq" data-topic="${topic.id}">Quiz neu starten</button>
+            </div>
+          </div>
+        `;
+      }
+
+      const question = mcqState.items[mcqState.index];
+
+      return `
+        <div class="exercise-card">
+          <div class="question-head">
+            <span>Multiple Choice</span>
+            <span>${mcqState.index + 1} / ${mcqState.items.length}</span>
+          </div>
+          <div class="question-title">${question.prompt}</div>
+          <div class="options">
+            ${question.options.map(option => {
+              let buttonClass = "option-btn";
+              if(mcqState.locked){
+                if(option === question.correct){
+                  buttonClass += " correct";
+                }else if(option === mcqState.selected){
+                  buttonClass += " wrong";
+                }
+              }
+
+              return `
+                <button
+                  class="${buttonClass}"
+                  data-action="answer-mcq"
+                  data-topic="${topic.id}"
+                  data-value="${option.replace(/"/g, "&quot;")}"
+                >
+                  ${option}
+                </button>
+              `;
+            }).join("")}
+          </div>
+          ${mcqState.feedback ? `<div class="feedback ${mcqState.selected === question.correct ? "good" : "bad"}">${mcqState.feedback}</div>` : ""}
+          <div class="control-row">
+            ${mcqState.locked ? `<button class="action-btn" data-action="next-mcq" data-topic="${topic.id}">Naechste Frage</button>` : ""}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderMatch(topic){
+      const matchState = appState.topics[topic.id].match;
+
+      return `
+        <div class="exercise-card">
+          <div class="question-head">
+            <span>Vokabel-Zuordnung</span>
+            <span>${matchState.score} / ${matchState.pairs.length}</span>
+          </div>
+          <div class="tiny-note">Waehle fuer jedes deutsche Wort die passende englische Uebersetzung aus.</div>
+          <div class="match-table">
+            ${matchState.pairs.map(pair => `
+              <div class="match-row">
+                <div class="match-label">${pair.de}</div>
+                <select class="select" data-action="select-match" data-topic="${topic.id}" data-pair="${pair.id}">
+                  <option value="">Bitte auswaehlen</option>
+                  ${matchState.options.map(option => `
+                    <option value="${option.replace(/"/g, "&quot;")}" ${matchState.selections[pair.id] === option ? "selected" : ""}>${option}</option>
+                  `).join("")}
+                </select>
+              </div>
+            `).join("")}
+          </div>
+          ${matchState.checked ? `<div class="feedback ${matchState.score === matchState.pairs.length ? "good" : "bad"}">${matchState.resultText}</div>` : ""}
+          <div class="control-row">
+            <button class="action-btn" data-action="check-match" data-topic="${topic.id}">Zuordnung pruefen</button>
+            <button class="ghost-btn" data-action="restart-match" data-topic="${topic.id}">Neu mischen</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderTyping(topic){
+      const typingState = appState.topics[topic.id].typing;
+      const finished = typingState.index >= typingState.items.length;
+
+      if(finished){
+        return `
+          <div class="exercise-card">
+            <div class="question-head">
+              <span>Schreibtraining</span>
+              <span>${typingState.score} / ${typingState.items.length}</span>
+            </div>
+            <div class="feedback good">Sehr gut! Du hast alle Schreibaufgaben bearbeitet.</div>
+            <div class="control-row">
+              <button class="ghost-btn" data-action="restart-typing" data-topic="${topic.id}">Schreibtraining neu starten</button>
+            </div>
+          </div>
+        `;
+      }
+
+      const item = typingState.items[typingState.index];
+
+      return `
+        <div class="exercise-card">
+          <div class="question-head">
+            <span>Schreibtraining</span>
+            <span>${typingState.index + 1} / ${typingState.items.length}</span>
+          </div>
+          <div class="question-title">Schreibe die englische Uebersetzung zu: <strong>${item.de}</strong></div>
+          <input
+            class="input"
+            type="text"
+            placeholder="Deine Antwort auf Englisch"
+            value="${typingState.answer.replace(/"/g, "&quot;")}"
+            data-action="typing-input"
+            data-topic="${topic.id}"
+            ${typingState.locked ? "disabled" : ""}
+          >
+          ${typingState.feedback ? `<div class="feedback ${normalize(typingState.answer) === normalize(item.en) ? "good" : "bad"}">${typingState.feedback}</div>` : ""}
+          <div class="control-row">
+            ${typingState.locked
+              ? `<button class="action-btn" data-action="next-typing" data-topic="${topic.id}">Naechstes Wort</button>`
+              : `<button class="action-btn" data-action="check-typing" data-topic="${topic.id}">Antwort pruefen</button>`
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    function renderSentence(topic){
+      const sentenceState = appState.topics[topic.id].sentence;
+      const total = topic.sentences.length;
+      const round = sentenceState.round;
+
+      const finished = sentenceState.index >= total;
+
+      if(finished){
+        return `
+          <div class="exercise-card">
+            <div class="question-head">
+              <span>Satzbau</span>
+              <span>${sentenceState.score} / ${total}</span>
+            </div>
+            <div class="feedback good">Du hast alle Satzbau-Aufgaben abgeschlossen.</div>
+            <div class="control-row">
+              <button class="ghost-btn" data-action="restart-sentence" data-topic="${topic.id}">Satzbau neu starten</button>
+            </div>
+          </div>
+        `;
+      }
+
+      return `
+        <div class="exercise-card">
+          <div class="question-head">
+            <span>Satzbau</span>
+            <span>${sentenceState.index + 1} / ${total}</span>
+          </div>
+          <div class="question-title">${round.prompt}</div>
+          <div class="builder-area">
+            <div class="built-bank ${round.built.length ? "" : "empty"}">
+              ${round.built.map(token => `
+                <button class="chip" data-action="remove-word" data-topic="${topic.id}" data-word="${token.id}">
+                  ${token.text}
+                </button>
+              `).join("")}
+            </div>
+            <div class="word-bank">
+              ${round.bank.map(token => `
+                <button class="chip" data-action="add-word" data-topic="${topic.id}" data-word="${token.id}">
+                  ${token.text}
+                </button>
+              `).join("")}
+            </div>
+          </div>
+          ${sentenceState.message ? `<div class="feedback ${sentenceState.correct ? "good" : "bad"}">${sentenceState.message}</div>` : ""}
+          <div class="control-row">
+            <button class="ghost-btn" data-action="reset-built" data-topic="${topic.id}">Zuruecksetzen</button>
+            ${sentenceState.checked
+              ? `<button class="action-btn" data-action="next-sentence" data-topic="${topic.id}">Naechster Satz</button>`
+              : `<button class="action-btn" data-action="check-sentence" data-topic="${topic.id}">Satz pruefen</button>`
+            }
+          </div>
+        </div>
+      `;
+    }
+
+    function renderPractice(topic){
+      const state = appState.topics[topic.id];
+      return `
+        <div class="score-strip">
+          <div class="score-pill">Quiz: ${state.mcq.score}/${state.mcq.items.length}</div>
+          <div class="score-pill">Zuordnung: ${state.match.score}/${state.match.pairs.length}</div>
+          <div class="score-pill">Schreiben: ${state.typing.score}/${state.typing.items.length}</div>
+          <div class="score-pill">Satzbau: ${state.sentence.score}/${topic.sentences.length}</div>
+        </div>
+        <div class="exercise-grid">
+          ${renderMcq(topic)}
+          ${renderMatch(topic)}
+          ${renderTyping(topic)}
+          ${renderSentence(topic)}
+        </div>
+        <div class="control-row">
+          <button class="ghost-btn" data-action="restart-all-practice" data-topic="${topic.id}">Alle Uebungen neu starten</button>
+        </div>
+      `;
+    }
+
+    function renderSpeak(topic){
+      const translateState = appState.topics[topic.id].translate;
+      const finished = translateState.index >= translateState.items.length;
+
+      if(finished){
+        return `
+          <div class="single-panel">
+            <div class="panel-card speak-card">
+              <div class="question-head">
+                <span>Sprechen & Uebersetzen</span>
+                <span>${translateState.score} / ${translateState.items.length}</span>
+              </div>
+              <div class="feedback good">Fertig! Du hast alle Bildsaetze uebersetzt.</div>
+              <div class="simple-note">Sprich die richtigen englischen Saetze jetzt noch einmal laut nach. Das hilft dir direkt fuer die muendliche Pruefung.</div>
+              <div class="control-row">
+                <button class="ghost-btn" data-action="restart-translate" data-topic="${topic.id}">Satztraining neu starten</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      const item = translateState.items[translateState.index];
+
+      return `
+        <div class="single-panel">
+          <div class="panel-card speak-card">
+            <div class="question-head">
+              <span>Sprechen & Uebersetzen</span>
+              <span>${translateState.index + 1} / ${translateState.items.length}</span>
+            </div>
+            <div class="translate-prompt">
+              <strong>Uebersetze ins Englische:</strong>
+              <p>${item.de}</p>
+            </div>
+            <input
+              class="input"
+              type="text"
+              placeholder="Schreibe deinen englischen Satz hier"
+              value="${translateState.answer.replace(/"/g, "&quot;")}"
+              data-action="translate-input"
+              data-topic="${topic.id}"
+              ${translateState.locked ? "disabled" : ""}
+            >
+            ${translateState.feedback ? `<div class="feedback ${normalize(translateState.answer) === normalize(item.en) ? "good" : "bad"}">${translateState.feedback}</div>` : ""}
+            <div class="control-row">
+              ${translateState.locked
+                ? `<button class="action-btn" data-action="next-translate" data-topic="${topic.id}">Naechster Satz</button>`
+                : `<button class="action-btn" data-action="check-translate" data-topic="${topic.id}">Uebersetzung pruefen</button>`
+              }
+              <button class="ghost-btn" data-action="restart-translate" data-topic="${topic.id}">Neu starten</button>
+            </div>
+            <div class="simple-note">Wenn du geprueft hast, sprich den richtigen englischen Satz einmal laut aus.</div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderActiveTopic(){
+      const topic = topicById(appState.activeTopic);
+      const state = appState.topics[topic.id];
+
+      let content = "";
+      if(state.phase === "learn"){
+        content = renderLearn(topic);
+      }else if(state.phase === "practice"){
+        content = renderPractice(topic);
+      }else{
+        content = renderSpeak(topic);
+      }
+
+      return `
+        <section class="topic-stage ${topic.themeClass}">
+          ${renderStageHeader(topic)}
+          ${content}
+        </section>
+      `;
+    }
+
+    function renderApp(){
+      const activeTopic = topicById(appState.activeTopic);
+      document.getElementById("app").innerHTML = `
+        <div class="shell">
+          ${renderHeader()}
+          ${renderTopicNav(activeTopic)}
+          ${renderActiveTopic()}
+          <p class="footer">Viel Erfolg beim Ueben fuer deinen Picture-Based-Talk im Quali.</p>
+        </div>
+      `;
+    }
+
+    function switchTopic(topicId){
+      appState.activeTopic = topicId;
+      renderApp();
+    }
+
+    function switchPhase(topicId, phase){
+      appState.topics[topicId].phase = phase;
+      renderApp();
+    }
+
+    function updateVocab(topicId, direction){
+      const topic = topicById(topicId);
+      const state = appState.topics[topicId];
+      if(direction === "next"){
+        state.vocabIndex = (state.vocabIndex + 1) % topic.vocab.length;
+      }else{
+        state.vocabIndex = (state.vocabIndex - 1 + topic.vocab.length) % topic.vocab.length;
+      }
+      state.revealTranslation = false;
+      renderApp();
+    }
+
+    function randomVocab(topicId){
+      const topic = topicById(topicId);
+      const state = appState.topics[topicId];
+      state.vocabIndex = Math.floor(Math.random() * topic.vocab.length);
+      state.revealTranslation = false;
+      renderApp();
+    }
+
+    function toggleTranslation(topicId){
+      const state = appState.topics[topicId];
+      state.revealTranslation = !state.revealTranslation;
+      renderApp();
+    }
+
+    function answerMcq(topicId, value){
+      const mcqState = appState.topics[topicId].mcq;
+      if(mcqState.locked || mcqState.index >= mcqState.items.length){
+        return;
+      }
+
+      const question = mcqState.items[mcqState.index];
+      mcqState.selected = value;
+      mcqState.locked = true;
+
+      if(value === question.correct){
+        mcqState.score += 1;
+        mcqState.feedback = "Richtig! Gute Arbeit.";
+      }else{
+        mcqState.feedback = 'Nicht ganz. Richtig waere: "' + question.correct + '".';
+      }
+
+      renderApp();
+    }
+
+    function nextMcq(topicId){
+      const mcqState = appState.topics[topicId].mcq;
+      mcqState.index += 1;
+      mcqState.locked = false;
+      mcqState.selected = "";
+      mcqState.feedback = "";
+      renderApp();
+    }
+
+    function restartMcq(topicId){
+      const topic = topicById(topicId);
+      appState.topics[topicId].mcq = createMcqState(topic);
+      renderApp();
+    }
+
+    function setMatchSelection(topicId, pairId, value){
+      const matchState = appState.topics[topicId].match;
+      matchState.selections[pairId] = value;
+    }
+
+    function checkMatch(topicId){
+      const matchState = appState.topics[topicId].match;
+      let correct = 0;
+
+      matchState.pairs.forEach(pair => {
+        if(matchState.selections[pair.id] === pair.en){
+          correct += 1;
+        }
+      });
+
+      matchState.checked = true;
+      matchState.score = correct;
+      matchState.resultText = correct === matchState.pairs.length
+        ? "Perfekt! Alle Zuordnungen sind richtig."
+        : "Du hast " + correct + " von " + matchState.pairs.length + " richtig.";
+
+      renderApp();
+    }
+
+    function restartMatch(topicId){
+      const topic = topicById(topicId);
+      appState.topics[topicId].match = createMatchState(topic);
+      renderApp();
+    }
+
+    function updateTypingAnswer(topicId, value){
+      appState.topics[topicId].typing.answer = value;
+    }
+
+    function checkTyping(topicId){
+      const typingState = appState.topics[topicId].typing;
+      if(typingState.locked || typingState.index >= typingState.items.length){
+        return;
+      }
+
+      const item = typingState.items[typingState.index];
+      typingState.locked = true;
+
+      if(normalize(typingState.answer) === normalize(item.en)){
+        typingState.score += 1;
+        typingState.feedback = "Richtig geschrieben. Sehr gut!";
+      }else{
+        typingState.feedback = 'Fast. Die richtige Loesung ist: "' + item.en + '".';
+      }
+
+      renderApp();
+    }
+
+    function nextTyping(topicId){
+      const typingState = appState.topics[topicId].typing;
+      typingState.index += 1;
+      typingState.answer = "";
+      typingState.locked = false;
+      typingState.feedback = "";
+      renderApp();
+    }
+
+    function restartTyping(topicId){
+      const topic = topicById(topicId);
+      appState.topics[topicId].typing = createTypingState(topic);
+      renderApp();
+    }
+
+    function updateTranslateAnswer(topicId, value){
+      appState.topics[topicId].translate.answer = value;
+    }
+
+    function checkTranslate(topicId){
+      const translateState = appState.topics[topicId].translate;
+      if(translateState.locked || translateState.index >= translateState.items.length){
+        return;
+      }
+
+      const item = translateState.items[translateState.index];
+      translateState.locked = true;
+
+      if(normalize(translateState.answer) === normalize(item.en)){
+        translateState.score += 1;
+        translateState.feedback = "Richtig! Genau so kannst du den Satz sagen.";
+      }else{
+        translateState.feedback = 'Fast. Eine passende Loesung ist: "' + item.en + '".';
+      }
+
+      renderApp();
+    }
+
+    function nextTranslate(topicId){
+      const translateState = appState.topics[topicId].translate;
+      translateState.index += 1;
+      translateState.answer = "";
+      translateState.locked = false;
+      translateState.feedback = "";
+      renderApp();
+    }
+
+    function restartTranslate(topicId){
+      const topic = topicById(topicId);
+      appState.topics[topicId].translate = createTranslateState(topic);
+      renderApp();
+    }
+
+    function addWord(topicId, wordId){
+      const sentenceState = appState.topics[topicId].sentence;
+      if(sentenceState.checked){
+        return;
+      }
+
+      const wordIndex = sentenceState.round.bank.findIndex(token => token.id === wordId);
+      if(wordIndex === -1){
+        return;
+      }
+
+      const [token] = sentenceState.round.bank.splice(wordIndex, 1);
+      sentenceState.round.built.push(token);
+      renderApp();
+    }
+
+    function removeWord(topicId, wordId){
+      const sentenceState = appState.topics[topicId].sentence;
+      if(sentenceState.checked){
+        return;
+      }
+
+      const builtIndex = sentenceState.round.built.findIndex(token => token.id === wordId);
+      if(builtIndex === -1){
+        return;
+      }
+
+      const [token] = sentenceState.round.built.splice(builtIndex, 1);
+      sentenceState.round.bank.push(token);
+      renderApp();
+    }
+
+    function resetBuilt(topicId){
+      const topic = topicById(topicId);
+      const sentenceState = appState.topics[topicId].sentence;
+      sentenceState.checked = false;
+      sentenceState.correct = false;
+      sentenceState.message = "";
+      sentenceState.round = buildSentenceRound(topic, sentenceState.index);
+      renderApp();
+    }
+
+    function checkSentence(topicId){
+      const sentenceState = appState.topics[topicId].sentence;
+      if(sentenceState.checked){
+        return;
+      }
+
+      const builtSentence = composeSentence(sentenceState.round.built);
+      sentenceState.checked = true;
+
+      if(normalize(builtSentence) === normalize(sentenceState.round.solution)){
+        sentenceState.correct = true;
+        sentenceState.score += 1;
+        sentenceState.message = "Richtig! Dein Satz ist korrekt.";
+      }else{
+        sentenceState.correct = false;
+        sentenceState.message = 'Noch nicht ganz. Die Loesung ist: "' + sentenceState.round.solution + '".';
+      }
+
+      renderApp();
+    }
+
+    function nextSentence(topicId){
+      const topic = topicById(topicId);
+      const sentenceState = appState.topics[topicId].sentence;
+      sentenceState.index += 1;
+      sentenceState.checked = false;
+      sentenceState.correct = false;
+      sentenceState.message = "";
+
+      if(sentenceState.index < topic.sentences.length){
+        sentenceState.round = buildSentenceRound(topic, sentenceState.index);
+      }
+
+      renderApp();
+    }
+
+    function restartSentence(topicId){
+      const topic = topicById(topicId);
+      appState.topics[topicId].sentence = createSentenceState(topic);
+      renderApp();
+    }
+
+    document.addEventListener("click", event => {
+      const target = event.target.closest("[data-action]");
+      if(!target){
+        return;
+      }
+
+      const action = target.dataset.action;
+      const topicId = target.dataset.topic;
+
+      if(action === "switch-topic"){
+        switchTopic(topicId);
+      }else if(action === "switch-phase"){
+        switchPhase(topicId, target.dataset.phase);
+      }else if(action === "prev-vocab"){
+        updateVocab(topicId, "prev");
+      }else if(action === "next-vocab"){
+        updateVocab(topicId, "next");
+      }else if(action === "random-vocab"){
+        randomVocab(topicId);
+      }else if(action === "toggle-translation"){
+        toggleTranslation(topicId);
+      }else if(action === "answer-mcq"){
+        answerMcq(topicId, target.dataset.value);
+      }else if(action === "next-mcq"){
+        nextMcq(topicId);
+      }else if(action === "restart-mcq"){
+        restartMcq(topicId);
+      }else if(action === "check-match"){
+        checkMatch(topicId);
+      }else if(action === "restart-match"){
+        restartMatch(topicId);
+      }else if(action === "check-typing"){
+        checkTyping(topicId);
+      }else if(action === "next-typing"){
+        nextTyping(topicId);
+      }else if(action === "restart-typing"){
+        restartTyping(topicId);
+      }else if(action === "check-translate"){
+        checkTranslate(topicId);
+      }else if(action === "next-translate"){
+        nextTranslate(topicId);
+      }else if(action === "restart-translate"){
+        restartTranslate(topicId);
+      }else if(action === "add-word"){
+        addWord(topicId, target.dataset.word);
+      }else if(action === "remove-word"){
+        removeWord(topicId, target.dataset.word);
+      }else if(action === "reset-built"){
+        resetBuilt(topicId);
+      }else if(action === "check-sentence"){
+        checkSentence(topicId);
+      }else if(action === "next-sentence"){
+        nextSentence(topicId);
+      }else if(action === "restart-sentence"){
+        restartSentence(topicId);
+      }else if(action === "restart-all-practice"){
+        resetTopicPractice(topicId);
+        renderApp();
+      }
+    });
+
+    document.addEventListener("change", event => {
+      const target = event.target;
+      if(target.dataset.action === "select-match"){
+        setMatchSelection(target.dataset.topic, target.dataset.pair, target.value);
+      }
+    });
+
+    document.addEventListener("input", event => {
+      const target = event.target;
+      if(target.dataset.action === "typing-input"){
+        updateTypingAnswer(target.dataset.topic, target.value);
+      }else if(target.dataset.action === "translate-input"){
+        updateTranslateAnswer(target.dataset.topic, target.value);
+      }
+    });
+
+    document.addEventListener("keydown", event => {
+      const activeState = appState.topics[appState.activeTopic];
+      if(activeState.phase !== "learn"){
+        return;
+      }
+
+      if(event.key === "ArrowRight"){
+        updateVocab(appState.activeTopic, "next");
+      }else if(event.key === "ArrowLeft"){
+        updateVocab(appState.activeTopic, "prev");
+      }
+    });
+
+    initState();
+    renderApp();
+  </script>
+</body>
+</html>
