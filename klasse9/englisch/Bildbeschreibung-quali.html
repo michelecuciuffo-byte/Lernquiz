@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Speaking Test Quali – School, Winter Activities, Free Time</title>
+  <style>
+    :root{
+      --bg:#f4f7fb;
+      --card:#ffffff;
+      --ink:#17324d;
+      --muted:#5a728a;
+      --line:#d6e2ee;
+      --accent:#2d6cdf;
+      --accent2:#5ea3ff;
+      --soft:#eef5ff;
+      --soft2:#f7fbff;
+      --good:#137333;
+      --warn:#9a6700;
+      --shadow:0 14px 36px rgba(23,50,77,.12);
+      --radius:20px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:linear-gradient(180deg,#eef4fb 0%, #f9fbfe 100%);
+      color:var(--ink);
+      line-height:1.55;
+    }
+    .wrap{
+      max-width:1200px;
+      margin:0 auto;
+      padding:24px;
+    }
+    header.hero{
+      background:linear-gradient(135deg,#2d6cdf 0%, #7fb4ff 100%);
+      color:#fff;
+      border-radius:28px;
+      padding:30px 26px;
+      box-shadow:var(--shadow);
+      margin-bottom:24px;
+    }
+    .hero h1{
+      margin:0 0 10px 0;
+      font-size:clamp(1.8rem, 3vw, 2.8rem);
+      line-height:1.12;
+    }
+    .hero p{
+      margin:0;
+      max-width:900px;
+      font-size:1.04rem;
+    }
+    .hero .chips{
+      margin-top:16px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+    }
+    .chip{
+      background:rgba(255,255,255,.18);
+      border:1px solid rgba(255,255,255,.28);
+      padding:8px 12px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:.95rem;
+    }
+
+    .notice{
+      background:#fff;
+      border:1px solid var(--line);
+      border-left:6px solid var(--accent);
+      border-radius:18px;
+      padding:16px 18px;
+      margin:18px 0 28px;
+      box-shadow:0 8px 24px rgba(0,0,0,.05);
+    }
+
+    nav.topnav{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-bottom:22px;
+    }
+    nav.topnav a{
+      text-decoration:none;
+      color:var(--accent);
+      font-weight:700;
+      background:#fff;
+      border:1px solid var(--line);
+      padding:10px 14px;
+      border-radius:999px;
+      transition:.2s ease;
+    }
+    nav.topnav a:hover{
+      transform:translateY(-1px);
+      background:var(--soft);
+    }
+
+    .grid{
+      display:grid;
+      gap:22px;
+    }
+    .section-card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:var(--shadow);
+    }
+    .section-card h2{
+      margin-top:0;
+      font-size:1.8rem;
+    }
+    .subtitle{
+      color:var(--muted);
+      margin-top:-4px;
+      margin-bottom:14px;
+    }
+
+    .image-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(240px, 1fr));
+      gap:16px;
+      margin:18px 0 8px;
+    }
+    .img-card{
+      background:var(--soft2);
+      border:1px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      display:flex;
+      flex-direction:column;
+      min-height:100%;
+    }
+    .img-card img{
+      width:100%;
+      height:220px;
+      object-fit:cover;
+      display:block;
+      background:#e8eef5;
+    }
+    .img-card .body{
+      padding:14px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      height:100%;
+    }
+    .img-card h3{
+      margin:0;
+      font-size:1.05rem;
+    }
+    .caption{
+      color:var(--muted);
+      font-size:.96rem;
+      margin:0;
+    }
+    .credit{
+      margin-top:auto;
+      font-size:.88rem;
+    }
+    .credit a{
+      color:var(--accent);
+      text-decoration:none;
+      font-weight:700;
+    }
+
+    .task-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(260px, 1fr));
+      gap:16px;
+      margin-top:18px;
+    }
+    .task{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:18px;
+      padding:16px;
+    }
+    .task h3{
+      margin-top:0;
+      font-size:1.08rem;
+    }
+    .task ul{
+      margin:10px 0 0 18px;
+      padding:0;
+    }
+    .phrase-table{
+      width:100%;
+      border-collapse:collapse;
+      margin-top:10px;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      overflow:hidden;
+      font-size:.96rem;
+    }
+    .phrase-table th,
+    .phrase-table td{
+      padding:10px 12px;
+      text-align:left;
+      vertical-align:top;
+      border-bottom:1px solid var(--line);
+    }
+    .phrase-table th{
+      background:var(--soft);
+      font-size:.92rem;
+    }
+    .phrase-table tr:last-child td{
+      border-bottom:none;
+    }
+
+    details{
+      border:1px solid var(--line);
+      border-radius:16px;
+      background:#fff;
+      padding:0;
+      overflow:hidden;
+    }
+    details + details{
+      margin-top:12px;
+    }
+    summary{
+      list-style:none;
+      cursor:pointer;
+      padding:14px 16px;
+      font-weight:700;
+      background:var(--soft);
+    }
+    summary::-webkit-details-marker{display:none}
+    .details-body{
+      padding:15px 16px 16px;
+      border-top:1px solid var(--line);
+    }
+
+    .vocab{
+      display:grid;
+      grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));
+      gap:10px;
+      margin-top:8px;
+    }
+    .vocab div{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      background:#fff;
+    }
+
+    .qa{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+    .qa div{
+      background:#fff;
+      border:1px dashed #c7d6e7;
+      border-radius:14px;
+      padding:12px;
+    }
+
+    .speaking-box{
+      margin-top:20px;
+      background:linear-gradient(180deg,#eef6ff 0%, #f9fcff 100%);
+      border:1px solid #d5e6ff;
+      border-radius:20px;
+      padding:18px;
+    }
+
+    .footer-note{
+      margin-top:28px;
+      color:var(--muted);
+      font-size:.93rem;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:16px;
+    }
+
+    .mini-btn{
+      display:inline-block;
+      margin-top:10px;
+      background:var(--accent);
+      color:#fff;
+      text-decoration:none;
+      padding:10px 14px;
+      border-radius:12px;
+      font-weight:700;
+    }
+
+    @media (max-width:700px){
+      .wrap{padding:14px}
+      .section-card{padding:16px}
+      .hero{padding:22px 18px}
+      .img-card img{height:200px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <h1>Speaking Test Quali</h1>
+      <p>
+        Interaktive Übungsdatei zu den Themen <strong>school life</strong>, <strong>winter activities</strong> und <strong>free time</strong>.
+        Die Bilder werden direkt über verlinkte, frei nutzbare Bilddateien geladen. So kannst du sie als Sprechanlass für Bildbeschreibung,
+        Wortschatz, Fragen-Antworten und kurze Monologe nutzen.
+      </p>
+    </header>
+
+    <div class="notice">
+      <strong>Hinweis:</strong> Diese Datei nutzt externe Bildlinks. Die Bilder werden also nur angezeigt, wenn beim Öffnen der HTML-Datei eine Internetverbindung besteht.
+    </div>
+
+    <nav class="topnav">
+      <a href="#school">School life</a>
+      <a href="#winter">Winter activities</a>
+      <a href="#freetime">Free time</a>
+      <a href="#phrases">Useful phrases</a>
+    </nav>
+
+    <section id="school" class="section-card">
+      <h2>1. School life</h2>
+      <p class="subtitle">Describe what the students are doing, where the scene takes place and what the atmosphere is like.</p>
+
+      <div class="image-grid">
+        <article class="img-card">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Classroom%20discussion%20%2851266402888%29.jpg" alt="Students having a classroom discussion">
+          <div class="body">
+            <h3>Classroom discussion</h3>
+            <p class="caption">Several students are working together in class. You can describe the people, their body language and the learning situation.</p>
+            <p class="credit"><a href="https://commons.wikimedia.org/wiki/File:Classroom_discussion_(51266402888).jpg" target="_blank" rel="noopener noreferrer">Bildquelle öffnen</a></p>
+          </div>
+        </article>
+
+        <article class="img-card">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Basic%20science%20class.jpg" alt="Students in a science class">
+          <div class="body">
+            <h3>Science lesson</h3>
+            <p class="caption">The students are attending a science lesson. There are many details in the room that make the picture easy to describe.</p>
+            <p class="credit"><a href="https://commons.wikimedia.org/wiki/File:Basic_science_class.jpg" target="_blank" rel="noopener noreferrer">Bildquelle öffnen</a></p>
+          </div>
+        </article>
+
+        <article class="img-card">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/School%20children%20happily%20playing%20in%20playground.jpg" alt="School children playing in the playground">
+          <div class="body">
+            <h3>Break time outside</h3>
+            <p class="caption">The children are playing outside during a school break. The scene is lively and full of movement.</p>
+            <p class="credit"><a href="https://commons.wikimedia.org/wiki/File:School_children_happily_playing_in_playground.jpg" target="_blank" rel="noopener noreferrer">Bildquelle öffnen</a></p>
+          </div>
+        </article>
+      </div>
+
+      <div class="task-grid">
+        <div class="task">
+          <h3>Useful words</h3>
+          <div class="vocab">
+            <div>classroom – Klassenzimmer</div>
+            <div>desk – Schreibtisch / Pult</div>
+            <div>break time – Pause</div>
+            <div>experiment – Experiment</div>
+            <div>classmates – Mitschülerinnen und Mitschüler</div>
+            <div>to explain – erklären</div>
+            <div>to concentrate – sich konzentrieren</div>
+            <div>busy – beschäftigt / belebt</div>
+          </div>
+        </div>
+        <div class="task">
+          <h3>Mini task</h3>
+          <ul>
+            <li>Choose one school picture.</li>
+            <li>Describe the picture in 4–6 sentences.</li>
+            <li>Say what the students are doing.</li>
+            <li>Describe the place and the atmosphere.</li>
+            <li>Say if you would like to be there and why.</li>
+          </ul>
+        </div>
+      </div>
+
+      <details open>
+        <summary>Possible questions</summary>
+        <div class="details-body">
+          <div class="qa">
+            <div>What can you see in the picture?</div>
+            <div>What are the students doing?</div>
+            <div>What can you see in the classroom or playground?</div>
+            <div>What subject could it be?</div>
+            <div>Does the atmosphere look calm or lively?</div>
+            <div>Which school activities do you like best?</div>
+          </div>
+        </div>
+      </details>
+
+      <div class="speaking-box">
+        <strong>Example start:</strong><br>
+        In this picture I can see students at school. Some of them are working together and they seem focused. The classroom looks busy and interesting. I think the lesson could be enjoyable because the students are active and involved.
+      </div>
+    </section>
+
+    <section id="winter" class="section-card">
+      <h2>2. Winter activities</h2>
+      <p class="subtitle">Talk about winter weather, winter activities and what the people are doing in the snow or on the ice.</p>
+
+      <div class="image-grid">
+        <article class="img-card">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Snowball%20fight.jpg" alt="People having a snowball fight">
+          <div class="body">
+            <h3>Snowball fight</h3>
+            <p class="caption">The people are playing together in the snow. You can describe movement, clothes, weather and emotions.</p>
+            <p class="credit"><a href="https://commons.wikimedia.org/wiki/File:Snowball_fight.jpg" target="_blank" rel="noopener noreferrer">Bildquelle öffnen</a></p>
+          </div>
+        </article>
+
+        <article class="img-card">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Children%20ice-skating.jpg" alt="Children ice skating">
+          <div class="body">
+            <h3>Ice skating</h3>
+            <p class="caption">Several children are skating on the ice. The picture offers a lot to say about action, balance and winter fun.</p>
+            <p class="credit"><a href="https://commons.wikimedia.org/wiki/File:Children_ice-skating.jpg" target="_blank" rel="noopener noreferrer">Bildquelle öffnen</a></p>
+          </div>
+        </article>
+
+        <article class="img-card">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Children%20sledging%20in%20winter%20%288128192588%29.jpg" alt="Children sledging in winter">
+          <div class="body">
+            <h3>Sledging</h3>
+            <p class="caption">The children are going down a snowy hill on a sledge. The scene looks exciting, cold and energetic.</p>
+            <p class="credit"><a href="https://commons.wikimedia.org/wiki/File:Children_sledging_in_winter_(8128192588).jpg" target="_blank" rel="noopener noreferrer">Bildquelle öffnen</a></p>
+          </div>
+        </article>
+      </div>
+
+      <div class="task-grid">
+        <div class="task">
+          <h3>Useful words</h3>
+          <div class="vocab">
+            <div>snowy – verschneit</div>
+            <div>cold – kalt</div>
+            <div>slippery – rutschig</div>
+            <div>gloves – Handschuhe</div>
+            <div>sledge – Schlitten</div>
+            <div>ice skating – Schlittschuhlaufen</div>
+            <div>snowball – Schneeball</div>
+            <div>to freeze – frieren / gefrieren</div>
+          </div>
+        </div>
+        <div class="task">
+          <h3>Mini task</h3>
+          <ul>
+            <li>Choose one winter picture.</li>
+            <li>Describe what the people are doing.</li>
+            <li>Say what the weather is like.</li>
+            <li>Name the clothes or objects you can see.</li>
+            <li>Say if you would enjoy this activity.</li>
+          </ul>
+        </div>
+      </div>
+
+      <details>
+        <summary>Possible questions</summary>
+        <div class="details-body">
+          <div class="qa">
+            <div>What is the weather like in winter?</div>
+            <div>What can people do in this picture?</div>
+            <div>Which winter activity looks the most fun?</div>
+            <div>What do people need for this activity?</div>
+            <div>Is the activity easy or difficult?</div>
+            <div>Do you prefer winter activities or summer activities?</div>
+          </div>
+        </div>
+      </details>
+
+      <div class="speaking-box">
+        <strong>Example start:</strong><br>
+        In this picture I can see people enjoying winter. They are wearing warm clothes because it is very cold. The ground is covered with snow or ice, and the activity looks exciting. I think winter can be fun when you do something active outside.
+      </div>
+    </section>
+
+    <section id="freetime" class="section-card">
+      <h2>3. Free time</h2>
+      <p class="subtitle">Talk about hobbies, sports and relaxing activities in your free time.</p>
+
+      <div class="image-grid">
+        <article class="img-card">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Family%20playing%20a%20board%20game.jpg" alt="Family playing a board game">
+          <div class="body">
+            <h3>Board game evening</h3>
+            <p class="caption">A family is spending time together and playing a board game. You can describe faces, objects and the atmosphere at home.</p>
+            <p class="credit"><a href="https://commons.wikimedia.org/wiki/File:Family_playing_a_board_game.jpg" target="_blank" rel="noopener noreferrer">Bildquelle öffnen</a></p>
+          </div>
+        </article>
+
+        <article class="img-card">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/People%20having%20picnic%20in%20park%20%286968378538%29.jpg" alt="People having a picnic in the park">
+          <div class="body">
+            <h3>Picnic in the park</h3>
+            <p class="caption">People are relaxing outside, eating and spending time together. There is a lot to describe in the foreground and background.</p>
+            <p class="credit"><a href="https://commons.wikimedia.org/wiki/File:People_having_picnic_in_park_(6968378538).jpg" target="_blank" rel="noopener noreferrer">Bildquelle öffnen</a></p>
+          </div>
+        </article>
+
+        <article class="img-card">
+          <img src="https://commons.wikimedia.org/wiki/Special:FilePath/Playing%20football%2C%20Regent%27s%20Park%20-%20geograph.org.uk%20-%202609111.jpg" alt="Playing football">
+          <div class="body">
+            <h3>Playing football</h3>
+            <p class="caption">Football is a popular team sport. It is active, social and exciting.</p>
+            <p class="credit"><a href="https://commons.wikimedia.org/wiki/File:Playing_football,_Regent%27s_Park_-_geograph.org.uk_-_2609111.jpg" target="_blank" rel="noopener noreferrer">Bildquelle öffnen</a></p>
+          </div>
+        </article>
+      </div>
+
+      <div class="task-grid">
+        <div class="task">
+          <h3>Useful words</h3>
+          <div class="vocab">
+            <div>hobby – Hobby</div>
+            <div>to relax – sich entspannen</div>
+            <div>to meet friends – Freunde treffen</div>
+            <div>outdoors – draußen</div>
+            <div>indoors – drinnen</div>
+            <div>healthy – gesund</div>
+            <div>team sport – Mannschaftssport</div>
+            <div>board game – Brettspiel</div>
+            <div>in my free time – in meiner Freizeit</div>
+          </div>
+        </div>
+        <div class="task">
+          <h3>Mini task</h3>
+          <ul>
+            <li>Choose one free-time picture.</li>
+            <li>Describe what the people are doing.</li>
+            <li>Say if the activity is active or relaxing.</li>
+            <li>Say why this hobby could be fun.</li>
+            <li>Say if you would like to do it yourself.</li>
+          </ul>
+        </div>
+      </div>
+
+      <details>
+        <summary>Possible questions</summary>
+        <div class="details-body">
+          <div class="qa">
+            <div>What do you usually do in your free time?</div>
+            <div>Do you prefer active or quiet hobbies?</div>
+            <div>Which free-time activity in the pictures looks the most interesting?</div>
+            <div>Why is free time important?</div>
+            <div>Which hobby would you recommend to a friend?</div>
+          </div>
+        </div>
+      </details>
+
+      <div class="speaking-box">
+        <strong>Example start:</strong><br>
+        In this picture I can see people spending their free time together. They look relaxed and happy, and the activity seems enjoyable. In my opinion, free-time activities are important because they help people relax and have fun with others.
+      </div>
+    </section>
+
+    <section id="phrases" class="section-card">
+      <h2>4. Useful speaking phrases</h2>
+      <p class="subtitle">These sentence starters can help you speak more fluently in the exam.</p>
+
+      <div class="task-grid">
+        <div class="task">
+          <h3>Describing a picture</h3>
+          <table class="phrase-table">
+            <thead>
+              <tr>
+                <th>English</th>
+                <th>Deutsch</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>In this picture I can see ...</td><td>Auf diesem Bild kann ich ... sehen.</td></tr>
+              <tr><td>In the foreground there is / there are ...</td><td>Im Vordergrund ist / sind ...</td></tr>
+              <tr><td>In the background I can see ...</td><td>Im Hintergrund kann ich ... sehen.</td></tr>
+              <tr><td>The person / people look(s) ...</td><td>Die Person / Die Leute sehen ... aus.</td></tr>
+              <tr><td>The weather seems to be ...</td><td>Das Wetter scheint ... zu sein.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="task">
+          <h3>Giving your opinion</h3>
+          <table class="phrase-table">
+            <thead>
+              <tr>
+                <th>English</th>
+                <th>Deutsch</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>I think that ...</td><td>Ich denke, dass ...</td></tr>
+              <tr><td>In my opinion ...</td><td>Meiner Meinung nach ...</td></tr>
+              <tr><td>I like ... because ...</td><td>Ich mag ... weil ...</td></tr>
+              <tr><td>I do not like ... because ...</td><td>Ich mag ... nicht, weil ...</td></tr>
+              <tr><td>I would like to ...</td><td>Ich würde gerne ...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="task">
+          <h3>Comparing</h3>
+          <table class="phrase-table">
+            <thead>
+              <tr>
+                <th>English</th>
+                <th>Deutsch</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Both pictures show ...</td><td>Beide Bilder zeigen ...</td></tr>
+              <tr><td>However, ...</td><td>Allerdings / Jedoch ...</td></tr>
+              <tr><td>One difference is that ...</td><td>Ein Unterschied ist, dass ...</td></tr>
+              <tr><td>This picture is more ... than ...</td><td>Dieses Bild ist ... als ...</td></tr>
+              <tr><td>Compared to ..., this one ...</td><td>Im Vergleich zu ... ist dieses hier ...</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="task">
+          <h3>Linking words</h3>
+          <table class="phrase-table">
+            <thead>
+              <tr>
+                <th>English</th>
+                <th>Deutsch</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td>Moreover, ...</td><td>Außerdem, ...</td></tr>
+              <tr><td>In addition, ...</td><td>Zusätzlich, ...</td></tr>
+              <tr><td>Besides, ...</td><td>Außerdem / Daneben, ...</td></tr>
+              <tr><td>Also, ...</td><td>Auch / Außerdem, ...</td></tr>
+              <tr><td>Furthermore, ...</td><td>Des Weiteren, ...</td></tr>
+              <tr><td>For example, ...</td><td>Zum Beispiel, ...</td></tr>
+              <tr><td>Therefore, ...</td><td>Deshalb / Daher, ...</td></tr>
+              <tr><td>Because of that, ...</td><td>Deswegen, ...</td></tr>
+              <tr><td>On the one hand ..., on the other hand ...</td><td>Einerseits ..., andererseits ...</td></tr>
+              <tr><td>Finally, ...</td><td>Schließlich, ...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <a class="mini-btn" href="#school">Back to top topics</a>
+    </section>
+
+    <div class="footer-note">
+      <strong>Hinweis:</strong> Die eingebundenen Bilddateien verweisen auf öffentlich erreichbare Wikimedia-Commons-Dateiseiten mit frei nutzbaren Lizenzen.
+    </div>
+  </div>
+</body>
+</html>
