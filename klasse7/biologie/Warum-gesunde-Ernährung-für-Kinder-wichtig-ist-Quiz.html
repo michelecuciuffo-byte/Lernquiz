@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz: Warum ist gesunde Ernährung für Kinder wichtig?</title>
+  <style>
+    :root{
+      --bg:#f7f9fc;
+      --card:#ffffff;
+      --text:#1f2937;
+      --muted:#6b7280;
+      --line:#d9e2ec;
+      --accent:#2563eb;
+      --accent2:#1d4ed8;
+      --good-bg:#ecfdf5;
+      --good-border:#10b981;
+      --bad-bg:#fef2f2;
+      --bad-border:#ef4444;
+      --soft:#eef4ff;
+      --shadow:0 10px 24px rgba(31,41,55,0.08);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:linear-gradient(180deg,#f7f9fc 0%,#eef4ff 100%);
+      color:var(--text);
+      line-height:1.5;
+    }
+
+    .wrap{
+      max-width:920px;
+      margin:0 auto;
+      padding:28px 16px 40px;
+    }
+
+    .hero{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:24px;
+      padding:24px;
+      box-shadow:var(--shadow);
+      margin-bottom:22px;
+    }
+
+    h1{
+      margin:0 0 10px;
+      font-size:clamp(1.7rem, 3vw, 2.3rem);
+      line-height:1.2;
+    }
+
+    .subtitle{
+      margin:0 0 16px;
+      color:var(--muted);
+      font-size:1rem;
+    }
+
+    .video-box{
+      background:var(--soft);
+      border:1px solid #cfe0ff;
+      border-radius:16px;
+      padding:14px 16px;
+      margin-top:14px;
+    }
+
+    .video-box a{
+      color:var(--accent2);
+      font-weight:700;
+      text-decoration:none;
+    }
+
+    .video-box a:hover{
+      text-decoration:underline;
+    }
+
+    .score-box{
+      position:sticky;
+      top:10px;
+      z-index:5;
+      background:rgba(255,255,255,0.92);
+      backdrop-filter:blur(4px);
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px 16px;
+      margin-bottom:20px;
+      box-shadow:0 6px 18px rgba(31,41,55,0.07);
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .quiz-card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:20px;
+      margin-bottom:18px;
+      box-shadow:var(--shadow);
+    }
+
+    .q-title{
+      margin:0 0 14px;
+      font-size:1.08rem;
+      font-weight:700;
+    }
+
+    .options{
+      display:grid;
+      gap:10px;
+      margin-bottom:14px;
+    }
+
+    label.option{
+      display:block;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:12px 14px;
+      background:#fafcff;
+      cursor:pointer;
+      transition:0.18s ease;
+    }
+
+    label.option:hover{
+      border-color:#b8c7da;
+      background:#f3f7ff;
+    }
+
+    input[type="radio"]{
+      margin-right:8px;
+      transform:translateY(1px);
+    }
+
+    .btn-row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:8px;
+    }
+
+    button{
+      border:none;
+      border-radius:12px;
+      padding:10px 14px;
+      font-weight:700;
+      cursor:pointer;
+      transition:0.18s ease;
+      font-size:0.97rem;
+    }
+
+    .check-btn{
+      background:var(--accent);
+      color:#fff;
+    }
+
+    .check-btn:hover{
+      background:var(--accent2);
+    }
+
+    .reset-btn{
+      background:#eef2f7;
+      color:#374151;
+    }
+
+    .reset-btn:hover{
+      background:#e2e8f0;
+    }
+
+    .feedback{
+      margin-top:14px;
+      padding:12px 14px;
+      border-radius:14px;
+      border:1px solid transparent;
+      display:none;
+      font-size:0.97rem;
+    }
+
+    .feedback.good{
+      display:block;
+      background:var(--good-bg);
+      border-color:var(--good-border);
+    }
+
+    .feedback.bad{
+      display:block;
+      background:var(--bad-bg);
+      border-color:var(--bad-border);
+    }
+
+    .footer-note{
+      margin-top:18px;
+      color:var(--muted);
+      font-size:0.95rem;
+      text-align:center;
+    }
+
+    .pill{
+      display:inline-block;
+      background:#e8f0ff;
+      color:#1e40af;
+      border:1px solid #cfe0ff;
+      padding:5px 10px;
+      border-radius:999px;
+      font-size:0.88rem;
+      font-weight:700;
+      margin-bottom:10px;
+    }
+
+    @media (max-width:640px){
+      .quiz-card{padding:16px}
+      .hero{padding:18px}
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <div class="pill">Quiz zur Wiederholung</div>
+      <h1>Warum ist gesunde Ernährung für Kinder wichtig?</h1>
+      <p class="subtitle">
+        Beantworte die Fragen und überprüfe jede Aufgabe sofort. Es geht hier nur darum,
+        warum gesunde Ernährung für Kinder wichtig ist.
+      </p>
+
+      <div class="video-box">
+        <strong>Zum Video:</strong><br>
+        Schau dir das Video hier an:
+        <a href="https://www.youtube.com/watch?v=pUlZfd9Ayik" target="_blank" rel="noopener noreferrer">
+          Video öffnen
+        </a>
+      </div>
+    </section>
+
+    <div class="score-box">
+      <div><strong>Richtige Antworten:</strong> <span id="score">0</span> / <span id="total">6</span></div>
+      <div><strong>Bereits geprüft:</strong> <span id="done">0</span> / <span id="total2">6</span></div>
+    </div>
+
+    <section class="quiz-card" data-question="q1" data-correct="b">
+      <p class="q-title">1. Warum ist gesunde Ernährung laut Video ein wichtiger Grundstein?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q1" value="a"> Weil man dadurch länger schlafen kann.</label>
+        <label class="option"><input type="radio" name="q1" value="b"> Weil sie Gesundheit, Beweglichkeit und Lernen beeinflusst.</label>
+        <label class="option"><input type="radio" name="q1" value="c"> Weil Kinder dadurch nie mehr krank werden.</label>
+      </div>
+      <div class="btn-row">
+        <button class="check-btn" onclick="checkAnswer('q1')">Antwort prüfen</button>
+        <button class="reset-btn" onclick="resetQuestion('q1')">Zurücksetzen</button>
+      </div>
+      <div class="feedback" id="fb-q1"></div>
+    </section>
+
+    <section class="quiz-card" data-question="q2" data-correct="c">
+      <p class="q-title">2. Warum ist es besonders wichtig, schon als Kind gesunde Ernährung zu lernen?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q2" value="a"> Weil Erwachsene nur noch Obst essen dürfen.</label>
+        <label class="option"><input type="radio" name="q2" value="b"> Weil Kinder immer das gleiche essen sollen.</label>
+        <label class="option"><input type="radio" name="q2" value="c"> Weil Gewohnheiten aus der Kindheit oft lange bleiben.</label>
+      </div>
+      <div class="btn-row">
+        <button class="check-btn" onclick="checkAnswer('q2')">Antwort prüfen</button>
+        <button class="reset-btn" onclick="resetQuestion('q2')">Zurücksetzen</button>
+      </div>
+      <div class="feedback" id="fb-q2"></div>
+    </section>
+
+    <section class="quiz-card" data-question="q3" data-correct="a">
+      <p class="q-title">3. Was könnte laut Video passieren, wenn Kinder nicht gesund essen?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q3" value="a"> Sie haben später eher gesundheitliche Probleme und lernen weniger über gute Ernährung.</label>
+        <label class="option"><input type="radio" name="q3" value="b"> Sie werden automatisch stärker als andere Kinder.</label>
+        <label class="option"><input type="radio" name="q3" value="c"> Sie müssen nie wieder kochen lernen.</label>
+      </div>
+      <div class="btn-row">
+        <button class="check-btn" onclick="checkAnswer('q3')">Antwort prüfen</button>
+        <button class="reset-btn" onclick="resetQuestion('q3')">Zurücksetzen</button>
+      </div>
+      <div class="feedback" id="fb-q3"></div>
+    </section>
+
+    <section class="quiz-card" data-question="q4" data-correct="b">
+      <p class="q-title">4. Welche Aussage passt am besten?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q4" value="a"> Gesunde Ernährung ist nur für Erwachsene wichtig.</label>
+        <label class="option"><input type="radio" name="q4" value="b"> Gesunde Ernährung kann Kindern helfen, gesünder und leistungsfähiger zu sein.</label>
+        <label class="option"><input type="radio" name="q4" value="c"> Gesunde Ernährung ist nur im Sportunterricht wichtig.</label>
+      </div>
+      <div class="btn-row">
+        <button class="check-btn" onclick="checkAnswer('q4')">Antwort prüfen</button>
+        <button class="reset-btn" onclick="resetQuestion('q4')">Zurücksetzen</button>
+      </div>
+      <div class="feedback" id="fb-q4"></div>
+    </section>
+
+    <section class="quiz-card" data-question="q5" data-correct="c">
+      <p class="q-title">5. Warum profitiert nicht nur das Kind selbst von gesunder Ernährung?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q5" value="a"> Weil dadurch alle Hausaufgaben leichter werden.</label>
+        <label class="option"><input type="radio" name="q5" value="b"> Weil dann jedes Essen kostenlos ist.</label>
+        <label class="option"><input type="radio" name="q5" value="c"> Weil eine gesündere Ernährung langfristig auch der ganzen Gesellschaft helfen kann.</label>
+      </div>
+      <div class="btn-row">
+        <button class="check-btn" onclick="checkAnswer('q5')">Antwort prüfen</button>
+        <button class="reset-btn" onclick="resetQuestion('q5')">Zurücksetzen</button>
+      </div>
+      <div class="feedback" id="fb-q5"></div>
+    </section>
+
+    <section class="quiz-card" data-question="q6" data-correct="a">
+      <p class="q-title">6. Richtig oder falsch? Wer als Kind gesunde Ernährung kennenlernt, kann dieses Wissen oft auch später im Leben nutzen.</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q6" value="a"> Richtig</label>
+        <label class="option"><input type="radio" name="q6" value="b"> Falsch</label>
+      </div>
+      <div class="btn-row">
+        <button class="check-btn" onclick="checkAnswer('q6')">Antwort prüfen</button>
+        <button class="reset-btn" onclick="resetQuestion('q6')">Zurücksetzen</button>
+      </div>
+      <div class="feedback" id="fb-q6"></div>
+    </section>
+
+    <p class="footer-note">
+      Jede Aufgabe wird direkt ausgewertet. So kannst du sofort sehen, was schon gut klappt.
+    </p>
+  </div>
+
+  <script>
+    const questionStates = {
+      q1: null,
+      q2: null,
+      q3: null,
+      q4: null,
+      q5: null,
+      q6: null
+    };
+
+    function updateScore() {
+      const values = Object.values(questionStates);
+      const done = values.filter(v => v !== null).length;
+      const score = values.filter(v => v === true).length;
+
+      document.getElementById('score').textContent = score;
+      document.getElementById('done').textContent = done;
+    }
+
+    function checkAnswer(questionName) {
+      const selected = document.querySelector(`input[name="${questionName}"]:checked`);
+      const section = document.querySelector(`[data-question="${questionName}"]`);
+      const correct = section.dataset.correct;
+      const feedback = document.getElementById(`fb-${questionName}`);
+
+      if (!selected) {
+        feedback.className = 'feedback bad';
+        feedback.innerHTML = 'Bitte wähle zuerst eine Antwort aus.';
+        questionStates[questionName] = null;
+        updateScore();
+        return;
+      }
+
+      const answer = selected.value;
+
+      if (answer === correct) {
+        feedback.className = 'feedback good';
+        feedback.innerHTML = 'Richtig! Sehr gut gemacht.';
+        questionStates[questionName] = true;
+      } else {
+        let hint = '';
+
+        if (questionName === 'q1') {
+          hint = 'Gesunde Ernährung beeinflusst nicht nur den Körper, sondern auch das Lernen.';
+        } else if (questionName === 'q2') {
+          hint = 'Essgewohnheiten, die man früh lernt, begleiten einen oft sehr lange.';
+        } else if (questionName === 'q3') {
+          hint = 'Im Video wird betont, dass gesunde Ernährung für Gesundheit und Wissen über Ernährung wichtig ist.';
+        } else if (questionName === 'q4') {
+          hint = 'Kinder können durch gesunde Ernährung fitter und leistungsfähiger sein.';
+        } else if (questionName === 'q5') {
+          hint = 'Langfristig kann eine gesündere Ernährung auch Krankheiten verringern und der Gesellschaft helfen.';
+        } else if (questionName === 'q6') {
+          hint = 'Was man als Kind lernt, kann später im Leben wichtig bleiben.';
+        }
+
+        feedback.className = 'feedback bad';
+        feedback.innerHTML = `Noch nicht richtig. Tipp: ${hint}`;
+        questionStates[questionName] = false;
+      }
+
+      updateScore();
+    }
+
+    function resetQuestion(questionName) {
+      const inputs = document.querySelectorAll(`input[name="${questionName}"]`);
+      inputs.forEach(input => input.checked = false);
+
+      const feedback = document.getElementById(`fb-${questionName}`);
+      feedback.className = 'feedback';
+      feedback.innerHTML = '';
+
+      questionStates[questionName] = null;
+      updateScore();
+    }
+
+    updateScore();
+  </script>
+</body>
+</html>
