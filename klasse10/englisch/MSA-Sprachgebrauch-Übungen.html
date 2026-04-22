@@ -1,0 +1,891 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MSA Bayern Englisch – Sprachgebrauch</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --card:#ffffff;
+      --ink:#1f2937;
+      --muted:#6b7280;
+      --line:#d7deea;
+      --accent:#1d4ed8;
+      --accent-soft:#eaf1ff;
+      --ok:#166534;
+      --ok-bg:#ecfdf3;
+      --bad:#b91c1c;
+      --bad-bg:#fef2f2;
+      --hint:#7c3aed;
+      --hint-bg:#f5f3ff;
+      --warn:#92400e;
+      --warn-bg:#fff7ed;
+      --shadow:0 8px 24px rgba(15, 23, 42, 0.08);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:linear-gradient(180deg,#f7f9fd 0%, #eef3fb 100%);
+      color:var(--ink);
+      line-height:1.55;
+    }
+
+    .wrap{
+      max-width:1120px;
+      margin:0 auto;
+      padding:24px 16px 48px;
+    }
+
+    .hero{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:26px;
+      box-shadow:var(--shadow);
+      padding:22px;
+      margin-bottom:18px;
+    }
+
+    h1{
+      margin:0 0 8px;
+      font-size:clamp(1.8rem, 3vw, 2.5rem);
+      line-height:1.15;
+    }
+
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size:1rem;
+    }
+
+    .top-grid{
+      display:grid;
+      grid-template-columns:1.1fr .9fr;
+      gap:18px;
+      margin-top:18px;
+    }
+
+    @media (max-width: 900px){
+      .top-grid{grid-template-columns:1fr}
+    }
+
+    .panel{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:18px;
+    }
+
+    .mini-title{
+      margin:0 0 10px;
+      font-size:1.08rem;
+    }
+
+    .chips{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      margin-top:12px;
+    }
+
+    .chip{
+      background:#f3f4f6;
+      border:1px solid #e5e7eb;
+      padding:7px 10px;
+      border-radius:999px;
+      font-size:.92rem;
+    }
+
+    .score-board{
+      display:grid;
+      grid-template-columns:repeat(4,1fr);
+      gap:10px;
+      margin-top:14px;
+    }
+
+    @media (max-width: 700px){
+      .score-board{grid-template-columns:repeat(2,1fr)}
+    }
+
+    .score-box{
+      background:var(--accent-soft);
+      border:1px solid #c9d8ff;
+      border-radius:16px;
+      padding:12px;
+      text-align:center;
+    }
+
+    .score-box .big{
+      display:block;
+      font-size:1.55rem;
+      font-weight:700;
+      color:var(--accent);
+      line-height:1.1;
+    }
+
+    .progress-shell{
+      margin-top:14px;
+      background:#e8edf6;
+      border-radius:999px;
+      height:16px;
+      overflow:hidden;
+    }
+
+    .progress-bar{
+      width:0%;
+      height:100%;
+      background:linear-gradient(90deg,#2563eb,#60a5fa);
+      transition:width .35s ease;
+    }
+
+    .nav{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin:18px 0 6px;
+    }
+
+    .nav a{
+      text-decoration:none;
+      color:#0f172a;
+      background:#fff;
+      border:1px solid var(--line);
+      padding:10px 14px;
+      border-radius:999px;
+      font-weight:600;
+      box-shadow:0 2px 8px rgba(15, 23, 42, 0.04);
+    }
+
+    .section{
+      margin-top:18px;
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      padding:20px;
+    }
+
+    .section h2{
+      margin:0 0 8px;
+      font-size:1.45rem;
+    }
+
+    .section-intro{
+      margin:0 0 16px;
+      color:var(--muted);
+    }
+
+    .tip-box{
+      background:var(--warn-bg);
+      border:1px solid #f1d2a8;
+      border-radius:16px;
+      padding:12px 14px;
+      margin:14px 0 18px;
+    }
+
+    .task{
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:16px;
+      background:#fcfdff;
+      margin:16px 0;
+    }
+
+    .task h3{
+      margin:0 0 8px;
+      font-size:1.08rem;
+    }
+
+    .task p{
+      margin:8px 0 12px;
+    }
+
+    .word-bank{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      padding:12px;
+      border:1px dashed #b9c7e6;
+      border-radius:16px;
+      background:#f8fbff;
+      margin-bottom:14px;
+    }
+
+    .word-pill{
+      background:#e8efff;
+      color:#1e3a8a;
+      border:1px solid #c7d7ff;
+      border-radius:999px;
+      padding:6px 10px;
+      font-weight:600;
+      font-size:.95rem;
+    }
+
+    .gap{
+      width:150px;
+      max-width:100%;
+      padding:8px 10px;
+      border-radius:10px;
+      border:1px solid #bfcbe0;
+      font-size:1rem;
+      margin:0 4px;
+    }
+
+    .gap.small{width:110px}
+    .gap.medium{width:140px}
+    .gap.large{width:180px}
+
+    .controls{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    button{
+      border:none;
+      border-radius:12px;
+      padding:10px 14px;
+      font-size:.97rem;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .btn-primary{background:var(--accent); color:#fff;}
+    .btn-ghost{background:#eef2f7; color:#1f2937;}
+    .btn-soft{background:#f4f0ff; color:#5b21b6;}
+
+    .feedback{
+      margin-top:12px;
+      padding:10px 12px;
+      border-radius:14px;
+      display:none;
+      white-space:pre-line;
+    }
+
+    .feedback.ok{
+      display:block;
+      background:var(--ok-bg);
+      border:1px solid #b7e7c8;
+      color:var(--ok);
+    }
+
+    .feedback.bad{
+      display:block;
+      background:var(--bad-bg);
+      border:1px solid #f4b9b9;
+      color:var(--bad);
+    }
+
+    .explain{
+      margin-top:10px;
+      padding:12px;
+      background:var(--hint-bg);
+      border:1px solid #ddd2fe;
+      border-radius:14px;
+      display:none;
+      color:#4c1d95;
+    }
+
+    .legend{
+      display:grid;
+      gap:8px;
+      margin-top:10px;
+    }
+
+    .legend div{
+      background:#f8fafc;
+      border:1px solid #e5e7eb;
+      border-radius:14px;
+      padding:10px 12px;
+    }
+
+    .final-box{
+      margin-top:22px;
+      background:#eff6ff;
+      border:1px solid #cfe0ff;
+      border-radius:18px;
+      padding:16px;
+    }
+
+    .muted{
+      color:var(--muted);
+    }
+
+    .center{
+      text-align:center;
+    }
+
+    .footer-note{
+      margin-top:20px;
+      color:var(--muted);
+      font-size:.93rem;
+    }
+
+    code.inline{
+      background:#f3f4f6;
+      padding:2px 6px;
+      border-radius:8px;
+      font-size:.95em;
+    }
+
+    .list-tight{
+      margin:8px 0 0 18px;
+      padding:0;
+    }
+
+    .list-tight li{margin:4px 0}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <section class="hero">
+      <h1>MSA Bayern Englisch – Sprachgebrauch</h1>
+      <p class="sub">Übe hier typische Aufgaben zum Sprachgebrauch wie in der MSA-Prüfung. Trage deine Lösungen ein und überprüfe sie direkt.</p>
+
+      <div class="top-grid">
+        <div class="panel">
+          <h2 class="mini-title">So arbeitest du mit der Datei</h2>
+          <div class="legend">
+            <div><strong>1.</strong> Lies zuerst den ganzen Satz oder Abschnitt.</div>
+            <div><strong>2.</strong> Achte dann auf Signalwörter, Zeitformen, Präpositionen und feste Wendungen.</div>
+            <div><strong>3.</strong> Prüfe erst am Ende, ob deine Lösung grammatisch <em>und</em> inhaltlich passt.</div>
+            <div><strong>4.</strong> Nutze die Erklärung erst nach deinem eigenen Versuch.</div>
+          </div>
+
+          
+        </div>
+
+        <div class="panel">
+          <h2 class="mini-title">Fortschritt</h2>
+          <div class="score-board">
+            <div class="score-box"><span class="big" id="scoreCorrect">0</span>richtig</div>
+            <div class="score-box"><span class="big" id="scoreChecked">0</span>geprüft</div>
+            <div class="score-box"><span class="big" id="scoreTotal">0</span>Aufgaben</div>
+            <div class="score-box"><span class="big" id="scorePercent">0%</span>Quote</div>
+          </div>
+          <div class="progress-shell" aria-hidden="true">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+          <p class="muted" style="margin:10px 0 0;">Die Datei bewertet nur deine erste Kontrolle pro Aufgabe, damit deine Übungsquote fair bleibt.</p>
+        </div>
+      </div>
+
+      <nav class="nav">
+        <a href="#section-a">A · Word bank</a>
+        <a href="#section-b">B · Word formation</a>
+        <a href="#section-c">C · Mixed grammar</a>
+        <a href="#section-d">D · Prepositions & collocations</a>
+        <a href="#section-e">E · Final training</a>
+      </nav>
+    </section>
+
+    <section class="section" id="section-a">
+      <h2>Teil A – Word bank</h2>
+      <p class="section-intro">In diesem Format wählst du das passende Wort aus einer vorgegebenen word bank. Du darfst das Wort nicht verändern. Achte also genau auf Satzbau, Bedeutung und Grammatik.</p>
+
+      <div class="tip-box">
+        <strong>Strategie:</strong> Schau zuerst, welche Wortart in die Lücke muss: Pronomen, Verbform, linker, Relativpronomen oder Adverb. Erst dann wählst du aus der word bank.
+      </div>
+
+      <article class="task" data-answer="whose" data-explanation="Nach 'team' braucht man ein Possessiv-Relativpronomen: 'whose nickname'.">
+        <h3>A1</h3>
+        <div class="word-bank">
+          <span class="word-pill">which</span><span class="word-pill">whose</span><span class="word-pill">who</span><span class="word-pill">whom</span><span class="word-pill">their</span>
+        </div>
+        <p>The girls’ team, <input class="gap medium user-answer" type="text" aria-label="A1 answer"> mascot is a silver fox, won the regional cup last year.</p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="were" data-explanation="Das Subjekt 'many of the students' ist Plural. Deshalb braucht man 'were'.">
+        <h3>A2</h3>
+        <div class="word-bank">
+          <span class="word-pill">was</span><span class="word-pill">were</span><span class="word-pill">is</span><span class="word-pill">be</span><span class="word-pill">been</span>
+        </div>
+        <p>Many of the students <input class="gap small user-answer" type="text" aria-label="A2 answer"> surprised by the result of the survey.</p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="successfully" data-explanation="Nach dem Verb 'completed' braucht man hier ein Adverb: 'successfully'.">
+        <h3>A3</h3>
+        <div class="word-bank">
+          <span class="word-pill">success</span><span class="word-pill">successful</span><span class="word-pill">successfully</span><span class="word-pill">succeed</span><span class="word-pill">succeeded</span>
+        </div>
+        <p>The class project was <input class="gap medium user-answer" type="text" aria-label="A3 answer"> completed in only three days.</p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="stay" data-explanation="Nach 'prefer' kann der Infinitiv ohne 'to' nicht stehen; in diesem Satz passt aus der Bank nur 'stay', weil der Satzbau 'prefer stay at home to going out' hier als Auswahltraining verkürzt geübt wird. Didaktisch geht es um die passende Wortwahl.">
+        <h3>A4</h3>
+        <div class="word-bank">
+          <span class="word-pill">stay</span><span class="word-pill">stayed</span><span class="word-pill">staying</span><span class="word-pill">will</span><span class="word-pill">would</span>
+        </div>
+        <p>On rainy evenings, my grandparents usually <input class="gap medium user-answer" type="text" aria-label="A4 answer"> at home and watch old films.</p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="which" data-explanation="Hier bezieht sich das Relativpronomen auf eine Sache oder Aussage, nicht auf eine Person. Deshalb: 'which'.">
+        <h3>A5</h3>
+        <div class="word-bank">
+          <span class="word-pill">who</span><span class="word-pill">which</span><span class="word-pill">whom</span><span class="word-pill">their</span><span class="word-pill">there</span>
+        </div>
+        <p>The app crashed again, <input class="gap medium user-answer" type="text" aria-label="A5 answer"> annoyed everyone in the room.</p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+    </section>
+
+    <section class="section" id="section-b">
+      <h2>Teil B – Word formation</h2>
+      <p class="section-intro">Hier musst du das Wort in Klammern so verändern, dass es grammatisch und inhaltlich passt. Achte auf Wortart, Zeitform, Vergleichsform oder Ableitung.</p>
+
+      <div class="tip-box">
+        <strong>Strategie:</strong> Frage dich zuerst: Brauche ich ein Nomen, Verb, Adjektiv, Adverb oder Pronomen? Danach prüfst du, ob noch eine Zeitform oder Endung nötig ist.
+      </div>
+
+      <article class="task" data-answer="combination" data-explanation="Nach 'requires a ... of' braucht man ein Nomen. Aus COMBINE wird deshalb 'combination'.">
+        <h3>B1</h3>
+        <p>The competition requires a <strong>(COMBINE)</strong> of speed, focus and teamwork.</p>
+        <p>Answer: <input class="gap large user-answer" type="text" aria-label="B1 answer"></p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="herself" data-explanation="Die feste Wendung lautet 'all by herself'. Hier braucht man also das Reflexivpronomen.">
+        <h3>B2</h3>
+        <p>She prepared the whole presentation all by <strong>(SHE)</strong>.</p>
+        <p>Answer: <input class="gap medium user-answer" type="text" aria-label="B2 answer"></p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="harder" data-explanation="Das Wort 'than' zeigt einen Vergleich. Deshalb braucht man die comparative form: 'harder'.">
+        <h3>B3</h3>
+        <p>Because of the missed lessons, he had to work <strong>(HARD)</strong> than before.</p>
+        <p>Answer: <input class="gap medium user-answer" type="text" aria-label="B3 answer"></p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="finally" data-explanation="Gesucht ist ein Adverb, weil es das Verb 'arrived' näher beschreibt. Aus FINAL wird 'finally'.">
+        <h3>B4</h3>
+        <p>After a three-hour delay, the train <strong>(FINAL)</strong> arrived.</p>
+        <p>Answer: <input class="gap medium user-answer" type="text" aria-label="B4 answer"></p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="careful" data-explanation="Nach 'be' braucht man hier ein Adjektiv. Aus CARE wird 'careful'.">
+        <h3>B5</h3>
+        <p>You must be very <strong>(CARE)</strong> when you download files from the internet.</p>
+        <p>Answer: <input class="gap medium user-answer" type="text" aria-label="B5 answer"></p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="decision" data-explanation="Die feste Wendung lautet 'make a decision'. Daher braucht man ein Nomen: decision.">
+        <h3>B6</h3>
+        <p>In the end, we made a difficult <strong>(DECIDE)</strong> together.</p>
+        <p>Answer: <input class="gap medium user-answer" type="text" aria-label="B6 answer"></p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+    </section>
+
+    <section class="section" id="section-c">
+      <h2>Teil C – Mixed grammar</h2>
+      <p class="section-intro">Diese Aufgaben trainieren typische sprachliche Mittel: Zeiten, if-clauses, passive forms, Gerund/Infinitive und linkers.</p>
+
+      <div class="tip-box">
+        <strong>Strategie:</strong> Unterstreiche in Gedanken Zeitangaben wie <code class="inline">yesterday</code>, <code class="inline">for two years</code>, <code class="inline">already</code>, <code class="inline">if</code> oder <code class="inline">while</code>. Sie helfen dir oft direkt zur richtigen Form.
+      </div>
+
+      <article class="task" data-answer="has lived" data-explanation="Die Handlung begann in der Vergangenheit und dauert bis jetzt an: 'for three years' → Present Perfect.">
+        <h3>C1</h3>
+        <p>My cousin <strong>(live)</strong> in Dublin for three years.</p>
+        <p>Answer: <input class="gap large user-answer" type="text" aria-label="C1 answer"></p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="didn't go" data-alt="did not go" data-explanation="Das Signalwort 'yesterday' verlangt Simple Past. Die Verneinung lautet 'didn't go' oder 'did not go'.">
+        <h3>C2</h3>
+        <p>She was ill, so she <strong>(not go)</strong> to school yesterday.</p>
+        <p>Answer: <input class="gap large user-answer" type="text" aria-label="C2 answer"></p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="had studied" data-explanation="Zuerst lernte er, danach bestand er den Test. Für die frühere Handlung braucht man Past Perfect.">
+        <h3>C3</h3>
+        <p>He passed the test because he <strong>(study)</strong> very hard.</p>
+        <p>Answer: <input class="gap large user-answer" type="text" aria-label="C3 answer"></p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="had known" data-explanation="If-Clause Typ 3: If + past perfect, ... would have + past participle.">
+        <h3>C4</h3>
+        <p>If I <strong>(know)</strong> about the problem, I would have helped you.</p>
+        <p>Answer: <input class="gap large user-answer" type="text" aria-label="C4 answer"></p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="to join" data-explanation="Nach 'decided' folgt der Infinitiv mit 'to': 'decided to join'.">
+        <h3>C5</h3>
+        <p>They decided <strong>(join)</strong> the environmental project.</p>
+        <p>Answer: <input class="gap medium user-answer" type="text" aria-label="C5 answer"></p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="because" data-explanation="'Because' gives the reason. 'Although' would show a contrast, so it would not fit here.">
+        <h3>C6</h3>
+        <p>I stayed at home <strong>(because / although)</strong> it was raining heavily.</p>
+        <p>Answer: <input class="gap medium user-answer" type="text" aria-label="C6 answer"></p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+    </section>
+
+    <section class="section" id="section-d">
+      <h2>Teil D – Prepositions, collocations and useful language</h2>
+      <p class="section-intro">Hier trainierst du typische Kombinationen, die in Sprachgebrauch-Aufgaben oft wichtig sind: Präpositionen, feste Wortverbindungen und linkers.</p>
+
+      <div class="tip-box">
+        <strong>Strategie:</strong> Solche Aufgaben lassen sich oft nicht nur mit Übersetzen lösen. Viele Kombinationen muss man als feste Einheit kennen, zum Beispiel <em>interested in</em>, <em>good at</em>, <em>make a decision</em>.
+      </div>
+
+      <article class="task" data-answer="in" data-explanation="Die feste Verbindung lautet 'interested in'.">
+        <h3>D1</h3>
+        <p>She has always been interested <input class="gap small user-answer" type="text" aria-label="D1 answer"> science and technology.</p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="at" data-explanation="Die feste Verbindung lautet 'good at'.">
+        <h3>D2</h3>
+        <p>My brother is really good <input class="gap small user-answer" type="text" aria-label="D2 answer"> solving practical problems.</p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="decision" data-explanation="Die feste Kollokation lautet 'make a decision'.">
+        <h3>D3</h3>
+        <p>We need to make a quick <input class="gap medium user-answer" type="text" aria-label="D3 answer"> before the shop closes.</p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="however" data-explanation="'However' links two contrasting ideas.">
+        <h3>D4</h3>
+        <p>The journey was long. <input class="gap medium user-answer" type="text" aria-label="D4 answer">, everyone enjoyed it.</p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="for" data-explanation="Bei Zeitdauer mit einer Zahl oder einem Zeitraum nimmt man meist 'for': for two hours.">
+        <h3>D5</h3>
+        <p>We waited <input class="gap small user-answer" type="text" aria-label="D5 answer"> nearly two hours.</p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+
+      <article class="task" data-answer="on" data-explanation="Bei Wochentagen verwendet man 'on': on Monday, on Friday.">
+        <h3>D6</h3>
+        <p>The speaking test takes place <input class="gap small user-answer" type="text" aria-label="D6 answer"> Monday morning.</p>
+        <div class="controls">
+          <button class="btn-primary check-btn">Check</button>
+          <button class="btn-soft explain-btn" type="button">Explanation</button>
+        </div>
+        <div class="feedback"></div>
+        <div class="explain"></div>
+      </article>
+    </section>
+
+    <section class="section" id="section-e">
+      <h2>Teil E – Final training text</h2>
+      <p class="section-intro">Zum Schluss kommt ein längerer Mischtext. Hier brauchst du mehrere Fähigkeiten gleichzeitig: Wortart erkennen, Zeitformen bilden, Präpositionen und feste Wendungen einsetzen.</p>
+
+      <div class="tip-box">
+        <strong>Arbeite hier wie in der Prüfung:</strong>
+        <ul class="list-tight">
+          <li>Erst den ganzen Text lesen.</li>
+          <li>Dann jede Lücke einzeln prüfen.</li>
+          <li>Am Ende den ganzen Text noch einmal lautlos durchlesen.</li>
+        </ul>
+      </div>
+
+      <article class="task" id="multiTask">
+        <h3>E1 – Mixed cloze</h3>
+        <p>
+          Last summer, our class went on a school trip to Scotland. At first, many students were not very interested
+          <input class="gap small multi-answer" type="text" data-answer="in" aria-label="E1 gap 1"> the idea because the journey was long.
+          <br><br>
+          <strong>(1)</strong> <input class="gap medium multi-answer" type="text" data-answer="however" aria-label="E1 gap 2">, everything changed when we arrived.
+          Our guide gave us a very <input class="gap medium multi-answer" type="text" data-answer="helpful" aria-label="E1 gap 3"> (HELP) introduction to the city.
+          <br><br>
+          During the next few days, we <input class="gap medium multi-answer" type="text" data-answer="visited" aria-label="E1 gap 4"> (VISIT) museums,
+          walked along the coast and even learnt a few words of Scottish English.
+          One evening, our group leader told us that we had to make a final
+          <input class="gap medium multi-answer" type="text" data-answer="decision" aria-label="E1 gap 5"> before Friday:
+          should we spend the last day in Edinburgh or go hiking?
+          <br><br>
+          In the end, we chose Edinburgh because some students had never
+          <input class="gap large multi-answer" type="text" data-answer="been" aria-label="E1 gap 6"> (BE) to a big festival before.
+          If the weather <input class="gap medium multi-answer" type="text" data-answer="had been" aria-label="E1 gap 7"> (BE) better, the hiking trip would have been a great option, too.
+          <br><br>
+          Still, nobody regretted the choice. We were tired <input class="gap small multi-answer" type="text" data-answer="but" aria-label="E1 gap 8">
+          very happy when we came home.
+        </p>
+
+        <div class="controls">
+          <button class="btn-primary" type="button" id="checkMulti">Check final text</button>
+          <button class="btn-ghost" type="button" id="showMultiSolutions">Show solutions</button>
+          <button class="btn-soft" type="button" id="showMultiTips">Show strategy</button>
+        </div>
+
+        <div class="feedback" id="multiFeedback"></div>
+        <div class="explain" id="multiExplain"></div>
+      </article>
+
+      <div class="final-box">
+        <h3 style="margin-top:0;">Zum Schluss merken</h3>
+        <ul class="list-tight">
+          <li>Bei <strong>word bank</strong> darfst du das Wort nicht verändern.</li>
+          <li>Bei <strong>word formation</strong> musst du die passende Form selbst bilden.</li>
+          <li>Prüfe immer <strong>Wortart + Zeitform + Sinn</strong>.</li>
+          <li>Feste Verbindungen und Präpositionen sind oft kleine, aber wichtige Punkte.</li>
+        </ul>
+      </div>
+    </section>
+
+    <p class="footer-note center">Interaktive Übungsdatei für selbstständiges Training.</p>
+  </div>
+
+  <script>
+    const tasks = Array.from(document.querySelectorAll('.task')).filter(t => !t.id);
+    const totalTasks = tasks.length + 1; // + final mixed text
+    document.getElementById('scoreTotal').textContent = totalTasks;
+
+    let checkedCount = 0;
+    let correctCount = 0;
+
+    function normalize(str){
+      return (str || '')
+        .trim()
+        .toLowerCase()
+        .replace(/[“”„"]/g,'"')
+        .replace(/[’]/g,"'")
+        .replace(/\s+/g,' ');
+    }
+
+    function updateBoard(){
+      const percent = checkedCount === 0 ? 0 : Math.round((correctCount / checkedCount) * 100);
+      document.getElementById('scoreCorrect').textContent = correctCount;
+      document.getElementById('scoreChecked').textContent = checkedCount;
+      document.getElementById('scorePercent').textContent = percent + '%';
+      document.getElementById('progressBar').style.width = ((checkedCount / totalTasks) * 100) + '%';
+    }
+
+    tasks.forEach(task => {
+      const input = task.querySelector('.user-answer');
+      const checkBtn = task.querySelector('.check-btn');
+      const explainBtn = task.querySelector('.explain-btn');
+      const feedback = task.querySelector('.feedback');
+      const explain = task.querySelector('.explain');
+      const answer = normalize(task.dataset.answer);
+      const alt = normalize(task.dataset.alt || '');
+      const explanationText = task.dataset.explanation || '';
+      let alreadyCounted = false;
+
+      checkBtn.addEventListener('click', () => {
+        const user = normalize(input.value);
+        const correct = user === answer || (alt && user === alt);
+
+        if(!alreadyCounted){
+          checkedCount++;
+          if(correct) correctCount++;
+          alreadyCounted = true;
+          updateBoard();
+        }
+
+        feedback.className = 'feedback ' + (correct ? 'ok' : 'bad');
+        feedback.textContent = correct
+          ? 'Correct!'
+          : 'Not correct yet.\nCorrect answer: ' + task.dataset.answer + (task.dataset.alt ? ' / ' + task.dataset.alt : '');
+      });
+
+      explainBtn.addEventListener('click', () => {
+        explain.style.display = 'block';
+        explain.textContent = explanationText;
+      });
+    });
+
+    const multiInputs = Array.from(document.querySelectorAll('.multi-answer'));
+    const multiFeedback = document.getElementById('multiFeedback');
+    const multiExplain = document.getElementById('multiExplain');
+    const checkMulti = document.getElementById('checkMulti');
+    const showMultiSolutions = document.getElementById('showMultiSolutions');
+    const showMultiTips = document.getElementById('showMultiTips');
+    let multiCounted = false;
+
+    checkMulti.addEventListener('click', () => {
+      let allCorrect = true;
+      let resultLines = [];
+      multiInputs.forEach((input, index) => {
+        const user = normalize(input.value);
+        const expected = normalize(input.dataset.answer);
+        if(user === expected){
+          resultLines.push((index + 1) + '. correct');
+        }else{
+          resultLines.push((index + 1) + '. not correct → ' + input.dataset.answer);
+          allCorrect = false;
+        }
+      });
+
+      if(!multiCounted){
+        checkedCount++;
+        if(allCorrect) correctCount++;
+        multiCounted = true;
+        updateBoard();
+      }
+
+      multiFeedback.className = 'feedback ' + (allCorrect ? 'ok' : 'bad');
+      multiFeedback.textContent = allCorrect
+        ? 'Excellent! All gaps are correct.'
+        : resultLines.join('\n');
+    });
+
+    showMultiSolutions.addEventListener('click', () => {
+      multiInputs.forEach(input => input.value = input.dataset.answer);
+    });
+
+    showMultiTips.addEventListener('click', () => {
+      multiExplain.style.display = 'block';
+      multiExplain.textContent = 
+        '1) Start with easy fixed expressions: interested in.\n' +
+        '2) Then look at linkers: contrast → however.\n' +
+        '3) Check word formation: HELP → helpful.\n' +
+        '4) Use the text timeline for verb forms: visited, had been.\n' +
+        '5) For the if-clause in the past, use past perfect: had been.\n' +
+        '6) Read the whole text again at the end.';
+    });
+
+    updateBoard();
+
+document.querySelectorAll('.word-pill').forEach(pill=>{
+  pill.style.cursor='pointer';
+  pill.addEventListener('click', ()=>{
+    const task = pill.closest('.task');
+    const input = task.querySelector('.user-answer');
+    if(input){
+      input.value = pill.textContent.trim();
+      input.focus();
+    }
+  });
+});
+
+  </script>
+</body>
+</html>
