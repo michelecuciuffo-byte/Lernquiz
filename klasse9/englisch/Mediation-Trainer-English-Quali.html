@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mediation Trainer – Quali Englisch</title>
+
+<style>
+:root{
+  --bg:#fff7ed;
+  --card:#ffffff;
+  --ink:#263238;
+  --muted:#607d8b;
+  --accent:#f4a261;
+  --accent-dark:#d9793d;
+  --soft:#ffe1c2;
+  --blue:#dbeafe;
+  --green:#dcfce7;
+  --yellow:#fef3c7;
+  --pink:#ffe4e6;
+  --shadow:0 14px 30px rgba(38,50,56,.13);
+}
+
+body{
+  margin:0;
+  font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  background:linear-gradient(180deg,#fff7ed,#fffbeb);
+  color:var(--ink);
+}
+
+.wrap{
+  max-width:1150px;
+  margin:0 auto;
+  padding:24px;
+}
+
+.hero{
+  background:white;
+  border-radius:28px;
+  padding:28px;
+  box-shadow:var(--shadow);
+  text-align:center;
+  margin-bottom:22px;
+}
+
+h1{
+  margin:0;
+  font-size:2rem;
+}
+
+.subtitle{
+  color:var(--muted);
+  margin-top:10px;
+  font-size:1.05rem;
+}
+
+.controls{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  justify-content:center;
+  margin-top:18px;
+}
+
+button{
+  border:none;
+  border-radius:999px;
+  padding:11px 18px;
+  background:var(--accent);
+  color:white;
+  font-weight:700;
+  cursor:pointer;
+  box-shadow:0 6px 14px rgba(217,121,61,.22);
+}
+
+button:hover{
+  background:var(--accent-dark);
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:20px;
+}
+
+.card{
+  background:var(--card);
+  border-radius:24px;
+  padding:22px;
+  box-shadow:var(--shadow);
+  margin-bottom:20px;
+}
+
+.scene-title{
+  font-size:1.5rem;
+  margin-bottom:10px;
+}
+
+.info{
+  background:var(--yellow);
+  border-radius:18px;
+  padding:14px;
+  margin:12px 0;
+}
+
+.rolebox{
+  border-radius:20px;
+  padding:18px;
+  margin:16px 0;
+  line-height:1.55;
+}
+
+.de{
+  background:var(--blue);
+}
+
+.en{
+  background:var(--green);
+}
+
+.task{
+  background:var(--pink);
+}
+
+.label{
+  font-weight:800;
+  margin-bottom:8px;
+}
+
+.text{
+  white-space:pre-line;
+  font-size:1.05rem;
+}
+
+.solution{
+  display:none;
+  background:#f3f4f6;
+  border-radius:18px;
+  padding:16px;
+  line-height:1.55;
+  margin-top:12px;
+}
+
+.timer{
+  font-size:2.2rem;
+  font-weight:900;
+  text-align:center;
+  background:#fff;
+  border-radius:20px;
+  padding:16px;
+  margin-bottom:14px;
+  box-shadow:var(--shadow);
+}
+
+.small{
+  color:var(--muted);
+  font-size:.95rem;
+}
+
+ul{
+  line-height:1.6;
+}
+
+@media(max-width:850px){
+  .grid{
+    grid-template-columns:1fr;
+  }
+}
+</style>
+</head>
+
+<body>
+<div class="wrap">
+
+  <section class="hero">
+    <h1>Mediation Trainer – Quali Englisch</h1>
+    <div class="subtitle">
+      Trainiere das Vermitteln zwischen Deutsch und Englisch in realistischen Alltagssituationen.
+    </div>
+
+    <div class="controls">
+      <button onclick="nextScenario()">Neue Situation</button>
+      <button onclick="toggleSolution()">Lösung anzeigen / ausblenden</button>
+      <button onclick="startTimer()">Timer starten</button>
+      <button onclick="pauseTimer()">Pause</button>
+      <button onclick="resetTimer()">Reset</button>
+    </div>
+  </section>
+
+  <div class="grid">
+
+    <main>
+      <div class="timer" id="timer">02:00</div>
+
+      <section class="card" id="scenarioBox"></section>
+    </main>
+
+    <aside>
+      <section class="card">
+        <h2>Speaking Structure</h2>
+        <ul>
+          <li><b>Listen carefully:</b> Was ist die Hauptinformation?</li>
+          <li><b>Do not translate word by word:</b> Sinn übertragen.</li>
+          <li><b>Be polite:</b> freundlich und ruhig vermitteln.</li>
+          <li><b>Use simple language:</b> kurze, klare Sätze.</li>
+          <li><b>Ask back if necessary:</b> Could you repeat that, please?</li>
+        </ul>
+      </section>
+
+      <section class="card">
+        <h2>Useful Phrases</h2>
+        <ul>
+          <li><b>He says that...</b> – Er sagt, dass ...</li>
+          <li><b>She would like to know...</b> – Sie möchte wissen ...</li>
+          <li><b>Could you please explain...?</b> – Können Sie bitte erklären ...?</li>
+          <li><b>He needs help with...</b> – Er braucht Hilfe bei ...</li>
+          <li><b>She is asking if...</b> – Sie fragt, ob ...</li>
+        </ul>
+      </section>
+    </aside>
+
+  </div>
+</div>
+
+<script>
+const scenarios = [
+  {
+    title: "Bahnhof – Tourist findet den richtigen Zug nicht",
+    situation: "Eine englischsprachige Touristin steht am Bahnhof. Sie möchte nach München fahren, versteht aber die Ansage nicht. Du vermittelst zwischen ihr und einem deutschen Bahnmitarbeiter.",
+    englishText:
+`Excuse me, I need some help.
+I want to travel to Munich today, but I am not sure which train I have to take.
+My ticket says platform 4, but the screen now says platform 7.
+I am worried because my train leaves in ten minutes.
+Can you please ask the railway employee if the train is delayed or if the platform has changed?`,
+    germanText:
+`Der Zug nach München fährt heute ausnahmsweise von Gleis 7 ab.
+Die Änderung wurde gerade erst angezeigt.
+Der Zug hat ungefähr fünf Minuten Verspätung.
+Die Reisende soll bitte die Unterführung benutzen und dann direkt zu Gleis 7 gehen.
+Ihr Ticket bleibt natürlich gültig.`,
+    task1: "Aufgabe 1: Vermittle der deutschen Person auf Deutsch, was die englischsprachige Touristin wissen möchte.",
+    task2: "Aufgabe 2: Erkläre der Touristin auf Englisch, was der Bahnmitarbeiter gesagt hat.",
+    solution:
+`Deutsch:
+Die Touristin braucht Hilfe. Sie möchte heute nach München fahren, ist aber unsicher, welchen Zug sie nehmen muss. Auf ihrem Ticket steht Gleis 4, aber auf der Anzeige steht jetzt Gleis 7. Sie macht sich Sorgen, weil der Zug in zehn Minuten fährt. Sie möchte wissen, ob der Zug verspätet ist oder ob sich das Gleis geändert hat.
+
+Englisch:
+Your train to Munich leaves from platform 7 today. The platform has changed recently. The train is about five minutes late, so you still have enough time. Please use the underpass and go directly to platform 7. Your ticket is still valid.`
+  },
+
+  {
+    title: "Hotel – Problem mit der Buchung",
+    situation: "Ein englischer Gast kommt in einem Hotel an. Die deutsche Rezeptionistin findet seine Buchung nicht sofort. Du vermittelst zwischen beiden.",
+    englishText:
+`Good evening.
+I booked a single room for two nights online.
+I received a confirmation email yesterday, but I cannot find it at the moment.
+The booking should be under the name Mr. Johnson.
+Could you please ask if they can check my name again?
+I also requested a quiet room because I have an important meeting tomorrow morning.`,
+    germanText:
+`Die Buchung wurde gefunden.
+Sie war versehentlich unter dem Vornamen gespeichert.
+Das Zimmer ist für zwei Nächte reserviert.
+Ein ruhiges Zimmer zum Innenhof ist verfügbar.
+Der Gast kann ab sofort einchecken und bekommt die Zimmerkarte gleich.`,
+    task1: "Aufgabe 1: Gib der Rezeptionistin auf Deutsch die wichtigsten Informationen des Gastes weiter.",
+    task2: "Aufgabe 2: Erkläre dem Gast auf Englisch, was die Rezeptionistin gesagt hat.",
+    solution:
+`Deutsch:
+Der Gast hat online ein Einzelzimmer für zwei Nächte gebucht. Er hat gestern eine Bestätigung per E-Mail bekommen, findet sie aber gerade nicht. Die Buchung müsste unter dem Namen Mr. Johnson sein. Außerdem hatte er um ein ruhiges Zimmer gebeten, weil er morgen früh ein wichtiges Meeting hat.
+
+Englisch:
+They have found your booking. It was saved under your first name by mistake. Your room is booked for two nights. A quiet room facing the courtyard is available. You can check in now, and you will get your room card in a moment.`
+  },
+
+  {
+    title: "Restaurant – Allergie und Bestellung",
+    situation: "Eine englischsprachige Kundin möchte in einem Restaurant essen. Sie hat eine Allergie. Du vermittelst zwischen ihr und dem deutschen Kellner.",
+    englishText:
+`Hello, I would like to order something vegetarian.
+But I have a serious allergy to nuts.
+Could you please ask the waiter if the vegetable curry contains nuts?
+I also need to know if the sauce is made with cream because I do not eat dairy products.
+If the curry is not possible, I would like to know what else I can order.`,
+    germanText:
+`Das Gemüsecurry enthält Cashewnüsse und ist deshalb nicht geeignet.
+Die Soße enthält außerdem Sahne.
+Als Alternative gibt es einen veganen Salat mit Brot oder Nudeln mit Tomatensoße.
+Beide Gerichte enthalten keine Nüsse.
+Der Kellner kann zusätzlich in der Küche Bescheid sagen, damit besonders vorsichtig gearbeitet wird.`,
+    task1: "Aufgabe 1: Erkläre dem Kellner auf Deutsch, was die Kundin braucht.",
+    task2: "Aufgabe 2: Erkläre der Kundin auf Englisch, welche Möglichkeiten sie hat.",
+    solution:
+`Deutsch:
+Die Kundin möchte etwas Vegetarisches bestellen. Sie hat aber eine starke Nussallergie. Sie möchte wissen, ob das Gemüsecurry Nüsse enthält. Außerdem möchte sie wissen, ob die Soße Sahne enthält, weil sie keine Milchprodukte isst. Falls das Curry nicht möglich ist, möchte sie eine Alternative.
+
+Englisch:
+The vegetable curry is not suitable because it contains cashew nuts. The sauce also contains cream. As an alternative, you can order a vegan salad with bread or pasta with tomato sauce. Both dishes do not contain nuts. The waiter can also inform the kitchen so that they are extra careful.`
+  },
+
+  {
+    title: "Arztpraxis – Tourist ist krank",
+    situation: "Ein englischsprachiger Tourist fühlt sich krank und ist in einer deutschen Arztpraxis. Du vermittelst zwischen ihm und der Arzthelferin.",
+    englishText:
+`Good morning.
+I have not been feeling well since yesterday evening.
+I have a sore throat, a headache and I feel very weak.
+I do not have my European health insurance card with me.
+Could you ask if I can still see a doctor today?
+I am staying in Germany for only three more days.`,
+    germanText:
+`Der Patient kann heute noch zum Arzt.
+Er muss aber zuerst dieses Formular ausfüllen.
+Wenn er keine Versicherungskarte dabei hat, kann die Praxis seine Daten später nachtragen.
+Er soll bitte im Wartezimmer Platz nehmen.
+Die Wartezeit beträgt ungefähr 30 Minuten.`,
+    task1: "Aufgabe 1: Vermittle der Arzthelferin auf Deutsch, was der Tourist sagt.",
+    task2: "Aufgabe 2: Erkläre dem Touristen auf Englisch, was er tun soll.",
+    solution:
+`Deutsch:
+Der Tourist fühlt sich seit gestern Abend krank. Er hat Halsschmerzen, Kopfschmerzen und fühlt sich sehr schwach. Er hat seine europäische Krankenversicherungskarte nicht dabei. Er möchte wissen, ob er heute trotzdem einen Arzt sehen kann. Er bleibt nur noch drei Tage in Deutschland.
+
+Englisch:
+You can still see a doctor today. First, you have to fill in this form. If you do not have your insurance card with you, the practice can add your details later. Please take a seat in the waiting room. The waiting time is about 30 minutes.`
+  },
+
+  {
+    title: "Schule – Austauschschüler versteht den Stundenplan nicht",
+    situation: "Ein englischsprachiger Austauschschüler ist neu an einer deutschen Schule. Er versteht seinen Stundenplan nicht. Du vermittelst zwischen ihm und einer deutschen Lehrerin.",
+    englishText:
+`Excuse me, I am new at this school.
+I do not understand my timetable.
+It says that I have chemistry in room B204, but I cannot find this room.
+I also do not know where I have to go after the break.
+Could you please ask the teacher if she can explain my next lessons to me?`,
+    germanText:
+`Der Raum B204 befindet sich im zweiten Stock im naturwissenschaftlichen Gebäude.
+Nach der Pause hat der Schüler Englisch in Raum A112.
+Danach hat er Sport in der Turnhalle.
+Die Lehrerin kann ihm den Weg kurz zeigen.
+Außerdem bekommt er später einen Plan vom Schulgebäude.`,
+    task1: "Aufgabe 1: Erkläre der Lehrerin auf Deutsch, welches Problem der Austauschschüler hat.",
+    task2: "Aufgabe 2: Erkläre dem Austauschschüler auf Englisch, wohin er gehen muss.",
+    solution:
+`Deutsch:
+Der Austauschschüler ist neu an der Schule und versteht seinen Stundenplan nicht. Dort steht, dass er Chemie in Raum B204 hat, aber er findet den Raum nicht. Außerdem weiß er nicht, wohin er nach der Pause gehen muss. Er fragt, ob die Lehrerin ihm seine nächsten Stunden erklären kann.
+
+Englisch:
+Room B204 is on the second floor in the science building. After the break, you have English in room A112. After that, you have PE in the sports hall. The teacher can show you the way now, and later you will get a map of the school building.`
+  }
+];
+
+let current = 0;
+let timerSeconds = 120;
+let timerInterval = null;
+
+function loadScenario(){
+  const s = scenarios[current];
+
+  document.getElementById("scenarioBox").innerHTML = `
+    <div class="scene-title">${s.title}</div>
+
+    <div class="info">
+      <b>Situation:</b><br>
+      ${s.situation}
+    </div>
+
+    <div class="rolebox en">
+      <div class="label">Englische Person liest / sagt:</div>
+      <div class="text">${s.englishText}</div>
+      <button onclick="speakCurrent('english')">Englisch vorlesen</button>
+    </div>
+
+    <div class="rolebox task">
+      <div class="label">${s.task1}</div>
+    </div>
+
+    <div class="rolebox de">
+      <div class="label">Deutsche Person liest / sagt:</div>
+      <div class="text">${s.germanText}</div>
+      <button onclick="speakCurrent('german')">Deutsch vorlesen</button>
+    </div>
+
+    <div class="rolebox task">
+      <div class="label">${s.task2}</div>
+    </div>
+
+    <div class="solution" id="solutionBox">
+      <b>Mögliche Lösung:</b><br><br>
+      <div class="text">${s.solution}</div>
+    </div>
+
+    <p class="small">
+      Hinweis: Falls das Vorlesen nicht startet, einmal irgendwo auf die Seite klicken und dann erneut den Button drücken.
+    </p>
+  `;
+}
+
+function speakCurrent(language){
+  if (!("speechSynthesis" in window)) {
+    alert("Dein Browser unterstützt die Vorlesefunktion leider nicht.");
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const s = scenarios[current];
+  const utterance = new SpeechSynthesisUtterance(
+    language === "english" ? s.englishText : s.germanText
+  );
+
+  utterance.lang = language === "english" ? "en-GB" : "de-DE";
+  utterance.rate = 0.9;
+  utterance.pitch = 1;
+
+  const voices = window.speechSynthesis.getVoices();
+  const preferredVoice = voices.find(v => v.lang === utterance.lang);
+
+  if (preferredVoice) {
+    utterance.voice = preferredVoice;
+  }
+
+  window.speechSynthesis.speak(utterance);
+}
+
+function nextScenario(){
+  let next;
+  do {
+    next = Math.floor(Math.random() * scenarios.length);
+  } while (next === current && scenarios.length > 1);
+
+  current = next;
+  resetTimer();
+  loadScenario();
+}
+
+function toggleSolution(){
+  const box = document.getElementById("solutionBox");
+  if (!box) return;
+  box.style.display = box.style.display === "block" ? "none" : "block";
+}
+
+function updateTimer(){
+  const m = String(Math.floor(timerSeconds / 60)).padStart(2,"0");
+  const s = String(timerSeconds % 60).padStart(2,"0");
+  document.getElementById("timer").textContent = `${m}:${s}`;
+}
+
+function startTimer(){
+  clearInterval(timerInterval);
+  timerInterval = setInterval(() => {
+    if (timerSeconds > 0) {
+      timerSeconds--;
+      updateTimer();
+    } else {
+      clearInterval(timerInterval);
+    }
+  }, 1000);
+}
+
+function pauseTimer(){
+  clearInterval(timerInterval);
+}
+
+function resetTimer(){
+  clearInterval(timerInterval);
+  timerSeconds = 120;
+  updateTimer();
+}
+
+window.speechSynthesis.onvoiceschanged = () => {
+  window.speechSynthesis.getVoices();
+};
+
+loadScenario();
+updateTimer();
+</script>
+</body>
+</html>
