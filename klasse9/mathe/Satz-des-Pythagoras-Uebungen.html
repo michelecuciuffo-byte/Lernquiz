@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Satz des Pythagoras – anschaulich & interaktiv</title>
+
+<style>
+:root{
+  --blue:#8fb8d8;
+  --blue2:#b8d8e8;
+  --green:#5fa878;
+  --red:#c46a6a;
+  --purple:#a894c8;
+  --yellow:#f4d77b;
+  --orange:#e7a77e;
+  --dark:#2f3a46;
+  --muted:#6f7f8f;
+  --soft:#fbfaf7;
+  --card:#ffffff;
+  --line:#d9e7ef;
+}
+
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:
+    radial-gradient(circle at top left,#e6f0f4 0,#fbfaf7 38%,#ffffff 100%);
+  color:var(--dark);
+}
+
+header{
+  min-height:260px;
+  background:
+    linear-gradient(135deg,rgba(143,184,216,.96),rgba(184,216,232,.92)),
+    radial-gradient(circle at 20% 20%,rgba(255,255,255,.35),transparent 30%);
+  color:white;
+  padding:50px 20px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+
+header::after{
+  content:"";
+  position:absolute;
+  width:260px;
+  height:260px;
+  border:35px solid rgba(255,255,255,.18);
+  border-radius:40px;
+  right:-70px;
+  top:30px;
+  transform:rotate(25deg);
+}
+
+header h1{
+  font-size:48px;
+  margin:0;
+}
+
+header p{
+  font-size:22px;
+  margin-top:15px;
+}
+
+main{
+  max-width:1420px;
+  margin:auto;
+  padding:30px 22px;
+}
+
+.card{
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(10px);
+  border:1px solid var(--line);
+  border-radius:28px;
+  padding:30px;
+  margin:32px 0;
+  box-shadow:0 18px 45px rgba(15,23,42,.10);
+}
+
+h2{
+  color:#6f9fbd;
+  margin-top:0;
+  font-size:30px;
+}
+
+h3{
+  margin-bottom:8px;
+  color:#0f172a;
+}
+
+.formula{
+  text-align:center;
+  font-size:34px;
+  font-weight:900;
+  padding:25px;
+  margin:22px 0;
+  border-radius:22px;
+  background:linear-gradient(135deg,#f7f1e8,#e6f0f4);
+  border:3px dashed #b7cfe0;
+}
+
+.flex{
+  display:flex;
+  flex-wrap:wrap;
+  gap:28px;
+  align-items:center;
+  justify-content:center;
+}
+
+.textbox{
+  max-width:390px;
+  font-size:17px;
+  line-height:1.65;
+}
+
+.highlight{
+  background:#fef3c7;
+  padding:3px 8px;
+  border-radius:8px;
+  font-weight:bold;
+}
+
+.scene{
+  background:linear-gradient(#f3f8f9,#ffffff);
+  border:2px solid #d9e7ef;
+  border-radius:26px;
+  padding:18px;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.8);
+}
+
+svg{
+  width:100%;
+  max-width:760px;
+  display:block;
+}
+
+.scene{
+  flex:1 1 760px;
+}
+
+.textbox{
+  flex:0 1 390px;
+}
+
+.measure{
+  stroke:#6f9fbd;
+  stroke-width:2;
+  marker-start:url(#arrow);
+  marker-end:url(#arrow);
+}
+
+.side-red{stroke:#c46a6a;stroke-width:7;stroke-linecap:round;}
+.side-green{stroke:#5fa878;stroke-width:7;stroke-linecap:round;}
+.side-purple{stroke:#a894c8;stroke-width:7;stroke-linecap:round;}
+.angle-arc{fill:none;stroke:#6f9fbd;stroke-width:3;stroke-linecap:round;}
+.angle-dot{fill:#6f9fbd;}
+
+.dashed{
+  stroke-dasharray:9 7;
+}
+
+.label{
+  font-size:20px;
+  font-weight:700;
+  fill:#1e293b;
+}
+
+.small{
+  font-size:15px;
+  fill:#475569;
+}
+
+.exercise{
+  background:#f8fafc;
+  border-left:7px solid #b7cfe0;
+  padding:16px;
+  border-radius:18px;
+  margin:16px 0;
+  font-size:16px;
+}
+
+.hint{
+  margin:10px 0 4px;
+}
+
+.hint summary{
+  display:inline-block;
+  cursor:pointer;
+  padding:8px 12px;
+  border-radius:999px;
+  background:#f7f1e8;
+  border:1px solid #eadcc9;
+  color:#6f5d49;
+  font-weight:700;
+}
+
+.hint-box{
+  margin-top:10px;
+  padding:12px 14px;
+  background:#fffaf1;
+  border:1px solid #eadcc9;
+  border-radius:14px;
+  line-height:1.55;
+}
+
+input{
+  width:130px;
+  padding:11px;
+  font-size:18px;
+  border-radius:12px;
+  border:2px solid #b7cfe0;
+  margin:6px;
+}
+
+button{
+  background:linear-gradient(135deg,#8fb8d8,#7aa9c8);
+  color:white;
+  border:none;
+  padding:12px 20px;
+  font-size:17px;
+  border-radius:13px;
+  cursor:pointer;
+  margin:6px;
+  box-shadow:0 8px 18px rgba(111,159,189,.25);
+}
+
+button:hover{
+  transform:translateY(-1px);
+}
+
+.result{
+  margin-top:14px;
+  font-size:18px;
+  font-weight:bold;
+  line-height:1.6;
+}
+
+.good{color:var(--green)}
+.bad{color:var(--red)}
+
+.steps{
+  background:#f3f8f9;
+  border:1px solid #d9e7ef;
+  border-radius:18px;
+  padding:18px;
+  line-height:1.8;
+  font-size:18px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
+  gap:22px;
+}
+
+.task-card{
+  background:white;
+  border:1px solid #d9e7ef;
+  border-radius:24px;
+  padding:20px;
+  box-shadow:0 12px 30px rgba(15,23,42,.08);
+}
+
+.badge{
+  display:inline-block;
+  padding:7px 13px;
+  border-radius:999px;
+  background:#e6f0f4;
+  color:#5f8eaa;
+  font-weight:800;
+  margin-bottom:8px;
+}
+
+.float{
+  animation:float 3s ease-in-out infinite;
+}
+
+@keyframes float{
+  0%,100%{transform:translateY(0)}
+  50%{transform:translateY(-8px)}
+}
+
+.pulse{
+  animation:pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes pulse{
+  0%,100%{opacity:.45}
+  50%{opacity:1}
+}
+
+footer{
+  text-align:center;
+  padding:35px;
+  color:#64748b;
+}
+
+@media (max-width:700px){
+  .formula{font-size:25px;padding:18px;}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Satz des Pythagoras</h1>
+  <p>Rechtwinklige Dreiecke erkennen, Seiten zuordnen und sicher berechnen</p>
+</header>
+
+<main>
+
+<section class="card">
+  <h2>1. Merksatz</h2>
+
+  <div class="formula">
+    Kathete² + Kathete² = Hypotenuse²
+  </div>
+
+  <div class="flex">
+    <div class="scene">
+      <svg viewBox="0 0 560 360">
+        <defs>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#6f9fbd"/>
+          </marker>
+        </defs>
+
+        <rect x="0" y="0" width="560" height="360" rx="24" fill="#fbfaf7"/>
+        <polygon points="95,280 95,80 420,280" fill="#f4f1f8" stroke="#d9e7ef" stroke-width="2"/>
+        <line x1="95" y1="280" x2="95" y2="80" class="side-red"/>
+        <line x1="95" y1="280" x2="420" y2="280" class="side-green"/>
+        <line x1="95" y1="80" x2="420" y2="280" class="side-purple"/>
+
+        <path d="M95 242 A38 38 0 0 1 133 280" class="angle-arc"/>
+        <circle cx="114" cy="261" r="5" class="angle-dot pulse"/>
+
+        <text x="32" y="185" class="label" fill="#c46a6a">Kathete</text>
+        <text x="215" y="314" class="label" fill="#5fa878">Kathete</text>
+        <text x="274" y="130" class="label" fill="#a894c8">Hypotenuse</text>
+
+        <text x="132" y="250" class="small">rechter Winkel</text>
+      </svg>
+    </div>
+
+    <div class="textbox">
+      <p>Der Satz gilt nur im <span class="highlight">rechtwinkligen Dreieck</span>.</p>
+      <p>Die <b>Katheten</b> sind die beiden Seiten, die direkt am rechten Winkel liegen.</p>
+      <p>Die <b>Hypotenuse</b> liegt dem rechten Winkel gegenüber. Sie ist im rechtwinkligen Dreieck immer die längste Seite.</p>
+      <p>Darum muss man vor jeder Rechnung zuerst in der Skizze erkennen: Welche beiden Seiten liegen am rechten Winkel und welche Seite liegt gegenüber?</p>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>2. Transferaufgabe: Leiter an der Hauswand</h2>
+
+  <div class="flex">
+    <div class="scene">
+      <svg viewBox="0 0 560 390">
+        <defs>
+          <marker id="arrow2" markerWidth="10" markerHeight="10" refX="5" refY="5" orient="auto">
+            <path d="M0,0 L10,5 L0,10 Z" fill="#6f9fbd"/>
+          </marker>
+        </defs>
+
+        <rect width="560" height="390" rx="24" fill="#f3f8f9"/>
+        <circle cx="470" cy="65" r="35" fill="#f4df9b"/>
+
+        <rect x="80" y="70" width="130" height="250" fill="#d9e7ef" stroke="#8fb8d8" stroke-width="3"/>
+        <polygon points="70,70 145,25 220,70" fill="#d98989"/>
+        <rect x="122" y="210" width="45" height="75" fill="#92400e"/>
+        <rect x="105" y="110" width="38" height="38" fill="#f0f7f8" stroke="#8fb8d8"/>
+        <rect x="158" y="110" width="38" height="38" fill="#f0f7f8" stroke="#8fb8d8"/>
+
+        <rect x="0" y="320" width="560" height="70" fill="#dcefdc"/>
+        <line x1="210" y1="320" x2="405" y2="320" stroke="#475569" stroke-width="5"/>
+        <g stroke-linecap="round">
+          <line x1="397" y1="320" x2="217" y2="105" stroke="#8b5e34" stroke-width="7"/>
+          <line x1="414" y1="306" x2="234" y2="91" stroke="#8b5e34" stroke-width="7"/>
+          <g stroke="#b88455" stroke-width="5">
+            <line x1="378" y1="292" x2="395" y2="278"/><line x1="350" y1="258" x2="367" y2="244"/>
+            <line x1="322" y1="224" x2="339" y2="210"/><line x1="294" y1="191" x2="311" y2="177"/>
+            <line x1="266" y1="157" x2="283" y2="143"/><line x1="238" y1="124" x2="255" y2="110"/>
+          </g>
+        </g>
+
+        <line x1="225" y1="320" x2="225" y2="105" stroke="#c46a6a" stroke-width="3" stroke-dasharray="7 6"/>
+        <line x1="225" y1="320" x2="405" y2="320" stroke="#5fa878" stroke-width="3" stroke-dasharray="7 6"/>
+        <path d="M225 292 A28 28 0 0 1 253 320" class="angle-arc"/><circle cx="239" cy="306" r="4.5" class="angle-dot"/>
+
+        <text x="238" y="215" class="label" fill="#c46a6a">4 m</text>
+        <text x="285" y="350" class="label" fill="#5fa878">3 m</text>
+        <text x="250" y="155" class="label" fill="#a894c8">Leiter ?</text>
+      </svg>
+    </div>
+
+    <div class="textbox">
+      <h3>Aufgabe</h3>
+      <div class="exercise">
+        <p>Eine Leiter steht 3 m von der Hauswand entfernt. Ihr oberes Ende erreicht eine Höhe von 4 m. Wie lang ist die Leiter?</p>
+        <details class="hint"><summary>Klicke mich an, wenn du einen Tipp brauchst</summary><div class="hint-box">Die Wand, der Boden und die Leiter bilden ein rechtwinkliges Dreieck. Die Leiter ist die schräge und längste Strecke.</div></details>
+        <input id="leiter" type="number" step="0.1" placeholder="Länge">
+        <button onclick="check('leiter',5,'leiterR','3² + 4² = 9 + 16 = 25, also √25 = 5 m.')">Prüfen</button>
+        <div id="leiterR" class="result"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>3. Transferaufgabe: Turmhöhe</h2>
+
+  <div class="flex">
+    <div class="scene">
+      <svg viewBox="0 0 560 390">
+        <rect width="560" height="390" rx="24" fill="#fbfaf7"/>
+        <rect x="0" y="320" width="560" height="70" fill="#dcefdc"/>
+
+        <rect x="365" y="105" width="85" height="215" fill="#cbd5e1" stroke="#64748b" stroke-width="3"/>
+        <polygon points="350,105 407,45 465,105" fill="#64748b"/>
+        <rect x="390" y="245" width="35" height="75" fill="#78350f"/>
+        <circle cx="407" cy="80" r="10" fill="#f4d77b"/>
+
+        <g stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="105" cy="262" r="17" fill="#e9c979" stroke="#9b7b43" stroke-width="2"/>
+          <path d="M105 279 L105 314" stroke="#7aa9c8" stroke-width="8"/>
+          <path d="M87 292 L123 292" stroke="#7aa9c8" stroke-width="6"/>
+          <path d="M105 314 L91 336" stroke="#475569" stroke-width="6"/>
+          <path d="M105 314 L122 336" stroke="#475569" stroke-width="6"/>
+          <circle cx="99" cy="258" r="2" fill="#2f3a46"/><circle cx="111" cy="258" r="2" fill="#2f3a46"/>
+          <path d="M98 267 Q105 272 112 267" fill="none" stroke="#2f3a46" stroke-width="2"/>
+        </g>
+
+        <line x1="110" y1="265" x2="407" y2="45" stroke="#a894c8" stroke-width="3" stroke-dasharray="7 6"/>
+        <line x1="110" y1="320" x2="407" y2="320" stroke="#5fa878" stroke-width="4"/>
+        <line x1="407" y1="320" x2="407" y2="45" stroke="#c46a6a" stroke-width="4"/>
+        <path d="M379 320 A28 28 0 0 1 407 292" class="angle-arc"/><circle cx="393" cy="306" r="4.5" class="angle-dot"/>
+
+        <text x="230" y="350" class="label" fill="#5fa878">12 m</text>
+        <text x="235" y="175" class="label" fill="#a894c8">13 m</text>
+        <text x="425" y="190" class="label" fill="#c46a6a">?</text>
+      </svg>
+    </div>
+
+    <div class="textbox">
+      <div class="exercise">
+        <p>Eine Person steht 12 m vom Turm entfernt. Die direkte Sichtlinie zur Turmspitze beträgt 13 m. Berechne die Turmhöhe.</p>
+        <details class="hint"><summary>Klicke mich an, wenn du einen Tipp brauchst</summary><div class="hint-box">Die Sichtlinie ist die längste Strecke. Gesucht ist eine Strecke, die am rechten Winkel liegt.</div></details>
+        <input id="turm" type="number" step="0.1" placeholder="Höhe">
+        <button onclick="check('turm',5,'turmR','13² - 12² = 169 - 144 = 25, also √25 = 5 m.')">Prüfen</button>
+        <div id="turmR" class="result"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>4. Transferaufgabe: Drache</h2>
+
+  <div class="flex">
+    <div class="scene">
+      <svg viewBox="0 0 560 390">
+        <rect width="560" height="390" rx="24" fill="#f0f7f8"/>
+        <ellipse cx="120" cy="70" rx="45" ry="18" fill="white"/>
+        <ellipse cx="165" cy="80" rx="55" ry="20" fill="white"/>
+        <ellipse cx="425" cy="65" rx="65" ry="22" fill="white"/>
+
+        <rect x="0" y="320" width="560" height="70" fill="#dcefdc"/>
+
+        <circle cx="95" cy="270" r="18" fill="#e9c979"/>
+        <line x1="95" y1="288" x2="95" y2="320" stroke="#8fb8d8" stroke-width="8"/>
+        <line x1="82" y1="300" x2="120" y2="287" stroke="#8fb8d8" stroke-width="6"/>
+
+        <polygon class="float" points="420,75 465,115 420,155 375,115" fill="#f4d77b" stroke="#caa45a" stroke-width="4"/>
+        <line x1="420" y1="155" x2="410" y2="175" stroke="#caa45a" stroke-width="3"/>
+        <line x1="410" y1="175" x2="430" y2="195" stroke="#caa45a" stroke-width="3"/>
+        <line x1="430" y1="195" x2="415" y2="215" stroke="#caa45a" stroke-width="3"/>
+
+        <line x1="110" y1="285" x2="420" y2="115" stroke="#a894c8" stroke-width="3" stroke-dasharray="7 6"/>
+        <line x1="110" y1="320" x2="420" y2="320" stroke="#5fa878" stroke-width="4"/>
+        <line x1="420" y1="320" x2="420" y2="115" stroke="#c46a6a" stroke-width="4"/>
+        <path d="M392 320 A28 28 0 0 1 420 292" class="angle-arc"/><circle cx="406" cy="306" r="4.5" class="angle-dot"/>
+
+        <text x="245" y="350" class="label" fill="#5fa878">24 m</text>
+        <text x="260" y="195" class="label" fill="#a894c8">25 m</text>
+        <text x="435" y="230" class="label" fill="#c46a6a">?</text>
+      </svg>
+    </div>
+
+    <div class="textbox">
+      <div class="exercise">
+        <p>Der Drache befindet sich 24 m waagerecht vom Kind entfernt. Die gespannte Schnur ist 25 m lang. Berechne die Flughöhe.</p>
+        <details class="hint"><summary>Klicke mich an, wenn du einen Tipp brauchst</summary><div class="hint-box">Die gespannte Schnur ist die schräge und längste Strecke. Die Höhe liegt senkrecht zum Boden.</div></details>
+        <input id="drache" type="number" step="0.1" placeholder="Höhe">
+        <button onclick="check('drache',7,'dracheR','25² - 24² = 625 - 576 = 49, also √49 = 7 m.')">Prüfen</button>
+        <div id="dracheR" class="result"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>5. Transferaufgabe: Bildschirmdiagonale</h2>
+
+  <div class="flex">
+    <div class="scene">
+      <svg viewBox="0 0 560 390">
+        <rect width="560" height="390" rx="24" fill="#fbfaf7"/>
+        <rect x="90" y="70" width="360" height="220" rx="18" fill="#0f172a"/>
+        <rect x="112" y="92" width="316" height="176" rx="10" fill="#e6f0f4"/>
+        <line x1="112" y1="268" x2="428" y2="92" stroke="#a894c8" stroke-width="5"/>
+        <line x1="112" y1="305" x2="428" y2="305" stroke="#5fa878" stroke-width="4"/>
+        <line x1="465" y1="92" x2="465" y2="268" stroke="#c46a6a" stroke-width="4"/>
+        <rect x="260" y="290" width="60" height="35" fill="#334155"/>
+        <rect x="215" y="325" width="150" height="18" rx="8" fill="#64748b"/>
+
+        <text x="235" y="335" class="label" fill="#5fa878">40 cm</text>
+        <text x="480" y="185" class="label" fill="#c46a6a">30 cm</text>
+        <text x="235" y="150" class="label" fill="#a894c8">?</text>
+      </svg>
+    </div>
+
+    <div class="textbox">
+      <div class="exercise">
+        <p>Ein Bildschirm ist 40 cm breit und 30 cm hoch. Berechne die Länge der Diagonale.</p>
+        <details class="hint"><summary>Klicke mich an, wenn du einen Tipp brauchst</summary><div class="hint-box">Breite und Höhe treffen rechtwinklig aufeinander. Die Diagonale liegt gegenüber vom rechten Winkel.</div></details>
+        <input id="screen" type="number" step="0.1" placeholder="Diagonale">
+        <button onclick="check('screen',50,'screenR','40² + 30² = 1600 + 900 = 2500, also √2500 = 50 cm.')">Prüfen</button>
+        <div id="screenR" class="result"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>6. Gemischte Übungen</h2>
+
+  <div class="grid">
+    <div class="task-card">
+      <span class="badge">Aufgabe A</span>
+      <p>In einem rechtwinkligen Dreieck sind zwei Seiten 9 cm und 12 cm lang. Die gesuchte Seite liegt dem rechten Winkel gegenüber.</p>
+      <input id="mix1" type="number" step="0.1">
+      <details class="hint"><summary>Klicke mich an, wenn du einen Tipp brauchst</summary><div class="hint-box">Wenn die gesuchte Seite gegenüber vom rechten Winkel liegt, addierst du die Quadrate der beiden anderen Seiten.</div></details>
+      <button onclick="check('mix1',15,'mixR1','9² + 12² = 81 + 144 = 225, also gesuchte Seite = 15 cm.')">Prüfen</button>
+      <div id="mixR1" class="result"></div>
+    </div>
+
+    <div class="task-card">
+      <span class="badge">Aufgabe B</span>
+      <p>In einem rechtwinkligen Dreieck sind zwei Seiten 17 cm und 8 cm lang. Die Seite mit 17 cm ist die längste Seite. Berechne die fehlende Seitenlänge.</p>
+      <input id="mix2" type="number" step="0.1">
+      <details class="hint"><summary>Klicke mich an, wenn du einen Tipp brauchst</summary><div class="hint-box">Die längste Seite ist gegeben. Um eine kürzere Seite zu finden, subtrahierst du die Quadrate.</div></details>
+      <button onclick="check('mix2',15,'mixR2','17² - 8² = 289 - 64 = 225, also fehlende Seite = 15 cm.')">Prüfen</button>
+      <div id="mixR2" class="result"></div>
+    </div>
+
+    <div class="task-card">
+      <span class="badge">Aufgabe C</span>
+      <p>In einem rechtwinkligen Dreieck sind zwei Seiten 10 cm und 6 cm lang. Die Seite mit 10 cm liegt dem rechten Winkel gegenüber. Berechne die fehlende Seitenlänge.</p>
+      <input id="mix3" type="number" step="0.1">
+      <details class="hint"><summary>Klicke mich an, wenn du einen Tipp brauchst</summary><div class="hint-box">Die Seite gegenüber vom rechten Winkel ist gegeben. Gesucht ist eine Seite am rechten Winkel.</div></details>
+      <button onclick="check('mix3',8,'mixR3','10² - 6² = 100 - 36 = 64, also fehlende Seite = 8 cm.')">Prüfen</button>
+      <div id="mixR3" class="result"></div>
+    </div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>7. Eigener Pythagoras-Rechner</h2>
+
+  <div class="exercise">
+    <p>Gib genau zwei Seitenlängen ein und lasse die gesuchte Seite frei. Achte darauf, welche Seite dem rechten Winkel gegenüberliegt.</p>
+
+    <p>
+      Kathete 1:
+      <input id="calcA" type="number" step="0.1">
+      Kathete 2:
+      <input id="calcB" type="number" step="0.1">
+      Hypotenuse:
+      <input id="calcC" type="number" step="0.1">
+    </p>
+
+    <button onclick="pythagorasCalc()">Berechnen</button>
+    <div id="calcResult" class="result"></div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  Merke: Bei rechtwinkligen Dreiecken entscheidet die Lage der Seiten, welche Rechnung passt.
+</footer>
+
+<script>
+function check(inputId, solution, resultId, explanation){
+  const value = Number(document.getElementById(inputId).value);
+  const result = document.getElementById(resultId);
+
+  if(Math.abs(value - solution) < 0.05){
+    result.innerHTML = "🏆 Richtig!<br>" + explanation;
+    result.className = "result good";
+  }else{
+    result.innerHTML = "Noch nicht richtig. Öffne bei Bedarf den Tippkasten und versuche es noch einmal.";
+    result.className = "result bad";
+  }
+}
+
+function pythagorasCalc(){
+  const aEl = document.getElementById("calcA");
+  const bEl = document.getElementById("calcB");
+  const cEl = document.getElementById("calcC");
+  const result = document.getElementById("calcResult");
+
+  const a = Number(aEl.value);
+  const b = Number(bEl.value);
+  const c = Number(cEl.value);
+
+  const filled = [aEl.value,bEl.value,cEl.value].filter(v => v !== "").length;
+
+  if(filled !== 2){
+    result.innerHTML = "Bitte genau zwei Werte eintragen und ein Feld frei lassen.";
+    result.className = "result bad";
+    return;
+  }
+
+  if(!cEl.value){
+    const c2 = a*a + b*b;
+    const erg = Math.sqrt(c2);
+    result.innerHTML =
+      "Gesucht ist die Hypotenuse.<br>" +
+      "Kathete² + Kathete² = Hypotenuse²<br>" +
+      a + "² + " + b + "² = Hypotenuse²<br>" +
+      (a*a) + " + " + (b*b) + " = Hypotenuse²<br>" +
+      c2 + " = Hypotenuse²<br>" +
+      "Hypotenuse = √" + c2 + "<br>" +
+      "<b>Hypotenuse ≈ " + erg.toFixed(2) + "</b>";
+    result.className = "result good";
+    return;
+  }
+
+  if(!aEl.value){
+    const a2 = c*c - b*b;
+    if(a2 <= 0){
+      result.innerHTML = "Diese Werte passen nicht zu einem rechtwinkligen Dreieck.";
+      result.className = "result bad";
+      return;
+    }
+    const erg = Math.sqrt(a2);
+    result.innerHTML =
+      "Gesucht ist eine Kathete.<br>" +
+      "Hypotenuse² - bekannte Kathete² = gesuchte Kathete²<br>" +
+      c + "² - " + b + "² = gesuchte Kathete²<br>" +
+      (c*c) + " - " + (b*b) + " = gesuchte Kathete²<br>" +
+      a2 + " = gesuchte Kathete²<br>" +
+      "gesuchte Kathete = √" + a2 + "<br>" +
+      "<b>gesuchte Kathete ≈ " + erg.toFixed(2) + "</b>";
+    result.className = "result good";
+    return;
+  }
+
+  if(!bEl.value){
+    const b2 = c*c - a*a;
+    if(b2 <= 0){
+      result.innerHTML = "Diese Werte passen nicht zu einem rechtwinkligen Dreieck.";
+      result.className = "result bad";
+      return;
+    }
+    const erg = Math.sqrt(b2);
+    result.innerHTML =
+      "Gesucht ist eine Kathete.<br>" +
+      "Hypotenuse² - bekannte Kathete² = gesuchte Kathete²<br>" +
+      c + "² - " + a + "² = gesuchte Kathete²<br>" +
+      (c*c) + " - " + (a*a) + " = gesuchte Kathete²<br>" +
+      b2 + " = gesuchte Kathete²<br>" +
+      "gesuchte Kathete = √" + b2 + "<br>" +
+      "<b>gesuchte Kathete ≈ " + erg.toFixed(2) + "</b>";
+    result.className = "result good";
+  }
+}
+</script>
+
+</body>
+</html>
