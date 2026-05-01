@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Warum Natriumchlorid als Schmelze und Lösung Strom leitet</title>
+<style>
+:root{
+  --bg-a:#e7fbf4;
+  --bg-b:#eef5ff;
+  --panel:rgba(255,255,255,0.9);
+  --ink:#0f172a;
+  --muted:#475569;
+  --line:#cbd5e1;
+  --na-fill:#dbeafe;
+  --na-stroke:#2563eb;
+  --cl-fill:#dcfce7;
+  --cl-stroke:#16a34a;
+  --minus:#16a34a;
+  --minus-soft:rgba(22,163,74,0.14);
+  --plus:#dc2626;
+  --plus-soft:rgba(220,38,38,0.14);
+  --water-o:#fecaca;
+  --water-o-stroke:#ef4444;
+  --water-h:#dbeafe;
+  --water-h-stroke:#60a5fa;
+  --heat:#fb923c;
+  --heat-dark:#ea580c;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  min-height:100vh;
+  font-family:"Trebuchet MS","Segoe UI",sans-serif;
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 12% 12%, #dcfff1 0, rgba(220,255,241,0) 36%),
+    radial-gradient(circle at 88% 8%, #dbeafe 0, rgba(219,234,254,0) 38%),
+    linear-gradient(135deg, var(--bg-a), var(--bg-b));
+}
+.wrap{max-width:1240px;margin:0 auto;padding:26px 18px 40px}
+.hero{display:grid;grid-template-columns:1.5fr 0.9fr;gap:18px;align-items:stretch}
+.hero-card,.formula-card,.stage-card{background:var(--panel);border:1px solid rgba(148,163,184,0.35);box-shadow:0 18px 45px rgba(15,23,42,0.08);backdrop-filter:blur(14px)}
+.hero-card,.formula-card{border-radius:24px;padding:20px 22px}
+h1{margin:0 0 10px;font-size:clamp(1.95rem,4vw,2.9rem);line-height:1.05}
+.intro{margin:0;color:var(--muted);line-height:1.6;font-size:1.02rem}
+.formula-card{display:flex;flex-direction:column;justify-content:center;gap:10px;text-align:center}
+.formula-card .label{font-size:0.88rem;text-transform:uppercase;letter-spacing:0.14em;color:#2563eb;font-weight:800}
+.formula-card .formula{font-size:clamp(1.25rem,2.7vw,1.82rem);font-weight:800;line-height:1.35}
+.formula-card .hint{color:var(--muted);line-height:1.5}
+.stage-card{margin-top:18px;border-radius:30px;padding:16px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+button{border:1px solid rgba(148,163,184,0.55);background:rgba(255,255,255,0.88);color:var(--ink);font:inherit;font-weight:800;padding:10px 14px;border-radius:999px;cursor:pointer;transition:transform .18s ease,box-shadow .18s ease,background .18s ease,border-color .18s ease}
+button:hover{transform:translateY(-1px);box-shadow:0 10px 20px rgba(37,99,235,.12)}
+button.primary{background:linear-gradient(135deg,#dff7ff,#e7fff4);border-color:#7dd3fc}
+button.mode.active{background:linear-gradient(135deg,#ffedd5,#e7fff4);border-color:#fb923c;box-shadow:0 8px 20px rgba(251,146,60,.18)}
+button:disabled{opacity:.5;cursor:default;transform:none;box-shadow:none}
+.step-status{min-width:210px;padding:10px 14px;border-radius:999px;background:linear-gradient(135deg,rgba(224,239,255,.95),rgba(236,253,245,.95));border:1px solid rgba(125,211,252,.9);color:#1e3a8a;font-weight:800;text-align:center;box-shadow:0 8px 20px rgba(37,99,235,.1)}
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 12px}
+.legend span{display:inline-flex;align-items:center;gap:9px;padding:8px 12px;border-radius:999px;background:rgba(248,250,252,.92);border:1px solid rgba(203,213,225,.9);color:var(--muted);font-size:.95rem}
+.swatch{width:16px;height:16px;border-radius:50%;display:inline-block;flex:0 0 auto}.swatch.na{background:var(--na-fill);border:2px solid var(--na-stroke)}.swatch.cl{background:var(--cl-fill);border:2px solid var(--cl-stroke)}.swatch.minus{border-radius:6px;background:linear-gradient(180deg,#86efac,#16a34a)}.swatch.plus{border-radius:6px;background:linear-gradient(180deg,#fca5a5,#dc2626)}.swatch.water{background:linear-gradient(135deg,#fecaca 0 48%,#dbeafe 52% 100%);border:1px solid #cbd5e1}.swatch.heat{border-radius:6px;background:linear-gradient(180deg,#fed7aa,#f97316)}
+.stage{border-radius:24px;overflow:hidden;border:1px solid rgba(203,213,225,.9);background:linear-gradient(180deg,#fbfeff 0%,#edf6ff 100%)}
+svg{display:block;width:100%;height:auto} svg text{font-weight:800;text-anchor:middle;dominant-baseline:middle}
+.note-panel{position:relative;display:flex;align-items:flex-start;gap:16px;margin-top:14px;padding:16px 18px;border-radius:24px;background:linear-gradient(135deg,rgba(239,246,255,.97),rgba(240,253,244,.97));border:1px solid rgba(191,219,254,.95);box-shadow:0 14px 28px rgba(37,99,235,.08);overflow:hidden}.note-panel::before{content:"";position:absolute;inset:0 auto 0 0;width:6px;background:linear-gradient(180deg,#60a5fa,#34d399)}.note-panel.reveal{animation:noteReveal .45s ease}.note-icon{position:relative;z-index:1;width:58px;height:58px;border-radius:18px;flex:0 0 auto;display:grid;place-items:center;background:linear-gradient(135deg,rgba(219,234,254,.98),rgba(220,252,231,.98));border:1px solid rgba(147,197,253,.95);box-shadow:0 10px 24px rgba(96,165,250,.18)}.note-icon svg{width:30px;height:30px;overflow:visible}.note-copy{position:relative;z-index:1;flex:1}.note-kicker{margin-bottom:4px;color:#2563eb;font-size:.83rem;font-weight:900;letter-spacing:.12em;text-transform:uppercase}.note-panel strong{display:block;margin-bottom:5px;font-size:1.06rem;line-height:1.35}.note-panel span{display:block;color:var(--muted);line-height:1.55}@keyframes noteReveal{from{opacity:0;transform:translateY(10px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+.tank-outline{fill:url(#tankFill);stroke:#fff;stroke-width:3}.pole-chip{stroke-width:1.4}.pole-chip.minus{fill:var(--minus-soft);stroke:#86efac}.pole-chip.plus{fill:var(--plus-soft);stroke:#fca5a5}.pole-label{font-size:18px}.pole-label.minus{fill:var(--minus)}.pole-label.plus{fill:var(--plus)}.electrode{stroke-width:2}.electrode.minus{fill:url(#minusElectrode);stroke:#15803d;filter:url(#minusGlow)}.electrode.plus{fill:url(#plusElectrode);stroke:#b91c1c;filter:url(#plusGlow)}
+.water-bond{stroke:#64748b;stroke-width:1.5}.water-o{fill:var(--water-o);stroke:var(--water-o-stroke);stroke-width:1.3}.water-h{fill:var(--water-h);stroke:var(--water-h-stroke);stroke-width:1.1}.delta-plus,.delta-minus{font-size:8.5px;font-weight:800}.delta-plus{fill:#2563eb}.delta-minus{fill:#ef4444}.water-ambient{opacity:.9}.water-focus{opacity:1}.water-rise{animation:waterRise .7s ease both}@keyframes waterRise{from{opacity:0}to{opacity:1}}
+.crystal-link{stroke:#bfdbfe;stroke-width:2.4;opacity:.75}.crystal-link.hot{stroke:#fdba74;stroke-width:3.1;opacity:.9;stroke-dasharray:7 8;animation:dash 1.2s linear infinite}@keyframes dash{to{stroke-dashoffset:-30}}
+.hydration-ring.na{fill:rgba(147,197,253,.18);stroke:rgba(59,130,246,.38)}.hydration-ring.cl{fill:rgba(134,239,172,.18);stroke:rgba(34,197,94,.38)}.na-ion{fill:var(--na-fill);stroke:var(--na-stroke);stroke-width:2.1}.cl-ion{fill:var(--cl-fill);stroke:var(--cl-stroke);stroke-width:2.1}.ion-label{font-size:16px;fill:#0f172a}.sparkle{fill:rgba(255,255,255,.48)}
+.heat-wave{fill:none;stroke:#fb923c;stroke-width:3;stroke-linecap:round;opacity:.75;animation:heatWave 1.1s ease-in-out infinite}.heat-wave:nth-child(2){animation-delay:.18s}.heat-wave:nth-child(3){animation-delay:.36s}@keyframes heatWave{0%{opacity:.1;transform:translateY(14px) scaleX(.8)}50%{opacity:.8}100%{opacity:.05;transform:translateY(-20px) scaleX(1.1)}}
+.flame-core{animation:flicker .65s ease-in-out infinite alternate;transform-origin:center}.flame-mid{animation:flicker .8s ease-in-out infinite alternate;transform-origin:center}@keyframes flicker{from{transform:scaleY(.94) translateY(2px);opacity:.82}to{transform:scaleY(1.08) translateY(-2px);opacity:1}}
+.heat-dot{fill:#fb923c;opacity:.85;animation:floatHeat 1.7s ease-in-out infinite}.heat-dot:nth-child(2n){animation-delay:.28s}.heat-dot:nth-child(3n){animation-delay:.48s}@keyframes floatHeat{0%{transform:translateY(16px);opacity:0}35%{opacity:.8}100%{transform:translateY(-36px);opacity:0}}
+.field-arrow{stroke:#94a3b8;stroke-width:2.2;opacity:.55;marker-end:url(#arrowHead)}
+@media (max-width:960px){.hero{grid-template-columns:1fr}}@media (max-width:700px){.wrap{padding:16px 12px 28px}.hero-card,.formula-card{border-radius:20px;padding:18px}button{flex:1 1 46%;justify-content:center}.legend span{width:100%;justify-content:flex-start}.note-panel{flex-direction:column}.step-status{min-width:100%}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="hero-card">
+      <h1>Warum Natriumchlorid als Schmelze und Lösung Strom leitet</h1>
+      <p class="intro">Die Animation zeigt zwei Wege: Festes Natriumchlorid leitet nicht, weil die Ionen im Kristallgitter fest sitzen. Erst beim Schmelzen oder beim Lösen in Wasser entstehen frei bewegliche Na<sup>+</sup>- und Cl<sup>−</sup>-Ionen. Diese können sich bei angelegter Spannung gerichtet bewegen.</p>
+    </div>
+    <div class="formula-card">
+      <div class="label">Zwei Möglichkeiten</div>
+      <div class="formula">NaCl (s) → NaCl (l)<br>NaCl (s) → Na<sup>+</sup> (aq) + Cl<sup>−</sup> (aq)</div>
+      <div class="hint">Beim Schmelzen werden die Gitterkräfte durch Wärme überwunden. Beim Lösen trennen Wassermoleküle die Ionen aus dem Kristall.</div>
+    </div>
+  </section>
+
+  <section class="stage-card">
+    <div class="controls">
+      <button id="meltModeBtn" class="mode active" onclick="setMode('melt')">Schmelzen</button>
+      <button id="solutionModeBtn" class="mode" onclick="setMode('solution')">Lösen in Wasser</button>
+      <button id="prevBtn" onclick="goPrev()">Zurück</button>
+      <div class="step-status" id="stepStatus">Schmelzen – Schritt 1 von 4</div>
+      <button id="nextBtn" class="primary" onclick="goNext()">Weiter</button>
+      <button onclick="resetAll()">Neu starten</button>
+    </div>
+
+    <div class="legend">
+      <span><i class="swatch na"></i> Na<sup>+</sup>-Ionen</span>
+      <span><i class="swatch cl"></i> Cl<sup>−</sup>-Ionen</span>
+      <span><i class="swatch water"></i> Wassermoleküle mit O(δ−) und H(δ+)</span>
+      <span><i class="swatch heat"></i> Wärme/Bunsenbrenner</span>
+      <span><i class="swatch minus"></i> Minuspol</span>
+      <span><i class="swatch plus"></i> Pluspol</span>
+    </div>
+
+    <div class="stage">
+      <svg id="scene" viewBox="0 0 1080 620" width="100%" height="100%" aria-label="Modell zur Leitfähigkeit von Natriumchlorid als Schmelze und Lösung">
+        <defs>
+          <linearGradient id="tankFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fafdff"></stop><stop offset="100%" stop-color="#dceeff"></stop></linearGradient>
+          <linearGradient id="minusElectrode" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#86efac"></stop><stop offset="100%" stop-color="#15803d"></stop></linearGradient>
+          <linearGradient id="plusElectrode" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fca5a5"></stop><stop offset="100%" stop-color="#b91c1c"></stop></linearGradient>
+          <linearGradient id="flameGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#fef3c7"></stop><stop offset="45%" stop-color="#fb923c"></stop><stop offset="100%" stop-color="#dc2626"></stop></linearGradient>
+          <linearGradient id="blueFlame" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#bfdbfe"></stop><stop offset="100%" stop-color="#2563eb"></stop></linearGradient>
+          <filter id="minusGlow" x="-40%" y="-10%" width="180%" height="120%"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#22c55e" flood-opacity="0.36"></feDropShadow></filter>
+          <filter id="plusGlow" x="-40%" y="-10%" width="180%" height="120%"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#ef4444" flood-opacity="0.36"></feDropShadow></filter>
+          <filter id="softShadow" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="10" stdDeviation="12" flood-color="#94a3b8" flood-opacity="0.22"></feDropShadow></filter>
+          <marker id="arrowHead" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L9,3 L0,6 Z" fill="#94a3b8"></path></marker>
+        </defs>
+        <rect x="34" y="24" width="1012" height="572" rx="34" fill="rgba(255,255,255,0.55)"></rect>
+        <rect x="62" y="78" width="956" height="474" rx="30" class="tank-outline" filter="url(#softShadow)"></rect>
+        <path d="M108 118 C 260 90, 820 90, 972 118" fill="none" stroke="rgba(255,255,255,0.7)" stroke-width="3"></path>
+        <g id="sparkleLayer"><circle cx="190" cy="182" r="5" class="sparkle"></circle><circle cx="286" cy="430" r="4" class="sparkle"></circle><circle cx="520" cy="132" r="6" class="sparkle"></circle><circle cx="772" cy="442" r="5" class="sparkle"></circle><circle cx="872" cy="210" r="4" class="sparkle"></circle><circle cx="930" cy="380" r="3.5" class="sparkle"></circle></g>
+        <g id="fieldLayer"></g><g id="ambientWaterLayer"></g><g id="heatLayer"></g><g id="particleLayer"></g>
+        <g id="electrodeLayer"><rect x="92" y="108" width="34" height="414" rx="10" class="electrode minus"></rect><rect x="954" y="108" width="34" height="414" rx="10" class="electrode plus"></rect><rect x="70" y="48" width="76" height="34" rx="17" class="pole-chip minus"></rect><rect x="932" y="48" width="76" height="34" rx="17" class="pole-chip plus"></rect><text x="108" y="65" class="pole-label minus">− Pol</text><text x="970" y="65" class="pole-label plus">+ Pol</text></g>
+      </svg>
+    </div>
+
+    <div class="note-panel" id="notePanel">
+      <div class="note-icon" aria-hidden="true"><svg viewBox="0 0 32 32" role="img" aria-hidden="true"><circle cx="16" cy="16" r="15" fill="rgba(255,255,255,0.45)"></circle><path d="M11.5 13.5a4.5 4.5 0 1 1 9 0c0 1.7-.76 2.75-1.88 3.88-.86.86-1.32 1.55-1.32 2.62h-2.6c0-1.08-.47-1.77-1.32-2.62-1.12-1.13-1.88-2.18-1.88-3.88Z" fill="#facc15" stroke="#eab308" stroke-width="1.3"></path><path d="M13.4 22.1h5.2" stroke="#334155" stroke-width="1.6" stroke-linecap="round"></path><path d="M14 24.7h4" stroke="#334155" stroke-width="1.6" stroke-linecap="round"></path><path d="M16 4.2v2.6M7.9 8.1l1.8 1.8M24.1 8.1l-1.8 1.8" stroke="#f59e0b" stroke-width="1.5" stroke-linecap="round"></path></svg></div>
+      <div class="note-copy"><div class="note-kicker">Erklärung</div><strong id="mainText"></strong><span id="subText"></span></div>
+    </div>
+  </section>
+</div>
+
+<script>
+const svgNs='http://www.w3.org/2000/svg';
+const particleLayer=document.getElementById('particleLayer');
+const ambientWaterLayer=document.getElementById('ambientWaterLayer');
+const heatLayer=document.getElementById('heatLayer');
+const fieldLayer=document.getElementById('fieldLayer');
+const notePanel=document.getElementById('notePanel');
+const mainText=document.getElementById('mainText');
+const subText=document.getElementById('subText');
+const prevBtn=document.getElementById('prevBtn');
+const nextBtn=document.getElementById('nextBtn');
+const stepStatus=document.getElementById('stepStatus');
+const meltModeBtn=document.getElementById('meltModeBtn');
+const solutionModeBtn=document.getElementById('solutionModeBtn');
+const ION_RADIUS=26; const TOTAL_STEPS=4;
+let currentMode='melt'; let currentStep=1; let activeAnimationFrame=null;
+const ions=[{id:'na1',type:'na'},{id:'cl1',type:'cl'},{id:'na2',type:'na'},{id:'cl2',type:'cl'},{id:'na3',type:'na'},{id:'cl3',type:'cl'},{id:'na4',type:'na'},{id:'cl4',type:'cl'}];
+const crystalLayout={na1:{x:462,y:212},cl1:{x:514,y:212},na2:{x:566,y:212},cl2:{x:618,y:212},cl3:{x:462,y:264},na3:{x:514,y:264},cl4:{x:566,y:264},na4:{x:618,y:264}};
+const meltLooseLayout={na1:{x:365,y:180},cl1:{x:458,y:225},na2:{x:550,y:178},cl2:{x:680,y:222},cl3:{x:378,y:355},na3:{x:510,y:390},cl4:{x:632,y:350},na4:{x:735,y:395}};
+const meltTargetLayout={na1:{x:166,y:170},na2:{x:166,y:290},na3:{x:166,y:410},na4:{x:166,y:500},cl1:{x:914,y:170},cl2:{x:914,y:290},cl3:{x:914,y:410},cl4:{x:914,y:500}};
+const solutionLayout={na1:{x:390,y:175},cl1:{x:660,y:175},na2:{x:390,y:300},cl2:{x:660,y:300},na3:{x:390,y:425},cl3:{x:660,y:425},na4:{x:510,y:240},cl4:{x:540,y:385}};
+const solutionTargetLayout={na1:{x:166,y:170},na2:{x:166,y:290},na3:{x:166,y:410},na4:{x:166,y:500},cl1:{x:914,y:170},cl2:{x:914,y:290},cl3:{x:914,y:410},cl4:{x:914,y:500}};
+const approachWaters=[{fromX:352,fromY:92,toX:430,toY:170,angle:28,charges:true,scale:.94,begin:'0s'},{fromX:540,fromY:78,toX:540,toY:154,angle:0,charges:true,scale:.98,begin:'.06s'},{fromX:728,fromY:92,toX:650,toY:170,angle:-28,charges:true,scale:.94,begin:'.12s'},{fromX:300,fromY:250,toX:416,toY:254,angle:92,charges:false,scale:.9,begin:'.08s'},{fromX:780,fromY:250,toX:664,toY:254,angle:-92,charges:false,scale:.9,begin:'.14s'},{fromX:362,fromY:470,toX:430,toY:358,angle:152,charges:true,scale:.94,begin:'.18s'},{fromX:540,fromY:494,toX:540,toY:374,angle:180,charges:true,scale:.98,begin:'.24s'},{fromX:718,fromY:470,toX:650,toY:358,angle:-152,charges:true,scale:.94,begin:'.3s'}];
+function svgEl(tag,attrs={}){const el=document.createElementNS(svgNs,tag);for(const [k,v] of Object.entries(attrs))el.setAttribute(k,v);return el}
+function setTexts(main,sub){mainText.textContent=main;subText.textContent=sub;notePanel.classList.remove('reveal');void notePanel.offsetWidth;notePanel.classList.add('reveal')}
+function stopAnimation(){if(activeAnimationFrame!==null){cancelAnimationFrame(activeAnimationFrame);activeAnimationFrame=null}}
+function clearLayers(){stopAnimation();particleLayer.innerHTML='';ambientWaterLayer.innerHTML='';heatLayer.innerHTML='';fieldLayer.innerHTML=''}
+function updateNavigation(){stepStatus.textContent=`${currentMode==='melt'?'Schmelzen':'Lösen'} – Schritt ${currentStep} von ${TOTAL_STEPS}`;prevBtn.disabled=currentStep<=1;nextBtn.textContent=currentStep<TOTAL_STEPS?'Weiter':'Noch einmal';meltModeBtn.classList.toggle('active',currentMode==='melt');solutionModeBtn.classList.toggle('active',currentMode==='solution')}
+function setMode(mode){currentMode=mode;showStep(1)}
+function goPrev(){if(currentStep>1)showStep(currentStep-1)}
+function goNext(){if(currentStep<TOTAL_STEPS)showStep(currentStep+1);else showStep(1)}
+function resetAll(){showStep(1)}
+function showField(){fieldLayer.innerHTML='';[170,260,350,440].forEach(y=>fieldLayer.appendChild(svgEl('line',{x1:'150',y1:y,x2:'930',y2:y,class:'field-arrow'})))}
+function drawCrystalLinks(hot=false){const cls=hot?'crystal-link hot':'crystal-link';[['na1','cl1'],['cl1','na2'],['na2','cl2'],['cl3','na3'],['na3','cl4'],['cl4','na4'],['na1','cl3'],['cl1','na3'],['na2','cl4'],['cl2','na4'],['cl1','cl3'],['na2','na3']].forEach(([a,b])=>{const p=crystalLayout[a],q=crystalLayout[b];particleLayer.appendChild(svgEl('line',{x1:p.x,y1:p.y,x2:q.x,y2:q.y,class:cls}))})}
+function createIonGroup(ion,pos,options={}){const g=svgEl('g',{filter:'url(#softShadow)',transform:`translate(${pos.x} ${pos.y})`});if(options.hydrated)drawHydrationShell(g,ion.type,{transition:options.hydrationTransition});g.appendChild(svgEl('circle',{cx:'0',cy:'0',r:String(ION_RADIUS),class:ion.type==='na'?'na-ion':'cl-ion'}));const label=svgEl('text',{x:'0',y:'1',class:'ion-label'});label.textContent=ion.type==='na'?'Na⁺':'Cl⁻';g.appendChild(label);return g}
+function renderIons(layout,options={}){const groups={};ions.forEach(ion=>{const g=createIonGroup(ion,layout[ion.id],options);particleLayer.appendChild(g);groups[ion.id]=g});if(options.animateTo)animateIonGroups(groups,layout,options.animateTo,options.duration||2200)}
+function renderCrystal(options={}){particleLayer.innerHTML='';drawCrystalLinks(Boolean(options.hot));renderIons(crystalLayout,options)}
+function easeOutCubic(t){return 1-Math.pow(1-t,3)}
+function animateIonGroups(groups,fromLayout,toLayout,duration){const start=performance.now();function frame(now){const raw=Math.min((now-start)/duration,1);const e=easeOutCubic(raw);ions.forEach(ion=>{const from=fromLayout[ion.id],to=toLayout[ion.id];const x=from.x+(to.x-from.x)*e,y=from.y+(to.y-from.y)*e;groups[ion.id].setAttribute('transform',`translate(${x} ${y})`)});if(raw<1)activeAnimationFrame=requestAnimationFrame(frame);else activeAnimationFrame=null}activeAnimationFrame=requestAnimationFrame(frame)}
+function createFreeWater(x,y,angle,showCharges,scale=1){const group=svgEl('g',{transform:`translate(${x} ${y}) rotate(${angle}) scale(${scale})`});group.appendChild(svgEl('line',{x1:'0',y1:'0',x2:'-15',y2:'-12',class:'water-bond'}));group.appendChild(svgEl('line',{x1:'0',y1:'0',x2:'15',y2:'-12',class:'water-bond'}));group.appendChild(svgEl('circle',{cx:'0',cy:'0',r:'11',class:'water-o'}));group.appendChild(svgEl('circle',{cx:'-15',cy:'-12',r:'5.5',class:'water-h'}));group.appendChild(svgEl('circle',{cx:'15',cy:'-12',r:'5.5',class:'water-h'}));if(showCharges){const dm=svgEl('text',{x:'0',y:'0',class:'delta-minus'});dm.textContent='δ−';const dp1=svgEl('text',{x:'-15',y:'-12',class:'delta-plus'});dp1.textContent='δ+';const dp2=svgEl('text',{x:'15',y:'-12',class:'delta-plus'});dp2.textContent='δ+';group.append(dm,dp1,dp2)}return group}
+function renderAmbientWater(animated){ambientWaterLayer.innerHTML='';approachWaters.forEach(w=>{const wrapper=svgEl('g',{class:'water-ambient water-focus'});if(animated){wrapper.appendChild(svgEl('animateTransform',{attributeName:'transform',type:'translate',from:`${w.fromX} ${w.fromY}`,to:`${w.toX} ${w.toY}`,dur:'.95s',begin:w.begin||'0s',fill:'freeze',calcMode:'spline',keyTimes:'0;1',keySplines:'0.22 1 0.36 1'}))}else wrapper.setAttribute('transform',`translate(${w.toX} ${w.toY})`);wrapper.appendChild(createFreeWater(0,0,w.angle,w.charges,w.scale||1));ambientWaterLayer.appendChild(wrapper)})}
+function renderDockedWatersFade(){ambientWaterLayer.innerHTML='';approachWaters.forEach(w=>{const wrapper=svgEl('g',{class:'water-ambient water-focus',transform:`translate(${w.toX} ${w.toY})`});wrapper.appendChild(svgEl('animate',{attributeName:'opacity',from:'1',to:'0',dur:'1.05s',begin:'.18s',fill:'freeze'}));wrapper.appendChild(createFreeWater(0,0,w.angle,w.charges,w.scale||1));ambientWaterLayer.appendChild(wrapper)})}
+function drawHydrationShell(group,type,options={}){const shell=type==='na'?[{x:0,y:-40,angle:0},{x:40,y:0,angle:90},{x:0,y:40,angle:180},{x:-40,y:0,angle:-90}]:[{x:0,y:-48,angle:180},{x:48,y:0,angle:-90},{x:0,y:48,angle:0},{x:-48,y:0,angle:90}];const start=type==='na'?[{x:18,y:-18},{x:20,y:-6},{x:20,y:6},{x:18,y:18}]:[{x:-18,y:-18},{x:-20,y:-6},{x:-20,y:6},{x:-18,y:18}];shell.forEach((c,i)=>{if(options.transition){const wg=svgEl('g');wg.appendChild(svgEl('animateTransform',{attributeName:'transform',type:'translate',from:`${start[i].x} ${start[i].y}`,to:`${c.x} ${c.y}`,dur:'1.2s',begin:'.12s',fill:'freeze',calcMode:'spline',keyTimes:'0;1',keySplines:'0.22 1 0.36 1'}));wg.appendChild(svgEl('animate',{attributeName:'opacity',from:'.25',to:'1',dur:'.8s',begin:'.12s',fill:'freeze'}));wg.appendChild(createFreeWater(0,0,c.angle,false,.72));group.appendChild(wg)}else group.appendChild(createFreeWater(c.x,c.y,c.angle,false,.72))})}
+function renderBurner(){const g=svgEl('g',{transform:'translate(540 510)'});g.appendChild(svgEl('ellipse',{cx:'0',cy:'52',rx:'80',ry:'16',fill:'rgba(15,23,42,0.16)'}));g.appendChild(svgEl('rect',{x:'-54',y:'26',width:'108',height:'28',rx:'10',fill:'#475569',stroke:'#334155','stroke-width':'2'}));g.appendChild(svgEl('rect',{x:'-22',y:'-30',width:'44',height:'64',rx:'10',fill:'#94a3b8',stroke:'#475569','stroke-width':'2'}));g.appendChild(svgEl('rect',{x:'-15',y:'-65',width:'30',height:'42',rx:'8',fill:'#64748b',stroke:'#334155','stroke-width':'2'}));g.appendChild(svgEl('path',{d:'M0 -152 C -45 -110 -25 -73 0 -58 C 30 -78 52 -112 0 -152Z',fill:'url(#flameGrad)',class:'flame-mid'}));g.appendChild(svgEl('path',{d:'M0 -126 C -22 -98 -14 -76 0 -66 C 16 -80 25 -103 0 -126Z',fill:'url(#blueFlame)',class:'flame-core'}));[-90,-55,-20,18,55,90].forEach((x,i)=>{const dot=svgEl('circle',{cx:String(x),cy:String(-118-i%2*24),r:String(5+i%3),class:'heat-dot'});g.appendChild(dot)});[-58,0,58].forEach(x=>g.appendChild(svgEl('path',{d:`M${x} -150 C ${x-26} -188, ${x+26} -206, ${x} -246`,class:'heat-wave'})));heatLayer.appendChild(g)}
+function renderMeltBowl(){const bowl=svgEl('g',{transform:'translate(540 372)',filter:'url(#softShadow)'});bowl.appendChild(svgEl('path',{d:'M-188 -14 C-150 72 150 72 188 -14 Z',fill:'rgba(254,215,170,.72)',stroke:'#fb923c','stroke-width':'3'}));bowl.appendChild(svgEl('ellipse',{cx:'0',cy:'-14',rx:'188',ry:'36',fill:'rgba(255,247,237,.75)',stroke:'#fdba74','stroke-width':'3'}));bowl.appendChild(svgEl('path',{d:'M-128 -16 C-70 -44 70 -44 128 -16',fill:'none',stroke:'#f97316','stroke-width':'4','stroke-linecap':'round',opacity:'.42'}));heatLayer.appendChild(bowl)}
+function showStep(step){currentStep=step;updateNavigation();clearLayers();if(currentMode==='melt')showMeltStep(step);else showSolutionStep(step)}
+function showMeltStep(step){if(step===1){renderCrystal();setTexts('Festes Natriumchlorid besteht aus einem Ionenkristall.','Die Na⁺- und Cl⁻-Ionen sind regelmäßig angeordnet und durch starke Ionenbindungen an feste Plätze gebunden. Deshalb gibt es im festen Salz keine frei beweglichen Ladungsträger.');return}if(step===2){renderBurner();renderMeltBowl();renderCrystal({hot:true});setTexts('Der Bunsenbrenner erwärmt das Salz stark.','Durch die zugeführte Wärme schwingen die Ionen immer stärker. Die Ionenbindungen im Gitter werden überwunden: Das starre Gitter beginnt aufzubrechen.');return}if(step===3){renderBurner();renderMeltBowl();renderIons(crystalLayout,{animateTo:meltLooseLayout,duration:1800});setTexts('In der Schmelze sind die Ionen frei beweglich.','Die Ionen sind nicht mehr an feste Gitterplätze gebunden. Es liegen bewegliche Na⁺- und Cl⁻-Ionen vor. Damit sind Ladungsträger vorhanden.');return}if(step===4){showField();renderMeltBowl();renderIons(meltLooseLayout,{animateTo:meltTargetLayout,duration:2800});setTexts('Bei angelegter Spannung wandern die Ionen zu den Elektroden.','Na⁺-Ionen bewegen sich zum Minuspol, Cl⁻-Ionen zum Pluspol. Diese gerichtete Bewegung geladener Teilchen ist elektrischer Strom. Deshalb leitet geschmolzenes Natriumchlorid.')}}
+function showSolutionStep(step){if(step===1){renderCrystal();setTexts('Auch beim Lösen startet man mit festem Natriumchlorid.','Im festen Kristall sind die Na⁺- und Cl⁻-Ionen noch fest gebunden. Festes Natriumchlorid leitet deshalb nicht.');return}if(step===2){renderAmbientWater(true);renderCrystal();setTexts('Wassermoleküle nähern sich dem NaCl-Kristall.','Wasser ist polar: Die Sauerstoffseite ist δ−, die Wasserstoffseiten sind δ+. Dadurch können sich Wassermoleküle passend an Na⁺- und Cl⁻-Ionen ausrichten.');return}if(step===3){renderDockedWatersFade();renderIons(crystalLayout,{hydrated:true,hydrationTransition:true,animateTo:solutionLayout,duration:1650});setTexts('Wassermoleküle ziehen die Ionen aus dem Kristall heraus.','Bei Na⁺ zeigt die Sauerstoffseite des Wassers nach innen. Bei Cl⁻ zeigen die Wasserstoffseiten nach innen. So entstehen hydratisierte, frei bewegliche Ionen.');return}if(step===4){showField();renderIons(solutionLayout,{hydrated:true,animateTo:solutionTargetLayout,duration:2800});setTexts('Die NaCl-Lösung leitet Strom durch hydratisierte, bewegliche Ionen.','Na⁺-Ionen wandern mit ihrer Hydrathülle zum Minuspol, Cl⁻-Ionen mit ihrer Hydrathülle zum Pluspol. Die gerichtete Bewegung dieser hydratisierten Ionen ist der elektrische Strom in der Lösung.')}}
+showStep(1);
+</script>
+</body>
+</html>
