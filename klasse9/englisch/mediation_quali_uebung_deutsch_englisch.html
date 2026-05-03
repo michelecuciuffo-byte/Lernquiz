@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mediation-Training Quali – Deutsch ↔ Englisch</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --muted: #667085;
+      --primary: #2563eb;
+      --primary-soft: #dbeafe;
+      --accent: #f97316;
+      --accent-soft: #ffedd5;
+      --success: #16a34a;
+      --success-soft: #dcfce7;
+      --danger: #dc2626;
+      --border: #d9e2ef;
+      --shadow: 0 14px 34px rgba(15, 23, 42, 0.10);
+      --radius: 22px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #e0f2fe 0, transparent 30%), var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .page {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px 60px;
+    }
+
+    header {
+      background: linear-gradient(135deg, #2563eb, #7c3aed);
+      color: white;
+      padding: 34px 28px;
+      border-radius: 30px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    header h1 {
+      margin: 0 0 10px;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      line-height: 1.05;
+      letter-spacing: -0.04em;
+    }
+
+    header p {
+      max-width: 820px;
+      margin: 0;
+      font-size: 1.08rem;
+      opacity: 0.95;
+    }
+
+    .toolbar {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 12px;
+      margin: 20px 0 24px;
+    }
+
+    .tool-card {
+      background: rgba(255, 255, 255, 0.88);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.06);
+    }
+
+    .tool-card strong {
+      display: block;
+      margin-bottom: 6px;
+      font-size: 1rem;
+    }
+
+    .tool-card span {
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 14px 0 24px;
+    }
+
+    .tab-btn {
+      border: 1px solid var(--border);
+      background: white;
+      color: var(--text);
+      padding: 11px 14px;
+      border-radius: 999px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: 0.2s ease;
+      box-shadow: 0 5px 14px rgba(15, 23, 42, 0.06);
+    }
+
+    .tab-btn:hover {
+      transform: translateY(-1px);
+      border-color: var(--primary);
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: white;
+      border-color: var(--primary);
+    }
+
+    .scenario {
+      display: none;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 30px;
+      padding: 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 24px;
+    }
+
+    .scenario.active {
+      display: block;
+    }
+
+    .scenario-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 18px;
+      margin-bottom: 20px;
+    }
+
+    .scenario h2 {
+      margin: 0 0 8px;
+      font-size: clamp(1.45rem, 3vw, 2.2rem);
+      letter-spacing: -0.02em;
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 0.86rem;
+      font-weight: 700;
+      background: var(--primary-soft);
+      color: #1d4ed8;
+    }
+
+    .badge.orange {
+      background: var(--accent-soft);
+      color: #c2410c;
+    }
+
+    .badge.green {
+      background: var(--success-soft);
+      color: #15803d;
+    }
+
+    .task-box {
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 16px;
+      margin-bottom: 18px;
+    }
+
+    .task-box h3,
+    .help-box h3,
+    .check-box h3 {
+      margin: 0 0 10px;
+      font-size: 1.12rem;
+    }
+
+    .conversation {
+      display: grid;
+      gap: 14px;
+    }
+
+    .turn {
+      border-radius: 20px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      position: relative;
+    }
+
+    .turn.de {
+      border-left: 7px solid var(--accent);
+      background: linear-gradient(90deg, #fff7ed, #ffffff 45%);
+    }
+
+    .turn.en {
+      border-left: 7px solid var(--primary);
+      background: linear-gradient(90deg, #eff6ff, #ffffff 45%);
+    }
+
+    .speaker {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 8px;
+      font-weight: 800;
+    }
+
+    .lang {
+      font-size: 0.78rem;
+      border-radius: 999px;
+      padding: 4px 8px;
+      color: white;
+      background: var(--muted);
+      white-space: nowrap;
+    }
+
+    .turn.de .lang {
+      background: var(--accent);
+    }
+
+    .turn.en .lang {
+      background: var(--primary);
+    }
+
+    .prompt {
+      margin: 0 0 10px;
+      font-size: 1.02rem;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 76px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      resize: vertical;
+      font: inherit;
+      background: #ffffff;
+      outline: none;
+    }
+
+    textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    button.action {
+      border: 0;
+      border-radius: 999px;
+      padding: 10px 14px;
+      font-weight: 800;
+      cursor: pointer;
+      background: var(--primary);
+      color: white;
+      transition: 0.2s ease;
+    }
+
+    button.action.secondary {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    button.action.orange {
+      background: var(--accent);
+    }
+
+    button.action:hover {
+      transform: translateY(-1px);
+      filter: brightness(0.98);
+    }
+
+    .solution {
+      display: none;
+      margin-top: 10px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: var(--success-soft);
+      border: 1px solid #86efac;
+    }
+
+    .solution.show {
+      display: block;
+    }
+
+    .solution strong {
+      color: #166534;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+      margin-top: 22px;
+    }
+
+    .help-box,
+    .check-box {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 16px;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.05);
+    }
+
+    .help-box ul,
+    .check-box ul {
+      margin: 0;
+      padding-left: 20px;
+    }
+
+    .help-box li,
+    .check-box li {
+      margin-bottom: 7px;
+    }
+
+    .mini-inputs {
+      display: grid;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .mini-inputs label {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 8px;
+      align-items: start;
+      color: var(--text);
+    }
+
+    .mini-inputs input[type="checkbox"] {
+      transform: translateY(4px) scale(1.1);
+    }
+
+    .scorebar {
+      position: sticky;
+      bottom: 12px;
+      margin-top: 24px;
+      background: rgba(255,255,255,0.94);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 10px 14px;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      backdrop-filter: blur(8px);
+    }
+
+    .progress-wrap {
+      height: 12px;
+      flex: 1;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), var(--success));
+      transition: width 0.25s ease;
+    }
+
+    footer {
+      color: var(--muted);
+      text-align: center;
+      margin-top: 26px;
+      font-size: 0.95rem;
+    }
+
+    @media (max-width: 820px) {
+      .toolbar,
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+
+      .scenario-head {
+        flex-direction: column;
+      }
+
+      .scorebar {
+        border-radius: 22px;
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .progress-wrap {
+        width: 100%;
+        flex: none;
+      }
+    }
+
+    @media print {
+      body {
+        background: #ffffff;
+      }
+
+      .page {
+        max-width: none;
+        padding: 0;
+      }
+
+      header,
+      .scenario,
+      .tool-card,
+      .help-box,
+      .check-box {
+        box-shadow: none;
+      }
+
+      .tabs,
+      .btn-row,
+      .scorebar,
+      textarea,
+      footer {
+        display: none !important;
+      }
+
+      .scenario {
+        display: block !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+        margin-bottom: 14mm;
+      }
+
+      .solution {
+        display: block !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header>
+      <h1>Mediation-Training Quali</h1>
+      <p>Übe typische Gesprächssituationen: Du vermittelst zwischen einer deutschsprachigen und einer englischsprachigen Person. Dabei übersetzt du nicht jedes Wort einzeln, sondern gibst die wichtigsten Informationen passend und höflich weiter.</p>
+    </header>
+
+    <section class="toolbar" aria-label="Hinweise">
+      <div class="tool-card">
+        <strong>So arbeitest du:</strong>
+        <span>Lies immer zuerst den Satz einer Person. Formuliere dann eine passende Antwort in der jeweils anderen Sprache.</span>
+      </div>
+      <div class="tool-card">
+        <strong>Wichtig:</strong>
+        <span>Namen, Uhrzeiten, Preise, Orte und Probleme genau übernehmen.</span>
+      </div>
+      <div class="tool-card">
+        <strong>Quali-Tipp:</strong>
+        <span>Höflich, kurz und klar sprechen. Kleine Vereinfachungen sind erlaubt.</span>
+      </div>
+    </section>
+
+    <nav class="tabs" aria-label="Szenarien auswählen">
+      <button class="tab-btn active" onclick="showScenario(0)">1 Bahnhof</button>
+      <button class="tab-btn" onclick="showScenario(1)">2 Hotel</button>
+      <button class="tab-btn" onclick="showScenario(2)">3 Arztpraxis</button>
+      <button class="tab-btn" onclick="showScenario(3)">4 Schule</button>
+      <button class="tab-btn" onclick="showScenario(4)">5 Restaurant</button>
+      <button class="tab-btn" onclick="showScenario(5)">6 Zoo</button>
+    </nav>
+
+    <main id="scenarioContainer"></main>
+
+    <div class="scorebar" aria-label="Fortschritt">
+      <strong id="progressText">0 / 0 abgehakt</strong>
+      <div class="progress-wrap"><div class="progress" id="progressBar"></div></div>
+      <button class="action secondary" onclick="resetChecks()">Fortschritt zurücksetzen</button>
+    </div>
+
+    <footer>
+      Tipp: Im Druckmodus werden alle Szenarien und Lösungen angezeigt.
+    </footer>
+  </div>
+
+  <script>
+    const scenarios = [
+      {
+        title: "Am Bahnhof – Anschlusszug verpasst",
+        roles: "Du hilfst einer deutschen Reisenden und einem englischsprachigen Bahnmitarbeiter.",
+        level: "leicht bis mittel",
+        goal: "Vermittle Informationen zu Verspätung, Gleis, Ticket und Ersatzverbindung.",
+        turns: [
+          {
+            speaker: "Frau Schneider",
+            lang: "Deutsch",
+            className: "de",
+            prompt: "Entschuldigung, mein Zug aus Nürnberg hatte 25 Minuten Verspätung. Deshalb habe ich den Anschlusszug nach Salzburg verpasst. Können Sie bitte fragen, wann der nächste Zug fährt?",
+            direction: "Antworte auf Englisch.",
+            solution: "Excuse me, her train from Nuremberg was 25 minutes late, so she missed her connecting train to Salzburg. Could you tell us when the next train leaves?"
+          },
+          {
+            speaker: "Railway employee",
+            lang: "English",
+            className: "en",
+            prompt: "The next train to Salzburg leaves at 4:18 p.m. from platform 7. She can use the same ticket because the delay was not her fault.",
+            direction: "Antworte auf Deutsch.",
+            solution: "Der nächste Zug nach Salzburg fährt um 16:18 Uhr von Gleis 7. Sie kann dasselbe Ticket benutzen, weil die Verspätung nicht ihre Schuld war."
+          },
+          {
+            speaker: "Frau Schneider",
+            lang: "Deutsch",
+            className: "de",
+            prompt: "Danke. Können Sie noch fragen, ob ich in Salzburg meinen reservierten Sitzplatz trotzdem bekomme?",
+            direction: "Antworte auf Englisch.",
+            solution: "Thank you. She would also like to know whether she can still get her reserved seat when she arrives in Salzburg."
+          },
+          {
+            speaker: "Railway employee",
+            lang: "English",
+            className: "en",
+            prompt: "Unfortunately, the seat reservation is only valid for the original train. She can go to the service desk and ask for a refund for the reservation.",
+            direction: "Antworte auf Deutsch.",
+            solution: "Leider gilt die Sitzplatzreservierung nur für den ursprünglichen Zug. Sie kann zum Service-Schalter gehen und eine Erstattung für die Reservierung beantragen."
+          }
+        ],
+        phrases: [
+          "She would like to know whether ...",
+          "He says that ... / She says that ...",
+          "The next train leaves at ...",
+          "You can use the same ticket.",
+          "Unfortunately, ..."
+        ],
+        checklist: [
+          "Verspätung und Grund genannt",
+          "Uhrzeit und Gleis korrekt übernommen",
+          "Ticketinformation korrekt erklärt",
+          "höflich und verständlich formuliert"
+        ]
+      },
+      {
+        title: "Im Hotel – Problem mit dem Zimmer",
+        roles: "Du vermittelst zwischen einem deutschen Gast und einer englischsprachigen Rezeptionistin.",
+        level: "mittel",
+        goal: "Erkläre ein Zimmerproblem und gib Lösungsvorschläge weiter.",
+        turns: [
+          {
+            speaker: "Herr Weber",
+            lang: "Deutsch",
+            className: "de",
+            prompt: "Unser Zimmer ist leider nicht sauber. Im Bad liegen noch Handtücher vom vorherigen Gast, und die Klimaanlage funktioniert nicht. Können Sie das bitte an der Rezeption erklären?",
+            direction: "Antworte auf Englisch.",
+            solution: "Unfortunately, their room is not clean. There are still towels from the previous guest in the bathroom, and the air conditioning does not work. Could you please help them?"
+          },
+          {
+            speaker: "Receptionist",
+            lang: "English",
+            className: "en",
+            prompt: "I am very sorry. We can send housekeeping immediately. If they prefer, we can also offer them another room on the third floor.",
+            direction: "Antworte auf Deutsch.",
+            solution: "Es tut ihr sehr leid. Sie können sofort jemanden vom Housekeeping schicken. Wenn ihr möchtet, können sie euch auch ein anderes Zimmer im dritten Stock anbieten."
+          },
+          {
+            speaker: "Herr Weber",
+            lang: "Deutsch",
+            className: "de",
+            prompt: "Ein anderes Zimmer wäre besser. Bitte fragen Sie, ob es dort ruhig ist und ob wir unsere Koffer direkt mitnehmen sollen.",
+            direction: "Antworte auf Englisch.",
+            solution: "They would prefer another room. Could you tell us whether it is quiet there and whether they should take their luggage with them now?"
+          },
+          {
+            speaker: "Receptionist",
+            lang: "English",
+            className: "en",
+            prompt: "Yes, the room is quiet and faces the courtyard. They can take their luggage now, and I will give them the new key card.",
+            direction: "Antworte auf Deutsch.",
+            solution: "Ja, das Zimmer ist ruhig und liegt zum Innenhof. Ihr könnt eure Koffer jetzt mitnehmen, und sie gibt euch die neue Schlüsselkarte."
+          }
+        ],
+        phrases: [
+          "The room is not clean.",
+          "The air conditioning does not work.",
+          "They would prefer another room.",
+          "The room faces the courtyard.",
+          "She will give you the new key card."
+        ],
+        checklist: [
+          "Problem mit Sauberkeit genannt",
+          "Problem mit Klimaanlage genannt",
+          "Alternative Zimmerlösung erklärt",
+          "Information zu Gepäck und Schlüsselkarte weitergegeben"
+        ]
+      },
+      {
+        title: "In der Arztpraxis – Bauchschmerzen im Urlaub",
+        roles: "Du hilfst einem deutschen Jugendlichen und einer englischsprachigen Ärztin.",
+        level: "mittel bis anspruchsvoll",
+        goal: "Vermittle Beschwerden, Dauer, mögliche Ursachen und ärztliche Hinweise.",
+        turns: [
+          {
+            speaker: "Lukas",
+            lang: "Deutsch",
+            className: "de",
+            prompt: "Ich habe seit gestern Abend Bauchschmerzen und mir ist übel. Ich habe gestern am Strand ein Sandwich gegessen, das schon ziemlich warm war. Kannst du das der Ärztin sagen?",
+            direction: "Antworte auf Englisch.",
+            solution: "He has had stomach pain since yesterday evening and he feels sick. Yesterday he ate a sandwich at the beach, and it was already quite warm."
+          },
+          {
+            speaker: "Doctor",
+            lang: "English",
+            className: "en",
+            prompt: "Has he got a fever or diarrhoea? And has he drunk enough water today?",
+            direction: "Antworte auf Deutsch.",
+            solution: "Sie fragt, ob du Fieber oder Durchfall hast. Außerdem möchte sie wissen, ob du heute genug Wasser getrunken hast."
+          },
+          {
+            speaker: "Lukas",
+            lang: "Deutsch",
+            className: "de",
+            prompt: "Fieber habe ich nicht, aber ich musste heute schon dreimal auf die Toilette. Getrunken habe ich nur ein Glas Wasser und eine Cola.",
+            direction: "Antworte auf Englisch.",
+            solution: "He does not have a fever, but he has been to the toilet three times today. He has only drunk one glass of water and one coke."
+          },
+          {
+            speaker: "Doctor",
+            lang: "English",
+            className: "en",
+            prompt: "He should drink a lot of water or tea and eat only light food today. If the pain gets worse or if he gets a fever, he should come back immediately.",
+            direction: "Antworte auf Deutsch.",
+            solution: "Du sollst heute viel Wasser oder Tee trinken und nur leichte Kost essen. Wenn die Schmerzen schlimmer werden oder du Fieber bekommst, sollst du sofort wiederkommen."
+          }
+        ],
+        phrases: [
+          "He has had stomach pain since ...",
+          "He feels sick.",
+          "She asks whether ...",
+          "He should drink a lot of water.",
+          "If the pain gets worse, ..."
+        ],
+        checklist: [
+          "Dauer der Beschwerden genannt",
+          "mögliche Ursache erklärt",
+          "Fragen zu Fieber, Durchfall und Trinken weitergegeben",
+          "ärztliche Hinweise korrekt vermittelt"
+        ]
+      },
+      {
+        title: "In der Schule – Austauschschülerin versteht die Regeln nicht",
+        roles: "Du vermittelst zwischen einer deutschen Lehrkraft und einer englischsprachigen Austauschschülerin.",
+        level: "leicht bis mittel",
+        goal: "Erkläre Schulregeln, Zeiten und organisatorische Hinweise.",
+        turns: [
+          {
+            speaker: "Lehrerin",
+            lang: "Deutsch",
+            className: "de",
+            prompt: "Bitte sag Emily, dass sie morgen um 7:45 Uhr vor dem Sekretariat sein soll. Sie bekommt dort ihren Stundenplan und einen Schlüssel für ihr Schließfach.",
+            direction: "Antworte auf Englisch.",
+            solution: "Emily, you should be in front of the school office tomorrow at 7:45 a.m. You will get your timetable there and a key for your locker."
+          },
+          {
+            speaker: "Emily",
+            lang: "English",
+            className: "en",
+            prompt: "Thank you. Do I have to bring sports clothes tomorrow? And am I allowed to use my phone during breaks?",
+            direction: "Antworte auf Deutsch.",
+            solution: "Sie bedankt sich und fragt, ob sie morgen Sportsachen mitbringen muss. Außerdem möchte sie wissen, ob sie ihr Handy in den Pausen benutzen darf."
+          },
+          {
+            speaker: "Lehrerin",
+            lang: "Deutsch",
+            className: "de",
+            prompt: "Sportsachen braucht sie erst am Donnerstag. Das Handy darf sie in den Pausen benutzen, aber nicht im Unterricht und nicht in der Mensa.",
+            direction: "Antworte auf Englisch.",
+            solution: "You only need sports clothes on Thursday. You are allowed to use your phone during breaks, but not during lessons and not in the cafeteria."
+          },
+          {
+            speaker: "Emily",
+            lang: "English",
+            className: "en",
+            prompt: "That is clear. Could you also ask where I can buy lunch at school?",
+            direction: "Antworte auf Deutsch.",
+            solution: "Das ist klar. Sie fragt außerdem, wo sie in der Schule Mittagessen kaufen kann."
+          }
+        ],
+        phrases: [
+          "You should be in front of ...",
+          "You will get your timetable.",
+          "Are we allowed to ...?",
+          "You are allowed to ..., but not ...",
+          "She would like to know where ..."
+        ],
+        checklist: [
+          "Uhrzeit und Ort korrekt genannt",
+          "Stundenplan und Schließfach erklärt",
+          "Handyregel richtig weitergegeben",
+          "Frage nach Mittagessen verständlich vermittelt"
+        ]
+      },
+      {
+        title: "Im Restaurant – Allergie und Bestellung",
+        roles: "Du hilfst einem deutschen Gast und einem englischsprachigen Kellner.",
+        level: "mittel",
+        goal: "Vermittle Allergien, Essenswünsche und Nachfragen zur Speisekarte.",
+        turns: [
+          {
+            speaker: "Anna",
+            lang: "Deutsch",
+            className: "de",
+            prompt: "Ich habe eine Nussallergie. Kannst du bitte fragen, ob in der Tomatensuppe oder im vegetarischen Burger Nüsse enthalten sind?",
+            direction: "Antworte auf Englisch.",
+            solution: "She has a nut allergy. Could you please tell us whether there are any nuts in the tomato soup or in the vegetarian burger?"
+          },
+          {
+            speaker: "Waiter",
+            lang: "English",
+            className: "en",
+            prompt: "The tomato soup is safe, but the vegetarian burger may contain traces of nuts because it is prepared in the same kitchen area.",
+            direction: "Antworte auf Deutsch.",
+            solution: "Die Tomatensuppe ist sicher. Der vegetarische Burger kann aber Spuren von Nüssen enthalten, weil er im selben Küchenbereich zubereitet wird."
+          },
+          {
+            speaker: "Anna",
+            lang: "Deutsch",
+            className: "de",
+            prompt: "Dann nehme ich lieber die Tomatensuppe und einen kleinen Salat ohne Dressing. Bitte frag auch, ob ich Leitungswasser bekommen kann.",
+            direction: "Antworte auf Englisch.",
+            solution: "Then she would prefer the tomato soup and a small salad without dressing. Could she also have some tap water, please?"
+          },
+          {
+            speaker: "Waiter",
+            lang: "English",
+            className: "en",
+            prompt: "Of course. I will bring the soup, the salad without dressing and a glass of tap water. The food will take about 15 minutes.",
+            direction: "Antworte auf Deutsch.",
+            solution: "Natürlich. Er bringt die Suppe, den Salat ohne Dressing und ein Glas Leitungswasser. Das Essen dauert ungefähr 15 Minuten."
+          }
+        ],
+        phrases: [
+          "She has a nut allergy.",
+          "Does it contain nuts?",
+          "It may contain traces of ...",
+          "She would prefer ...",
+          "The food will take about ... minutes."
+        ],
+        checklist: [
+          "Allergie deutlich genannt",
+          "beide Gerichte nachgefragt",
+          "Risiko mit Spuren richtig erklärt",
+          "Bestellung und Wartezeit korrekt vermittelt"
+        ]
+      },
+      {
+        title: "Im Zoo – Informationen zur Führung",
+        roles: "Du vermittelst zwischen einer deutschen Familie und einem englischsprachigen Zoo-Mitarbeiter.",
+        level: "leicht bis mittel",
+        goal: "Gib Informationen zu Zeiten, Treffpunkt, Preisen und Regeln weiter.",
+        turns: [
+          {
+            speaker: "Familie Becker",
+            lang: "Deutsch",
+            className: "de",
+            prompt: "Wir interessieren uns für die Führung zu den Wildtieren. Kannst du fragen, wann sie beginnt, wie lange sie dauert und wo der Treffpunkt ist?",
+            direction: "Antworte auf Englisch.",
+            solution: "They are interested in the guided tour about wild animals. Could you tell us when it starts, how long it takes and where the meeting point is?"
+          },
+          {
+            speaker: "Zoo guide",
+            lang: "English",
+            className: "en",
+            prompt: "The tour starts at 2 p.m. and takes about 45 minutes. The meeting point is next to the lion enclosure.",
+            direction: "Antworte auf Deutsch.",
+            solution: "Die Führung beginnt um 14 Uhr und dauert ungefähr 45 Minuten. Der Treffpunkt ist neben dem Löwengehege."
+          },
+          {
+            speaker: "Familie Becker",
+            lang: "Deutsch",
+            className: "de",
+            prompt: "Bitte frag, ob die Führung extra kostet und ob Kinder Fotos machen dürfen.",
+            direction: "Antworte auf Englisch.",
+            solution: "Could you please tell us whether the tour costs extra and whether children are allowed to take photos?"
+          },
+          {
+            speaker: "Zoo guide",
+            lang: "English",
+            className: "en",
+            prompt: "The tour is included in the ticket price. Children may take photos, but they must not use flash because it can disturb the animals.",
+            direction: "Antworte auf Deutsch.",
+            solution: "Die Führung ist im Eintrittspreis enthalten. Kinder dürfen Fotos machen, aber sie dürfen keinen Blitz benutzen, weil das die Tiere stören kann."
+          }
+        ],
+        phrases: [
+          "They are interested in ...",
+          "When does it start?",
+          "How long does it take?",
+          "Is it included in the ticket price?",
+          "They must not use flash."
+        ],
+        checklist: [
+          "Startzeit und Dauer korrekt genannt",
+          "Treffpunkt richtig wiedergegeben",
+          "Preisregel erklärt",
+          "Fotoregel mit Begründung vermittelt"
+        ]
+      }
+    ];
+
+    const container = document.getElementById("scenarioContainer");
+
+    function createScenarioHTML(scenario, index) {
+      const turnsHTML = scenario.turns.map((turn, turnIndex) => `
+        <article class="turn ${turn.className}">
+          <div class="speaker">
+            <span>${turn.speaker}</span>
+            <span class="lang">${turn.lang}</span>
+          </div>
+          <p class="prompt">${turn.prompt}</p>
+          <strong>${turn.direction}</strong>
+          <textarea placeholder="Schreibe hier deine Mediation ..."></textarea>
+          <div class="btn-row">
+            <button class="action" onclick="toggleSolution(${index}, ${turnIndex})">Lösung anzeigen</button>
+            <button class="action secondary" onclick="clearTextarea(this)">Eingabe löschen</button>
+          </div>
+          <div class="solution" id="solution-${index}-${turnIndex}">
+            <strong>Mögliche Lösung:</strong><br>${turn.solution}
+          </div>
+        </article>
+      `).join("");
+
+      const phrasesHTML = scenario.phrases.map(item => `<li>${item}</li>`).join("");
+      const checklistHTML = scenario.checklist.map((item, itemIndex) => `
+        <label>
+          <input type="checkbox" class="check" onchange="updateProgress()" />
+          <span>${item}</span>
+        </label>
+      `).join("");
+
+      return `
+        <section class="scenario ${index === 0 ? "active" : ""}" id="scenario-${index}">
+          <div class="scenario-head">
+            <div>
+              <h2>${scenario.title}</h2>
+              <p>${scenario.roles}</p>
+            </div>
+            <div class="badge-row">
+              <span class="badge">Quali Mediation</span>
+              <span class="badge orange">${scenario.level}</span>
+              <span class="badge green">Deutsch ↔ Englisch</span>
+            </div>
+          </div>
+
+          <div class="task-box">
+            <h3>Aufgabe:</h3>
+            <p>${scenario.goal}</p>
+          </div>
+
+          <div class="conversation">
+            ${turnsHTML}
+          </div>
+
+          <div class="grid-2">
+            <aside class="help-box">
+              <h3>Nützliche Formulierungen:</h3>
+              <ul>${phrasesHTML}</ul>
+            </aside>
+            <aside class="check-box">
+              <h3>Selbstcheck:</h3>
+              <div class="mini-inputs">${checklistHTML}</div>
+            </aside>
+          </div>
+        </section>
+      `;
+    }
+
+    container.innerHTML = scenarios.map(createScenarioHTML).join("");
+
+    function showScenario(index) {
+      document.querySelectorAll(".scenario").forEach((scenario, i) => {
+        scenario.classList.toggle("active", i === index);
+      });
+      document.querySelectorAll(".tab-btn").forEach((btn, i) => {
+        btn.classList.toggle("active", i === index);
+      });
+      window.scrollTo({ top: 0, behavior: "smooth" });
+    }
+
+    function toggleSolution(scenarioIndex, turnIndex) {
+      const element = document.getElementById(`solution-${scenarioIndex}-${turnIndex}`);
+      element.classList.toggle("show");
+    }
+
+    function clearTextarea(button) {
+      const card = button.closest(".turn");
+      const textarea = card.querySelector("textarea");
+      textarea.value = "";
+      textarea.focus();
+    }
+
+    function updateProgress() {
+      const checks = Array.from(document.querySelectorAll(".check"));
+      const checked = checks.filter(check => check.checked).length;
+      const total = checks.length;
+      const percent = total === 0 ? 0 : Math.round((checked / total) * 100);
+      document.getElementById("progressText").textContent = `${checked} / ${total} abgehakt`;
+      document.getElementById("progressBar").style.width = `${percent}%`;
+    }
+
+    function resetChecks() {
+      document.querySelectorAll(".check").forEach(check => check.checked = false);
+      updateProgress();
+    }
+
+    updateProgress();
+  </script>
+</body>
+</html>

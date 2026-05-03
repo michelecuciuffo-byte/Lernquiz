@@ -1,0 +1,1194 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>QUALI Speaking Trainer – Mindmap Edition</title>
+
+<style>
+:root{
+--bg:#f8fafc;
+--card:#ffffff;
+--main:#2563eb;
+--main2:#1d4ed8;
+--soft:#dbeafe;
+--text:#1e293b;
+--muted:#64748b;
+--line:#cbd5e1;
+--shadow:0 14px 30px rgba(0,0,0,.08);
+--radius:24px;
+--ok:#16a34a;
+--bad:#dc2626;
+--warn:#f59e0b;
+}
+
+*{box-sizing:border-box;}
+
+body{
+margin:0;
+font-family:Arial,Helvetica,sans-serif;
+background:linear-gradient(135deg,#eff6ff,#ffffff);
+color:var(--text);
+}
+
+header{
+padding:28px 18px;
+text-align:center;
+}
+
+header h1{
+margin:0;
+font-size:clamp(2rem,5vw,4rem);
+color:var(--main2);
+}
+
+header p{
+margin:12px auto 0;
+max-width:900px;
+line-height:1.6;
+color:var(--muted);
+}
+
+.wrap{
+width:min(1300px,95%);
+margin:auto;
+padding-bottom:40px;
+}
+
+.topbar{
+display:flex;
+flex-wrap:wrap;
+gap:10px;
+justify-content:center;
+margin-bottom:22px;
+position:sticky;
+top:0;
+z-index:20;
+padding:12px;
+background:rgba(248,250,252,.88);
+backdrop-filter:blur(10px);
+border-radius:0 0 24px 24px;
+}
+
+.tab{
+border:none;
+padding:12px 18px;
+border-radius:999px;
+cursor:pointer;
+font-weight:700;
+background:white;
+box-shadow:var(--shadow);
+transition:.18s ease;
+}
+
+.tab:hover{
+transform:translateY(-2px);
+}
+
+.tab.active{
+background:var(--main);
+color:white;
+}
+
+.link-tab-static{
+background:#f97316;
+color:white;
+box-shadow:0 14px 30px rgba(249,115,22,.22);
+}
+
+.link-tab-static.active{
+background:#ea580c;
+color:white;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1.15fr .85fr;
+gap:24px;
+}
+
+.card{
+background:var(--card);
+border-radius:var(--radius);
+padding:22px;
+box-shadow:var(--shadow);
+margin-bottom:22px;
+}
+
+h2,h3{margin-top:0;color:var(--main2);}
+
+.small{
+color:var(--muted);
+line-height:1.5;
+}
+
+.mindwrap{
+overflow:auto;
+padding:10px 0;
+}
+
+.mindmap{
+position:relative;
+width:760px;
+height:560px;
+margin:auto;
+background:
+linear-gradient(#f1f5f9 1px,transparent 1px),
+linear-gradient(90deg,#f1f5f9 1px,transparent 1px),
+white;
+background-size:28px 28px;
+border-radius:24px;
+border:2px solid #e2e8f0;
+}
+
+.center{
+position:absolute;
+left:50%;
+top:50%;
+transform:translate(-50%,-50%);
+width:190px;
+min-height:95px;
+border-radius:22px;
+background:var(--main);
+color:white;
+display:flex;
+align-items:center;
+justify-content:center;
+font-size:1.4rem;
+font-weight:800;
+text-align:center;
+padding:14px;
+z-index:3;
+}
+
+.branch{
+position:absolute;
+width:185px;
+background:white;
+border:2px solid #dbeafe;
+border-radius:20px;
+padding:12px;
+z-index:2;
+box-shadow:0 8px 18px rgba(0,0,0,.05);
+}
+
+.branch h4{
+margin:0 0 8px;
+font-size:.95rem;
+color:var(--main2);
+}
+
+.branch input{
+width:100%;
+padding:8px 10px;
+margin:4px 0;
+border-radius:12px;
+border:1px solid #cbd5e1;
+}
+
+.branch input:focus{
+outline:none;
+border-color:var(--main);
+box-shadow:0 0 0 3px rgba(37,99,235,.14);
+}
+
+.line{
+position:absolute;
+left:50%;
+top:50%;
+height:4px;
+background:#cbd5e1;
+transform-origin:left center;
+border-radius:999px;
+z-index:1;
+}
+
+.b1{left:35px;top:35px;}
+.b2{right:35px;top:35px;}
+.b3{left:35px;bottom:35px;}
+.b4{right:35px;bottom:35px;}
+.b5{left:287px;top:15px;}
+.b6{left:287px;bottom:15px;}
+
+.l1{width:270px;transform:rotate(220deg);}
+.l2{width:270px;transform:rotate(320deg);}
+.l3{width:270px;transform:rotate(140deg);}
+.l4{width:270px;transform:rotate(40deg);}
+.l5{width:215px;transform:rotate(270deg);}
+.l6{width:215px;transform:rotate(90deg);}
+
+.btnrow{
+display:flex;
+gap:10px;
+flex-wrap:wrap;
+margin-top:14px;
+}
+
+.btn{
+border:none;
+padding:10px 16px;
+border-radius:999px;
+cursor:pointer;
+font-weight:700;
+background:var(--main);
+color:white;
+transition:.18s ease;
+}
+
+.btn:hover{
+transform:translateY(-2px);
+background:var(--main2);
+}
+
+.btn.alt{
+background:#e2e8f0;
+color:#0f172a;
+}
+
+.btn.alt:hover{
+background:#cbd5e1;
+}
+
+.list{
+display:grid;
+gap:10px;
+}
+
+.item{
+padding:12px;
+border-radius:14px;
+background:#f8fafc;
+border-left:5px solid var(--main);
+line-height:1.45;
+}
+
+.timer{
+font-size:3rem;
+font-weight:900;
+text-align:center;
+margin:10px 0;
+}
+
+.sample{
+display:none;
+margin-top:12px;
+padding:14px;
+border-radius:16px;
+background:#ecfeff;
+line-height:1.6;
+}
+
+img.hero{
+width:100%;
+border-radius:20px;
+margin-top:10px;
+object-fit:cover;
+height:220px;
+background:#e2e8f0;
+}
+
+/* Linking phrases page */
+.link-page{
+display:none;
+}
+
+.link-page.active{
+display:block;
+}
+
+.trainer-page.hidden{
+display:none;
+}
+
+.phrase-grid{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:16px;
+}
+
+.phrase-card{
+border-radius:20px;
+padding:18px;
+background:#f8fafc;
+border:1px solid #e2e8f0;
+}
+
+.phrase-card h3{
+margin-bottom:10px;
+font-size:1.2rem;
+}
+
+.bad-example{
+background:#fff1f2;
+border-left:5px solid var(--bad);
+}
+
+.good-example{
+background:#f0fdf4;
+border-left:5px solid var(--ok);
+}
+
+.translation{
+font-size:.95rem;
+color:var(--muted);
+margin-top:5px;
+}
+
+.quiz-block{
+display:grid;
+gap:12px;
+}
+
+.quiz-question{
+padding:16px;
+border-radius:18px;
+background:#f8fafc;
+border:1px solid #e2e8f0;
+}
+
+.quiz-question strong{
+display:block;
+margin-bottom:10px;
+color:#0f172a;
+}
+
+.options{
+display:flex;
+flex-wrap:wrap;
+gap:8px;
+}
+
+.option{
+border:none;
+border-radius:999px;
+padding:9px 13px;
+background:#e2e8f0;
+cursor:pointer;
+font-weight:700;
+color:#0f172a;
+}
+
+.option.correct{
+background:#bbf7d0;
+color:#14532d;
+}
+
+.option.wrong{
+background:#fecaca;
+color:#7f1d1d;
+}
+
+.feedback{
+margin-top:10px;
+font-weight:700;
+display:none;
+}
+
+.feedback.ok{color:var(--ok);}
+.feedback.bad{color:var(--bad);}
+
+.gap-text{
+line-height:2.2;
+}
+
+.gap-input{
+display:inline-block;
+min-width:190px;
+padding:7px 10px;
+border-radius:10px;
+border:2px solid #cbd5e1;
+font-size:1rem;
+}
+
+.result{
+margin-top:10px;
+font-weight:800;
+}
+
+.word-bank{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+margin:12px 0;
+}
+
+.word-pill{
+background:#dbeafe;
+color:#1e3a8a;
+padding:8px 12px;
+border-radius:999px;
+font-weight:800;
+}
+
+.practice-box textarea{
+width:100%;
+min-height:140px;
+border-radius:16px;
+border:2px solid #cbd5e1;
+padding:12px;
+font-family:Arial,Helvetica,sans-serif;
+font-size:1rem;
+resize:vertical;
+}
+
+.practice-box textarea:focus{
+outline:none;
+border-color:var(--main);
+box-shadow:0 0 0 3px rgba(37,99,235,.14);
+}
+
+@media(max-width:950px){
+.grid{grid-template-columns:1fr;}
+.phrase-grid{grid-template-columns:1fr;}
+}
+
+@media print{
+.topbar,.btnrow,.btn,.options{display:none !important;}
+.card{box-shadow:none;border:1px solid #ddd;}
+body{background:white;}
+.link-page,.trainer-page{display:block !important;}
+.trainer-page.hidden{display:block !important;}
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>🎤 QUALI Speaking Trainer</h1>
+<p>Mit echter Mindmap-Vorlage. Thema wählen, Stichpunkte eintragen und frei sprechen. Mit den Hauptthemen Winter, Wild Animals und Free Time sowie passenden Unterthemen und Überleitungssätzen.</p>
+</header>
+
+<div class="wrap">
+
+<div class="topbar" id="tabs">
+<button class="tab link-tab-static" type="button" onclick="showLinkingPage()">Überleitungssätze</button>
+</div>
+
+<section class="trainer-page" id="trainerPage">
+<div class="grid">
+
+<div>
+
+<div class="card">
+<div class="item" style="margin-bottom:16px;background:#eff6ff;border-left-color:#1d4ed8;">
+<strong>Tipp:</strong> Nutze den Reiter <strong>„Überleitungssätze“</strong>, um abwechslungsreiche Übergänge für Winter, Wild Animals und Free Time zu üben.
+</div>
+<h2 id="title">Winter</h2>
+<p class="small" id="desc"></p>
+
+<img class="hero" id="hero" src="https://images.unsplash.com/photo-1483664852095-d6cc6870702d?w=1200&q=80" alt="Winter">
+
+<div class="mindwrap">
+<div class="mindmap">
+
+<div class="line l1"></div>
+<div class="line l2"></div>
+<div class="line l3"></div>
+<div class="line l4"></div>
+<div class="line l5"></div>
+<div class="line l6"></div>
+
+<div class="center" id="centerText">Winter</div>
+
+<div class="branch b1"><h4 id="h1">Advantages</h4><input><input><input></div>
+<div class="branch b2"><h4 id="h2">Problems</h4><input><input><input></div>
+<div class="branch b3"><h4 id="h3">Rules</h4><input><input><input></div>
+<div class="branch b4"><h4 id="h4">Learning</h4><input><input><input></div>
+<div class="branch b5"><h4 id="h5">Opinion</h4><input><input><input></div>
+<div class="branch b6"><h4 id="h6">Examples</h4><input><input><input></div>
+
+</div>
+</div>
+
+<div class="btnrow">
+<button class="btn" onclick="fillExample()">Example ideas</button>
+<button class="btn alt" onclick="clearMap()">Clear</button>
+<button class="btn alt" onclick="window.print()">Print</button>
+</div>
+
+</div>
+
+<div class="card">
+<h3>⏱ Timer</h3>
+<div class="timer" id="timer">02:00</div>
+<div class="btnrow">
+<button class="btn" onclick="startTimer()">Start</button>
+<button class="btn alt" onclick="pauseTimer()">Pause</button>
+<button class="btn alt" onclick="resetTimer()">Reset</button>
+</div>
+</div>
+
+</div>
+
+<div>
+
+<div class="card">
+<h3>🗣 Useful phrases</h3>
+<div class="list" id="phrases"></div>
+</div>
+
+<div class="card">
+<h3>❓ Teacher questions</h3>
+<div class="list" id="questions"></div>
+</div>
+
+<div class="card">
+<h3>⭐ Sample answer</h3>
+<button class="btn" onclick="toggleSample()">Show / Hide</button>
+<div class="sample" id="sample"></div>
+</div>
+
+</div>
+
+</div>
+</section>
+
+<section class="link-page" id="linkingPage">
+
+<div class="card">
+<h2>Überleitungssätze / Linking phrases</h2>
+<p class="small">
+Diese Seite hilft dir, nicht immer nur <strong>“I carry on with my next topic.”</strong> zu sagen. Der Satz ist nicht falsch, klingt aber schnell eintönig, wenn man ihn zu oft benutzt.
+Mit abwechslungsreichen Übergängen klingt dein Topic Based Talk flüssiger, natürlicher und sicherer.
+</p>
+</div>
+
+<div class="phrase-grid">
+
+<div class="phrase-card">
+<h3>1. Ein neues Unterthema beginnen</h3>
+<div class="list">
+<div class="item">Moreover, I’d like to talk about ...<div class="translation">Außerdem möchte ich über ... sprechen.</div></div>
+<div class="item">Another important point is ...<div class="translation">Ein weiterer wichtiger Punkt ist ...</div></div>
+<div class="item">Next, I want to mention ...<div class="translation">Als Nächstes möchte ich ... erwähnen.</div></div>
+<div class="item">Let me now move on to ...<div class="translation">Ich komme nun zu ...</div></div>
+</div>
+</div>
+
+<div class="phrase-card">
+<h3>2. Beispiele geben</h3>
+<div class="list">
+<div class="item">For example, ...<div class="translation">Zum Beispiel ...</div></div>
+<div class="item">For instance, ...<div class="translation">Beispielsweise ...</div></div>
+<div class="item">A good example is ...<div class="translation">Ein gutes Beispiel ist ...</div></div>
+<div class="item">This can be seen in ...<div class="translation">Das sieht man bei ...</div></div>
+</div>
+</div>
+
+<div class="phrase-card">
+<h3>3. Meinung ausdrücken</h3>
+<div class="list">
+<div class="item">In my opinion, ...<div class="translation">Meiner Meinung nach ...</div></div>
+<div class="item">I think that ...<div class="translation">Ich denke, dass ...</div></div>
+<div class="item">Personally, I believe that ...<div class="translation">Persönlich glaube ich, dass ...</div></div>
+<div class="item">From my point of view, ...<div class="translation">Aus meiner Sicht ...</div></div>
+</div>
+</div>
+
+<div class="phrase-card">
+<h3>4. Vorteile und Nachteile nennen</h3>
+<div class="list">
+<div class="item">One advantage is that ...<div class="translation">Ein Vorteil ist, dass ...</div></div>
+<div class="item">One disadvantage is that ...<div class="translation">Ein Nachteil ist, dass ...</div></div>
+<div class="item">On the one hand, ... On the other hand, ...<div class="translation">Einerseits ... Andererseits ...</div></div>
+<div class="item">However, there are also problems.<div class="translation">Allerdings gibt es auch Probleme.</div></div>
+</div>
+</div>
+
+<div class="phrase-card">
+<h3>5. Reihenfolge und Struktur</h3>
+<div class="list">
+<div class="item">First of all, ...<div class="translation">Zuerst einmal ...</div></div>
+<div class="item">Secondly, ...<div class="translation">Zweitens ...</div></div>
+<div class="item">After that, ...<div class="translation">Danach ...</div></div>
+<div class="item">Finally, ...<div class="translation">Zum Schluss ...</div></div>
+</div>
+</div>
+
+<div class="phrase-card">
+<h3>6. Schluss formulieren</h3>
+<div class="list">
+<div class="item">To sum up, ...<div class="translation">Zusammenfassend ...</div></div>
+<div class="item">All in all, ...<div class="translation">Alles in allem ...</div></div>
+<div class="item">That is why I think ...<div class="translation">Deshalb denke ich ...</div></div>
+<div class="item">That was my short talk about ...<div class="translation">Das war mein kurzer Vortrag über ...</div></div>
+</div>
+</div>
+
+</div>
+
+<div class="card">
+<h2>Einfache und abwechslungsreichere Überleitungen</h2>
+<div class="list">
+<div class="item bad-example"><strong>Einfach, aber etwas eintönig bei häufiger Wiederholung:</strong> I carry on with my next topic.</div>
+<div class="item good-example"><strong>Besser:</strong> Let me now move on to another important point: winter activities.</div>
+<div class="item good-example"><strong>Besser:</strong> Moreover, I’d like to talk about endangered wild animals.</div>
+<div class="item good-example"><strong>Besser:</strong> Another interesting aspect is how teenagers spend their free time.</div>
+</div>
+</div>
+
+<div class="card">
+<h2>Quiz 1: Wähle die beste Überleitung</h2>
+<p class="small">Klicke jeweils auf die beste Antwort.</p>
+<div class="quiz-block" id="choiceQuiz"></div>
+</div>
+
+<div class="card">
+<h2>Quiz 2: Lückentext</h2>
+<p class="small">Setze passende Linking phrases ein. Nutze die Wortbox.</p>
+<div class="word-bank">
+<span class="word-pill">Moreover</span>
+<span class="word-pill">For example</span>
+<span class="word-pill">However</span>
+<span class="word-pill">To sum up</span>
+</div>
+
+<div class="quiz-question">
+<p class="gap-text">
+<input class="gap-input" data-answer="Moreover" placeholder="Linking phrase">, I’d like to talk about smartphones at school.
+</p>
+<p class="gap-text">
+Many people enjoy winter activities. <input class="gap-input" data-answer="For example" placeholder="Linking phrase">, they can go sledging or ice skating.
+</p>
+<p class="gap-text">
+<input class="gap-input" data-answer="However" placeholder="Linking phrase">, ice and snow can also be dangerous.
+</p>
+<p class="gap-text">
+<input class="gap-input" data-answer="To sum up" placeholder="Linking phrase">, winter can be beautiful, but warm clothes are important.
+</p>
+<button class="btn" onclick="checkGapQuiz()">Check answers</button>
+<button class="btn alt" onclick="resetGapQuiz()">Reset</button>
+<div class="result" id="gapResult"></div>
+</div>
+</div>
+
+<div class="card practice-box">
+<h2>Quiz 3: Eigene Mini-Rede verbessern</h2>
+<p class="small">
+Schreibe 5–6 Sätze zu einem Thema und benutze mindestens drei Überleitungen, zum Beispiel:
+<strong>First of all</strong>, <strong>Moreover</strong>, <strong>However</strong>, <strong>In my opinion</strong>, <strong>To sum up</strong>.
+</p>
+<textarea id="ownSpeech" placeholder="Example: First of all, I would like to talk about free time. Moreover, hobbies are important because they help students relax. However, too much screen time can be a problem. In my opinion, students should meet friends and do sports too. To sum up, free time is important and fun."></textarea>
+<div class="btnrow">
+<button class="btn" onclick="checkOwnSpeech()">Check my text</button>
+<button class="btn alt" onclick="document.getElementById('ownSpeech').value=''; document.getElementById('ownResult').innerHTML=''">Clear</button>
+</div>
+<div class="result" id="ownResult"></div>
+</div>
+
+<div class="card">
+<h2>Mini-Baukasten für den Speaking Test</h2>
+<div class="list">
+<div class="item"><strong>Start:</strong> I would like to talk about ...</div>
+<div class="item"><strong>First point:</strong> First of all, I want to mention ...</div>
+<div class="item"><strong>Next point:</strong> Moreover, I’d like to talk about ...</div>
+<div class="item"><strong>Example:</strong> For example, ...</div>
+<div class="item"><strong>Problem:</strong> However, there are also some problems.</div>
+<div class="item"><strong>Opinion:</strong> In my opinion, ... because ...</div>
+<div class="item"><strong>Ending:</strong> To sum up, ... / All in all, ...</div>
+</div>
+</div>
+
+</section>
+
+</div>
+
+<script>
+
+const topics = {
+
+"Winter":{
+desc:"Talk about winter weather, clothes, activities and your opinion.",
+img:"https://images.unsplash.com/photo-1483664852095-d6cc6870702d?w=1200&q=80",
+heads:["Weather","Clothes","Activities","Problems","Food / Drinks","Opinion"],
+ideas:["cold","snow","ice","jacket","scarf","gloves","skiing","sledging","dark days","slippery roads","hot chocolate","I like winter"],
+phrases:[
+"In winter, the weather is often ...",
+"Many people wear ...",
+"A popular winter activity is ...",
+"In my opinion, winter is ... because ..."
+],
+questions:[
+"Do you like winter? Why or why not?",
+"What can people do in winter?",
+"What problems can winter weather cause?",
+"What clothes do people need in winter?"
+],
+sample:"I would like to talk about winter. In winter, the weather is often cold and sometimes snowy. Many people wear warm jackets, scarves and gloves. Moreover, you can go sledging, skiing or build a snowman. However, winter can also be difficult because the streets can be slippery and it gets dark early. In my opinion, winter is a nice season because it feels calm and cozy."
+},
+
+"Winter Activities":{
+desc:"Talk about things people can do in winter.",
+img:"https://images.unsplash.com/photo-1489515217757-5fd1be406fef?w=1200&q=80",
+heads:["Outdoor","Indoor","With friends","Equipment","Risks","Opinion"],
+ideas:["sledging","skiing","ice skating","watching films","baking","board games","friends","family","helmet","warm clothes","injuries","fun"],
+phrases:[
+"One popular winter activity is ...",
+"You need ... for this activity.",
+"It can be fun because ...",
+"A problem could be ..."
+],
+questions:[
+"What is your favourite winter activity?",
+"Do you prefer indoor or outdoor activities in winter?",
+"What equipment do you need for winter sports?"
+],
+sample:"I would like to talk about winter activities. In winter, people can go sledging, skiing or ice skating. If the weather is bad, they can stay inside, watch films or play board games. For example, I like spending time with my friends when it is cold outside. However, winter sports can be dangerous, so safety is important."
+},
+
+"Winter Weather":{
+desc:"Talk about cold temperatures, snow, ice and problems in winter.",
+img:"https://images.unsplash.com/photo-1517299321609-52687d1bc55a?w=1200&q=80",
+heads:["Temperature","Snow","Ice","Traffic","Daily life","Opinion"],
+ideas:["below zero","freezing","snowflakes","ice","slippery","traffic jams","school bus","warm clothes","short days","dark early","beautiful","sometimes annoying"],
+phrases:[
+"Winter weather can be ...",
+"Snow is beautiful, but ...",
+"One problem is that ...",
+"I think winter weather is ..."
+],
+questions:[
+"What is typical winter weather?",
+"Can snow cause problems?",
+"How does winter weather change daily life?"
+],
+sample:"I would like to talk about winter weather. Winter weather can be very cold, and sometimes the temperature is below zero. Snow looks beautiful, but ice can make roads and pavements slippery. Another problem is that buses and trains can be late. In my opinion, winter weather is nice when you are prepared and wear warm clothes."
+},
+
+"Christmas and Winter Holidays":{
+desc:"Talk about holidays, traditions and free days in winter.",
+img:"https://images.unsplash.com/photo-1482517967863-00e15c9b44be?w=1200&q=80",
+heads:["Traditions","Family","Food","Presents","Activities","Opinion"],
+ideas:["Christmas market","family dinner","cookies","hot chocolate","presents","decorations","music","holidays","relaxing","snow","special time","I enjoy it"],
+phrases:[
+"During the winter holidays, many people ...",
+"A tradition in my family is ...",
+"For example, we ...",
+"I like this time because ..."
+],
+questions:[
+"What do you do during the winter holidays?",
+"Are winter holidays important for you?",
+"What traditions do many families have?"
+],
+sample:"I would like to talk about Christmas and winter holidays. During the winter holidays, many people spend time with their families. For example, they eat together, bake cookies or visit a Christmas market. Some people also get presents. I like this time because it is relaxing and special."
+},
+
+"Wild Animals":{
+desc:"Talk about wild animals, their habitats, behaviour and protection.",
+img:"https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=1200&q=80",
+heads:["Examples","Habitat","Food","Behaviour","Dangers","Protection"],
+ideas:["lion","tiger","wolf","forest","savanna","ocean","meat","plants","hunt","live in groups","habitat loss","protect nature"],
+phrases:[
+"Wild animals are animals like ...",
+"They live in ...",
+"Some wild animals are endangered because ...",
+"We should protect them by ..."
+],
+questions:[
+"Which wild animal do you like best?",
+"Where do wild animals live?",
+"Why are some wild animals endangered?",
+"How can people protect wild animals?"
+],
+sample:"I would like to talk about wild animals. Wild animals are animals like lions, wolves, elephants or dolphins. They live in different habitats, for example in forests, oceans or the savanna. Moreover, many wild animals are important for nature. However, some animals are endangered because people destroy their habitats. In my opinion, we should protect wild animals and treat nature with respect."
+},
+
+"Endangered Animals":{
+desc:"Talk about animals that are in danger and why protection is important.",
+img:"https://images.unsplash.com/photo-1501706362039-c6e809abf92b?w=1200&q=80",
+heads:["Examples","Reasons","Habitat","Humans","Protection","Opinion"],
+ideas:["panda","tiger","rhino","habitat loss","climate change","poaching","forests","national parks","donations","laws","important","sad"],
+phrases:[
+"An endangered animal is ...",
+"One reason is ...",
+"Humans can help by ...",
+"I think this topic is important because ..."
+],
+questions:[
+"What endangered animals do you know?",
+"Why are animals endangered?",
+"What can people do to help?"
+],
+sample:"I would like to talk about endangered animals. Examples are pandas, tigers and rhinos. Many animals are endangered because people destroy forests or hunt them. Climate change can also be a problem. Humans can help by protecting habitats, supporting national parks and following strict laws. I think this topic is important because animals cannot protect themselves."
+},
+
+"Animals in Zoos":{
+desc:"Talk about advantages and disadvantages of zoos.",
+img:"https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=1200&q=80",
+heads:["Animals","Education","Protection","Problems","Visitors","Opinion"],
+ideas:["lions","monkeys","learn about animals","breeding programs","small cages","stress","families","school trips","expensive","interesting","not natural","mixed opinion"],
+phrases:[
+"Zoos can be useful because ...",
+"One advantage is ...",
+"One disadvantage is ...",
+"In my opinion, zoos should ..."
+],
+questions:[
+"Are zoos good or bad?",
+"What can children learn in zoos?",
+"Should wild animals live in zoos?"
+],
+sample:"I would like to talk about animals in zoos. Zoos can be useful because people can learn about animals. Some zoos also protect endangered species. However, it can be a problem if animals have too little space. In my opinion, zoos should only keep animals if they can offer good conditions."
+},
+
+"Pets and Wild Animals":{
+desc:"Compare pets with wild animals.",
+img:"https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=1200&q=80",
+heads:["Pets","Wild animals","Care","Freedom","Dangers","Opinion"],
+ideas:["dog","cat","rabbit","wolf","lion","fox","feeding","home","nature","freedom","dangerous","not a pet"],
+phrases:[
+"Pets are different from wild animals because ...",
+"Pets need ...",
+"Wild animals should live ...",
+"I think people should not ..."
+],
+questions:[
+"What is the difference between pets and wild animals?",
+"Can wild animals be pets?",
+"What do pets need?"
+],
+sample:"I would like to compare pets and wild animals. Pets, like dogs or cats, live with people and need food, care and attention. Wild animals, like wolves or lions, live in nature and should be free. Some wild animals can be dangerous and are not suitable as pets. In my opinion, wild animals should stay in their natural habitats."
+},
+
+"Free Time":{
+desc:"Talk about hobbies, friends, media, sports and your opinion.",
+img:"https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1200&q=80",
+heads:["Hobbies","Friends","Sports","Media","Weekend","Opinion"],
+ideas:["reading","music","meeting friends","football","cycling","Netflix","gaming","social media","Saturday","relaxing","important","I enjoy it"],
+phrases:[
+"In my free time, I like to ...",
+"A hobby of mine is ...",
+"I often spend time with ...",
+"Free time is important because ..."
+],
+questions:[
+"What do you do in your free time?",
+"Do you prefer spending free time alone or with friends?",
+"How much free time do students need?",
+"What is your favourite hobby?"
+],
+sample:"I would like to talk about free time. In my free time, I like meeting friends, listening to music and watching films. Moreover, I sometimes do sport because it helps me relax. At the weekend, I usually have more time for my hobbies. In my opinion, free time is very important because students need a break from school and homework."
+},
+
+"Hobbies":{
+desc:"Talk about different hobbies and why people enjoy them.",
+img:"https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=1200&q=80",
+heads:["Creative","Sporty","At home","Outside","Benefits","Opinion"],
+ideas:["drawing","playing music","football","dancing","reading","gaming","cycling","walking","relaxing","learn skills","fun","my hobby"],
+phrases:[
+"A hobby is something you do for fun.",
+"My favourite hobby is ...",
+"This hobby is good because ...",
+"I would like to try ..."
+],
+questions:[
+"What hobbies do you have?",
+"Why are hobbies important?",
+"Would you like to try a new hobby?"
+],
+sample:"I would like to talk about hobbies. A hobby is something you do for fun in your free time. Some people like creative hobbies, for example drawing or playing music. Other people prefer sporty hobbies like football or dancing. My favourite hobby is listening to music because it helps me relax."
+},
+
+"Spending Time with Friends":{
+desc:"Talk about meeting friends and doing activities together.",
+img:"https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=1200&q=80",
+heads:["Activities","Places","Communication","Weekend","Problems","Opinion"],
+ideas:["talking","shopping","cinema","park","home","texting","calling","Saturday","plans","arguments","fun","important"],
+phrases:[
+"With my friends, I often ...",
+"We usually meet ...",
+"A problem can be ...",
+"Friendship is important because ..."
+],
+questions:[
+"What do you do with your friends?",
+"Where do you usually meet?",
+"Why are friends important?"
+],
+sample:"I would like to talk about spending time with friends. With my friends, I often talk, go to the park or watch films. We usually meet at the weekend because we have more time then. Sometimes it can be difficult to find a day when everyone is free. In my opinion, friends are important because they make life more enjoyable."
+},
+
+"Media in Free Time":{
+desc:"Talk about films, series, gaming, social media and screen time.",
+img:"https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=1200&q=80",
+heads:["Films","Gaming","Social media","Advantages","Problems","Opinion"],
+ideas:["Netflix","YouTube","computer games","Instagram","TikTok","fun","information","too much screen time","tired eyes","distraction","relaxing","clear limits"],
+phrases:[
+"Many teenagers use media to ...",
+"One advantage is ...",
+"However, too much screen time can ...",
+"In my opinion, students should ..."
+],
+questions:[
+"How do teenagers use media in their free time?",
+"Is gaming a good hobby?",
+"Can social media be a problem?"
+],
+sample:"I would like to talk about media in free time. Many teenagers watch films, play computer games or use social media. One advantage is that media can be entertaining and informative. However, too much screen time can be bad for your eyes and concentration. In my opinion, media are okay if you also do other activities."
+},
+
+"Weekend Plans":{
+desc:"Talk about what people do at the weekend.",
+img:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200&q=80",
+heads:["Saturday","Sunday","Family","Friends","Homework","Opinion"],
+ideas:["sleep longer","shopping","family breakfast","meeting friends","cinema","homework","cleaning room","relaxing","sports","walk","important break","I like weekends"],
+phrases:[
+"At the weekend, I usually ...",
+"On Saturday, I often ...",
+"On Sunday, my family ...",
+"The weekend is important because ..."
+],
+questions:[
+"What do you usually do at the weekend?",
+"Do you prefer Saturday or Sunday?",
+"Should students do homework at the weekend?"
+],
+sample:"I would like to talk about weekend plans. On Saturday, I usually sleep longer and meet friends. Sometimes I go shopping or watch a film. On Sunday, I often spend time with my family and do homework. I like weekends because I can relax after a busy school week."
+}
+
+};
+
+let current="Winter";
+
+const tabsEl = document.getElementById("tabs");
+const trainerPageEl = document.getElementById("trainerPage");
+const linkingPageEl = document.getElementById("linkingPage");
+const titleEl = document.getElementById("title");
+const centerTextEl = document.getElementById("centerText");
+const descEl = document.getElementById("desc");
+const heroEl = document.getElementById("hero");
+const phrasesEl = document.getElementById("phrases");
+const questionsEl = document.getElementById("questions");
+const sampleEl = document.getElementById("sample");
+const timerEl = document.getElementById("timer");
+
+for(let key in topics){
+let b=document.createElement("button");
+b.className="tab";
+b.type="button";
+b.innerText=key;
+b.onclick=()=>loadTopic(key);
+tabsEl.appendChild(b);
+}
+
+function showTrainer(){
+trainerPageEl.classList.remove("hidden");
+linkingPageEl.classList.remove("active");
+}
+
+function showLinkingPage(){
+pauseTimer();
+trainerPageEl.classList.add("hidden");
+linkingPageEl.classList.add("active");
+document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));
+const linkTab = [...document.querySelectorAll(".tab")].find(x=>x.innerText.trim()==="Überleitungssätze");
+if(linkTab){ linkTab.classList.add("active"); }
+window.scrollTo({top:0, behavior:"smooth"});
+}
+
+function loadTopic(name){
+current=name;
+let t=topics[name];
+showTrainer();
+
+document.querySelectorAll(".tab").forEach(x=>{
+x.classList.remove("active");
+if(x.innerText===name)x.classList.add("active");
+});
+
+titleEl.innerText=name;
+centerTextEl.innerText=name;
+descEl.innerText=t.desc;
+heroEl.src=t.img;
+heroEl.alt=name;
+
+for(let i=1;i<=6;i++){
+document.getElementById("h"+i).innerText=t.heads[i-1];
+}
+
+phrasesEl.innerHTML=t.phrases.map(x=>`<div class="item">${x}</div>`).join("");
+questionsEl.innerHTML=t.questions.map(x=>`<div class="item">${x}</div>`).join("");
+sampleEl.innerText=t.sample;
+sampleEl.style.display="none";
+
+clearMap();
+}
+
+function fillExample(){
+let vals=topics[current].ideas;
+let inputs=document.querySelectorAll(".branch input");
+inputs.forEach((x,i)=>x.value=vals[i]||"");
+}
+
+function clearMap(){
+document.querySelectorAll(".branch input").forEach(x=>x.value="");
+}
+
+function toggleSample(){
+sampleEl.style.display = sampleEl.style.display==="block" ? "none":"block";
+}
+
+loadTopic(current);
+
+let sec=120;
+let run=null;
+
+function draw(){
+timerEl.innerText=String(Math.floor(sec/60)).padStart(2,"0")+":"+String(sec%60).padStart(2,"0");
+}
+
+function startTimer(){
+if(run)return;
+run=setInterval(()=>{
+sec--;
+draw();
+if(sec<=0){
+clearInterval(run);
+run=null;
+timerEl.innerText="Done!";
+}
+},1000);
+}
+
+function pauseTimer(){
+clearInterval(run);
+run=null;
+}
+
+function resetTimer(){
+pauseTimer();
+sec=120;
+draw();
+}
+
+draw();
+
+/* Quiz functions */
+
+const choiceQuizData = [
+{
+q:"Du wechselst von 'winter weather' zu 'winter activities'. Welche Überleitung passt am besten?",
+options:["I carry on with my next topic.","Let me now move on to winter activities.","Winter activities are yellow."],
+answer:1,
+explain:"'Let me now move on to ...' ist eine klare und natürliche Überleitung."
+},
+{
+q:"Du möchtest ein Beispiel für ein wild animal nennen. Was passt?",
+options:["For example, lions live in the savanna.","However, lions live in the savanna.","To sum up, lions live in the savanna."],
+answer:0,
+explain:"'For example' benutzt man, wenn man ein Beispiel nennt."
+},
+{
+q:"Du möchtest ein Problem nennen. Was passt?",
+options:["Moreover, too much screen time can be unhealthy.","However, too much screen time can be unhealthy.","First of all, too much screen time can be unhealthy."],
+answer:1,
+explain:"'However' passt, wenn ein Gegensatz oder ein Problem kommt."
+},
+{
+q:"Du möchtest am Ende zusammenfassen. Was passt?",
+options:["To sum up, free time is important for teenagers.","For example, free time is important for teenagers.","Secondly, free time is important for teenagers."],
+answer:0,
+explain:"'To sum up' eignet sich für eine Zusammenfassung am Ende."
+},
+{
+q:"Du möchtest zusätzlich noch etwas nennen. Was passt?",
+options:["Moreover, I’d like to talk about endangered animals.","To sum up, I’d like to talk about endangered animals.","For example, I’d like to talk about endangered animals."],
+answer:0,
+explain:"'Moreover' heißt 'außerdem' und verbindet weitere Punkte."
+}
+];
+
+function buildChoiceQuiz(){
+const wrap=document.getElementById("choiceQuiz");
+wrap.innerHTML="";
+choiceQuizData.forEach((item,index)=>{
+const box=document.createElement("div");
+box.className="quiz-question";
+box.innerHTML=`<strong>${index+1}. ${item.q}</strong><div class="options"></div><div class="feedback"></div>`;
+const optWrap=box.querySelector(".options");
+item.options.forEach((opt,i)=>{
+const btn=document.createElement("button");
+btn.className="option";
+btn.innerText=opt;
+btn.onclick=()=>checkChoice(index,i,box,btn);
+optWrap.appendChild(btn);
+});
+wrap.appendChild(box);
+});
+}
+
+function checkChoice(qIndex,optIndex,box,btn){
+const item=choiceQuizData[qIndex];
+const all=box.querySelectorAll(".option");
+all.forEach((b,i)=>{
+b.disabled=true;
+if(i===item.answer)b.classList.add("correct");
+});
+const fb=box.querySelector(".feedback");
+fb.style.display="block";
+if(optIndex===item.answer){
+btn.classList.add("correct");
+fb.className="feedback ok";
+fb.innerText="Richtig! " + item.explain;
+}else{
+btn.classList.add("wrong");
+fb.className="feedback bad";
+fb.innerText="Noch nicht ganz. " + item.explain;
+}
+}
+
+function checkGapQuiz(){
+let inputs=document.querySelectorAll(".gap-input");
+let correct=0;
+inputs.forEach(inp=>{
+let user=inp.value.trim().toLowerCase();
+let ans=inp.dataset.answer.trim().toLowerCase();
+if(user===ans){
+inp.style.borderColor="var(--ok)";
+inp.style.background="#f0fdf4";
+correct++;
+}else{
+inp.style.borderColor="var(--bad)";
+inp.style.background="#fff1f2";
+}
+});
+document.getElementById("gapResult").innerText=`${correct} von ${inputs.length} richtig.`;
+document.getElementById("gapResult").style.color=correct===inputs.length ? "var(--ok)" : "var(--bad)";
+}
+
+function resetGapQuiz(){
+document.querySelectorAll(".gap-input").forEach(inp=>{
+inp.value="";
+inp.style.borderColor="#cbd5e1";
+inp.style.background="white";
+});
+document.getElementById("gapResult").innerText="";
+}
+
+function checkOwnSpeech(){
+const text=document.getElementById("ownSpeech").value.toLowerCase();
+const phrases=["first of all","moreover","however","in my opinion","for example","to sum up","all in all","another important point","let me now move on"];
+let found=phrases.filter(p=>text.includes(p));
+let result=document.getElementById("ownResult");
+if(text.trim().length<40){
+result.style.color="var(--bad)";
+result.innerHTML="Schreibe zuerst einen kurzen Text mit mindestens 5 Sätzen.";
+return;
+}
+if(found.length>=3){
+result.style.color="var(--ok)";
+result.innerHTML="Sehr gut! Du hast diese Überleitungen verwendet: <br><strong>" + found.join(", ") + "</strong>";
+}else{
+result.style.color="var(--warn)";
+result.innerHTML="Schon gut, aber versuche mindestens 3 Überleitungen zu verwenden. Gefunden: <br><strong>" + (found.join(", ") || "noch keine") + "</strong>";
+}
+}
+
+buildChoiceQuiz();
+
+</script>
+
+</body>
+</html>
