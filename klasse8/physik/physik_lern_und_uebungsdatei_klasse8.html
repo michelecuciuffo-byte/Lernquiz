@@ -1,0 +1,1497 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Physik Klasse 8: Bewegung, Geschwindigkeit und Reibung</title>
+  <style>
+    :root {
+      --ink: #16202a;
+      --muted: #5b6673;
+      --line: #d8dee6;
+      --paper: #fbfaf6;
+      --white: #ffffff;
+      --blue: #2364aa;
+      --green: #2f7d5a;
+      --amber: #b66a13;
+      --red: #b83737;
+      --violet: #6f4ca8;
+      --soft-blue: #e9f2ff;
+      --soft-green: #e9f7ef;
+      --soft-amber: #fff3df;
+      --soft-red: #fdecec;
+      --shadow: 0 16px 38px rgba(34, 45, 57, 0.12);
+      --radius: 8px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      color: var(--ink);
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.72), rgba(251,250,246,0.96)),
+        repeating-linear-gradient(0deg, transparent 0, transparent 31px, rgba(35,100,170,0.05) 32px),
+        var(--paper);
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.55;
+    }
+
+    a {
+      color: inherit;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255, 255, 255, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .topbar-inner {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .brand {
+      display: flex;
+      gap: 12px;
+      align-items: center;
+      min-width: 0;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      border: 2px solid var(--ink);
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--soft-amber);
+      flex: 0 0 auto;
+    }
+
+    .brand-mark svg {
+      width: 28px;
+      height: 28px;
+    }
+
+    .brand h1 {
+      font-size: clamp(1.15rem, 2.4vw, 1.8rem);
+      margin: 0;
+      line-height: 1.12;
+      letter-spacing: 0;
+    }
+
+    .brand p {
+      margin: 2px 0 0;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+
+    .actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: end;
+    }
+
+    .icon-button, .plain-button, .check-button {
+      border: 1px solid var(--line);
+      background: var(--white);
+      color: var(--ink);
+      border-radius: var(--radius);
+      cursor: pointer;
+      min-height: 40px;
+      transition: transform 120ms ease, box-shadow 120ms ease, border-color 120ms ease;
+    }
+
+    .icon-button {
+      width: 42px;
+      display: grid;
+      place-items: center;
+    }
+
+    .plain-button, .check-button {
+      padding: 8px 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .check-button {
+      background: var(--ink);
+      color: var(--white);
+      border-color: var(--ink);
+    }
+
+    .icon-button:hover, .plain-button:hover, .check-button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 8px 20px rgba(34, 45, 57, 0.13);
+    }
+
+    .layout {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 22px 20px 60px;
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 24px;
+    }
+
+    .side {
+      position: sticky;
+      top: 82px;
+      align-self: start;
+      display: grid;
+      gap: 14px;
+    }
+
+    .toc, .progress-box {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .toc-title, .mini-title {
+      margin: 0 0 9px;
+      font-weight: 700;
+      font-size: 0.98rem;
+    }
+
+    .toc a {
+      display: block;
+      padding: 8px 9px;
+      color: var(--muted);
+      text-decoration: none;
+      border-radius: 6px;
+      font-size: 0.94rem;
+    }
+
+    .toc a:hover {
+      background: var(--soft-blue);
+      color: var(--blue);
+    }
+
+    .progress-line {
+      height: 12px;
+      background: #eef1f5;
+      border-radius: 999px;
+      overflow: hidden;
+      border: 1px solid var(--line);
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      transition: width 240ms ease;
+    }
+
+    .score {
+      color: var(--muted);
+      margin: 8px 0 0;
+      font-size: 0.93rem;
+    }
+
+    main {
+      display: grid;
+      gap: 22px;
+    }
+
+    .intro {
+      min-height: 330px;
+      border-radius: var(--radius);
+      overflow: hidden;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(90deg, rgba(22,32,42,0.88), rgba(22,32,42,0.55), rgba(22,32,42,0.16)),
+        radial-gradient(circle at 75% 28%, rgba(255,243,223,0.95) 0 9%, transparent 10%),
+        linear-gradient(160deg, #5aa2d7 0 28%, #d9edf6 29% 44%, #91b77b 45% 56%, #4c4f55 57% 60%, #d58a43 61% 100%);
+      display: grid;
+      align-items: end;
+      padding: clamp(24px, 5vw, 46px);
+      color: var(--white);
+      position: relative;
+    }
+
+    .intro::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 38px;
+      height: 9px;
+      background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,0.65) 0 34px, transparent 34px 70px),
+        linear-gradient(90deg, rgba(255,255,255,0.1), rgba(255,255,255,0.28));
+      border-top: 2px solid rgba(255,255,255,0.3);
+      border-bottom: 2px solid rgba(255,255,255,0.3);
+    }
+
+    .intro-content {
+      max-width: 720px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .intro h2 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 6vw, 4.6rem);
+      line-height: 0.98;
+      letter-spacing: 0;
+    }
+
+    .intro p {
+      max-width: 58ch;
+      margin: 0;
+      font-size: clamp(1rem, 2.2vw, 1.25rem);
+    }
+
+    section {
+      background: rgba(255,255,255,0.74);
+      border-top: 1px solid var(--line);
+      padding-top: 24px;
+    }
+
+    section h2 {
+      margin: 0 0 12px;
+      font-size: clamp(1.55rem, 3.1vw, 2.25rem);
+      line-height: 1.1;
+      letter-spacing: 0;
+    }
+
+    section h3 {
+      margin: 22px 0 8px;
+      font-size: 1.15rem;
+      letter-spacing: 0;
+    }
+
+    p {
+      margin: 0 0 11px;
+    }
+
+    .band {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin: 12px 0;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .three {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .fact {
+      border-left: 5px solid var(--blue);
+      background: var(--soft-blue);
+      padding: 12px 14px;
+      border-radius: 0 var(--radius) var(--radius) 0;
+      margin: 12px 0;
+    }
+
+    .fact.green {
+      border-left-color: var(--green);
+      background: var(--soft-green);
+    }
+
+    .fact.amber {
+      border-left-color: var(--amber);
+      background: var(--soft-amber);
+    }
+
+    .formula {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 10px 14px;
+      background: #16202a;
+      color: var(--white);
+      border-radius: var(--radius);
+      font-size: 1.26rem;
+      font-weight: 700;
+      margin: 8px 0;
+      max-width: 100%;
+    }
+
+    .formula small {
+      font-size: 0.82rem;
+      font-weight: 400;
+      color: #d7e1ea;
+      margin-left: 10px;
+    }
+
+    .mini-card {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 13px;
+    }
+
+    .mini-card h4 {
+      margin: 0 0 7px;
+      font-size: 1rem;
+    }
+
+    .diagram {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 12px;
+      overflow: hidden;
+    }
+
+    .diagram svg, canvas {
+      width: 100%;
+      max-width: 100%;
+      display: block;
+    }
+
+    .exercise {
+      background: var(--white);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 15px;
+      margin: 12px 0;
+    }
+
+    .exercise-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 0 0 9px;
+      font-weight: 700;
+    }
+
+    .badge {
+      background: var(--soft-amber);
+      color: #71420e;
+      border: 1px solid #f0cf9a;
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 0.78rem;
+      white-space: nowrap;
+    }
+
+    .task-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+      margin-top: 9px;
+    }
+
+    input[type="number"], input[type="text"], select {
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--ink);
+      border-radius: 6px;
+      padding: 8px 10px;
+      min-height: 39px;
+      max-width: 100%;
+    }
+
+    input.short {
+      width: 120px;
+    }
+
+    .options {
+      display: grid;
+      gap: 8px;
+      margin-top: 9px;
+    }
+
+    .option {
+      display: flex;
+      align-items: flex-start;
+      gap: 9px;
+      padding: 9px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .option input {
+      margin-top: 4px;
+    }
+
+    .feedback {
+      min-height: 24px;
+      margin-top: 10px;
+      font-weight: 700;
+    }
+
+    .feedback.ok {
+      color: var(--green);
+    }
+
+    .feedback.bad {
+      color: var(--red);
+    }
+
+    details {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: #fff;
+      margin: 10px 0;
+      overflow: hidden;
+    }
+
+    summary {
+      cursor: pointer;
+      padding: 10px 12px;
+      font-weight: 700;
+      background: #f5f7fa;
+    }
+
+    details .inside {
+      padding: 12px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 10px 0;
+      background: #fff;
+      border: 1px solid var(--line);
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 9px;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    th {
+      background: #f2f5f8;
+    }
+
+    .drag-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .drag-list {
+      min-height: 150px;
+      border: 1px dashed #aab4c0;
+      border-radius: var(--radius);
+      padding: 9px;
+      background: #fbfcfd;
+    }
+
+    .pill {
+      display: block;
+      width: 100%;
+      text-align: left;
+      margin: 7px 0;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      background: var(--white);
+      border-radius: 6px;
+      cursor: grab;
+    }
+
+    .drop {
+      min-height: 48px;
+      border: 2px dashed #aab4c0;
+      border-radius: var(--radius);
+      padding: 8px;
+      background: #fff;
+      margin: 7px 0 12px;
+    }
+
+    .drop.over {
+      border-color: var(--blue);
+      background: var(--soft-blue);
+    }
+
+    .label-line {
+      color: var(--muted);
+      font-size: 0.92rem;
+      margin-bottom: 3px;
+    }
+
+    .result-board {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .result {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 11px;
+      min-height: 76px;
+    }
+
+    .result strong {
+      display: block;
+      font-size: 1.35rem;
+      line-height: 1.1;
+    }
+
+    .small {
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .print-page {
+      display: none;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .side {
+        position: static;
+      }
+
+      .toc {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 4px;
+      }
+
+      .toc-title {
+        grid-column: 1 / -1;
+      }
+
+      .split, .three, .result-board, .drag-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      .topbar-inner {
+        grid-template-columns: 1fr;
+      }
+
+      .actions {
+        justify-content: start;
+      }
+
+      .toc {
+        grid-template-columns: 1fr;
+      }
+
+      .intro {
+        min-height: 300px;
+      }
+
+      .formula {
+        font-size: 1.05rem;
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .formula small {
+        margin: 2px 0 0;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .topbar, .side, .check-button, .plain-button, .icon-button, .feedback {
+        display: none !important;
+      }
+
+      .layout {
+        display: block;
+        max-width: none;
+        padding: 0;
+      }
+
+      .intro, section, .exercise, .band, .mini-card, .diagram {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+
+      details {
+        break-inside: avoid;
+      }
+
+      details .inside {
+        display: block;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 64 64" role="img">
+            <circle cx="32" cy="32" r="19" fill="none" stroke="#16202a" stroke-width="5"/>
+            <path d="M15 49h34M11 54h42M19 41l29-29" fill="none" stroke="#2364aa" stroke-width="5" stroke-linecap="round"/>
+            <circle cx="46" cy="14" r="5" fill="#b66a13"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Physik Lern- und Übungsdatei</h1>
+          <p>Klasse 8: Bewegung, Geschwindigkeit, s/t-Diagramme und Reibung</p>
+        </div>
+      </div>
+      <div class="actions">
+        <button class="plain-button" type="button" onclick="resetAll()">Zurücksetzen</button>
+        <button class="icon-button" type="button" onclick="window.print()" title="Drucken" aria-label="Drucken">
+          <svg width="22" height="22" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M6 9V3h12v6M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2M6 14h12v7H6z" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <div class="layout">
+    <aside class="side">
+      <nav class="toc" aria-label="Inhalt">
+        <p class="toc-title">Inhalt</p>
+        <a href="#bewegung">1. Bewegung</a>
+        <a href="#geschwindigkeit">2. Geschwindigkeit</a>
+        <a href="#stdiagramm">3. s/t-Diagramm</a>
+        <a href="#reibung">4. Reibung</a>
+        <a href="#radschiene">5. Rad und Schiene</a>
+        <a href="#reifen">6. Reifen auf Asphalt</a>
+        <a href="#abschluss">7. Abschlussübungen</a>
+      </nav>
+      <div class="progress-box">
+        <p class="mini-title">Übungsfortschritt</p>
+        <div class="progress-line" aria-hidden="true"><div class="progress-fill" id="progressFill"></div></div>
+        <p class="score" id="scoreText">0 von 0 Aufgaben geprüft</p>
+      </div>
+    </aside>
+
+    <main>
+      <div class="intro">
+        <div class="intro-content">
+          <h2>Bewegung verstehen</h2>
+          <p>Alles, was fährt, rollt, rutscht oder bremst, lässt sich mit wenigen Ideen beschreiben: Weg, Zeit, Geschwindigkeit und Reibung. Diese Datei führt dich Schritt für Schritt vom Alltagsbeispiel zur Rechnung.</p>
+        </div>
+      </div>
+
+      <section id="bewegung">
+        <h2>1. Bewegung</h2>
+        <p>Ein Körper ist in Bewegung, wenn er seine Lage verändert. Wichtig ist immer, worauf man sich bezieht. Ein Fahrgast sitzt im Zug still auf seinem Platz. Gegenüber dem Zug bewegt er sich nicht. Gegenüber dem Bahnhof bewegt er sich aber mit dem Zug mit.</p>
+        <div class="fact">
+          <strong>Merksatz:</strong> Bewegung bedeutet Ortsänderung in einer bestimmten Zeit. Man braucht also immer einen Weg und eine Zeit.
+        </div>
+        <div class="split">
+          <div class="mini-card">
+            <h4>Gleichförmige Bewegung</h4>
+            <p>Die Geschwindigkeit bleibt gleich. In gleichen Zeiten werden gleiche Strecken zurückgelegt.</p>
+            <p class="small">Beispiel: Ein Förderband läuft gleichmäßig.</p>
+          </div>
+          <div class="mini-card">
+            <h4>Ungleichförmige Bewegung</h4>
+            <p>Die Geschwindigkeit ändert sich. Der Körper wird schneller, langsamer oder beides.</p>
+            <p class="small">Beispiel: Ein Fahrrad fährt los und bremst später ab.</p>
+          </div>
+        </div>
+
+        <h3>Übungen zu Bewegung</h3>
+        <div class="exercise" data-task="mc">
+          <p class="exercise-title"><span class="badge">Aufgabe 1</span> Bezugssystem erkennen</p>
+          <p>Eine Schülerin sitzt im fahrenden Bus. Gegenüber welchem Bezugssystem ist sie in Bewegung?</p>
+          <div class="options">
+            <label class="option"><input type="radio" name="q1" value="a"> Gegenüber ihrem Sitzplatz</label>
+            <label class="option"><input type="radio" name="q1" value="b" data-correct="true"> Gegenüber der Bushaltestelle</label>
+            <label class="option"><input type="radio" name="q1" value="c"> Gegenüber ihrer Schultasche auf dem Nachbarsitz</label>
+          </div>
+          <button class="check-button" type="button" onclick="checkRadio(this)">Prüfen</button>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="exercise" data-task="text">
+          <p class="exercise-title"><span class="badge">Aufgabe 2</span> Gleichförmig oder ungleichförmig?</p>
+          <p>Ein Skateboard rollt zuerst schneller, dann langsamer und bleibt stehen. Welche Bewegungsart ist das?</p>
+          <div class="task-row">
+            <select data-answer="ungleichförmig|ungleichfoermig|ungleichförmige bewegung|ungleichfoermige bewegung">
+              <option value="">Auswählen...</option>
+              <option>gleichförmig</option>
+              <option>ungleichförmig</option>
+            </select>
+            <button class="check-button" type="button" onclick="checkText(this)">Prüfen</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </section>
+
+      <section id="geschwindigkeit">
+        <h2>2. Geschwindigkeit</h2>
+        <p>Die Geschwindigkeit sagt, wie schnell ein Körper unterwegs ist. Man berechnet sie aus dem zurückgelegten Weg und der benötigten Zeit.</p>
+        <div class="formula">v = s : t <small>Geschwindigkeit = Weg : Zeit</small></div>
+        <p>Die Zeichen bedeuten: <strong>v</strong> für Geschwindigkeit, <strong>s</strong> für Strecke oder Weg und <strong>t</strong> für Zeit. Typische Einheiten sind m/s und km/h.</p>
+        <div class="fact green">
+          <strong>Umrechnen:</strong> Von m/s nach km/h multiplizierst du mit 3,6. Von km/h nach m/s teilst du durch 3,6.
+        </div>
+        <div class="band">
+          <h3>Beispielrechnung</h3>
+          <p>Ein Fahrrad fährt 120 m in 20 s.</p>
+          <p><strong>v = s : t = 120 m : 20 s = 6 m/s</strong></p>
+          <p>In km/h: <strong>6 · 3,6 = 21,6 km/h</strong></p>
+        </div>
+
+        <h3>Interaktiver Geschwindigkeitsrechner</h3>
+        <div class="exercise">
+          <p>Gib zwei Werte ein. Die Geschwindigkeit wird berechnet.</p>
+          <div class="task-row">
+            <label>Weg s <input id="calcS" class="short" type="number" min="0" step="0.1" value="100"> m</label>
+            <label>Zeit t <input id="calcT" class="short" type="number" min="0.1" step="0.1" value="20"> s</label>
+            <button class="plain-button" type="button" onclick="speedCalc()">Berechnen</button>
+          </div>
+          <div class="feedback ok" id="calcOut">v = 5 m/s = 18 km/h</div>
+        </div>
+
+        <h3>Übungen zu Geschwindigkeit</h3>
+        <div class="exercise" data-task="num">
+          <p class="exercise-title"><span class="badge">Aufgabe 3</span> Geschwindigkeit berechnen</p>
+          <p>Ein Roller fährt 240 m in 30 s. Wie groß ist die Geschwindigkeit in m/s?</p>
+          <div class="task-row">
+            <input class="short" type="number" data-answer="8" data-tolerance="0.05" placeholder="m/s">
+            <button class="check-button" type="button" onclick="checkNumber(this)">Prüfen</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="exercise" data-task="num">
+          <p class="exercise-title"><span class="badge">Aufgabe 4</span> Einheit umrechnen</p>
+          <p>Wie viel km/h sind 12 m/s?</p>
+          <div class="task-row">
+            <input class="short" type="number" data-answer="43.2" data-tolerance="0.1" placeholder="km/h">
+            <button class="check-button" type="button" onclick="checkNumber(this)">Prüfen</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="exercise" data-task="num">
+          <p class="exercise-title"><span class="badge">Aufgabe 5</span> Weg berechnen</p>
+          <p>Ein Zug fährt 25 m/s und ist 40 s unterwegs. Welche Strecke legt er zurück?</p>
+          <div class="task-row">
+            <input class="short" type="number" data-answer="1000" data-tolerance="1" placeholder="m">
+            <button class="check-button" type="button" onclick="checkNumber(this)">Prüfen</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <details>
+          <summary>Zusatzaufgaben mit Lösungen</summary>
+          <div class="inside">
+            <ol>
+              <li>Ein Auto fährt 90 km in 1,5 h. Lösung: 90 : 1,5 = 60 km/h.</li>
+              <li>Eine Läuferin läuft 400 m in 80 s. Lösung: 400 : 80 = 5 m/s.</li>
+              <li>54 km/h in m/s. Lösung: 54 : 3,6 = 15 m/s.</li>
+              <li>Ein Fahrrad fährt 7 m/s für 60 s. Lösung: 7 · 60 = 420 m.</li>
+            </ol>
+          </div>
+        </details>
+      </section>
+
+      <section id="stdiagramm">
+        <h2>3. s/t-Diagramm</h2>
+        <p>In einem s/t-Diagramm steht auf der waagerechten Achse die Zeit t und auf der senkrechten Achse der Weg s. Man kann ablesen, wo ein Körper zu einer bestimmten Zeit ist.</p>
+        <div class="fact amber">
+          <strong>Wichtig:</strong> Die Steigung der Linie zeigt die Geschwindigkeit. Eine steile Linie bedeutet hohe Geschwindigkeit. Eine waagerechte Linie bedeutet Stillstand.
+        </div>
+        <div class="diagram">
+          <svg viewBox="0 0 720 360" aria-label="s/t-Diagramm mit drei Bewegungsarten">
+            <rect x="0" y="0" width="720" height="360" fill="#ffffff"/>
+            <g stroke="#d8dee6" stroke-width="1">
+              <path d="M80 40v260M180 40v260M280 40v260M380 40v260M480 40v260M580 40v260"/>
+              <path d="M80 300h540M80 248h540M80 196h540M80 144h540M80 92h540M80 40h540"/>
+            </g>
+            <g stroke="#16202a" stroke-width="3">
+              <path d="M80 300h560"/>
+              <path d="M80 300V28"/>
+            </g>
+            <g fill="#16202a" font-family="Arial, sans-serif" font-size="18">
+              <text x="630" y="326">t</text>
+              <text x="48" y="38">s</text>
+              <text x="76" y="326">0</text>
+              <text x="174" y="326">2</text>
+              <text x="274" y="326">4</text>
+              <text x="374" y="326">6</text>
+              <text x="474" y="326">8</text>
+              <text x="566" y="326">10 s</text>
+              <text x="28" y="252">20</text>
+              <text x="28" y="200">40</text>
+              <text x="28" y="148">60</text>
+              <text x="28" y="96">80</text>
+              <text x="20" y="45">100 m</text>
+            </g>
+            <path d="M80 300L580 40" fill="none" stroke="#2364aa" stroke-width="5" stroke-linecap="round"/>
+            <path d="M80 300L280 196L480 196L620 123" fill="none" stroke="#2f7d5a" stroke-width="5" stroke-linecap="round"/>
+            <path d="M80 300L620 300" fill="none" stroke="#b83737" stroke-width="5" stroke-linecap="round"/>
+            <g font-family="Arial, sans-serif" font-size="16" font-weight="700">
+              <text x="470" y="62" fill="#2364aa">gleich schnell</text>
+              <text x="318" y="186" fill="#2f7d5a">Pause</text>
+              <text x="460" y="287" fill="#b83737">Stillstand</text>
+            </g>
+          </svg>
+        </div>
+
+        <h3>Diagramm-Baukasten</h3>
+        <div class="exercise">
+          <p>Wähle eine Bewegung. Das Diagramm zeigt dir, wie sie ungefähr aussieht.</p>
+          <div class="task-row">
+            <select id="motionPreset" onchange="drawMotion()">
+              <option value="constant">Gleichförmig: gleiche Geschwindigkeit</option>
+              <option value="faster">Wird schneller</option>
+              <option value="pause">Fährt, hält an, fährt weiter</option>
+              <option value="back">Fährt zurück zum Start</option>
+            </select>
+          </div>
+          <canvas id="motionCanvas" width="720" height="340" aria-label="Interaktives s/t-Diagramm"></canvas>
+          <p class="small" id="motionText"></p>
+        </div>
+
+        <h3>Übungen zum s/t-Diagramm</h3>
+        <div class="exercise" data-task="mc">
+          <p class="exercise-title"><span class="badge">Aufgabe 6</span> Steigung deuten</p>
+          <p>Was bedeutet eine waagerechte Linie im s/t-Diagramm?</p>
+          <div class="options">
+            <label class="option"><input type="radio" name="q6" value="a"> Der Körper wird immer schneller.</label>
+            <label class="option"><input type="radio" name="q6" value="b" data-correct="true"> Der Körper bleibt am selben Ort stehen.</label>
+            <label class="option"><input type="radio" name="q6" value="c"> Der Körper bewegt sich rückwärts mit hoher Geschwindigkeit.</label>
+          </div>
+          <button class="check-button" type="button" onclick="checkRadio(this)">Prüfen</button>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="exercise" data-task="num">
+          <p class="exercise-title"><span class="badge">Aufgabe 7</span> Geschwindigkeit aus Diagrammdaten</p>
+          <p>In einem s/t-Diagramm steigt die Linie von 0 m bei 0 s auf 60 m bei 10 s. Welche Geschwindigkeit zeigt die Linie?</p>
+          <div class="task-row">
+            <input class="short" type="number" data-answer="6" data-tolerance="0.05" placeholder="m/s">
+            <button class="check-button" type="button" onclick="checkNumber(this)">Prüfen</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </section>
+
+      <section id="reibung">
+        <h2>4. Reibung</h2>
+        <p>Reibung entsteht, wenn sich zwei Oberflächen berühren und gegeneinander bewegen oder bewegt werden sollen. Auch glatte Flächen sind mikroskopisch betrachtet nicht völlig glatt. Kleine Unebenheiten greifen ineinander.</p>
+        <div class="three">
+          <div class="mini-card">
+            <h4>Haftreibung</h4>
+            <p>Wirkt, solange etwas noch nicht rutscht. Sie hilft zum Beispiel beim Loslaufen.</p>
+          </div>
+          <div class="mini-card">
+            <h4>Gleitreibung</h4>
+            <p>Wirkt, wenn Flächen aneinander entlang gleiten. Meist kleiner als Haftreibung.</p>
+          </div>
+          <div class="mini-card">
+            <h4>Rollreibung</h4>
+            <p>Wirkt beim Rollen. Sie ist oft viel kleiner als Gleitreibung.</p>
+          </div>
+        </div>
+        <div class="fact">
+          <strong>Reibung ist nicht nur schlecht:</strong> Ohne Reibung könnten wir kaum gehen, bremsen, schreiben oder Kurven fahren. Zu viel Reibung kann aber Wärme erzeugen und Energie verschwenden.
+        </div>
+
+        <h3>Übungen zu Reibung</h3>
+        <div class="exercise" data-task="drag">
+          <p class="exercise-title"><span class="badge">Aufgabe 8</span> Reibungsarten zuordnen</p>
+          <p>Ziehe die Beispiele zur passenden Reibungsart.</p>
+          <div class="drag-grid">
+            <div>
+              <div class="label-line">Beispiele</div>
+              <div class="drag-list" id="dragSource">
+                <button class="pill" draggable="true" data-match="haft">Schuhsohle hält auf dem Boden</button>
+                <button class="pill" draggable="true" data-match="gleit">Schlitten rutscht über Schnee</button>
+                <button class="pill" draggable="true" data-match="roll">Fahrradreifen rollt auf der Straße</button>
+              </div>
+            </div>
+            <div>
+              <div class="label-line">Haftreibung</div>
+              <div class="drop" data-accept="haft"></div>
+              <div class="label-line">Gleitreibung</div>
+              <div class="drop" data-accept="gleit"></div>
+              <div class="label-line">Rollreibung</div>
+              <div class="drop" data-accept="roll"></div>
+            </div>
+          </div>
+          <button class="check-button" type="button" onclick="checkDrag(this)">Prüfen</button>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="exercise" data-task="mc">
+          <p class="exercise-title"><span class="badge">Aufgabe 9</span> Reibung im Alltag</p>
+          <p>Warum streut man im Winter Sand oder Splitt auf glatte Wege?</p>
+          <div class="options">
+            <label class="option"><input type="radio" name="q9" value="a"> Damit der Boden kälter wird.</label>
+            <label class="option"><input type="radio" name="q9" value="b" data-correct="true"> Damit die Reibung größer wird und man weniger rutscht.</label>
+            <label class="option"><input type="radio" name="q9" value="c"> Damit die Rollreibung verschwindet.</label>
+          </div>
+          <button class="check-button" type="button" onclick="checkRadio(this)">Prüfen</button>
+          <div class="feedback"></div>
+        </div>
+      </section>
+
+      <section id="radschiene">
+        <h2>5. Rad und Schiene</h2>
+        <p>Bei Zügen rollt ein Stahlrad auf einer Stahlschiene. Beide Oberflächen sind sehr hart und verformen sich nur wenig. Deshalb ist die Rollreibung klein: Ein Zug kann mit wenig Energie sehr große Massen bewegen.</p>
+        <div class="split">
+          <div class="diagram">
+            <svg viewBox="0 0 560 240" aria-label="Stahlrad auf Schiene">
+              <rect width="560" height="240" fill="#fff"/>
+              <path d="M70 190h420" stroke="#777f88" stroke-width="22" stroke-linecap="round"/>
+              <path d="M70 177h420" stroke="#b6c0ca" stroke-width="6" stroke-linecap="round"/>
+              <circle cx="280" cy="96" r="66" fill="#cfd6de" stroke="#4d5661" stroke-width="6"/>
+              <circle cx="280" cy="96" r="25" fill="#f3f5f7" stroke="#4d5661" stroke-width="5"/>
+              <path d="M214 152c27 18 105 18 132 0" fill="none" stroke="#4d5661" stroke-width="8" stroke-linecap="round"/>
+              <path d="M145 42h80" stroke="#2364aa" stroke-width="7" stroke-linecap="round"/>
+              <path d="M207 26l28 16-28 16" fill="none" stroke="#2364aa" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+              <text x="118" y="30" font-family="Arial" font-size="20" fill="#2364aa" font-weight="700">Bewegung</text>
+              <text x="185" y="224" font-family="Arial" font-size="18" fill="#16202a">kleine Rollreibung</text>
+            </svg>
+          </div>
+          <div class="band">
+            <h3>Warum rutschen Züge trotzdem manchmal?</h3>
+            <p>Die Haftreibung zwischen Stahlrad und Schiene ist kleiner als bei Gummi auf Asphalt. Bei Regen, Laub oder Eis wird sie noch kleiner. Dann können Räder beim Anfahren durchdrehen oder beim Bremsen blockieren.</p>
+            <p>Deshalb brauchen Züge lange Bremswege und manchmal Sandstreuer, die Sand vor die Räder geben.</p>
+          </div>
+        </div>
+
+        <h3>Übungen zu Rad/Schiene</h3>
+        <div class="exercise" data-task="mc">
+          <p class="exercise-title"><span class="badge">Aufgabe 10</span> Stahl auf Stahl</p>
+          <p>Warum sind Eisenbahnen besonders energiesparend beim Transport schwerer Lasten?</p>
+          <div class="options">
+            <label class="option"><input type="radio" name="q10" value="a"> Weil Stahlräder immer ohne Reibung rollen.</label>
+            <label class="option"><input type="radio" name="q10" value="b" data-correct="true"> Weil die Rollreibung zwischen Stahlrad und Schiene sehr klein ist.</label>
+            <label class="option"><input type="radio" name="q10" value="c"> Weil Züge keine Masse haben.</label>
+          </div>
+          <button class="check-button" type="button" onclick="checkRadio(this)">Prüfen</button>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="exercise" data-task="text">
+          <p class="exercise-title"><span class="badge">Aufgabe 11</span> Bremsweg begründen</p>
+          <p>Ergänze: Züge haben oft lange Bremswege, weil die Haftreibung zwischen Stahlrad und Schiene im Vergleich zu Autoreifen eher ... ist.</p>
+          <div class="task-row">
+            <input type="text" data-answer="klein|gering|niedrig|kleiner|geringer" placeholder="Antwort">
+            <button class="check-button" type="button" onclick="checkText(this)">Prüfen</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </section>
+
+      <section id="reifen">
+        <h2>6. Reifen auf Asphalt</h2>
+        <p>Autoreifen bestehen aus Gummi. Asphalt ist rau. Dadurch entsteht viel Haftreibung. Diese Haftreibung ist wichtig, damit ein Auto beschleunigen, bremsen und Kurven fahren kann.</p>
+        <div class="split">
+          <div class="mini-card">
+            <h4>Trockener Asphalt</h4>
+            <p>Meist gute Haftung. Reifen können Kräfte gut auf die Straße übertragen.</p>
+          </div>
+          <div class="mini-card">
+            <h4>Nasser Asphalt</h4>
+            <p>Wasser kann die Haftung verringern. Bei sehr viel Wasser droht Aquaplaning: Der Reifen schwimmt auf.</p>
+          </div>
+        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Situation</th>
+              <th>Was passiert?</th>
+              <th>Folge</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Reifen rollt normal</td>
+              <td>Haftreibung am Kontaktpunkt</td>
+              <td>Auto bleibt gut lenkbar</td>
+            </tr>
+            <tr>
+              <td>Vollbremsung ohne ABS</td>
+              <td>Reifen blockiert und rutscht</td>
+              <td>Gleitreibung, schlechter lenkbar</td>
+            </tr>
+            <tr>
+              <td>Nasse Straße</td>
+              <td>Reibung wird kleiner</td>
+              <td>Bremsweg wird länger</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Mini-Simulation: Bremsweg</h3>
+        <div class="exercise">
+          <p>Stelle die Geschwindigkeit und den Untergrund ein. Die Anzeige ist ein vereinfachtes Modell: Sie zeigt, warum nasse oder glatte Straßen gefährlicher sind.</p>
+          <div class="task-row">
+            <label>Geschwindigkeit <input id="brakeSpeed" class="short" type="number" min="10" max="140" value="50"> km/h</label>
+            <label>Untergrund
+              <select id="surface" onchange="brakeCalc()">
+                <option value="0.85">trockener Asphalt</option>
+                <option value="0.45">nasser Asphalt</option>
+                <option value="0.18">Eis</option>
+                <option value="0.20">nasse Schiene</option>
+              </select>
+            </label>
+            <button class="plain-button" type="button" onclick="brakeCalc()">Anzeigen</button>
+          </div>
+          <div class="result-board">
+            <div class="result"><span class="small">Bremsweg</span><strong id="brakeOut">11,6 m</strong></div>
+            <div class="result"><span class="small">Reibungszahl</span><strong id="muOut">0,85</strong></div>
+            <div class="result"><span class="small">Tempo</span><strong id="vOut">50 km/h</strong></div>
+            <div class="result"><span class="small">Merke</span><strong id="brakeHint">gute Haftung</strong></div>
+          </div>
+          <canvas id="brakeCanvas" width="720" height="180" aria-label="Bremswegdarstellung"></canvas>
+        </div>
+
+        <h3>Übungen zu Reifen und Asphalt</h3>
+        <div class="exercise" data-task="mc">
+          <p class="exercise-title"><span class="badge">Aufgabe 12</span> Nasse Fahrbahn</p>
+          <p>Warum wird der Bremsweg auf nasser Straße länger?</p>
+          <div class="options">
+            <label class="option"><input type="radio" name="q12" value="a" data-correct="true"> Weil die Reibung zwischen Reifen und Straße kleiner wird.</label>
+            <label class="option"><input type="radio" name="q12" value="b"> Weil das Auto leichter wird.</label>
+            <label class="option"><input type="radio" name="q12" value="c"> Weil Geschwindigkeit keine Rolle spielt.</label>
+          </div>
+          <button class="check-button" type="button" onclick="checkRadio(this)">Prüfen</button>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="exercise" data-task="mc">
+          <p class="exercise-title"><span class="badge">Aufgabe 13</span> Rad/Schiene und Reifen/Asphalt vergleichen</p>
+          <p>Welche Aussage passt am besten?</p>
+          <div class="options">
+            <label class="option"><input type="radio" name="q13" value="a"> Gummi auf Asphalt hat immer weniger Haftreibung als Stahl auf Stahl.</label>
+            <label class="option"><input type="radio" name="q13" value="b" data-correct="true"> Gummi auf trockenem Asphalt hat meist mehr Haftreibung, Stahlrad auf Schiene dafür sehr kleine Rollreibung.</label>
+            <label class="option"><input type="radio" name="q13" value="c"> Stahlrad und Reifen funktionieren gleich, nur die Farbe ist anders.</label>
+          </div>
+          <button class="check-button" type="button" onclick="checkRadio(this)">Prüfen</button>
+          <div class="feedback"></div>
+        </div>
+      </section>
+
+      <section id="abschluss">
+        <h2>7. Abschlussübungen</h2>
+        <p>Hier werden die Themen gemischt. Rechne sorgfältig und schreibe bei Rechnungen immer die Einheit dazu.</p>
+
+        <div class="exercise" data-task="num">
+          <p class="exercise-title"><span class="badge">Aufgabe 14</span> Tabellenwert auswerten</p>
+          <p>Ein Körper legt in 4 s eine Strecke von 28 m zurück. Wie groß ist seine Geschwindigkeit?</p>
+          <div class="task-row">
+            <input class="short" type="number" data-answer="7" data-tolerance="0.05" placeholder="m/s">
+            <button class="check-button" type="button" onclick="checkNumber(this)">Prüfen</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="exercise" data-task="text">
+          <p class="exercise-title"><span class="badge">Aufgabe 15</span> Formel umstellen</p>
+          <p>Welche Formel benutzt du, wenn du den Weg s berechnen möchtest und v und t gegeben sind?</p>
+          <div class="task-row">
+            <input type="text" data-answer="s=v*t|s=v·t|s=v t|s=vt|s = v * t|s = v mal t|s=v mal t" placeholder="Formel">
+            <button class="check-button" type="button" onclick="checkFormula(this)">Prüfen</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="exercise" data-task="num">
+          <p class="exercise-title"><span class="badge">Aufgabe 16</span> Vom Alltag zur Rechnung</p>
+          <p>Ein Auto fährt 72 km/h. Wie viel m/s sind das?</p>
+          <div class="task-row">
+            <input class="short" type="number" data-answer="20" data-tolerance="0.05" placeholder="m/s">
+            <button class="check-button" type="button" onclick="checkNumber(this)">Prüfen</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="exercise" data-task="mc">
+          <p class="exercise-title"><span class="badge">Aufgabe 17</span> Diagramm und Bewegung</p>
+          <p>Eine Linie im s/t-Diagramm wird mit der Zeit immer steiler. Was bedeutet das?</p>
+          <div class="options">
+            <label class="option"><input type="radio" name="q17" value="a" data-correct="true"> Der Körper wird schneller.</label>
+            <label class="option"><input type="radio" name="q17" value="b"> Der Körper steht still.</label>
+            <label class="option"><input type="radio" name="q17" value="c"> Der Körper hat keine Geschwindigkeit.</label>
+          </div>
+          <button class="check-button" type="button" onclick="checkRadio(this)">Prüfen</button>
+          <div class="feedback"></div>
+        </div>
+
+        <details>
+          <summary>Lernzettel zum Wiederholen</summary>
+          <div class="inside">
+            <ul>
+              <li>Bewegung ist Ortsänderung in einer Zeit und hängt vom Bezugssystem ab.</li>
+              <li>v = s : t, s = v · t, t = s : v.</li>
+              <li>m/s · 3,6 = km/h. km/h : 3,6 = m/s.</li>
+              <li>Im s/t-Diagramm zeigt die Steigung die Geschwindigkeit.</li>
+              <li>Haftreibung verhindert Rutschen, Gleitreibung wirkt beim Rutschen, Rollreibung beim Rollen.</li>
+              <li>Stahlrad auf Schiene: kleine Rollreibung, aber auch begrenzte Haftung.</li>
+              <li>Reifen auf Asphalt: viel Haftreibung, besonders auf trockener Straße.</li>
+            </ul>
+          </div>
+        </details>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const taskState = new WeakMap();
+
+    function asNumber(value) {
+      return Number(String(value).replace(",", "."));
+    }
+
+    function normalize(value) {
+      return String(value)
+        .toLowerCase()
+        .trim()
+        .replaceAll(" ", "")
+        .replaceAll("×", "*")
+        .replaceAll("⋅", "·");
+    }
+
+    function setFeedback(exercise, ok, message) {
+      const feedback = exercise.querySelector(".feedback");
+      feedback.className = ok ? "feedback ok" : "feedback bad";
+      feedback.textContent = message;
+      taskState.set(exercise, ok);
+      updateProgress();
+    }
+
+    function checkRadio(button) {
+      const exercise = button.closest(".exercise");
+      const checked = exercise.querySelector("input[type='radio']:checked");
+      if (!checked) {
+        setFeedback(exercise, false, "Wähle zuerst eine Antwort aus.");
+        return;
+      }
+      if (checked.dataset.correct === "true") {
+        setFeedback(exercise, true, "Richtig. Genau so ist es.");
+      } else {
+        setFeedback(exercise, false, "Noch nicht. Lies den Merksatz darüber noch einmal und probiere es erneut.");
+      }
+    }
+
+    function checkNumber(button) {
+      const exercise = button.closest(".exercise");
+      const input = exercise.querySelector("input[type='number']");
+      const value = asNumber(input.value);
+      const answer = asNumber(input.dataset.answer);
+      const tolerance = asNumber(input.dataset.tolerance || 0.01);
+      if (!Number.isFinite(value)) {
+        setFeedback(exercise, false, "Trage zuerst eine Zahl ein.");
+        return;
+      }
+      if (Math.abs(value - answer) <= tolerance) {
+        setFeedback(exercise, true, "Richtig gerechnet.");
+      } else {
+        setFeedback(exercise, false, "Noch nicht. Tipp: Schreibe zuerst die Formel auf und setze dann die Zahlen ein.");
+      }
+    }
+
+    function checkText(button) {
+      const exercise = button.closest(".exercise");
+      const input = exercise.querySelector("input, select");
+      const value = String(input.value).toLowerCase().trim();
+      const answers = input.dataset.answer.split("|").map(a => a.toLowerCase().trim());
+      if (!value) {
+        setFeedback(exercise, false, "Trage zuerst eine Antwort ein.");
+        return;
+      }
+      if (answers.includes(value)) {
+        setFeedback(exercise, true, "Richtig.");
+      } else {
+        setFeedback(exercise, false, "Fast vielleicht, aber noch nicht passend. Überlege, welches Fachwort gesucht ist.");
+      }
+    }
+
+    function checkFormula(button) {
+      const exercise = button.closest(".exercise");
+      const input = exercise.querySelector("input");
+      const value = normalize(input.value);
+      const answers = input.dataset.answer.split("|").map(normalize);
+      if (!value) {
+        setFeedback(exercise, false, "Trage zuerst eine Formel ein.");
+        return;
+      }
+      if (answers.includes(value)) {
+        setFeedback(exercise, true, "Richtig. Weg = Geschwindigkeit mal Zeit.");
+      } else {
+        setFeedback(exercise, false, "Noch nicht. Starte mit v = s : t und stelle nach s um.");
+      }
+    }
+
+    function updateProgress() {
+      const exercises = [...document.querySelectorAll(".exercise[data-task]")];
+      const checked = exercises.filter(ex => taskState.has(ex)).length;
+      const correct = exercises.filter(ex => taskState.get(ex) === true).length;
+      const total = exercises.length;
+      const percent = total ? Math.round((correct / total) * 100) : 0;
+      document.getElementById("progressFill").style.width = percent + "%";
+      document.getElementById("scoreText").textContent = `${correct} von ${total} Aufgaben richtig (${checked} geprüft)`;
+    }
+
+    function resetAll() {
+      document.querySelectorAll("input").forEach(input => {
+        if (input.type === "radio") input.checked = false;
+        if (input.type === "text" || input.type === "number") {
+          if (!["calcS", "calcT", "brakeSpeed"].includes(input.id)) input.value = "";
+        }
+      });
+      document.querySelectorAll("select").forEach(select => {
+        if (!["motionPreset", "surface"].includes(select.id)) select.selectedIndex = 0;
+      });
+      document.querySelectorAll(".feedback").forEach(feedback => {
+        feedback.className = "feedback";
+        feedback.textContent = "";
+      });
+      document.querySelectorAll(".pill").forEach(pill => document.getElementById("dragSource").appendChild(pill));
+      document.querySelectorAll(".exercise[data-task]").forEach(ex => taskState.delete(ex));
+      speedCalc();
+      drawMotion();
+      brakeCalc();
+      updateProgress();
+    }
+
+    function speedCalc() {
+      const s = asNumber(document.getElementById("calcS").value);
+      const t = asNumber(document.getElementById("calcT").value);
+      const out = document.getElementById("calcOut");
+      if (!Number.isFinite(s) || !Number.isFinite(t) || t <= 0) {
+        out.textContent = "Bitte gib einen positiven Weg und eine positive Zeit ein.";
+        out.className = "feedback bad";
+        return;
+      }
+      const v = s / t;
+      out.className = "feedback ok";
+      out.textContent = `v = ${format(v)} m/s = ${format(v * 3.6)} km/h`;
+    }
+
+    function format(number) {
+      return Number(number.toFixed(2)).toLocaleString("de-DE");
+    }
+
+    function drawAxes(ctx, width, height) {
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, width, height);
+      ctx.strokeStyle = "#d8dee6";
+      ctx.lineWidth = 1;
+      for (let x = 70; x <= width - 50; x += 80) {
+        ctx.beginPath();
+        ctx.moveTo(x, 34);
+        ctx.lineTo(x, height - 48);
+        ctx.stroke();
+      }
+      for (let y = 34; y <= height - 48; y += 42) {
+        ctx.beginPath();
+        ctx.moveTo(70, y);
+        ctx.lineTo(width - 38, y);
+        ctx.stroke();
+      }
+      ctx.strokeStyle = "#16202a";
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(70, height - 48);
+      ctx.lineTo(width - 32, height - 48);
+      ctx.moveTo(70, height - 48);
+      ctx.lineTo(70, 24);
+      ctx.stroke();
+      ctx.fillStyle = "#16202a";
+      ctx.font = "16px Arial";
+      ctx.fillText("t", width - 28, height - 23);
+      ctx.fillText("s", 42, 31);
+    }
+
+    function drawPath(ctx, points, color) {
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 5;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.beginPath();
+      points.forEach((point, index) => {
+        if (index === 0) ctx.moveTo(point[0], point[1]);
+        else ctx.lineTo(point[0], point[1]);
+      });
+      ctx.stroke();
+    }
+
+    function drawMotion() {
+      const canvas = document.getElementById("motionCanvas");
+      const ctx = canvas.getContext("2d");
+      const width = canvas.width;
+      const height = canvas.height;
+      drawAxes(ctx, width, height);
+      const preset = document.getElementById("motionPreset").value;
+      const text = document.getElementById("motionText");
+      if (preset === "constant") {
+        drawPath(ctx, [[70, 292], [650, 58]], "#2364aa");
+        text.textContent = "Gerade Linie mit gleichbleibender Steigung: Die Geschwindigkeit bleibt gleich.";
+      }
+      if (preset === "faster") {
+        ctx.strokeStyle = "#b66a13";
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(70, 292);
+        ctx.quadraticCurveTo(260, 284, 650, 58);
+        ctx.stroke();
+        text.textContent = "Die Kurve wird immer steiler: In gleicher Zeit kommt immer mehr Weg dazu.";
+      }
+      if (preset === "pause") {
+        drawPath(ctx, [[70, 292], [250, 196], [430, 196], [650, 75]], "#2f7d5a");
+        text.textContent = "Erst steigt die Linie, dann bleibt sie waagerecht: Der Körper macht eine Pause.";
+      }
+      if (preset === "back") {
+        drawPath(ctx, [[70, 292], [330, 92], [650, 292]], "#6f4ca8");
+        text.textContent = "Die Linie steigt und fällt wieder: Der Körper entfernt sich und kommt zurück.";
+      }
+    }
+
+    function brakeCalc() {
+      const speed = Math.max(1, asNumber(document.getElementById("brakeSpeed").value) || 0);
+      const mu = asNumber(document.getElementById("surface").value);
+      const vms = speed / 3.6;
+      const g = 9.81;
+      const brake = (vms * vms) / (2 * mu * g);
+      document.getElementById("brakeOut").textContent = `${format(brake)} m`;
+      document.getElementById("muOut").textContent = format(mu);
+      document.getElementById("vOut").textContent = `${format(speed)} km/h`;
+      document.getElementById("brakeHint").textContent = mu > 0.7 ? "gute Haftung" : mu > 0.3 ? "vorsichtig" : "sehr glatt";
+      drawBrake(brake);
+    }
+
+    function drawBrake(distance) {
+      const canvas = document.getElementById("brakeCanvas");
+      const ctx = canvas.getContext("2d");
+      const width = canvas.width;
+      const height = canvas.height;
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, width, height);
+      ctx.strokeStyle = "#4d5661";
+      ctx.lineWidth = 12;
+      ctx.beginPath();
+      ctx.moveTo(44, 130);
+      ctx.lineTo(width - 44, 130);
+      ctx.stroke();
+      ctx.strokeStyle = "#f5f7fa";
+      ctx.setLineDash([24, 18]);
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      ctx.moveTo(44, 130);
+      ctx.lineTo(width - 44, 130);
+      ctx.stroke();
+      ctx.setLineDash([]);
+      const maxDistance = 170;
+      const end = Math.min(width - 70, 70 + (distance / maxDistance) * (width - 160));
+      ctx.strokeStyle = "#b83737";
+      ctx.lineWidth = 7;
+      ctx.beginPath();
+      ctx.moveTo(80, 92);
+      ctx.lineTo(end, 92);
+      ctx.stroke();
+      ctx.fillStyle = "#2364aa";
+      ctx.fillRect(54, 70, 44, 24);
+      ctx.fillStyle = "#16202a";
+      ctx.beginPath();
+      ctx.arc(65, 100, 8, 0, Math.PI * 2);
+      ctx.arc(88, 100, 8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.fillStyle = "#16202a";
+      ctx.font = "16px Arial";
+      ctx.fillText(`Bremsweg ungefähr ${format(distance)} m`, 80, 44);
+      ctx.fillStyle = "#b83737";
+      ctx.beginPath();
+      ctx.moveTo(end, 92);
+      ctx.lineTo(end - 12, 84);
+      ctx.lineTo(end - 12, 100);
+      ctx.closePath();
+      ctx.fill();
+    }
+
+    let dragged = null;
+
+    function setupDrag() {
+      document.querySelectorAll(".pill").forEach(pill => {
+        pill.addEventListener("dragstart", () => {
+          dragged = pill;
+        });
+      });
+      document.querySelectorAll(".drop, .drag-list").forEach(zone => {
+        zone.addEventListener("dragover", event => {
+          event.preventDefault();
+          zone.classList.add("over");
+        });
+        zone.addEventListener("dragleave", () => zone.classList.remove("over"));
+        zone.addEventListener("drop", event => {
+          event.preventDefault();
+          zone.classList.remove("over");
+          if (dragged) zone.appendChild(dragged);
+        });
+      });
+    }
+
+    function checkDrag(button) {
+      const exercise = button.closest(".exercise");
+      const drops = [...exercise.querySelectorAll(".drop")];
+      const ok = drops.every(drop => {
+        const item = drop.querySelector(".pill");
+        return item && item.dataset.match === drop.dataset.accept;
+      });
+      if (ok) {
+        setFeedback(exercise, true, "Richtig zugeordnet.");
+      } else {
+        setFeedback(exercise, false, "Noch nicht. Prüfe, ob etwas haftet, gleitet oder rollt.");
+      }
+    }
+
+    document.getElementById("calcS").addEventListener("input", speedCalc);
+    document.getElementById("calcT").addEventListener("input", speedCalc);
+    document.getElementById("brakeSpeed").addEventListener("input", brakeCalc);
+
+    setupDrag();
+    speedCalc();
+    drawMotion();
+    brakeCalc();
+    updateProgress();
+  </script>
+</body>
+</html>
