@@ -55,19 +55,56 @@ margin:auto;
 padding-bottom:40px;
 }
 
+.nav-shell{
+position:sticky;
+top:0;
+z-index:20;
+margin-bottom:22px;
+padding:10px 12px 12px;
+background:rgba(248,250,252,.92);
+backdrop-filter:blur(10px);
+border-radius:0 0 24px 24px;
+box-shadow:0 10px 24px rgba(15,23,42,.08);
+}
+
+.nav-toggle{
+display:block;
+margin:0 auto 10px;
+border:none;
+padding:10px 16px;
+border-radius:999px;
+cursor:pointer;
+font-weight:800;
+background:var(--main2);
+color:white;
+box-shadow:0 10px 24px rgba(37,99,235,.18);
+}
+
+.nav-toggle:hover{
+background:var(--main);
+}
+
 .topbar{
 display:flex;
 flex-wrap:wrap;
 gap:10px;
 justify-content:center;
-margin-bottom:22px;
-position:sticky;
-top:0;
-z-index:20;
-padding:12px;
-background:rgba(248,250,252,.88);
-backdrop-filter:blur(10px);
-border-radius:0 0 24px 24px;
+padding:2px;
+max-height:260px;
+overflow:hidden;
+transition:max-height .25s ease, opacity .2s ease, padding .2s ease, margin .2s ease;
+}
+
+.nav-shell.collapsed .topbar{
+max-height:0;
+opacity:0;
+padding:0;
+margin:0;
+pointer-events:none;
+}
+
+.nav-shell.collapsed{
+padding-bottom:10px;
 }
 
 .tab{
@@ -130,7 +167,7 @@ padding:10px 0;
 .mindmap{
 position:relative;
 width:760px;
-height:560px;
+height:690px;
 margin:auto;
 background:
 linear-gradient(#f1f5f9 1px,transparent 1px),
@@ -170,6 +207,8 @@ border-radius:20px;
 padding:12px;
 z-index:2;
 box-shadow:0 8px 18px rgba(0,0,0,.05);
+max-height:300px;
+overflow:auto;
 }
 
 .branch h4{
@@ -184,6 +223,27 @@ padding:8px 10px;
 margin:4px 0;
 border-radius:12px;
 border:1px solid #cbd5e1;
+}
+
+.input-list{
+display:grid;
+gap:0;
+}
+
+.plus-btn{
+width:100%;
+margin-top:7px;
+border:none;
+border-radius:999px;
+padding:8px 10px;
+cursor:pointer;
+font-weight:800;
+background:#dbeafe;
+color:#1e40af;
+}
+
+.plus-btn:hover{
+background:#bfdbfe;
 }
 
 .branch input:focus{
@@ -214,8 +274,8 @@ z-index:1;
 .l2{width:270px;transform:rotate(320deg);}
 .l3{width:270px;transform:rotate(140deg);}
 .l4{width:270px;transform:rotate(40deg);}
-.l5{width:215px;transform:rotate(270deg);}
-.l6{width:215px;transform:rotate(90deg);}
+.l5{width:280px;transform:rotate(270deg);}
+.l6{width:280px;transform:rotate(90deg);}
 
 .btnrow{
 display:flex;
@@ -267,6 +327,22 @@ font-size:3rem;
 font-weight:900;
 text-align:center;
 margin:10px 0;
+}
+
+.timer-card{
+position:sticky;
+top:112px;
+z-index:10;
+border:2px solid #dbeafe;
+background:linear-gradient(135deg,#ffffff,#eff6ff);
+}
+
+.timer-card h3{
+margin-bottom:4px;
+}
+
+.timer-buttons{
+justify-content:center;
 }
 
 .sample{
@@ -440,10 +516,11 @@ box-shadow:0 0 0 3px rgba(37,99,235,.14);
 @media(max-width:950px){
 .grid{grid-template-columns:1fr;}
 .phrase-grid{grid-template-columns:1fr;}
+.timer-card{position:static;}
 }
 
 @media print{
-.topbar,.btnrow,.btn,.options{display:none !important;}
+.nav-shell,.topbar,.btnrow,.btn,.options,.plus-btn{display:none !important;}
 .card{box-shadow:none;border:1px solid #ddd;}
 body{background:white;}
 .link-page,.trainer-page{display:block !important;}
@@ -461,8 +538,11 @@ body{background:white;}
 
 <div class="wrap">
 
+<div class="nav-shell" id="navShell">
+<button class="nav-toggle" id="navToggle" type="button" onclick="toggleTopbar()">▲ Themenleiste einklappen</button>
 <div class="topbar" id="tabs">
 <button class="tab link-tab-static" type="button" onclick="showLinkingPage()">Überleitungssätze</button>
+</div>
 </div>
 
 <section class="trainer-page" id="trainerPage">
@@ -491,12 +571,12 @@ body{background:white;}
 
 <div class="center" id="centerText">Winter</div>
 
-<div class="branch b1"><h4 id="h1">Advantages</h4><input><input><input></div>
-<div class="branch b2"><h4 id="h2">Problems</h4><input><input><input></div>
-<div class="branch b3"><h4 id="h3">Rules</h4><input><input><input></div>
-<div class="branch b4"><h4 id="h4">Learning</h4><input><input><input></div>
-<div class="branch b5"><h4 id="h5">Opinion</h4><input><input><input></div>
-<div class="branch b6"><h4 id="h6">Examples</h4><input><input><input></div>
+<div class="branch b1"><h4 id="h1">Advantages</h4><div class="input-list"><input placeholder="idea ..."><input placeholder="idea ..."><input placeholder="idea ..."></div><button class="plus-btn" type="button" onclick="addMindmapInput(this)">+ add idea</button></div>
+<div class="branch b2"><h4 id="h2">Problems</h4><div class="input-list"><input placeholder="idea ..."><input placeholder="idea ..."><input placeholder="idea ..."></div><button class="plus-btn" type="button" onclick="addMindmapInput(this)">+ add idea</button></div>
+<div class="branch b3"><h4 id="h3">Rules</h4><div class="input-list"><input placeholder="idea ..."><input placeholder="idea ..."><input placeholder="idea ..."></div><button class="plus-btn" type="button" onclick="addMindmapInput(this)">+ add idea</button></div>
+<div class="branch b4"><h4 id="h4">Learning</h4><div class="input-list"><input placeholder="idea ..."><input placeholder="idea ..."><input placeholder="idea ..."></div><button class="plus-btn" type="button" onclick="addMindmapInput(this)">+ add idea</button></div>
+<div class="branch b5"><h4 id="h5">Opinion</h4><div class="input-list"><input placeholder="idea ..."><input placeholder="idea ..."><input placeholder="idea ..."></div><button class="plus-btn" type="button" onclick="addMindmapInput(this)">+ add idea</button></div>
+<div class="branch b6"><h4 id="h6">Examples</h4><div class="input-list"><input placeholder="idea ..."><input placeholder="idea ..."><input placeholder="idea ..."></div><button class="plus-btn" type="button" onclick="addMindmapInput(this)">+ add idea</button></div>
 
 </div>
 </div>
@@ -509,19 +589,20 @@ body{background:white;}
 
 </div>
 
-<div class="card">
+</div>
+
+<div>
+
+<div class="card timer-card">
 <h3>⏱ Timer</h3>
+<p class="small">Nutze den Timer direkt neben deiner Mindmap beim freien Sprechen.</p>
 <div class="timer" id="timer">02:00</div>
-<div class="btnrow">
+<div class="btnrow timer-buttons">
 <button class="btn" onclick="startTimer()">Start</button>
 <button class="btn alt" onclick="pauseTimer()">Pause</button>
 <button class="btn alt" onclick="resetTimer()">Reset</button>
 </div>
 </div>
-
-</div>
-
-<div>
 
 <div class="card">
 <h3>🗣 Useful phrases</h3>
@@ -702,7 +783,7 @@ const topics = {
 desc:"Talk about winter weather, clothes, activities and your opinion.",
 img:"https://images.unsplash.com/photo-1483664852095-d6cc6870702d?w=1200&q=80",
 heads:["Weather","Clothes","Activities","Problems","Food / Drinks","Opinion"],
-ideas:["cold","snow","ice","jacket","scarf","gloves","skiing","sledging","dark days","slippery roads","hot chocolate","I like winter"],
+ideas:[["cold","snow","ice"],["jacket","scarf","gloves"],["skiing","sledging","build a snowman"],["dark days","slippery roads","snowstorms"],["hot chocolate","tea","cookies"],["I like winter","cozy","beautiful"]],
 phrases:[
 "In winter, the weather is often ...",
 "Many people wear ...",
@@ -722,7 +803,7 @@ sample:"I would like to talk about winter. In winter, the weather is often cold 
 desc:"Talk about things people can do in winter.",
 img:"https://images.unsplash.com/photo-1489515217757-5fd1be406fef?w=1200&q=80",
 heads:["Outdoor","Indoor","With friends","Equipment","Risks","Opinion"],
-ideas:["sledging","skiing","ice skating","watching films","baking","board games","friends","family","helmet","warm clothes","injuries","fun"],
+ideas:[["sledging","skiing","ice skating"],["watching films","baking","board games"],["snowball fight","meeting friends","winter walk"],["helmet","warm clothes","ice skates"],["injuries","slippery ice","cold hands"],["fun","exciting","relaxing"]],
 phrases:[
 "One popular winter activity is ...",
 "You need ... for this activity.",
@@ -741,7 +822,7 @@ sample:"I would like to talk about winter activities. In winter, people can go s
 desc:"Talk about cold temperatures, snow, ice and problems in winter.",
 img:"https://images.unsplash.com/photo-1517299321609-52687d1bc55a?w=1200&q=80",
 heads:["Temperature","Snow","Ice","Traffic","Daily life","Opinion"],
-ideas:["below zero","freezing","snowflakes","ice","slippery","traffic jams","school bus","warm clothes","short days","dark early","beautiful","sometimes annoying"],
+ideas:[["below zero","freezing","very cold"],["snowflakes","snowstorm","white landscape"],["slippery","frozen pavements","black ice"],["traffic jams","late buses","dangerous roads"],["warm clothes","short days","dark early"],["beautiful","sometimes annoying","I like snow"]],
 phrases:[
 "Winter weather can be ...",
 "Snow is beautiful, but ...",
@@ -760,7 +841,7 @@ sample:"I would like to talk about winter weather. Winter weather can be very co
 desc:"Talk about holidays, traditions and free days in winter.",
 img:"https://images.unsplash.com/photo-1482517967863-00e15c9b44be?w=1200&q=80",
 heads:["Traditions","Family","Food","Presents","Activities","Opinion"],
-ideas:["Christmas market","family dinner","cookies","hot chocolate","presents","decorations","music","holidays","relaxing","snow","special time","I enjoy it"],
+ideas:[["Christmas market","decorations","Christmas tree"],["family dinner","visit relatives","spend time together"],["cookies","hot chocolate","roast dinner"],["presents","wrapping paper","surprises"],["music","holidays","snow"],["special time","I enjoy it","relaxing"]],
 phrases:[
 "During the winter holidays, many people ...",
 "A tradition in my family is ...",
@@ -779,7 +860,7 @@ sample:"I would like to talk about Christmas and winter holidays. During the win
 desc:"Talk about wild animals, their habitats, behaviour and protection.",
 img:"https://images.unsplash.com/photo-1546182990-dffeafbe841d?w=1200&q=80",
 heads:["Examples","Habitat","Food","Behaviour","Dangers","Protection"],
-ideas:["lion","tiger","wolf","forest","savanna","ocean","meat","plants","hunt","live in groups","habitat loss","protect nature"],
+ideas:[["lion","tiger","wolf"],["forest","savanna","ocean"],["meat","plants","fish"],["hunt","live in groups","sleep in dens"],["habitat loss","hunters","climate change"],["protect nature","national parks","do not pollute"]],
 phrases:[
 "Wild animals are animals like ...",
 "They live in ...",
@@ -799,7 +880,7 @@ sample:"I would like to talk about wild animals. Wild animals are animals like l
 desc:"Talk about animals that are in danger and why protection is important.",
 img:"https://images.unsplash.com/photo-1501706362039-c6e809abf92b?w=1200&q=80",
 heads:["Examples","Reasons","Habitat","Humans","Protection","Opinion"],
-ideas:["panda","tiger","rhino","habitat loss","climate change","poaching","forests","national parks","donations","laws","important","sad"],
+ideas:[["panda","tiger","rhino"],["habitat loss","climate change","poaching"],["forests","oceans","grasslands"],["hunting","pollution","building roads"],["national parks","donations","laws"],["important","sad","animals need help"]],
 phrases:[
 "An endangered animal is ...",
 "One reason is ...",
@@ -818,7 +899,7 @@ sample:"I would like to talk about endangered animals. Examples are pandas, tige
 desc:"Talk about advantages and disadvantages of zoos.",
 img:"https://images.unsplash.com/photo-1564349683136-77e08dba1ef7?w=1200&q=80",
 heads:["Animals","Education","Protection","Problems","Visitors","Opinion"],
-ideas:["lions","monkeys","learn about animals","breeding programs","small cages","stress","families","school trips","expensive","interesting","not natural","mixed opinion"],
+ideas:[["lions","monkeys","elephants"],["learn about animals","school trips","information signs"],["breeding programs","endangered species","vets"],["small cages","stress","not natural"],["families","children","tourists"],["interesting","mixed opinion","only good zoos"]],
 phrases:[
 "Zoos can be useful because ...",
 "One advantage is ...",
@@ -837,7 +918,7 @@ sample:"I would like to talk about animals in zoos. Zoos can be useful because p
 desc:"Compare pets with wild animals.",
 img:"https://images.unsplash.com/photo-1450778869180-41d0601e046e?w=1200&q=80",
 heads:["Pets","Wild animals","Care","Freedom","Dangers","Opinion"],
-ideas:["dog","cat","rabbit","wolf","lion","fox","feeding","home","nature","freedom","dangerous","not a pet"],
+ideas:[["dog","cat","rabbit"],["wolf","lion","fox"],["feeding","home","vet"],["nature","freedom","natural habitat"],["dangerous","bite","not a pet"],["should stay wild","I like pets","respect animals"]],
 phrases:[
 "Pets are different from wild animals because ...",
 "Pets need ...",
@@ -856,7 +937,7 @@ sample:"I would like to compare pets and wild animals. Pets, like dogs or cats, 
 desc:"Talk about hobbies, friends, media, sports and your opinion.",
 img:"https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=1200&q=80",
 heads:["Hobbies","Friends","Sports","Media","Weekend","Opinion"],
-ideas:["reading","music","meeting friends","football","cycling","Netflix","gaming","social media","Saturday","relaxing","important","I enjoy it"],
+ideas:[["reading","music","drawing"],["meeting friends","talking","going out"],["football","cycling","swimming"],["Netflix","gaming","social media"],["Saturday","relaxing","sleep longer"],["important","I enjoy it","helps me relax"]],
 phrases:[
 "In my free time, I like to ...",
 "A hobby of mine is ...",
@@ -876,7 +957,7 @@ sample:"I would like to talk about free time. In my free time, I like meeting fr
 desc:"Talk about different hobbies and why people enjoy them.",
 img:"https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=1200&q=80",
 heads:["Creative","Sporty","At home","Outside","Benefits","Opinion"],
-ideas:["drawing","playing music","football","dancing","reading","gaming","cycling","walking","relaxing","learn skills","fun","my hobby"],
+ideas:[["drawing","playing music","photography"],["football","dancing","swimming"],["reading","gaming","cooking"],["cycling","walking","skating"],["relaxing","learn skills","fun"],["my hobby","I enjoy it","would like to try"]],
 phrases:[
 "A hobby is something you do for fun.",
 "My favourite hobby is ...",
@@ -895,7 +976,7 @@ sample:"I would like to talk about hobbies. A hobby is something you do for fun 
 desc:"Talk about meeting friends and doing activities together.",
 img:"https://images.unsplash.com/photo-1529333166437-7750a6dd5a70?w=1200&q=80",
 heads:["Activities","Places","Communication","Weekend","Problems","Opinion"],
-ideas:["talking","shopping","cinema","park","home","texting","calling","Saturday","plans","arguments","fun","important"],
+ideas:[["talking","shopping","cinema"],["park","home","city centre"],["texting","calling","voice messages"],["Saturday","plans","sleepover"],["arguments","no time","different plans"],["fun","important","good friendship"]],
 phrases:[
 "With my friends, I often ...",
 "We usually meet ...",
@@ -914,7 +995,7 @@ sample:"I would like to talk about spending time with friends. With my friends, 
 desc:"Talk about films, series, gaming, social media and screen time.",
 img:"https://images.unsplash.com/photo-1516321497487-e288fb19713f?w=1200&q=80",
 heads:["Films","Gaming","Social media","Advantages","Problems","Opinion"],
-ideas:["Netflix","YouTube","computer games","Instagram","TikTok","fun","information","too much screen time","tired eyes","distraction","relaxing","clear limits"],
+ideas:[["Netflix","movies","series"],["computer games","online games","console"],["Instagram","TikTok","YouTube"],["fun","information","relaxing"],["too much screen time","tired eyes","distraction"],["clear limits","okay sometimes","balance"]],
 phrases:[
 "Many teenagers use media to ...",
 "One advantage is ...",
@@ -933,7 +1014,7 @@ sample:"I would like to talk about media in free time. Many teenagers watch film
 desc:"Talk about what people do at the weekend.",
 img:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200&q=80",
 heads:["Saturday","Sunday","Family","Friends","Homework","Opinion"],
-ideas:["sleep longer","shopping","family breakfast","meeting friends","cinema","homework","cleaning room","relaxing","sports","walk","important break","I like weekends"],
+ideas:[["sleep longer","shopping","meeting friends"],["family breakfast","walk","relax"],["family time","visit grandparents","lunch"],["cinema","sports","plans"],["homework","study","cleaning room"],["important break","I like weekends","relaxing"]],
 phrases:[
 "At the weekend, I usually ...",
 "On Saturday, I often ...",
@@ -953,6 +1034,8 @@ sample:"I would like to talk about weekend plans. On Saturday, I usually sleep l
 let current="Winter";
 
 const tabsEl = document.getElementById("tabs");
+const navShellEl = document.getElementById("navShell");
+const navToggleEl = document.getElementById("navToggle");
 const trainerPageEl = document.getElementById("trainerPage");
 const linkingPageEl = document.getElementById("linkingPage");
 const titleEl = document.getElementById("title");
@@ -971,6 +1054,12 @@ b.type="button";
 b.innerText=key;
 b.onclick=()=>loadTopic(key);
 tabsEl.appendChild(b);
+}
+
+function toggleTopbar(){
+navShellEl.classList.toggle("collapsed");
+const isCollapsed = navShellEl.classList.contains("collapsed");
+navToggleEl.innerText = isCollapsed ? "▼ Themenleiste ausklappen" : "▲ Themenleiste einklappen";
 }
 
 function showTrainer(){
@@ -1016,10 +1105,24 @@ sampleEl.style.display="none";
 clearMap();
 }
 
+function addMindmapInput(button){
+const list=button.parentElement.querySelector(".input-list");
+const input=document.createElement("input");
+input.placeholder="idea ...";
+list.appendChild(input);
+input.focus();
+}
+
 function fillExample(){
 let vals=topics[current].ideas;
-let inputs=document.querySelectorAll(".branch input");
-inputs.forEach((x,i)=>x.value=vals[i]||"");
+let branches=document.querySelectorAll(".branch");
+branches.forEach((branch,branchIndex)=>{
+let inputs=branch.querySelectorAll("input");
+let branchIdeas=Array.isArray(vals[branchIndex]) ? vals[branchIndex] : vals.slice(branchIndex*Math.ceil(vals.length/branches.length),(branchIndex+1)*Math.ceil(vals.length/branches.length));
+inputs.forEach((input,inputIndex)=>{
+input.value=branchIdeas[inputIndex]||"";
+});
+});
 }
 
 function clearMap(){
