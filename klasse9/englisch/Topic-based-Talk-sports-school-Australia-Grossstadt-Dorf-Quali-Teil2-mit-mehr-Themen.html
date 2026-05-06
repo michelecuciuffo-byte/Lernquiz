@@ -55,19 +55,56 @@ margin:auto;
 padding-bottom:40px;
 }
 
+.nav-shell{
+position:sticky;
+top:0;
+z-index:20;
+margin-bottom:22px;
+padding:10px 12px 12px;
+background:rgba(248,250,252,.92);
+backdrop-filter:blur(10px);
+border-radius:0 0 24px 24px;
+box-shadow:0 10px 24px rgba(15,23,42,.08);
+}
+
+.nav-toggle{
+display:block;
+margin:0 auto 10px;
+border:none;
+padding:10px 16px;
+border-radius:999px;
+cursor:pointer;
+font-weight:800;
+background:var(--main2);
+color:white;
+box-shadow:0 10px 24px rgba(37,99,235,.18);
+}
+
+.nav-toggle:hover{
+background:var(--main);
+}
+
 .topbar{
 display:flex;
 flex-wrap:wrap;
 gap:10px;
 justify-content:center;
-margin-bottom:22px;
-position:sticky;
-top:0;
-z-index:20;
-padding:12px;
-background:rgba(248,250,252,.88);
-backdrop-filter:blur(10px);
-border-radius:0 0 24px 24px;
+padding:2px;
+max-height:260px;
+overflow:hidden;
+transition:max-height .25s ease, opacity .2s ease, padding .2s ease, margin .2s ease;
+}
+
+.nav-shell.collapsed .topbar{
+max-height:0;
+opacity:0;
+padding:0;
+margin:0;
+pointer-events:none;
+}
+
+.nav-shell.collapsed{
+padding-bottom:10px;
 }
 
 .tab{
@@ -130,7 +167,7 @@ padding:10px 0;
 .mindmap{
 position:relative;
 width:760px;
-height:560px;
+height:690px;
 margin:auto;
 background:
 linear-gradient(#f1f5f9 1px,transparent 1px),
@@ -170,6 +207,8 @@ border-radius:20px;
 padding:12px;
 z-index:2;
 box-shadow:0 8px 18px rgba(0,0,0,.05);
+max-height:300px;
+overflow:auto;
 }
 
 .branch h4{
@@ -184,6 +223,27 @@ padding:8px 10px;
 margin:4px 0;
 border-radius:12px;
 border:1px solid #cbd5e1;
+}
+
+.plus-btn{
+width:100%;
+margin-top:7px;
+border:none;
+border-radius:999px;
+padding:8px 10px;
+cursor:pointer;
+font-weight:800;
+background:#dbeafe;
+color:#1e40af;
+}
+
+.plus-btn:hover{
+background:#bfdbfe;
+}
+
+.input-list{
+display:grid;
+gap:0;
 }
 
 .branch input:focus{
@@ -214,8 +274,8 @@ z-index:1;
 .l2{width:270px;transform:rotate(320deg);}
 .l3{width:270px;transform:rotate(140deg);}
 .l4{width:270px;transform:rotate(40deg);}
-.l5{width:215px;transform:rotate(270deg);}
-.l6{width:215px;transform:rotate(90deg);}
+.l5{width:280px;transform:rotate(270deg);}
+.l6{width:280px;transform:rotate(90deg);}
 
 .btnrow{
 display:flex;
@@ -267,6 +327,22 @@ font-size:3rem;
 font-weight:900;
 text-align:center;
 margin:10px 0;
+}
+
+.timer-card{
+position:sticky;
+top:112px;
+z-index:10;
+border:2px solid #dbeafe;
+background:linear-gradient(135deg,#ffffff,#eff6ff);
+}
+
+.timer-card h3{
+margin-bottom:4px;
+}
+
+.timer-buttons{
+justify-content:center;
 }
 
 .sample{
@@ -440,10 +516,11 @@ box-shadow:0 0 0 3px rgba(37,99,235,.14);
 @media(max-width:950px){
 .grid{grid-template-columns:1fr;}
 .phrase-grid{grid-template-columns:1fr;}
+.timer-card{position:static;}
 }
 
 @media print{
-.topbar,.btnrow,.btn,.options{display:none !important;}
+.nav-shell,.topbar,.btnrow,.btn,.options,.plus-btn{display:none !important;}
 .card{box-shadow:none;border:1px solid #ddd;}
 body{background:white;}
 .link-page,.trainer-page{display:block !important;}
@@ -456,13 +533,16 @@ body{background:white;}
 
 <header>
 <h1>🎤 QUALI Speaking Trainer</h1>
-<p>Mit echter Mindmap-Vorlage. Thema wählen, Stichpunkte eintragen und frei sprechen. Neu: eigener Reiter für bessere Überleitungssätze.</p>
+<p>Mit echter Mindmap-Vorlage. Thema wählen, Stichpunkte eintragen und frei sprechen. Neu: mehr Lücken, Plus-Felder und zusätzliche Themen zu Großstadt und Dorf.</p>
 </header>
 
 <div class="wrap">
 
+<div class="nav-shell" id="navShell">
+<button class="nav-toggle" id="navToggle" type="button" onclick="toggleTopbar()">▲ Themenleiste einklappen</button>
 <div class="topbar" id="tabs">
 <button class="tab link-tab-static" type="button" onclick="showLinkingPage()">Überleitungssätze</button>
+</div>
 </div>
 
 <section class="trainer-page" id="trainerPage">
@@ -491,12 +571,12 @@ body{background:white;}
 
 <div class="center" id="centerText">Smartphones at School</div>
 
-<div class="branch b1"><h4 id="h1">Advantages</h4><input><input><input></div>
-<div class="branch b2"><h4 id="h2">Problems</h4><input><input><input></div>
-<div class="branch b3"><h4 id="h3">Rules</h4><input><input><input></div>
-<div class="branch b4"><h4 id="h4">Learning</h4><input><input><input></div>
-<div class="branch b5"><h4 id="h5">Opinion</h4><input><input><input></div>
-<div class="branch b6"><h4 id="h6">Examples</h4><input><input><input></div>
+<div class="branch b1"><h4 id="h1">Advantages</h4><div class="input-list"><input placeholder="idea ..."><input placeholder="idea ..."><input placeholder="idea ..."></div><button class="plus-btn" type="button" onclick="addMindmapInput(this)">+ add idea</button></div>
+<div class="branch b2"><h4 id="h2">Problems</h4><div class="input-list"><input placeholder="idea ..."><input placeholder="idea ..."><input placeholder="idea ..."></div><button class="plus-btn" type="button" onclick="addMindmapInput(this)">+ add idea</button></div>
+<div class="branch b3"><h4 id="h3">Rules</h4><div class="input-list"><input placeholder="idea ..."><input placeholder="idea ..."><input placeholder="idea ..."></div><button class="plus-btn" type="button" onclick="addMindmapInput(this)">+ add idea</button></div>
+<div class="branch b4"><h4 id="h4">Learning</h4><div class="input-list"><input placeholder="idea ..."><input placeholder="idea ..."><input placeholder="idea ..."></div><button class="plus-btn" type="button" onclick="addMindmapInput(this)">+ add idea</button></div>
+<div class="branch b5"><h4 id="h5">Opinion</h4><div class="input-list"><input placeholder="idea ..."><input placeholder="idea ..."><input placeholder="idea ..."></div><button class="plus-btn" type="button" onclick="addMindmapInput(this)">+ add idea</button></div>
+<div class="branch b6"><h4 id="h6">Examples</h4><div class="input-list"><input placeholder="idea ..."><input placeholder="idea ..."><input placeholder="idea ..."></div><button class="plus-btn" type="button" onclick="addMindmapInput(this)">+ add idea</button></div>
 
 </div>
 </div>
@@ -509,19 +589,20 @@ body{background:white;}
 
 </div>
 
-<div class="card">
+</div>
+
+<div>
+
+<div class="card timer-card">
 <h3>⏱ Timer</h3>
+<p class="small">Nutze den Timer direkt neben deiner Mindmap beim freien Sprechen.</p>
 <div class="timer" id="timer">02:00</div>
-<div class="btnrow">
+<div class="btnrow timer-buttons">
 <button class="btn" onclick="startTimer()">Start</button>
 <button class="btn alt" onclick="pauseTimer()">Pause</button>
 <button class="btn alt" onclick="resetTimer()">Reset</button>
 </div>
 </div>
-
-</div>
-
-<div>
 
 <div class="card">
 <h3>🗣 Useful phrases</h3>
@@ -846,6 +927,66 @@ questions:[
 sample:"I would like to talk about holidays in Australia. Tourists can visit beaches, go surfing or see famous cities like Sydney. A problem could be the long flight and the high costs. I would like to spend holidays there because the nature looks beautiful and exciting."
 },
 
+"Life in a Big City":{
+desc:"Talk about living in a big city: transport, free time, advantages and problems.",
+img:"https://images.unsplash.com/photo-1449824913935-59a10b8d2000?w=1200&q=80",
+heads:["Places","Transport","Free time","Advantages","Problems","Opinion"],
+ideas:["city centre","shops","schools","cinema","restaurants","museum","bus","train","underground","bike","traffic","walking","parks","sports clubs","shopping","events","friends","cafés","many opportunities","good jobs","public transport","more schools","interesting places","never boring","noise","traffic jams","expensive flats","air pollution","too many people","stress","I like cities","I prefer quiet places","good for young people","exciting","not always relaxing"],
+phrases:[
+"In a big city, there are many ...",
+"One advantage is that ...",
+"One problem is ...",
+"In my opinion, life in a big city is ..."
+],
+questions:[
+"What can people do in a big city?",
+"What are the advantages of living in a city?",
+"What problems can big cities have?",
+"Would you like to live in a big city? Why or why not?"
+],
+sample:"I would like to talk about life in a big city. In a big city, there are many shops, schools and places for free time, for example cinemas, parks or restaurants. One advantage is that people can use buses, trains or the underground. However, a big city can also be noisy, crowded and expensive. In my opinion, life in a big city is exciting, but I also think that quiet places are important."
+},
+
+"Life in a Village":{
+desc:"Talk about living in a village or in the countryside.",
+img:"https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1200&q=80",
+heads:["Nature","People","Transport","Free time","Advantages","Problems"],
+ideas:["fields","forest","fresh air","animals","gardens","quiet streets","neighbours","family","small community","people know each other","helpful people","village festivals","bus stop","few buses","car","bike","long way to school","walking","football club","playground","nature walks","meeting friends","calm life","more space","quiet","safe","not much traffic","good for children","few shops","boring sometimes","bad internet","fewer jobs","far away from city","not many activities","I like villages","peaceful","relaxing"],
+phrases:[
+"In a village, life is often ...",
+"One advantage is ...",
+"A disadvantage can be ...",
+"I would / would not like to live there because ..."
+],
+questions:[
+"What is life in a village like?",
+"What are the advantages of living in the countryside?",
+"What can be difficult in a village?",
+"Do you prefer a village or a city?"
+],
+sample:"I would like to talk about life in a village. In a village, life is often quieter than in a big city. There is more nature, for example fields, forests and gardens. People may know their neighbours and there can be a strong community. However, there are sometimes fewer shops, fewer buses and fewer activities for young people. I think village life can be relaxing, but it depends on the person."
+},
+
+"Big City or Village":{
+desc:"Compare life in a big city and life in a village.",
+img:"https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=1200&q=80",
+heads:["City life","Village life","Transport","Free time","Problems","My choice"],
+ideas:["many shops","many schools","cinema","restaurants","busy streets","public transport","quiet","nature","fresh air","more space","community","neighbours","bus","train","car","bike","long distances","traffic","sports clubs","shopping","walks","meeting friends","festivals","internet","city is noisy","village can be boring","city is expensive","few buses","air pollution","not many jobs","I prefer the city","I prefer the village","both are good","depends on age","for families","for students"],
+phrases:[
+"On the one hand, life in a city is ...",
+"On the other hand, life in a village is ...",
+"Compared to a village, a city ...",
+"Personally, I would choose ... because ..."
+],
+questions:[
+"What is better: city life or village life?",
+"What is different about transport?",
+"Where do young people have more free-time activities?",
+"Where would you like to live in the future?"
+],
+sample:"I would like to compare life in a big city and life in a village. On the one hand, a big city offers many shops, schools, restaurants and activities. Public transport is often better, too. On the other hand, a village is usually quieter and closer to nature. A problem in a city can be noise and high prices, while a problem in a village can be fewer buses or fewer activities. Personally, I would choose the city because there are more opportunities, but I also like the calm atmosphere of a village."
+},
+
 "Sport":{
 desc:"Health, fitness and favourite sports.",
 img:"https://images.unsplash.com/photo-1517649763962-0c623066013b?w=1200&q=80",
@@ -982,6 +1123,8 @@ sample:"I would like to talk about dangerous sports. Examples are climbing, skii
 let current="Smartphones at School";
 
 const tabsEl = document.getElementById("tabs");
+const navShellEl = document.getElementById("navShell");
+const navToggleEl = document.getElementById("navToggle");
 const trainerPageEl = document.getElementById("trainerPage");
 const linkingPageEl = document.getElementById("linkingPage");
 const titleEl = document.getElementById("title");
@@ -1000,6 +1143,12 @@ b.type="button";
 b.innerText=key;
 b.onclick=()=>loadTopic(key);
 tabsEl.appendChild(b);
+}
+
+function toggleTopbar(){
+navShellEl.classList.toggle("collapsed");
+const isCollapsed = navShellEl.classList.contains("collapsed");
+navToggleEl.innerText = isCollapsed ? "▼ Themenleiste ausklappen" : "▲ Themenleiste einklappen";
 }
 
 function showTrainer(){
@@ -1043,6 +1192,14 @@ sampleEl.innerText=t.sample;
 sampleEl.style.display="none";
 
 clearMap();
+}
+
+function addMindmapInput(button){
+const list=button.parentElement.querySelector(".input-list");
+const input=document.createElement("input");
+input.placeholder="idea ...";
+list.appendChild(input);
+input.focus();
 }
 
 function fillExample(){
