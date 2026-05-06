@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zusammenfassung Kurvendiskussion ganzrationaler Funktionen</title>
+
+<style>
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: 28px;
+    background: #f4f1df;
+    font-family: Arial, Helvetica, sans-serif;
+    color: #222;
+  }
+
+  .page {
+    width: 1280px;
+    min-height: 820px;
+    margin: 0 auto;
+    background: #f6f2df;
+    padding: 18px 26px 24px 26px;
+    position: relative;
+  }
+
+  .title {
+    text-align: center;
+    font-size: 29px;
+    letter-spacing: 0.5px;
+    color: #2d466a;
+    margin-bottom: 14px;
+    padding-bottom: 8px;
+    border-bottom: 4px solid #2d466a;
+    font-weight: 500;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 350px 1fr 350px;
+    grid-template-rows: auto auto;
+    gap: 14px 18px;
+  }
+
+  .box {
+    border: 2px solid #4a4a4a;
+    padding: 14px 16px;
+    line-height: 1.45;
+    font-size: 18px;
+  }
+
+  .yellow {
+    background: #f3efab;
+    min-height: 330px;
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .green {
+    background: #bdeeb0;
+    min-height: 360px;
+    overflow: hidden;
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .red {
+    background: #d99aa0;
+    min-height: 210px;
+  }
+
+  .blue {
+    background: #b8d9e6;
+    min-height: 230px;
+  }
+
+  .turquoise {
+    background: #b5e8df;
+    min-height: 250px;
+  }
+
+  h2 {
+    margin: 0 0 14px 0;
+    font-size: 20px;
+  }
+
+  p {
+    margin-top: 0;
+  }
+
+  .blank,
+  .smallblank,
+  .wideblank {
+    display: inline-block;
+    border-bottom: 2px solid #333;
+    height: 25px;
+    vertical-align: -3px;
+  }
+
+  .blank {
+    width: 125px;
+  }
+
+  .smallblank {
+    width: 75px;
+  }
+
+  .wideblank {
+    width: 185px;
+  }
+
+  .blank input,
+  .smallblank input,
+  .wideblank input {
+    width: 100%;
+    height: 23px;
+    border: none;
+    background: transparent;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 17px;
+    font-weight: bold;
+    text-align: center;
+    outline: none;
+    padding: 0 4px;
+  }
+
+  .blank input:focus,
+  .smallblank input:focus,
+  .wideblank input:focus {
+    background: rgba(255, 255, 255, 0.45);
+    border-radius: 4px;
+  }
+
+  .center {
+    position: relative;
+    grid-column: 2;
+    grid-row: 1 / span 2;
+  }
+
+  .graph-wrapper {
+    height: 430px;
+    position: relative;
+  }
+
+  .graph-wrapper svg {
+    cursor: crosshair;
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .graph-wrapper text {
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+  }
+
+  .task {
+    font-size: 18px;
+    line-height: 1.35;
+    margin-top: 4px;
+    color: #222;
+    text-align: center;
+    max-width: 520px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .task b {
+    color: #2958a0;
+  }
+
+  .wordbank {
+    text-align: center;
+    font-size: 17px;
+    font-weight: bold;
+    line-height: 1.45;
+    margin: 18px auto 0 auto;
+    max-width: 560px;
+    padding: 10px 14px 12px 14px;
+    border: 2px solid #4a4a4a;
+    background: #fff7cf;
+  }
+
+  .wordbank-title {
+    color: #2958a0;
+    font-size: 16px;
+    margin-bottom: 4px;
+  }
+
+  .polynomial-note {
+    max-width: 560px;
+    margin: 14px auto 0 auto;
+    font-size: 16px;
+    line-height: 1.35;
+    text-align: center;
+  }
+
+  .drag-line {
+    stroke: #2d466a;
+    stroke-width: 1.6;
+    stroke-dasharray: 6 5;
+    opacity: 0.65;
+    pointer-events: none;
+  }
+
+  .drag-point {
+    stroke: #fff;
+    stroke-width: 3;
+    cursor: grab;
+    filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.22));
+  }
+
+  .drag-point:active {
+    cursor: grabbing;
+  }
+
+  .readout {
+    font-size: 14px;
+    font-weight: bold;
+    fill: #2d466a;
+  }
+
+  /* NEW-Regel als sauberer, fest positionierter Block */
+  .new-wrap {
+    position: relative;
+    width: 305px;
+    height: 112px;
+    margin-top: 2px;
+    margin-left: 4px;
+    font-size: 20px;
+  }
+
+  .new-row {
+    position: absolute;
+    height: 26px;
+    display: flex;
+    align-items: center;
+  }
+
+  .new-row.r1 { top: 0; left: 0; }
+  .new-row.r2 { top: 36px; left: 0; }
+  .new-row.r3 { top: 72px; left: 0; }
+
+  .new-label {
+    width: 34px;
+  }
+
+  .new-spacer-small { width: 68px; }
+  .new-spacer-medium { width: 106px; }
+  .new-spacer-large { width: 144px; }
+
+  .new-letter {
+    width: 38px;
+    text-align: center;
+  }
+
+  .new-arrow {
+    position: absolute;
+    left: 58px;
+    top: 6px;
+    width: 15px;
+    height: 70px;
+    background: #138b32;
+  }
+
+  .new-arrow::after {
+    content: "";
+    position: absolute;
+    left: -9px;
+    bottom: -18px;
+    width: 0;
+    height: 0;
+    border-left: 17px solid transparent;
+    border-right: 17px solid transparent;
+    border-top: 25px solid #138b32;
+  }
+
+  .poly-icons {
+    margin-top: 12px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+    text-align: center;
+    font-size: 9px;
+  }
+
+  .poly-icons b {
+    display: block;
+    min-height: 28px;
+    white-space: nowrap;
+  }
+
+  .mini-axis {
+    height: 72px;
+  }
+
+  .mono-title {
+    font-weight: bold;
+    margin-bottom: 16px;
+  }
+
+  .right-col {
+    display: grid;
+    grid-template-rows: auto auto auto;
+    gap: 14px;
+    grid-row: 1 / span 2;
+    grid-column: 3;
+  }
+
+  .formula {
+    white-space: nowrap;
+  }
+
+  .foot {
+    font-size: 17px;
+  }
+
+  @media print {
+    @page {
+      size: A4 landscape;
+      margin: 8mm;
+    }
+
+    body {
+      padding: 0;
+      background: #fff;
+    }
+
+    .page {
+      margin: 0;
+      width: 100%;
+      min-height: 100vh;
+      print-color-adjust: exact;
+      -webkit-print-color-adjust: exact;
+    }
+
+    input {
+      background: transparent !important;
+    }
+  }
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+  <div class="title">Zusammenfassung: Kurvendiskussion ganzrationaler Funktionen</div>
+
+  <div class="layout">
+
+    <!-- LINKS OBEN -->
+    <div class="box yellow">
+      <h2>Symmetrie:</h2>
+
+      <p>
+        Wenn für alle x gilt: <b>f(x) =</b>
+        <span class="blank"><input type="text" aria-label="Symmetrie Lücke 1"></span>,
+        dann ist der Graph von <b>f</b> achsensymmetrisch zur y-Achse.
+        Bei Polynomen bedeutet das, dass <b>alle Exponenten</b>
+        <span class="blank"><input type="text" aria-label="Symmetrie Lücke 2"></span> sind.
+      </p>
+
+      <p style="margin-top: 28px;">
+        Wenn für alle x gilt: <b>f(x) =</b>
+        <span class="blank"><input type="text" aria-label="Symmetrie Lücke 3"></span>,
+        dann ist der Graph von <b>f</b> punktsymmetrisch zum Ursprung.
+        Bei Polynomen bedeutet das, dass <b>alle Exponenten</b>
+        <span class="blank"><input type="text" aria-label="Symmetrie Lücke 4"></span> sind.
+      </p>
+    </div>
+
+    <!-- MITTE GRAPH -->
+    <div class="center">
+
+      <div class="graph-wrapper">
+        <svg id="derivativeGraph" viewBox="0 0 620 430" aria-label="Graphen von f, f' und f''">
+          <defs>
+            <marker id="axisArrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto" markerUnits="strokeWidth">
+              <path d="M 0 0 L 8 4 L 0 8" fill="none" stroke="#333" stroke-width="1.6"></path>
+            </marker>
+            <clipPath id="graphClip">
+              <rect id="graphClipRect" x="54" y="34" width="512" height="336"></rect>
+            </clipPath>
+          </defs>
+          <rect x="0" y="0" width="620" height="430" fill="#f7f4e6"/>
+          <g id="gridMinor"></g>
+          <g id="gridMajor"></g>
+          <g id="axisLayer"></g>
+          <g id="tickLayer"></g>
+
+          <path id="curveF" d="
+            M 0 0"
+            fill="none"
+            stroke="#496b66"
+            stroke-width="2.5"
+            clip-path="url(#graphClip)"
+          />
+          <path id="curveFp" d="
+            M 0 0"
+            fill="none"
+            stroke="#bd5a67"
+            stroke-width="2.5"
+            clip-path="url(#graphClip)"
+          />
+          <path id="curveFpp" d="
+            M 0 0"
+            fill="none"
+            stroke="#799ed8"
+            stroke-width="2.5"
+            clip-path="url(#graphClip)"
+          />
+
+          <text id="labelF" font-size="25" fill="#2d806d" style="font-style: italic;">G<tspan baseline-shift="sub" font-size="16">f</tspan></text>
+          <text id="labelFp" font-size="25" fill="#bd5a67" style="font-style: italic;">G<tspan baseline-shift="sub" font-size="16">f'</tspan></text>
+          <text id="labelFpp" font-size="25" fill="#3d95d7" style="font-style: italic;">G<tspan baseline-shift="sub" font-size="16">f''</tspan></text>
+
+          <g id="dragLayer">
+            <line id="dragLine" class="drag-line" x1="0" y1="34" x2="0" y2="370"></line>
+            <circle id="pointF" class="drag-point" r="7" fill="#496b66"></circle>
+            <circle id="pointFp" class="drag-point" r="7" fill="#bd5a67"></circle>
+            <circle id="pointFpp" class="drag-point" r="7" fill="#799ed8"></circle>
+            <text id="dragReadout" class="readout" x="54" y="395"></text>
+          </g>
+
+        </svg>
+      </div>
+
+      <div class="task">
+        <b>Aufgabe:</b> Fülle die folgenden Elemente in die Lücken.
+        Die oben abgebildeten Graphen können dir dabei helfen.
+      </div>
+
+      <div class="polynomial-note">
+        <b>Polynom:</b> Eine ganzrationale Funktion ist eine Summe aus Potenzen von x
+        mit natürlichen Exponenten, z. B. f(x) = 2x<sup>4</sup> - 3x<sup>2</sup> + 5.
+        Ein einzelner Summand wie 2x<sup>4</sup> heißt <b>Monom</b>.
+      </div>
+
+      <div class="wordbank">
+        <div class="wordbank-title">Wortbox</div>
+        &lt;; ungerade; streng monoton fallend; f(-x); &gt;; gerade; -f(x);<br>
+        VZW; ≠; Rechtskurve; Linkskurve; höchsten; streng monoton<br>
+        wachsend
+      </div>
+
+    </div>
+
+    <!-- RECHTS -->
+    <div class="right-col">
+
+      <div class="box red">
+        <h2>Krümmungsverhalten:</h2>
+
+        <p class="formula">
+          <b>f''(x) &lt; 0</b> → Graph ist
+          <span class="wideblank"><input type="text" aria-label="Krümmung Lücke 1"></span>
+        </p>
+
+        <p class="formula">
+          <b>f''(x) &gt; 0</b> → Graph ist
+          <span class="wideblank"><input type="text" aria-label="Krümmung Lücke 2"></span>
+        </p>
+
+        <p class="foot" style="margin-top: 24px;">
+          Wendestellen trennen die Intervalle, auf denen der Graph eine LK bzw. eine RK ist.
+        </p>
+      </div>
+
+      <div class="box blue">
+        <h2>Verhalten für x → ±∞:</h2>
+
+        <p>
+          Bei Polynomen muss man nur den Summanden mit dem
+          <span class="blank"><input type="text" aria-label="Verhalten im Unendlichen Lücke"></span>
+          <b>Exponenten</b> ansehen:
+        </p>
+
+        <div class="poly-icons">
+
+          <div>
+            <b>n gerade, a<sub>n</sub> &gt; 0</b>
+            <svg class="mini-axis" viewBox="0 0 80 58">
+              <line x1="40" y1="6" x2="40" y2="52" stroke="#333"/>
+              <line x1="8" y1="35" x2="72" y2="35" stroke="#333"/>
+              <path d="M 13 9 C 16 22, 19 35, 24 47 M 56 47 C 61 35, 64 22, 67 9" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+              <text x="66" y="32" font-size="10">x</text>
+              <text x="43" y="12" font-size="10">y</text>
+            </svg>
+          </div>
+
+          <div>
+            <b>n gerade, a<sub>n</sub> &lt; 0</b>
+            <svg class="mini-axis" viewBox="0 0 80 58">
+              <line x1="40" y1="6" x2="40" y2="52" stroke="#333"/>
+              <line x1="8" y1="35" x2="72" y2="35" stroke="#333"/>
+              <path d="M 13 50 C 16 37, 19 24, 24 11 M 56 11 C 61 24, 64 37, 67 50" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+              <text x="66" y="32" font-size="10">x</text>
+              <text x="43" y="12" font-size="10">y</text>
+            </svg>
+          </div>
+
+          <div>
+            <b>n ungerade, a<sub>n</sub> &gt; 0</b>
+            <svg class="mini-axis" viewBox="0 0 80 58">
+              <line x1="40" y1="6" x2="40" y2="52" stroke="#333"/>
+              <line x1="8" y1="35" x2="72" y2="35" stroke="#333"/>
+              <path d="M 12 50 C 17 45, 22 39, 27 33 M 53 25 C 58 19, 63 14, 68 9" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+              <text x="66" y="32" font-size="10">x</text>
+              <text x="43" y="12" font-size="10">y</text>
+            </svg>
+          </div>
+
+          <div>
+            <b>n ungerade, a<sub>n</sub> &lt; 0</b>
+            <svg class="mini-axis" viewBox="0 0 80 58">
+              <line x1="40" y1="6" x2="40" y2="52" stroke="#333"/>
+              <line x1="8" y1="35" x2="72" y2="35" stroke="#333"/>
+              <path d="M 12 9 C 17 14, 22 20, 27 26 M 53 34 C 58 40, 63 45, 68 50" fill="none" stroke="#333" stroke-width="3" stroke-linecap="round"/>
+              <text x="66" y="32" font-size="10">x</text>
+              <text x="43" y="12" font-size="10">y</text>
+            </svg>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="box turquoise">
+        <h2>Monotonie:</h2>
+
+        <p class="mono-title">
+          Monotoniesatz:<br>
+          Wenn auf einem Intervall überall gilt ...
+        </p>
+
+        <p class="formula">
+          <b>f'(x) &lt; 0</b>, dann ist f
+          <span class="wideblank"><input type="text" aria-label="Monotonie Lücke 1"></span>
+        </p>
+
+        <p class="formula">
+          <b>f'(x) &gt; 0</b>, dann ist f
+          <span class="wideblank"><input type="text" aria-label="Monotonie Lücke 2"></span>
+        </p>
+      </div>
+
+    </div>
+
+    <!-- LINKS UNTEN -->
+    <div class="box green">
+      <h2>NEW-Regel:</h2>
+
+      <div class="new-wrap">
+        <div class="new-arrow"></div>
+
+        <div class="new-row r1">
+          <div class="new-label">f</div>
+          <div class="new-spacer-small"></div>
+          <div class="new-letter">N</div>
+          <div class="new-letter">E</div>
+          <div class="new-letter">W</div>
+        </div>
+
+        <div class="new-row r2">
+          <div class="new-label">f'</div>
+          <div class="new-spacer-medium"></div>
+          <div class="new-letter">N</div>
+          <div class="new-letter">E</div>
+          <div class="new-letter">W</div>
+        </div>
+
+        <div class="new-row r3">
+          <div class="new-label">f''</div>
+          <div class="new-spacer-large"></div>
+          <div class="new-letter">N</div>
+          <div class="new-letter">E</div>
+          <div class="new-letter">W</div>
+        </div>
+      </div>
+
+      <p style="margin-top: 18px;">
+        <b>Extremstellen:</b><br>
+        f'(x) = 0 und
+        <span class="blank"><input type="text" aria-label="Extremstellen Lücke"></span>
+        von f'(x)
+      </p>
+
+      <p style="margin-top: 16px;">ODER</p>
+
+      <p>
+        f'(x) = 0 und f''(x)
+        <span class="smallblank"><input type="text" aria-label="Maximum Lücke"></span>
+        0 (Maximumst.)<br>
+        bzw. f''(x)
+        <span class="smallblank"><input type="text" aria-label="Minimum Lücke"></span>
+        0 (Minimumst.)
+      </p>
+
+      <p style="margin-top: 16px;">
+        <b>Wendestellen:</b> f''(x) = 0 und f'''(x)
+        <span class="smallblank"><input type="text" aria-label="Wendestellen Lücke"></span>
+        0<br>
+        Wendest. sind Extremst. der Ableitung!
+      </p>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  (() => {
+    const svg = document.getElementById("derivativeGraph");
+    const curveF = document.getElementById("curveF");
+    const curveFp = document.getElementById("curveFp");
+    const curveFpp = document.getElementById("curveFpp");
+    const dragLine = document.getElementById("dragLine");
+    const pointF = document.getElementById("pointF");
+    const pointFp = document.getElementById("pointFp");
+    const pointFpp = document.getElementById("pointFpp");
+    const readout = document.getElementById("dragReadout");
+    const gridMinor = document.getElementById("gridMinor");
+    const gridMajor = document.getElementById("gridMajor");
+    const axisLayer = document.getElementById("axisLayer");
+    const tickLayer = document.getElementById("tickLayer");
+    const labelF = document.getElementById("labelF");
+    const labelFp = document.getElementById("labelFp");
+    const labelFpp = document.getElementById("labelFpp");
+
+    const plot = { x: 54, y: 34, width: 512, height: 336 };
+    const minX = -2.2;
+    const maxX = 2.2;
+    const minY = -3.3;
+    const maxY = 3.3;
+    const minorStep = 0.2;
+    const majorStep = 1;
+
+    let currentX = -1;
+    let dragging = false;
+
+    function f(x) {
+      return 0.25 * Math.pow(x, 3) - 0.75 * x;
+    }
+
+    function fPrime(x) {
+      return 0.75 * x * x - 0.75;
+    }
+
+    function fSecond(x) {
+      return 1.5 * x;
+    }
+
+    function sx(x) {
+      return plot.x + (x - minX) / (maxX - minX) * plot.width;
+    }
+
+    function sy(y) {
+      return plot.y + (maxY - y) / (maxY - minY) * plot.height;
+    }
+
+    function clamp(value, min, max) {
+      return Math.min(max, Math.max(min, value));
+    }
+
+    function line(parent, x1, y1, x2, y2, attrs = {}) {
+      const element = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      element.setAttribute("x1", x1);
+      element.setAttribute("y1", y1);
+      element.setAttribute("x2", x2);
+      element.setAttribute("y2", y2);
+      for (const [key, value] of Object.entries(attrs)) {
+        element.setAttribute(key, value);
+      }
+      parent.appendChild(element);
+      return element;
+    }
+
+    function text(parent, value, x, y, attrs = {}) {
+      const element = document.createElementNS("http://www.w3.org/2000/svg", "text");
+      element.textContent = value;
+      element.setAttribute("x", x);
+      element.setAttribute("y", y);
+      for (const [key, attrValue] of Object.entries(attrs)) {
+        element.setAttribute(key, attrValue);
+      }
+      parent.appendChild(element);
+      return element;
+    }
+
+    function renderGrid() {
+      for (let x = Math.ceil(minX / minorStep) * minorStep; x <= maxX + 0.001; x += minorStep) {
+        const px = sx(Number(x.toFixed(4)));
+        const isMajor = Math.abs(x / majorStep - Math.round(x / majorStep)) < 0.001;
+        line(isMajor ? gridMajor : gridMinor, px, plot.y, px, plot.y + plot.height, {
+          stroke: isMajor ? "#b9b9b9" : "#dedede",
+          "stroke-width": isMajor ? "1.25" : "0.8"
+        });
+      }
+
+      for (let y = Math.ceil(minY / minorStep) * minorStep; y <= maxY + 0.001; y += minorStep) {
+        const py = sy(Number(y.toFixed(4)));
+        const isMajor = Math.abs(y / majorStep - Math.round(y / majorStep)) < 0.001;
+        line(isMajor ? gridMajor : gridMinor, plot.x, py, plot.x + plot.width, py, {
+          stroke: isMajor ? "#b9b9b9" : "#dedede",
+          "stroke-width": isMajor ? "1.25" : "0.8"
+        });
+      }
+
+      const ox = sx(0);
+      const oy = sy(0);
+      line(axisLayer, plot.x, oy, plot.x + plot.width + 10, oy, {
+        stroke: "#333",
+        "stroke-width": "1.8",
+        "marker-end": "url(#axisArrow)"
+      });
+      line(axisLayer, ox, plot.y + plot.height, ox, plot.y - 10, {
+        stroke: "#333",
+        "stroke-width": "1.8",
+        "marker-end": "url(#axisArrow)"
+      });
+
+      text(tickLayer, "x", plot.x + plot.width + 14, oy + 18, { "font-size": "18", fill: "#333" });
+      text(tickLayer, "y", ox + 9, plot.y - 12, { "font-size": "18", fill: "#333" });
+
+      for (let x = -2; x <= 2; x++) {
+        if (x !== 0) {
+          text(tickLayer, String(x).replace("-", "−"), sx(x) - 7, oy + 16, { "font-size": "11", fill: "#555" });
+        }
+      }
+
+      for (let y = -1; y <= 2; y++) {
+        if (y !== 0) {
+          text(tickLayer, String(y).replace("-", "−"), ox - 21, sy(y) + 4, { "font-size": "11", fill: "#555" });
+        }
+      }
+    }
+
+    function buildPath(fn) {
+      const steps = 360;
+      let d = "";
+      for (let i = 0; i <= steps; i++) {
+        const x = minX + (maxX - minX) * i / steps;
+        const px = sx(x);
+        const py = sy(fn(x));
+        d += `${i === 0 ? "M" : "L"} ${px.toFixed(2)} ${py.toFixed(2)} `;
+      }
+      return d.trim();
+    }
+
+    function formatNumber(value) {
+      return value.toFixed(2).replace(".", ",");
+    }
+
+    function relationshipText(x) {
+      const fp = fPrime(x);
+      const fpp = fSecond(x);
+      if (Math.abs(fp) < 0.05) {
+        return "f'(x) = 0";
+      }
+      if (Math.abs(fpp) < 0.05) {
+        return "f''(x) = 0";
+      }
+      return "";
+    }
+
+    function updateMarkers(x) {
+      currentX = clamp(x, minX, maxX);
+      const px = sx(currentX);
+      const yF = sy(f(currentX));
+      const yFp = sy(fPrime(currentX));
+      const yFpp = sy(fSecond(currentX));
+
+      dragLine.setAttribute("x1", px);
+      dragLine.setAttribute("x2", px);
+      dragLine.setAttribute("y1", plot.y);
+      dragLine.setAttribute("y2", plot.y + plot.height);
+
+      pointF.setAttribute("cx", px);
+      pointF.setAttribute("cy", yF);
+      pointFp.setAttribute("cx", px);
+      pointFp.setAttribute("cy", yFp);
+      pointFpp.setAttribute("cx", px);
+      pointFpp.setAttribute("cy", yFpp);
+
+      const relation = relationshipText(currentX);
+      readout.textContent = relation ? `x = ${formatNumber(currentX)}   ${relation}` : `x = ${formatNumber(currentX)}`;
+    }
+
+    function xFromPointer(event) {
+      const rect = svg.getBoundingClientRect();
+      const viewX = (event.clientX - rect.left) * 620 / rect.width;
+      return minX + (viewX - plot.x) / plot.width * (maxX - minX);
+    }
+
+    renderGrid();
+    curveF.setAttribute("d", buildPath(f));
+    curveFp.setAttribute("d", buildPath(fPrime));
+    curveFpp.setAttribute("d", buildPath(fSecond));
+    labelF.setAttribute("x", sx(-1.95));
+    labelF.setAttribute("y", sy(1.0));
+    labelFp.setAttribute("x", sx(1.35));
+    labelFp.setAttribute("y", sy(1.15));
+    labelFpp.setAttribute("x", sx(0.4));
+    labelFpp.setAttribute("y", sy(1.9));
+    updateMarkers(currentX);
+
+    svg.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      dragging = true;
+      svg.setPointerCapture(event.pointerId);
+      updateMarkers(xFromPointer(event));
+    });
+
+    svg.addEventListener("pointermove", (event) => {
+      if (dragging) {
+        event.preventDefault();
+        updateMarkers(xFromPointer(event));
+      }
+    });
+
+    svg.addEventListener("pointerup", (event) => {
+      dragging = false;
+      svg.releasePointerCapture(event.pointerId);
+    });
+
+    svg.addEventListener("pointercancel", () => {
+      dragging = false;
+    });
+  })();
+</script>
+
+</body>
+</html>
