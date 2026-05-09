@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lenkrad & Wendepunkt – interaktive Erklärung</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #64748b;
+      --line: #d8e0ea;
+      --blue: #2563eb;
+      --blue-soft: #dbeafe;
+      --green: #16a34a;
+      --green-soft: #dcfce7;
+      --orange: #f97316;
+      --orange-soft: #ffedd5;
+      --red: #dc2626;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+      --radius: 24px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 15% 10%, rgba(37,99,235,.12), transparent 28%),
+        radial-gradient(circle at 90% 0%, rgba(22,163,74,.12), transparent 30%),
+        linear-gradient(135deg, #f8fafc 0%, #eef4fb 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    header {
+      padding: 34px 24px 18px;
+      text-align: center;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: clamp(1.8rem, 4vw, 3.1rem);
+      letter-spacing: -0.04em;
+    }
+
+    header p {
+      margin: 12px auto 0;
+      max-width: 900px;
+      color: var(--muted);
+      font-size: 1.05rem;
+      line-height: 1.55;
+    }
+
+    .wrap {
+      width: min(1220px, calc(100% - 32px));
+      margin: 0 auto 40px;
+      display: grid;
+      grid-template-columns: 1.05fr .95fr;
+      gap: 22px;
+    }
+
+    @media (max-width: 920px) {
+      .wrap { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: rgba(255,255,255,.92);
+      border: 1px solid rgba(148, 163, 184, .28);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .card-head {
+      padding: 18px 22px;
+      border-bottom: 1px solid var(--line);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+    }
+
+    .card-head h2 {
+      margin: 0;
+      font-size: 1.15rem;
+    }
+
+    .badge {
+      font-size: .78rem;
+      font-weight: 700;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: #1d4ed8;
+      white-space: nowrap;
+    }
+
+    .main-stage {
+      padding: 22px;
+    }
+
+    .road-box {
+      position: relative;
+      min-height: 420px;
+      border-radius: 22px;
+      background:
+        linear-gradient(90deg, rgba(148,163,184,.18) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(148,163,184,.18) 1px, transparent 1px),
+        linear-gradient(180deg, #f8fafc, #eef5ff);
+      background-size: 42px 42px;
+      border: 1px solid #d7e1ef;
+      overflow: hidden;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    #graphSvg {
+      height: 420px;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: none;
+    }
+
+    #graphSvg * {
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .mini-car {
+      cursor: grab;
+      touch-action: none;
+      filter: drop-shadow(0 7px 8px rgba(15,23,42,.26));
+    }
+
+    .mini-car:active { cursor: grabbing; }
+
+    .controls {
+      display: grid;
+      gap: 16px;
+      margin-top: 18px;
+    }
+
+    .control-row {
+      background: #f8fafc;
+      border: 1px solid #dbe3ee;
+      border-radius: 18px;
+      padding: 15px;
+    }
+
+    .control-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 10px;
+      align-items: center;
+    }
+
+    .control-top strong {
+      font-size: .98rem;
+    }
+
+    .value {
+      font-variant-numeric: tabular-nums;
+      color: var(--blue);
+      font-weight: 800;
+    }
+
+    input[type="range"] {
+      width: 100%;
+      accent-color: var(--blue);
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 10px 15px;
+      font-weight: 800;
+      color: white;
+      background: #1f2937;
+      cursor: pointer;
+      box-shadow: 0 8px 18px rgba(15,23,42,.16);
+    }
+
+    button:hover { transform: translateY(-1px); }
+    button.primary { background: var(--blue); }
+    button.green { background: var(--green); }
+    button.orange { background: var(--orange); }
+
+    .focus-toggle {
+      position: fixed;
+      top: 16px;
+      right: 16px;
+      z-index: 20;
+      background: #0f172a;
+    }
+
+    .steering-panel {
+      padding: 22px;
+      display: grid;
+      grid-template-columns: 230px 1fr;
+      gap: 22px;
+      align-items: center;
+    }
+
+    @media (max-width: 560px) {
+      .steering-panel { grid-template-columns: 1fr; justify-items: center; }
+    }
+
+    .wheel-wrap {
+      width: 220px;
+      height: 220px;
+      border-radius: 999px;
+      background:
+        radial-gradient(circle, #ffffff 0 27%, transparent 28%),
+        radial-gradient(circle, #e5ecf5 0 54%, #1f2937 55% 66%, #111827 67% 100%);
+      position: relative;
+      box-shadow: inset 0 12px 22px rgba(255,255,255,.65), 0 18px 35px rgba(15,23,42,.18);
+      transition: transform .08s linear;
+    }
+
+    .wheel-wrap::before,
+    .wheel-wrap::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 88px;
+      height: 16px;
+      background: #263244;
+      border-radius: 999px;
+      transform-origin: left center;
+    }
+
+    .wheel-wrap::before { transform: rotate(28deg); }
+    .wheel-wrap::after { transform: rotate(152deg); }
+
+    .wheel-spoke {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 16px;
+      height: 82px;
+      background: #263244;
+      border-radius: 999px;
+      transform: translateX(-50%);
+      transform-origin: top center;
+    }
+
+        .wheel-center {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 58px;
+      height: 58px;
+      transform: translate(-50%, -50%);
+      border-radius: 999px;
+      background: linear-gradient(145deg, #f8fafc, #cbd5e1);
+      border: 4px solid #334155;
+      z-index: 2;
+    }
+
+    .info-stack {
+      display: grid;
+      gap: 12px;
+    }
+
+    .info {
+      padding: 14px 15px;
+      border-radius: 17px;
+      border: 1px solid #dbe3ee;
+      background: #f8fafc;
+      line-height: 1.45;
+    }
+
+    .info b { color: #0f172a; }
+    .info.blue { background: var(--blue-soft); border-color: #bfdbfe; }
+    .info.green { background: var(--green-soft); border-color: #bbf7d0; }
+    .info.orange { background: var(--orange-soft); border-color: #fed7aa; }
+
+    .two-cols {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      width: min(1220px, calc(100% - 32px));
+      margin: 0 auto 42px;
+    }
+
+    @media (max-width: 920px) {
+      .two-cols { grid-template-columns: 1fr; }
+    }
+
+    .explain {
+      padding: 22px;
+      line-height: 1.6;
+    }
+
+    .explain h3 {
+      margin: 0 0 10px;
+      font-size: 1.12rem;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 12px;
+      align-items: start;
+      padding: 13px 0;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .step:last-child { border-bottom: none; }
+
+    .num {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      font-weight: 900;
+      color: white;
+      background: var(--blue);
+    }
+
+    .formula {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      background: #0f172a;
+      color: #e2e8f0;
+      border-radius: 18px;
+      padding: 16px;
+      overflow-x: auto;
+      line-height: 1.6;
+      margin-top: 12px;
+    }
+
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+      font-size: .92rem;
+      color: var(--muted);
+    }
+
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 999px;
+      padding: 7px 10px;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      background: var(--blue);
+    }
+
+    .dot.green { background: var(--green); }
+    .dot.orange { background: var(--orange); }
+    .dot.red { background: var(--red); }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      padding: 0 20px 34px;
+    }
+
+    .small {
+      font-size: .92rem;
+      color: var(--muted);
+    }
+
+    body.focus-mode {
+      background: #f8fafc;
+    }
+
+    body.focus-mode header {
+      padding: 16px 24px 0;
+    }
+
+    body.focus-mode header h1,
+    body.focus-mode header p,
+    body.focus-mode .card-head,
+    body.focus-mode .legend,
+    body.focus-mode .controls,
+    body.focus-mode .info-stack,
+    body.focus-mode .two-cols,
+    body.focus-mode footer {
+      display: none;
+    }
+
+    body.focus-mode .wrap {
+      width: min(1160px, calc(100% - 32px));
+      margin-top: 64px;
+      grid-template-columns: minmax(0, 1fr) 260px;
+      align-items: start;
+    }
+
+    body.focus-mode .main-stage {
+      padding: 14px;
+    }
+
+    body.focus-mode .card {
+      box-shadow: 0 10px 24px rgba(15,23,42,.08);
+    }
+
+    body.focus-mode .steering-panel {
+      grid-template-columns: 1fr;
+      justify-items: center;
+      padding: 22px 18px;
+    }
+
+    body.focus-mode main.wrap > .card:nth-child(2) .explain {
+      display: none;
+    }
+
+    @media (max-width: 820px) {
+      body.focus-mode .wrap {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <button class="focus-toggle" id="focusToggle" type="button" aria-pressed="false">Fokusmodus</button>
+
+  <header>
+    <h1>Warum wird das Lenkrad am Wendepunkt wieder gerade?</h1>
+    <p>
+      Das Programm zeigt eine Fahrspur als Graph. Du kannst das rote Auto direkt ziehen oder die Schieberegler verwenden.
+      Am Wendepunkt wechselt die Krümmung: Vorher lenkt man in eine Richtung, danach muss man in die entgegengesetzte Richtung lenken.
+      Genau dort ist die Kurve kurz „am wenigsten gebogen“.
+    </p>
+  </header>
+
+  <main class="wrap">
+    <section class="card">
+      <div class="card-head">
+        <h2>Interaktive Fahrspur als Graph</h2>
+        <span class="badge">Auto ziehbar</span>
+      </div>
+      <div class="main-stage">
+        <div class="road-box">
+          <svg id="graphSvg" viewBox="0 0 760 420" aria-label="Graph mit Fahrspur und Wendepunkt">
+            <defs>
+              <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,6 L9,3 z" fill="#334155"></path>
+              </marker>
+              <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+                <feDropShadow dx="0" dy="6" stdDeviation="5" flood-color="#0f172a" flood-opacity=".18"/>
+              </filter>
+            </defs>
+
+            <line x1="50" y1="210" x2="725" y2="210" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+            <line x1="380" y1="390" x2="380" y2="28" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)"/>
+            <text x="710" y="198" font-size="15" fill="#64748b">x</text>
+            <text x="393" y="42" font-size="15" fill="#64748b">y</text>
+
+            <path id="negativeRegion" d="" fill="rgba(249,115,22,.10)" stroke="none"></path>
+            <path id="positiveRegion" d="" fill="rgba(22,163,74,.10)" stroke="none"></path>
+
+            <path id="curveShadow" d="" fill="none" stroke="rgba(15,23,42,.18)" stroke-width="14" stroke-linecap="round" filter="url(#softShadow)"/>
+            <path id="curve" d="" fill="none" stroke="#2563eb" stroke-width="7" stroke-linecap="round"/>
+
+            <line id="inflectionGuide" x1="380" y1="55" x2="380" y2="365" stroke="#16a34a" stroke-width="3" stroke-dasharray="7 8" opacity=".8"/>
+            <circle id="inflectionDot" cx="380" cy="210" r="7" fill="#16a34a" stroke="white" stroke-width="3"/>
+            <text id="inflectionLabel" x="394" y="205" font-size="14" font-weight="800" fill="#16a34a">Wendepunkt</text>
+            <circle id="highDot" cx="0" cy="0" r="7" fill="#7c3aed" stroke="white" stroke-width="3"/>
+            <text id="highLabel" x="0" y="0" font-size="14" font-weight="800" fill="#7c3aed">Hochpunkt</text>
+            <circle id="lowDot" cx="0" cy="0" r="7" fill="#0891b2" stroke="white" stroke-width="3"/>
+            <text id="lowLabel" x="0" y="0" font-size="14" font-weight="800" fill="#0891b2">Tiefpunkt</text>
+            <line id="tangent" x1="0" y1="0" x2="0" y2="0" stroke="#f97316" stroke-width="4" stroke-linecap="round" stroke-dasharray="11 8"/>
+            <g id="point" class="mini-car">
+              <rect x="-20" y="-11" width="40" height="22" rx="8" fill="#dc2626" stroke="white" stroke-width="3"/>
+              <path d="M-7,-10 L8,-10 L15,-2 L15,8 L-15,8 L-15,-2 Z" fill="#f87171"/>
+              <rect x="4" y="-7" width="10" height="9" rx="3" fill="rgba(255,255,255,.72)"/>
+              <circle cx="-11" cy="12" r="4" fill="#0f172a"/>
+              <circle cx="12" cy="12" r="4" fill="#0f172a"/>
+            </g>
+            <text id="pointLabel" x="0" y="0" font-size="15" font-weight="800" fill="#dc2626">ziehbares Auto</text>
+
+            <text x="72" y="52" font-size="15" font-weight="800" fill="#f97316">vorher: Krümmung nach rechts/links</text>
+            <text x="490" y="356" font-size="15" font-weight="800" fill="#16a34a">nachher: Krümmung wechselt</text>
+          </svg>
+        </div>
+
+        <div class="legend">
+          <span><i class="dot"></i> Fahrspur / Graph</span>
+          <span><i class="dot red"></i> Mini-Auto ziehen</span>
+          <span><i class="dot orange"></i> Tangente am Auto</span>
+          <span><i class="dot green"></i> Krümmungswechsel</span>
+        </div>
+
+        <div class="controls">
+          <div class="control-row">
+            <div class="control-top">
+              <strong>Position des Autos auf der Kurve</strong>
+              <span class="value" id="xValue">x = 0.00</span>
+            </div>
+            <input type="range" id="xSlider" min="-2" max="2" step="0.01" value="0">
+          </div>
+
+          <div class="control-row">
+            <div class="control-top">
+              <strong>Stärke der S-Kurve</strong>
+              <span class="value" id="aValue">a = 0.55</span>
+            </div>
+            <input type="range" id="aSlider" min="0.25" max="0.75" step="0.01" value="0.55">
+          </div>
+
+          <div class="buttons">
+            <button class="primary" id="animateBtn">Animation starten</button>
+            <button class="green" id="inflectionBtn">Zum Wendepunkt</button>
+            <button class="orange" id="leftBtn">Vor den Wendepunkt</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>Lenkrad & Krümmung</h2>
+        <span class="badge">direkt gekoppelt</span>
+      </div>
+
+      <div class="steering-panel">
+        <div class="wheel-wrap" id="wheel">
+          <div class="wheel-spoke"></div>
+          <div class="wheel-center"></div>
+        </div>
+
+        <div class="info-stack">
+          <div class="info blue">
+            <b>Lenkradwinkel:</b><br>
+            <span id="steerText">0° – gerade</span>
+          </div>
+          <div class="info orange">
+            <b>Steigung der Straße:</b><br>
+            <span id="slopeText">Die Tangente zeigt die momentane Fahrtrichtung.</span>
+          </div>
+          <div class="info green">
+            <b>Krümmung:</b><br>
+            <span id="curvatureText">Ziehe den roten Punkt auf dem Graphen.</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="explain">
+        <h3>Merksatz:</h3>
+        <div class="info">
+          Beim Wendepunkt ist nicht unbedingt die Steigung 0. Die Straße kann also weiterhin schräg verlaufen.
+          Aber die <b>Krümmung</b> wechselt dort ihr Vorzeichen. Deshalb wird das Lenkrad dort kurz gerade gestellt,
+          bevor man in die andere Richtung einlenkt.
+        </div>
+
+        <div class="formula">
+          Beispiel-Funktion: f(x) = a · (x³ - 3x)<br>
+          1. Ableitung: f'(x) = 3a · (x² - 1) → Steigung / Fahrtrichtung<br>
+          2. Ableitung: f''(x) = 6a · x → Krümmung<br>
+          Hochpunkt: x = -1 · Tiefpunkt: x = 1 · Wendepunkt: x = 0
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <section class="two-cols">
+    <div class="card explain">
+      <h3>Schritt-für-Schritt-Erklärung:</h3>
+
+      <div class="step">
+        <div class="num">1</div>
+        <div>
+          <b>Vor dem Wendepunkt:</b><br>
+          Die Kurve ist in eine Richtung gekrümmt. Das Auto muss entsprechend einlenken.
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">2</div>
+        <div>
+          <b>Genau am Wendepunkt:</b><br>
+          Die Krümmung ist kurz 0. Die Kurve geht von einer Biegungsrichtung in die andere über.
+          Deshalb steht das Lenkrad in diesem Moment gerade.
+        </div>
+      </div>
+
+      <div class="step">
+        <div class="num">3</div>
+        <div>
+          <b>Nach dem Wendepunkt:</b><br>
+          Die Krümmung hat das Vorzeichen gewechselt. Nun muss man in die andere Richtung lenken.
+        </div>
+      </div>
+    </div>
+
+    <div class="card explain">
+      <h3>Wichtig für die Mathe-Erklärung:</h3>
+      <p>
+        Der Wendepunkt beschreibt nicht einfach einen „Punkt, an dem es gerade aussieht“.
+        Mathematisch bedeutet er:
+      </p>
+      <div class="info blue">
+        Die zweite Ableitung wird dort 0 und wechselt ihr Vorzeichen.
+      </div>
+      <p>
+        Anschaulich: Die Straße geht von „linksgekrümmt“ zu „rechtsgekrümmt“ über
+        oder umgekehrt. Das Auto fährt weiter, aber das Einlenken muss die Richtung wechseln.
+      </p>
+    </div>
+  </section>
+
+  <footer>
+    Interaktives Unterrichtsprogramm: Graph, Wendepunkt, Tangente, Krümmung und Lenkradbewegung.
+  </footer>
+
+  <script>
+    const svg = document.getElementById("graphSvg");
+    const curve = document.getElementById("curve");
+    const curveShadow = document.getElementById("curveShadow");
+    const point = document.getElementById("point");
+    const pointLabel = document.getElementById("pointLabel");
+    const tangent = document.getElementById("tangent");
+    const highDot = document.getElementById("highDot");
+    const highLabel = document.getElementById("highLabel");
+    const lowDot = document.getElementById("lowDot");
+    const lowLabel = document.getElementById("lowLabel");
+    const wheel = document.getElementById("wheel");
+
+    const xSlider = document.getElementById("xSlider");
+    const aSlider = document.getElementById("aSlider");
+    const xValue = document.getElementById("xValue");
+    const aValue = document.getElementById("aValue");
+    const steerText = document.getElementById("steerText");
+    const slopeText = document.getElementById("slopeText");
+    const curvatureText = document.getElementById("curvatureText");
+
+    const animateBtn = document.getElementById("animateBtn");
+    const inflectionBtn = document.getElementById("inflectionBtn");
+    const leftBtn = document.getElementById("leftBtn");
+    const focusToggle = document.getElementById("focusToggle");
+
+    const W = 760, H = 420;
+    const xMin = -2.1, xMax = 2.1;
+    const yMin = -2.4, yMax = 2.4;
+    const xPixelsPerUnit = 675 / (xMax - xMin);
+    const yPixelsPerUnit = 360 / (yMax - yMin);
+    const visualYScale = yPixelsPerUnit / xPixelsPerUnit;
+    const steeringScale = 45;
+
+    let animation = null;
+    let running = false;
+    let animT = Number(xSlider.min);
+
+    function sx(x) {
+      return 50 + (x - xMin) / (xMax - xMin) * 675;
+    }
+
+    function sy(y) {
+      return H - 30 - (y - yMin) / (yMax - yMin) * 360;
+    }
+
+    function f(x, a) {
+      return a * (x * x * x - 3 * x);
+    }
+
+    function fp(x, a) {
+      return 3 * a * (x * x - 1);
+    }
+
+    function fpp(x, a) {
+      return 6 * a * x;
+    }
+
+    function visualSlope(x, a) {
+      return -fp(x, a) * visualYScale;
+    }
+
+    function visualCurvature(x, a) {
+      const slope = visualSlope(x, a);
+      return (-fpp(x, a) * visualYScale) / Math.pow(1 + slope * slope, 1.5);
+    }
+
+    function makePath(a) {
+      let d = "";
+      for (let i = 0; i <= 180; i++) {
+        const x = xMin + (xMax - xMin) * i / 180;
+        const y = f(x, a);
+        d += (i === 0 ? "M" : "L") + sx(x).toFixed(2) + "," + sy(y).toFixed(2) + " ";
+      }
+      return d;
+    }
+
+    function update() {
+      const x = Number(xSlider.value);
+      const a = Number(aSlider.value);
+
+      curve.setAttribute("d", makePath(a));
+      curveShadow.setAttribute("d", makePath(a));
+
+      const highX = -1;
+      const highY = f(highX, a);
+      highDot.setAttribute("cx", sx(highX));
+      highDot.setAttribute("cy", sy(highY));
+      highLabel.setAttribute("x", sx(highX) - 74);
+      highLabel.setAttribute("y", sy(highY) - 14);
+
+      const lowX = 1;
+      const lowY = f(lowX, a);
+      lowDot.setAttribute("cx", sx(lowX));
+      lowDot.setAttribute("cy", sy(lowY));
+      lowLabel.setAttribute("x", sx(lowX) + 14);
+      lowLabel.setAttribute("y", sy(lowY) + 28);
+
+      const y = f(x, a);
+      const px = sx(x);
+      const py = sy(y);
+
+      const slope = fp(x, a);
+      const screenSlope = visualSlope(x, a);
+      const angle = Math.atan(screenSlope);
+      const angleDeg = angle * 180 / Math.PI;
+
+      point.setAttribute("transform", `translate(${px}, ${py}) rotate(${angleDeg})`);
+      pointLabel.setAttribute("x", px + 18);
+      pointLabel.setAttribute("y", py - 18);
+
+      const tangentLen = 120;
+      const tx1 = px - Math.cos(angle) * tangentLen;
+      const ty1 = py - Math.sin(angle) * tangentLen;
+      const tx2 = px + Math.cos(angle) * tangentLen;
+      const ty2 = py + Math.sin(angle) * tangentLen;
+
+      tangent.setAttribute("x1", tx1);
+      tangent.setAttribute("y1", ty1);
+      tangent.setAttribute("x2", tx2);
+      tangent.setAttribute("y2", ty2);
+
+      const curvature = fpp(x, a);
+      const turnCurvature = visualCurvature(x, a);
+      const steer = Math.max(-70, Math.min(70, turnCurvature * steeringScale));
+      wheel.style.transform = `rotate(${steer}deg)`;
+
+      xValue.textContent = `x = ${x.toFixed(2)}`;
+      aValue.textContent = `a = ${a.toFixed(2)}`;
+
+      const absSteer = Math.abs(steer).toFixed(0);
+      if (Math.abs(x) < 0.08) {
+        steerText.textContent = `ca. 0° – Lenkrad gerade am Wendepunkt`;
+        curvatureText.textContent = `f''(x) ≈ 0: Die Krümmung wechselt hier.`;
+      } else if (curvature > 0) {
+        steerText.textContent = `${absSteer}° nach links gedreht`;
+        curvatureText.textContent = `f''(x) > 0: Linkskrümmung, deshalb Lenkrad nach links.`;
+      } else {
+        steerText.textContent = `${absSteer}° nach rechts gedreht`;
+        curvatureText.textContent = `f''(x) < 0: Rechtskrümmung, deshalb Lenkrad nach rechts.`;
+      }
+
+      slopeText.textContent = `f'(x) = ${(slope).toFixed(2)}; das ist die momentane Fahrtrichtung.`;
+    }
+
+    xSlider.addEventListener("input", update);
+    aSlider.addEventListener("input", update);
+
+    focusToggle.addEventListener("click", () => {
+      const focusActive = document.body.classList.toggle("focus-mode");
+      focusToggle.setAttribute("aria-pressed", String(focusActive));
+      focusToggle.textContent = focusActive ? "Normalansicht" : "Fokusmodus";
+    });
+
+    inflectionBtn.addEventListener("click", () => {
+      stopAnimation();
+      xSlider.value = 0;
+      update();
+    });
+
+    leftBtn.addEventListener("click", () => {
+      stopAnimation();
+      xSlider.value = -1.25;
+      update();
+    });
+
+    function stopAnimation() {
+      running = false;
+      animateBtn.textContent = "Animation starten";
+      if (animation) cancelAnimationFrame(animation);
+    }
+
+    function step() {
+      if (!running) return;
+      animT += 0.018;
+      if (animT > Number(xSlider.max)) animT = Number(xSlider.min);
+      xSlider.value = animT.toFixed(2);
+      update();
+      animation = requestAnimationFrame(step);
+    }
+
+    animateBtn.addEventListener("click", () => {
+      running = !running;
+      animateBtn.textContent = running ? "Animation stoppen" : "Animation starten";
+      if (running) {
+        animT = Number(xSlider.value);
+        step();
+      } else {
+        stopAnimation();
+      }
+    });
+
+
+    let draggingPoint = false;
+
+    function clientToGraphX(evt) {
+      const rect = svg.getBoundingClientRect();
+      const clientX = evt.touches ? evt.touches[0].clientX : evt.clientX;
+      const svgX = (clientX - rect.left) / rect.width * W;
+      let graphX = xMin + ((svgX - 50) / 675) * (xMax - xMin);
+      graphX = Math.max(Number(xSlider.min), Math.min(Number(xSlider.max), graphX));
+      return graphX;
+    }
+
+    function setPointFromEvent(evt) {
+      const x = clientToGraphX(evt);
+      xSlider.value = x.toFixed(2);
+      update();
+    }
+
+    point.addEventListener("mousedown", (evt) => {
+      draggingPoint = true;
+      point.style.cursor = "grabbing";
+      stopAnimation();
+      setPointFromEvent(evt);
+      evt.preventDefault();
+    });
+
+    svg.addEventListener("mousedown", (evt) => {
+      if (evt.target === point) return;
+      const targetIsCurve = evt.target === curve || evt.target === curveShadow || evt.target === tangent;
+      if (targetIsCurve) {
+        draggingPoint = true;
+        point.style.cursor = "grabbing";
+        stopAnimation();
+        setPointFromEvent(evt);
+        evt.preventDefault();
+      }
+    });
+
+    window.addEventListener("mousemove", (evt) => {
+      if (!draggingPoint) return;
+      setPointFromEvent(evt);
+    });
+
+    window.addEventListener("mouseup", () => {
+      draggingPoint = false;
+      point.style.cursor = "grab";
+    });
+
+    point.addEventListener("touchstart", (evt) => {
+      draggingPoint = true;
+      stopAnimation();
+      setPointFromEvent(evt);
+      evt.preventDefault();
+    }, { passive: false });
+
+    svg.addEventListener("touchmove", (evt) => {
+      if (!draggingPoint) return;
+      setPointFromEvent(evt);
+      evt.preventDefault();
+    }, { passive: false });
+
+    window.addEventListener("touchend", () => {
+      draggingPoint = false;
+    });
+
+    update();
+  </script>
+</body>
+</html>
