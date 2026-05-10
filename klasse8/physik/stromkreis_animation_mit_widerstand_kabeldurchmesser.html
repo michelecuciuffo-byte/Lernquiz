@@ -63,14 +63,14 @@
   .stage, .panel, .explain, .concept{
     background:var(--card);
     border:1px solid #e5e7eb;
-    border-radius:28px;
+    border-radius:10px;
     box-shadow:var(--shadow);
   }
 
   .stage{
     position:relative;
     overflow:hidden;
-    min-height:650px;
+    min-height:600px;
     padding:18px;
   }
 
@@ -89,7 +89,7 @@
     background:#fff;
     border:1px solid #e5e7eb;
     padding:10px 14px;
-    border-radius:999px;
+    border-radius:8px;
     font-weight:700;
   }
 
@@ -107,7 +107,7 @@
   button{
     cursor:pointer;
     border:0;
-    border-radius:16px;
+    border-radius:8px;
     padding:13px 18px;
     font-weight:800;
     color:white;
@@ -121,11 +121,11 @@
 
   svg{
     width:100%;
-    height:545px;
+    height:500px;
     display:block;
     background:#fff;
     border:1px solid #e5e7eb;
-    border-radius:24px;
+    border-radius:8px;
   }
 
   .wire{
@@ -145,7 +145,7 @@
   .thin-wire{
     fill:none;
     stroke:#6b7280;
-    stroke-width:5;
+    stroke-width:3.5;
     stroke-linecap:round;
     stroke-linejoin:round;
   }
@@ -162,10 +162,31 @@
     stroke-width:3;
   }
 
+  .meter-small{
+    stroke-width:2.4;
+  }
+
   .meterScreen{
     fill:#ecfeff;
     stroke:#0891b2;
     stroke-width:2;
+  }
+
+  .amp-result-box{
+    fill:#dbeafe;
+    stroke:#60a5fa;
+    stroke-width:2;
+  }
+
+  .meter-result{
+    fill:#111827;
+    font-weight:900;
+  }
+
+  .component-value{
+    font-size:14px;
+    fill:#374151;
+    font-weight:850;
   }
 
   .label{
@@ -187,10 +208,11 @@
   }
 
   .electron{
-    fill:#60a5fa;
-    stroke:#1d4ed8;
+    fill:#fde047;
+    stroke:#a16207;
     stroke-width:2;
     opacity:0;
+    filter:drop-shadow(0 0 5px rgba(250,204,21,.7));
   }
 
   .closed .electron{
@@ -198,23 +220,13 @@
     animation: flow 3.2s linear infinite;
   }
 
-  .e2{animation-delay:-.4s!important}
-  .e3{animation-delay:-.8s!important}
-  .e4{animation-delay:-1.2s!important}
-  .e5{animation-delay:-1.6s!important}
-  .e6{animation-delay:-2s!important}
-  .e7{animation-delay:-2.4s!important}
-  .e8{animation-delay:-2.8s!important}
-  .e9{animation-delay:-3.2s!important}
-  .e10{animation-delay:-3.6s!important}
-
   @keyframes flow{
     0%{ offset-distance:0%; }
     100%{ offset-distance:100%; }
   }
 
   .pathFollower{
-    offset-path:path("M 120 370 L 120 155 L 265 155 L 355 155 L 555 155 L 675 155 L 675 370 L 475 370 L 325 370 L 120 370");
+    offset-path:path("M 120 322 L 120 220 L 120 155 L 265 155 L 355 155 L 555 155 L 675 155 L 675 370 L 475 370 L 325 370 L 120 370 L 120 322");
   }
 
   .switch-arm{
@@ -222,38 +234,68 @@
     stroke-width:8;
     stroke-linecap:round;
     transition:transform .3s ease;
-    transform-origin:265px 155px;
+    transform-origin:222px 155px;
   }
 
   .switch-arm.open{
-    transform:rotate(-24deg);
+    transform:rotate(-28deg);
+  }
+
+  .switch-base{
+    fill:#f9fafb;
+    stroke:#111827;
+    stroke-width:3;
+  }
+
+  .switch-hinge{
+    fill:#111827;
+  }
+
+  .switch-contact{
+    fill:#111827;
   }
 
   .lamp-glow{
     opacity:0;
     transition:opacity .3s ease;
+    transform-box:fill-box;
+    transform-origin:center;
   }
 
   .lamp-on .lamp-glow{
-    opacity:1;
+    opacity:var(--glow-opacity,.7);
     animation:pulse 1.2s ease-in-out infinite alternate;
   }
 
   @keyframes pulse{
-    from{transform:scale(1); opacity:.62;}
-    to{transform:scale(1.08); opacity:.95;}
+    from{transform:scale(var(--glow-scale-min,1)); opacity:calc(var(--glow-opacity,.7) * .68);}
+    to{transform:scale(var(--glow-scale-max,1.08)); opacity:var(--glow-opacity,.7);}
   }
 
-  .bulb{
+  .lamp-glass{
     fill:#fff7ed;
     stroke:#111827;
     stroke-width:3;
     transition:fill .3s, filter .3s;
   }
 
-  .lamp-on .bulb{
-    fill:var(--lamp-on);
-    filter:drop-shadow(0 0 18px rgba(250,204,21,.75));
+  .lamp-on .lamp-glass{
+    fill:var(--lamp-fill,var(--lamp-on));
+    filter:drop-shadow(0 0 var(--lamp-shadow,18px) rgba(250,204,21,var(--lamp-shadow-opacity,.75)));
+  }
+
+  .lamp-cap{
+    fill:#d1d5db;
+    stroke:#111827;
+    stroke-width:2.5;
+  }
+
+  .filament{
+    fill:none;
+    stroke:#111827;
+    stroke-width:3;
+    stroke-linecap:round;
+    stroke-linejoin:round;
   }
 
   .pressurePulse{
@@ -283,7 +325,7 @@
   .control{
     background:white;
     border:1px solid #e5e7eb;
-    border-radius:20px;
+    border-radius:8px;
     padding:15px;
     margin-bottom:14px;
   }
@@ -311,7 +353,7 @@
   .value{
     background:#fff;
     border:1px solid #e5e7eb;
-    border-radius:18px;
+    border-radius:8px;
     padding:14px;
   }
 
@@ -330,7 +372,7 @@
   .formula{
     margin-top:12px;
     padding:13px 14px;
-    border-radius:18px;
+    border-radius:8px;
     background:#111827;
     color:white;
     font-weight:800;
@@ -362,7 +404,7 @@
 
   .info{
     border:1px solid #e5e7eb;
-    border-radius:20px;
+    border-radius:8px;
     padding:14px;
     background:white;
     line-height:1.42;
@@ -376,7 +418,7 @@
   .conceptBox{
     background:#fff;
     border:1px solid #e5e7eb;
-    border-radius:22px;
+    border-radius:8px;
     padding:14px;
     margin-bottom:12px;
   }
@@ -388,7 +430,7 @@
 
   .miniAnim{
     height:135px;
-    border-radius:20px;
+    border-radius:8px;
     border:1px solid #dbeafe;
     background:linear-gradient(90deg,#eff6ff,#ffffff);
     position:relative;
@@ -401,7 +443,7 @@
     left:18px; top:38px;
     width:56px; height:58px;
     border:3px solid #111827;
-    border-radius:12px;
+    border-radius:8px;
     background:#f8fafc;
     display:flex;
     align-items:center;
@@ -409,32 +451,22 @@
     font-weight:900;
   }
 
-  .pressureArrow{
+  .pressureDot{
     position:absolute;
     left:88px;
-    top:58px;
-    width:44px;
-    height:18px;
+    top:55px;
+    width:22px;
+    height:22px;
     background:#f59e0b;
-    border-radius:999px;
+    border-radius:50%;
     opacity:.25;
     animation: push 1.3s ease-in-out infinite;
   }
 
-  .pressureArrow::after{
-    content:"";
-    position:absolute;
-    right:-13px;
-    top:-5px;
-    border-left:16px solid #f59e0b;
-    border-top:14px solid transparent;
-    border-bottom:14px solid transparent;
-  }
-
   @keyframes push{
-    0%{transform:translateX(0) scaleX(.8);opacity:.15}
+    0%{transform:translateX(0) scale(.75);opacity:.15}
     55%{opacity:.9}
-    100%{transform:translateX(185px) scaleX(1.25);opacity:0}
+    100%{transform:translateX(185px) scale(1.15);opacity:0}
   }
 
   .charge{
@@ -481,10 +513,37 @@
     gap:7px;
     background:white;
     border:1px solid #e5e7eb;
-    border-radius:999px;
+    border-radius:8px;
     padding:7px 10px;
     font-size:.9rem;
     font-weight:700;
+  }
+
+  .measurement-note{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:12px;
+  }
+
+  .measurement-note div{
+    background:#fff;
+    border:1px solid #dbeafe;
+    border-left:5px solid #2563eb;
+    border-radius:8px;
+    padding:11px 12px;
+    line-height:1.35;
+    font-size:.92rem;
+  }
+
+  .measurement-note strong{
+    display:block;
+    color:#111827;
+    margin-bottom:3px;
+  }
+
+  @media(max-width:680px){
+    .measurement-note{grid-template-columns:1fr}
   }
 
   .lineblue,.linegray,.lineorange{
@@ -499,7 +558,7 @@
     background:#fff;
     border:1px solid #dbeafe;
     box-shadow:0 10px 28px rgba(15,23,42,.10);
-    border-radius:16px;
+    border-radius:8px;
     padding:10px 12px;
     max-width:230px;
     font-size:.9rem;
@@ -515,7 +574,7 @@
     padding:18px;
     background:linear-gradient(180deg,#ffffff,#f8fafc);
     border:1px solid #e5e7eb;
-    border-radius:28px;
+    border-radius:10px;
     box-shadow:var(--shadow);
   }
 
@@ -527,13 +586,13 @@
   .resistanceWrap{
     background:white;
     border:1px solid #e5e7eb;
-    border-radius:24px;
+    border-radius:8px;
     padding:14px;
   }
 
   .resistanceAnim{
     height:250px;
-    border-radius:22px;
+    border-radius:8px;
     border:1px solid #dbeafe;
     background:
       radial-gradient(circle at 15% 25%, rgba(37,99,235,.10), transparent 26%),
@@ -588,7 +647,7 @@
     color:#111827;
     background:white;
     border:1px solid #e5e7eb;
-    border-radius:999px;
+    border-radius:8px;
     padding:7px 11px;
   }
 
@@ -740,75 +799,65 @@
           <stop offset="55%" stop-color="#facc15" stop-opacity="0.35"/>
           <stop offset="100%" stop-color="#facc15" stop-opacity="0"/>
         </radialGradient>
-        <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
-          <path d="M0,0 L0,6 L8,3 z" fill="#2563eb"/>
-        </marker>
       </defs>
 
       <g id="svgState">
         <!-- main wires -->
-        <path id="mainWire" class="wire" d="M 120 370 L 120 155 L 220 155"/>
-        <path id="wireAfterSwitch" class="wire" d="M 310 155 L 365 155"/>
-        <path class="wire" d="M 485 155 L 555 155"/>
-        <path class="wire" d="M 645 155 L 675 155 L 675 370 L 120 370"/>
-
-        <!-- voltage pressure pulses -->
-        <circle class="pressurePulse" cx="145" cy="154" r="18" fill="#f59e0b"/>
-        <circle class="pressurePulse" cx="145" cy="154" r="18" fill="#f59e0b" style="animation-delay:-.45s"/>
-        <circle class="pressurePulse" cx="145" cy="154" r="18" fill="#f59e0b" style="animation-delay:-.9s"/>
-        <text x="185" y="78" class="small" fill="#92400e">Spannung = elektrischer Antrieb</text>
+        <path id="mainWire" class="wire" d="M 120 220 L 120 155 L 220 155"/>
+        <path id="wireAfterSwitch" class="wire" d="M 310 155 L 379 155"/>
+        <path class="wire" d="M 471 155 L 555 155"/>
+        <path class="wire" d="M 645 155 L 675 155 L 675 370 L 120 370 L 120 322"/>
 
         <!-- battery -->
-        <rect x="82" y="300" width="76" height="102" rx="14" class="battery-body"/>
-        <line x1="100" y1="333" x2="140" y2="333" stroke="#111827" stroke-width="5" stroke-linecap="round"/>
-        <line x1="120" y1="313" x2="120" y2="353" stroke="#111827" stroke-width="5" stroke-linecap="round"/>
-        <line x1="101" y1="371" x2="139" y2="371" stroke="#111827" stroke-width="5" stroke-linecap="round"/>
-        <text x="120" y="425" text-anchor="middle" class="label">Batterie</text>
-        <text x="120" y="445" text-anchor="middle" class="small" id="batteryLabel">6,0 V</text>
-        <text x="120" y="462" text-anchor="middle" class="tiny">liefert Spannung U</text>
+        <rect x="82" y="220" width="76" height="102" rx="14" class="battery-body"/>
+        <line x1="100" y1="253" x2="140" y2="253" stroke="#111827" stroke-width="5" stroke-linecap="round"/>
+        <line x1="120" y1="233" x2="120" y2="273" stroke="#111827" stroke-width="5" stroke-linecap="round"/>
+        <line x1="101" y1="291" x2="139" y2="291" stroke="#111827" stroke-width="5" stroke-linecap="round"/>
+        <text x="72" y="258" text-anchor="end" class="label">Batterie</text>
+        <text x="72" y="278" text-anchor="end" class="small" id="batteryLabel">6,0 V</text>
+        <text x="72" y="296" text-anchor="end" class="tiny">liefert U</text>
 
         <!-- switch -->
-        <circle cx="220" cy="155" r="8" fill="#111827"/>
-        <circle cx="310" cy="155" r="8" fill="#111827"/>
-        <line id="switchArm" x1="220" y1="155" x2="306" y2="155" class="switch-arm open"/>
-        <text x="265" y="112" text-anchor="middle" class="label">Schalter</text>
-        <text x="265" y="132" text-anchor="middle" class="small" id="switchLabel">offen</text>
+        <rect x="206" y="143" width="32" height="24" rx="6" class="switch-base"/>
+        <circle cx="222" cy="155" r="9" class="switch-hinge"/>
+        <circle cx="310" cy="155" r="8" class="switch-contact"/>
+        <line id="switchArm" x1="222" y1="155" x2="306" y2="155" class="switch-arm open"/>
+        <circle cx="222" cy="155" r="4" fill="#f9fafb"/>
+        <text x="265" y="88" text-anchor="middle" class="label">Schalter</text>
+        <text x="265" y="108" text-anchor="middle" class="small" id="switchLabel">offen</text>
 
         <!-- ammeter -->
         <g>
-          <circle cx="425" cy="155" r="62" class="meter"/>
-          <rect x="386" y="174" width="78" height="30" rx="8" class="meterScreen"/>
-          <text x="425" y="146" text-anchor="middle" font-size="42" font-weight="900" fill="#111827">A</text>
-          <text x="425" y="194" text-anchor="middle" class="small" id="ampText">0,00 A</text>
+          <circle cx="425" cy="155" r="46" class="meter"/>
+          <text x="425" y="169" text-anchor="middle" font-size="42" font-weight="900" fill="#111827">A</text>
+          <rect x="384" y="207" width="82" height="31" rx="8" class="amp-result-box"/>
+          <text x="425" y="228" text-anchor="middle" class="small meter-result" id="ampText">0,00 A</text>
           <text x="425" y="83" text-anchor="middle" class="label">Amperemeter</text>
-          <text x="425" y="101" text-anchor="middle" class="tiny">misst Stromstärke I in Reihe</text>
         </g>
 
         <!-- lamp -->
         <g id="lampGroup">
           <circle class="lamp-glow" cx="600" cy="155" r="88" fill="url(#glow)"/>
-          <circle cx="600" cy="155" r="45" class="bulb"/>
-          <path d="M 578 154 C 586 132, 614 132, 622 154 C 612 170, 588 170, 578 154 Z" fill="none" stroke="#111827" stroke-width="3"/>
+          <path class="lamp-glass" d="M 600 105 C 572 105, 552 126, 552 153 C 552 174, 566 191, 582 201 L 582 211 L 618 211 L 618 201 C 634 191, 648 174, 648 153 C 648 126, 628 105, 600 105 Z"/>
+          <path class="filament" d="M 577 160 C 584 143, 592 177, 600 160 C 608 143, 616 177, 623 160"/>
+          <line x1="584" y1="160" x2="584" y2="197" stroke="#111827" stroke-width="2.5" stroke-linecap="round"/>
+          <line x1="616" y1="160" x2="616" y2="197" stroke="#111827" stroke-width="2.5" stroke-linecap="round"/>
+          <rect x="579" y="208" width="42" height="24" rx="5" class="lamp-cap"/>
+          <line x1="583" y1="215" x2="617" y2="215" stroke="#111827" stroke-width="2"/>
+          <line x1="584" y1="224" x2="616" y2="224" stroke="#111827" stroke-width="2"/>
           <line x1="563" y1="155" x2="555" y2="155" stroke="#111827" stroke-width="4"/>
           <line x1="637" y1="155" x2="645" y2="155" stroke="#111827" stroke-width="4"/>
-          <text x="600" y="83" text-anchor="middle" class="label">Lampe / Widerstand</text>
-          <text x="600" y="101" text-anchor="middle" class="tiny" id="resLabel">R = 20 Ω</text>
+          <text x="600" y="70" text-anchor="middle" class="label">Lampe / Widerstand</text>
+          <text x="600" y="91" text-anchor="middle" class="component-value" id="resLabel">R = 20 Ω</text>
         </g>
 
         <!-- voltmeter parallel branch -->
-        <path class="thin-wire" d="M 555 155 L 555 250 L 505 250"/>
-        <path class="thin-wire" d="M 645 155 L 645 250 L 695 250"/>
-        <path class="thin-wire" d="M 505 250 L 505 328 L 695 328 L 695 250"/>
-        <circle cx="600" cy="328" r="58" class="meter"/>
-        <rect x="562" y="345" width="76" height="30" rx="8" class="meterScreen"/>
-        <text x="600" y="319" text-anchor="middle" font-size="42" font-weight="900" fill="#111827">V</text>
-        <text x="600" y="365" text-anchor="middle" class="small" id="voltText">0,0 V</text>
-        <text x="600" y="412" text-anchor="middle" class="label">Voltmeter</text>
-        <text x="600" y="430" text-anchor="middle" class="tiny">misst Spannung U parallel</text>
-
-        <!-- current direction arrow -->
-        <path id="arrowPath" d="M 160 392 C 245 425, 390 425, 520 392" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#arrow)" opacity="0"/>
-        <text id="arrowText" x="348" y="460" text-anchor="middle" class="small" opacity="0">Stromstärke I = Ladungsmenge pro Zeit</text>
+        <path class="thin-wire" d="M 555 155 L 555 282 L 566 282"/>
+        <path class="thin-wire" d="M 645 155 L 645 282 L 634 282"/>
+        <circle cx="600" cy="282" r="34" class="meter meter-small"/>
+        <text x="600" y="279" text-anchor="middle" font-size="27" font-weight="900" fill="#111827">V</text>
+        <rect x="562" y="322" width="76" height="29" rx="8" class="amp-result-box"/>
+        <text x="600" y="341" text-anchor="middle" class="small meter-result" id="voltText">0,0 V</text>
 
         <!-- animated electrons -->
         <circle class="electron pathFollower e1" r="8"/>
@@ -824,14 +873,22 @@
       </g>
     </svg>
 
+    <div class="measurement-note">
+      <div>
+        <strong>Stromstärke messen</strong>
+        Das Amperemeter wird in Reihe geschaltet, weil der gesamte Strom durch das Messgerät fließen muss.
+      </div>
+      <div>
+        <strong>Spannung messen</strong>
+        Das Voltmeter wird parallel zur Lampe angeschlossen, weil es die Spannung zwischen zwei Punkten misst.
+      </div>
+    </div>
+
     <div class="legend">
       <span><i class="lineorange"></i> Spannung: Antrieb</span>
       <span><i class="lineblue"></i> Stromstärke: Ladungsfluss</span>
       <span><i class="linegray"></i> Voltmeter-Messleitung</span>
     </div>
-
-    <div class="callout c1"><b>Stromstärke:</b> Je mehr blaue Ladungen pro Sekunde vorbeikommen, desto größer ist I.</div>
-    <div class="callout c2"><b>Spannung:</b> Je größer U, desto stärker der elektrische Antrieb durch die Batterie.</div>
   </section>
 
   <aside>
@@ -887,9 +944,9 @@
         Die Batterie erzeugt einen Unterschied zwischen Pluspol und Minuspol. Dieser Unterschied wirkt wie ein Antrieb für die Ladungen.
         <div class="miniAnim">
           <div class="batteryMini">U</div>
-          <div class="pressureArrow"></div>
-          <div class="pressureArrow" style="animation-delay:-.45s"></div>
-          <div class="pressureArrow" style="animation-delay:-.9s"></div>
+          <div class="pressureDot"></div>
+          <div class="pressureDot" style="animation-delay:-.45s"></div>
+          <div class="pressureDot" style="animation-delay:-.9s"></div>
         </div>
       </div>
 
@@ -1012,9 +1069,6 @@
   const rOut = document.getElementById("rOut");
   const pOut = document.getElementById("pOut");
 
-  const arrowPath = document.getElementById("arrowPath");
-  const arrowText = document.getElementById("arrowText");
-
   const wires = [...document.querySelectorAll(".wire")];
 
   let closed = false;
@@ -1069,12 +1123,11 @@
       switchBtn.textContent = "Schalter öffnen";
       switchLabel.textContent = "geschlossen";
       wires.forEach(w => w.classList.add("on"));
-      arrowPath.setAttribute("opacity", "1");
-      arrowText.setAttribute("opacity", "1");
-
       const speed = Math.max(0.8, 4.8 - I * 6.5);
-      document.querySelectorAll(".electron").forEach(e => {
+      const circuitElectrons = [...document.querySelectorAll(".electron")];
+      circuitElectrons.forEach((e, index) => {
         e.style.animationDuration = `${speed}s`;
+        e.style.animationDelay = `${-(index * speed / circuitElectrons.length)}s`;
       });
 
       const chargeSpeed = Math.max(0.75, 2.8 - I * 2.7);
@@ -1095,7 +1148,7 @@
       });
 
       const pushSpeed = Math.max(0.65, 1.75 - U * 0.08);
-      document.querySelectorAll(".pressureArrow").forEach(a => {
+      document.querySelectorAll(".pressureDot").forEach(a => {
         a.style.animationDuration = `${pushSpeed}s`;
       });
       document.querySelectorAll(".pressurePulse").forEach(p => {
@@ -1103,7 +1156,14 @@
       });
 
       const lampIntensity = Math.min(1, P / 8);
-      lampGroup.style.opacity = 0.75 + lampIntensity * 0.25;
+      const lampLightness = 90 - lampIntensity * 28;
+      lampGroup.style.opacity = 0.92 + lampIntensity * 0.08;
+      lampGroup.style.setProperty("--lamp-fill", `hsl(48 100% ${lampLightness}%)`);
+      lampGroup.style.setProperty("--lamp-shadow", `${10 + lampIntensity * 34}px`);
+      lampGroup.style.setProperty("--lamp-shadow-opacity", `${0.25 + lampIntensity * 0.65}`);
+      lampGroup.style.setProperty("--glow-opacity", `${0.18 + lampIntensity * 0.78}`);
+      lampGroup.style.setProperty("--glow-scale-min", `${0.82 + lampIntensity * 0.08}`);
+      lampGroup.style.setProperty("--glow-scale-max", `${0.96 + lampIntensity * 0.28}`);
     }else{
       document.body.classList.remove("circuitClosed");
       svgState.classList.remove("closed");
@@ -1114,9 +1174,13 @@
       switchBtn.textContent = "Schalter schließen";
       switchLabel.textContent = "offen";
       wires.forEach(w => w.classList.remove("on"));
-      arrowPath.setAttribute("opacity", "0");
-      arrowText.setAttribute("opacity", "0");
       lampGroup.style.opacity = 1;
+      lampGroup.style.removeProperty("--lamp-fill");
+      lampGroup.style.removeProperty("--lamp-shadow");
+      lampGroup.style.removeProperty("--lamp-shadow-opacity");
+      lampGroup.style.removeProperty("--glow-opacity");
+      lampGroup.style.removeProperty("--glow-scale-min");
+      lampGroup.style.removeProperty("--glow-scale-max");
     }
   }
 
