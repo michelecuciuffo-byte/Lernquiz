@@ -1,0 +1,1135 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Interaktiver Stromkreis: Spannung und Stromstärke</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --ink:#1f2937;
+    --muted:#6b7280;
+    --wire:#374151;
+    --wire-on:#2563eb;
+    --accent:#f59e0b;
+    --green:#16a34a;
+    --red:#dc2626;
+    --card:#f8fafc;
+    --card2:#eff6ff;
+    --lamp-on:#facc15;
+    --shadow:0 14px 40px rgba(15,23,42,.12);
+  }
+
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+  }
+
+  header{
+    padding:26px 28px 10px;
+    text-align:center;
+  }
+
+  h1{
+    margin:0;
+    font-size:clamp(1.6rem,3vw,2.4rem);
+    letter-spacing:-.03em;
+  }
+
+  .subtitle{
+    margin:10px auto 0;
+    max-width:950px;
+    color:var(--muted);
+    line-height:1.45;
+    font-size:1.05rem;
+  }
+
+  .app{
+    max-width:1280px;
+    margin:18px auto 34px;
+    padding:0 18px;
+    display:grid;
+    grid-template-columns: minmax(650px, 1.45fr) minmax(330px,.8fr);
+    gap:20px;
+  }
+
+  @media(max-width:980px){
+    .app{grid-template-columns:1fr}
+  }
+
+  .stage, .panel, .explain, .concept{
+    background:var(--card);
+    border:1px solid #e5e7eb;
+    border-radius:28px;
+    box-shadow:var(--shadow);
+  }
+
+  .stage{
+    position:relative;
+    overflow:hidden;
+    min-height:650px;
+    padding:18px;
+  }
+
+  .stage-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-bottom:6px;
+  }
+
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    padding:10px 14px;
+    border-radius:999px;
+    font-weight:700;
+  }
+
+  .dot{
+    width:12px;height:12px;border-radius:50%;
+    background:var(--red);
+    box-shadow:0 0 0 4px rgba(220,38,38,.12);
+  }
+
+  .dot.on{
+    background:var(--green);
+    box-shadow:0 0 0 4px rgba(22,163,74,.14);
+  }
+
+  button{
+    cursor:pointer;
+    border:0;
+    border-radius:16px;
+    padding:13px 18px;
+    font-weight:800;
+    color:white;
+    background:#2563eb;
+    box-shadow:0 10px 22px rgba(37,99,235,.22);
+    transition:.18s transform,.18s filter;
+  }
+
+  button:hover{transform:translateY(-1px);filter:brightness(1.03)}
+  button:active{transform:translateY(1px)}
+
+  svg{
+    width:100%;
+    height:545px;
+    display:block;
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:24px;
+  }
+
+  .wire{
+    fill:none;
+    stroke:var(--wire);
+    stroke-width:9;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    transition:stroke .25s, filter .25s;
+  }
+
+  .wire.on{
+    stroke:var(--wire-on);
+    filter:drop-shadow(0 0 6px rgba(37,99,235,.35));
+  }
+
+  .thin-wire{
+    fill:none;
+    stroke:#6b7280;
+    stroke-width:5;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+  }
+
+  .battery-body{
+    fill:#f3f4f6;
+    stroke:#111827;
+    stroke-width:3;
+  }
+
+  .meter{
+    fill:#f9fafb;
+    stroke:#111827;
+    stroke-width:3;
+  }
+
+  .meterScreen{
+    fill:#ecfeff;
+    stroke:#0891b2;
+    stroke-width:2;
+  }
+
+  .label{
+    font-weight:800;
+    font-size:18px;
+    fill:#111827;
+  }
+
+  .small{
+    font-weight:650;
+    font-size:13px;
+    fill:#374151;
+  }
+
+  .tiny{
+    font-size:11px;
+    fill:#6b7280;
+    font-weight:650;
+  }
+
+  .electron{
+    fill:#60a5fa;
+    stroke:#1d4ed8;
+    stroke-width:2;
+    opacity:0;
+  }
+
+  .closed .electron{
+    opacity:1;
+    animation: flow 3.2s linear infinite;
+  }
+
+  .e2{animation-delay:-.4s!important}
+  .e3{animation-delay:-.8s!important}
+  .e4{animation-delay:-1.2s!important}
+  .e5{animation-delay:-1.6s!important}
+  .e6{animation-delay:-2s!important}
+  .e7{animation-delay:-2.4s!important}
+  .e8{animation-delay:-2.8s!important}
+  .e9{animation-delay:-3.2s!important}
+  .e10{animation-delay:-3.6s!important}
+
+  @keyframes flow{
+    0%{ offset-distance:0%; }
+    100%{ offset-distance:100%; }
+  }
+
+  .pathFollower{
+    offset-path:path("M 120 370 L 120 155 L 265 155 L 355 155 L 555 155 L 675 155 L 675 370 L 475 370 L 325 370 L 120 370");
+  }
+
+  .switch-arm{
+    stroke:#111827;
+    stroke-width:8;
+    stroke-linecap:round;
+    transition:transform .3s ease;
+    transform-origin:265px 155px;
+  }
+
+  .switch-arm.open{
+    transform:rotate(-24deg);
+  }
+
+  .lamp-glow{
+    opacity:0;
+    transition:opacity .3s ease;
+  }
+
+  .lamp-on .lamp-glow{
+    opacity:1;
+    animation:pulse 1.2s ease-in-out infinite alternate;
+  }
+
+  @keyframes pulse{
+    from{transform:scale(1); opacity:.62;}
+    to{transform:scale(1.08); opacity:.95;}
+  }
+
+  .bulb{
+    fill:#fff7ed;
+    stroke:#111827;
+    stroke-width:3;
+    transition:fill .3s, filter .3s;
+  }
+
+  .lamp-on .bulb{
+    fill:var(--lamp-on);
+    filter:drop-shadow(0 0 18px rgba(250,204,21,.75));
+  }
+
+  .pressurePulse{
+    opacity:0;
+  }
+
+  .closed .pressurePulse{
+    opacity:.9;
+    animation: pressure 1.45s ease-in-out infinite;
+  }
+
+  @keyframes pressure{
+    0%{ transform:translateX(0) scale(.85); opacity:.1; }
+    45%{ opacity:.75; }
+    100%{ transform:translateX(135px) scale(1.25); opacity:0; }
+  }
+
+  .panel, .explain, .concept{
+    padding:18px;
+  }
+
+  .panel h2, .explain h2, .concept h2{
+    margin:0 0 12px;
+    font-size:1.25rem;
+  }
+
+  .control{
+    background:white;
+    border:1px solid #e5e7eb;
+    border-radius:20px;
+    padding:15px;
+    margin-bottom:14px;
+  }
+
+  .control label{
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    font-weight:800;
+    margin-bottom:10px;
+  }
+
+  input[type="range"]{
+    width:100%;
+    accent-color:#2563eb;
+  }
+
+  .values{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:14px;
+  }
+
+  .value{
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:18px;
+    padding:14px;
+  }
+
+  .value .k{
+    font-size:.85rem;
+    color:var(--muted);
+    font-weight:750;
+  }
+
+  .value .v{
+    font-size:1.55rem;
+    font-weight:900;
+    margin-top:4px;
+  }
+
+  .formula{
+    margin-top:12px;
+    padding:13px 14px;
+    border-radius:18px;
+    background:#111827;
+    color:white;
+    font-weight:800;
+    text-align:center;
+  }
+
+  .hint{
+    margin-top:12px;
+    color:#4b5563;
+    font-size:.95rem;
+    line-height:1.45;
+  }
+
+  .explain, .concept{
+    margin-top:18px;
+    background:linear-gradient(180deg,#ffffff,#f8fafc);
+  }
+
+  .explain-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:12px;
+  }
+
+  @media(max-width:680px){
+    .explain-grid{grid-template-columns:1fr}
+    svg{height:480px}
+  }
+
+  .info{
+    border:1px solid #e5e7eb;
+    border-radius:20px;
+    padding:14px;
+    background:white;
+    line-height:1.42;
+  }
+
+  .info strong{
+    display:block;
+    margin-bottom:5px;
+  }
+
+  .conceptBox{
+    background:#fff;
+    border:1px solid #e5e7eb;
+    border-radius:22px;
+    padding:14px;
+    margin-bottom:12px;
+  }
+
+  .conceptBox strong{
+    display:block;
+    margin-bottom:5px;
+  }
+
+  .miniAnim{
+    height:135px;
+    border-radius:20px;
+    border:1px solid #dbeafe;
+    background:linear-gradient(90deg,#eff6ff,#ffffff);
+    position:relative;
+    overflow:hidden;
+    margin-top:10px;
+  }
+
+  .batteryMini{
+    position:absolute;
+    left:18px; top:38px;
+    width:56px; height:58px;
+    border:3px solid #111827;
+    border-radius:12px;
+    background:#f8fafc;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+  }
+
+  .pressureArrow{
+    position:absolute;
+    left:88px;
+    top:58px;
+    width:44px;
+    height:18px;
+    background:#f59e0b;
+    border-radius:999px;
+    opacity:.25;
+    animation: push 1.3s ease-in-out infinite;
+  }
+
+  .pressureArrow::after{
+    content:"";
+    position:absolute;
+    right:-13px;
+    top:-5px;
+    border-left:16px solid #f59e0b;
+    border-top:14px solid transparent;
+    border-bottom:14px solid transparent;
+  }
+
+  @keyframes push{
+    0%{transform:translateX(0) scaleX(.8);opacity:.15}
+    55%{opacity:.9}
+    100%{transform:translateX(185px) scaleX(1.25);opacity:0}
+  }
+
+  .charge{
+    position:absolute;
+    top:55px;
+    width:18px;height:18px;
+    border-radius:50%;
+    background:#60a5fa;
+    border:2px solid #1d4ed8;
+    animation: charges 2.2s linear infinite;
+  }
+
+  .q1{left:95px; animation-delay:0s}
+  .q2{left:95px; animation-delay:-.45s}
+  .q3{left:95px; animation-delay:-.9s}
+  .q4{left:95px; animation-delay:-1.35s}
+  .q5{left:95px; animation-delay:-1.8s}
+
+  @keyframes charges{
+    from{transform:translateX(0); opacity:.2}
+    15%{opacity:1}
+    85%{opacity:1}
+    to{transform:translateX(245px); opacity:.2}
+  }
+
+  .closedOnly{
+    opacity:.35;
+  }
+
+  body.circuitClosed .closedOnly{
+    opacity:1;
+  }
+
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:10px;
+  }
+
+  .legend span{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    background:white;
+    border:1px solid #e5e7eb;
+    border-radius:999px;
+    padding:7px 10px;
+    font-size:.9rem;
+    font-weight:700;
+  }
+
+  .lineblue,.linegray,.lineorange{
+    width:22px;height:5px;border-radius:99px;display:inline-block;
+  }
+  .lineblue{background:#2563eb}
+  .linegray{background:#6b7280}
+  .lineorange{background:#f59e0b}
+
+  .callout{
+    position:absolute;
+    background:#fff;
+    border:1px solid #dbeafe;
+    box-shadow:0 10px 28px rgba(15,23,42,.10);
+    border-radius:16px;
+    padding:10px 12px;
+    max-width:230px;
+    font-size:.9rem;
+    line-height:1.3;
+  }
+
+  .callout b{color:#1d4ed8}
+  .c1{left:34px;bottom:30px}
+  .c2{right:36px;top:92px}
+
+  .resistanceLab{
+    margin-top:18px;
+    padding:18px;
+    background:linear-gradient(180deg,#ffffff,#f8fafc);
+    border:1px solid #e5e7eb;
+    border-radius:28px;
+    box-shadow:var(--shadow);
+  }
+
+  .resistanceLab h2{
+    margin:0 0 12px;
+    font-size:1.25rem;
+  }
+
+  .resistanceWrap{
+    background:white;
+    border:1px solid #e5e7eb;
+    border-radius:24px;
+    padding:14px;
+  }
+
+  .resistanceAnim{
+    height:250px;
+    border-radius:22px;
+    border:1px solid #dbeafe;
+    background:
+      radial-gradient(circle at 15% 25%, rgba(37,99,235,.10), transparent 26%),
+      linear-gradient(180deg,#eff6ff,#ffffff);
+    position:relative;
+    overflow:hidden;
+    margin-top:12px;
+  }
+
+  .pipe{
+    position:absolute;
+    left:32px;
+    right:32px;
+    top:78px;
+    height:90px;
+    border-radius:999px;
+    background:#dbeafe;
+    border:4px solid #1d4ed8;
+    box-shadow:inset 0 7px 18px rgba(30,64,175,.16);
+    transition:height .25s, top .25s, background .25s;
+  }
+
+  .pipe.narrow{
+    height:42px;
+    top:102px;
+    background:#fee2e2;
+    border-color:#dc2626;
+    box-shadow:inset 0 7px 18px rgba(220,38,38,.18);
+  }
+
+  .pipe.medium{
+    height:66px;
+    top:90px;
+    background:#fef3c7;
+    border-color:#f59e0b;
+    box-shadow:inset 0 7px 18px rgba(245,158,11,.18);
+  }
+
+  .pipeLabel{
+    position:absolute;
+    left:42px;
+    top:18px;
+    font-weight:900;
+    color:#111827;
+  }
+
+  .diameterText{
+    position:absolute;
+    right:42px;
+    top:18px;
+    font-weight:900;
+    color:#111827;
+    background:white;
+    border:1px solid #e5e7eb;
+    border-radius:999px;
+    padding:7px 11px;
+  }
+
+  .wallAtom{
+    position:absolute;
+    width:22px;
+    height:22px;
+    border-radius:50%;
+    background:#f97316;
+    border:2px solid #9a3412;
+    box-shadow:0 4px 10px rgba(154,52,18,.18);
+  }
+
+  .wallAtom::after{
+    content:"+";
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    color:white;
+    font-size:14px;
+  }
+
+  .atom1{left:120px;top:65px}
+  .atom2{left:215px;top:164px}
+  .atom3{left:330px;top:70px}
+  .atom4{left:455px;top:166px}
+  .atom5{left:575px;top:67px}
+  .atom6{left:670px;top:164px}
+
+  .resElectron{
+    position:absolute;
+    left:42px;
+    width:17px;
+    height:17px;
+    border-radius:50%;
+    background:#60a5fa;
+    border:2px solid #1d4ed8;
+    box-shadow:0 0 0 4px rgba(96,165,250,.16);
+    animation: moveRes 3s linear infinite;
+  }
+
+  .resElectron::after{
+    content:"–";
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:white;
+    font-weight:900;
+    transform:translateY(-1px);
+  }
+
+  .rE1{top:94px; animation-delay:0s}
+  .rE2{top:126px; animation-delay:-.45s}
+  .rE3{top:146px; animation-delay:-.9s}
+  .rE4{top:105px; animation-delay:-1.35s}
+  .rE5{top:136px; animation-delay:-1.8s}
+  .rE6{top:115px; animation-delay:-2.25s}
+
+  @keyframes moveRes{
+    0%{transform:translateX(0) translateY(0); opacity:.15}
+    10%{opacity:1}
+    25%{transform:translateX(150px) translateY(-10px)}
+    33%{transform:translateX(205px) translateY(12px)}
+    47%{transform:translateX(318px) translateY(-13px)}
+    61%{transform:translateX(426px) translateY(14px)}
+    77%{transform:translateX(555px) translateY(-10px)}
+    92%{opacity:1}
+    100%{transform:translateX(690px) translateY(0); opacity:.15}
+  }
+
+  .collision{
+    position:absolute;
+    width:34px;
+    height:34px;
+    opacity:0;
+    animation: spark 2.4s linear infinite;
+  }
+
+  .collision::before,
+  .collision::after{
+    content:"";
+    position:absolute;
+    left:15px;
+    top:1px;
+    width:4px;
+    height:32px;
+    background:#ef4444;
+    border-radius:999px;
+  }
+
+  .collision::after{
+    transform:rotate(90deg);
+  }
+
+  .cSpark1{left:205px;top:100px;animation-delay:-.2s}
+  .cSpark2{left:323px;top:135px;animation-delay:-.75s}
+  .cSpark3{left:458px;top:97px;animation-delay:-1.25s}
+  .cSpark4{left:575px;top:133px;animation-delay:-1.8s}
+
+  @keyframes spark{
+    0%,18%,100%{opacity:0;transform:scale(.4) rotate(0deg)}
+    22%{opacity:1;transform:scale(1.1) rotate(18deg)}
+    29%{opacity:0;transform:scale(.7) rotate(35deg)}
+  }
+
+  .resistanceExplanation{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+    margin-top:12px;
+  }
+
+  .resistanceExplanation .info{
+    margin:0;
+  }
+
+  @media(max-width:680px){
+    .resistanceExplanation{grid-template-columns:1fr}
+    .atom5,.atom6{display:none}
+  }
+
+</style>
+</head>
+<body>
+<header>
+  <h1>Interaktiver Stromkreis mit Spannung, Stromstärke, Schalter und Messgeräten</h1>
+  <p class="subtitle">
+    Die Spannung ist der elektrische Antrieb. Die Stromstärke gibt an, wie viel elektrische Ladung pro Zeit durch den Stromkreis fließt.
+    Schließe den Schalter und verändere Spannung oder Widerstand.
+  </p>
+</header>
+
+<main class="app">
+  <section class="stage">
+    <div class="stage-top">
+      <div class="badge"><span id="statusDot" class="dot"></span><span id="statusText">Schalter offen: kein Stromfluss</span></div>
+      <button id="switchBtn">Schalter schließen</button>
+    </div>
+
+    <svg id="circuitSvg" viewBox="0 0 800 540" aria-label="Animierter Stromkreis">
+      <defs>
+        <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stop-color="#fde047" stop-opacity="0.85"/>
+          <stop offset="55%" stop-color="#facc15" stop-opacity="0.35"/>
+          <stop offset="100%" stop-color="#facc15" stop-opacity="0"/>
+        </radialGradient>
+        <marker id="arrow" markerWidth="10" markerHeight="10" refX="7" refY="3" orient="auto" markerUnits="strokeWidth">
+          <path d="M0,0 L0,6 L8,3 z" fill="#2563eb"/>
+        </marker>
+      </defs>
+
+      <g id="svgState">
+        <!-- main wires -->
+        <path id="mainWire" class="wire" d="M 120 370 L 120 155 L 220 155"/>
+        <path id="wireAfterSwitch" class="wire" d="M 310 155 L 365 155"/>
+        <path class="wire" d="M 485 155 L 555 155"/>
+        <path class="wire" d="M 645 155 L 675 155 L 675 370 L 120 370"/>
+
+        <!-- voltage pressure pulses -->
+        <circle class="pressurePulse" cx="145" cy="154" r="18" fill="#f59e0b"/>
+        <circle class="pressurePulse" cx="145" cy="154" r="18" fill="#f59e0b" style="animation-delay:-.45s"/>
+        <circle class="pressurePulse" cx="145" cy="154" r="18" fill="#f59e0b" style="animation-delay:-.9s"/>
+        <text x="185" y="78" class="small" fill="#92400e">Spannung = elektrischer Antrieb</text>
+
+        <!-- battery -->
+        <rect x="82" y="300" width="76" height="102" rx="14" class="battery-body"/>
+        <line x1="100" y1="333" x2="140" y2="333" stroke="#111827" stroke-width="5" stroke-linecap="round"/>
+        <line x1="120" y1="313" x2="120" y2="353" stroke="#111827" stroke-width="5" stroke-linecap="round"/>
+        <line x1="101" y1="371" x2="139" y2="371" stroke="#111827" stroke-width="5" stroke-linecap="round"/>
+        <text x="120" y="425" text-anchor="middle" class="label">Batterie</text>
+        <text x="120" y="445" text-anchor="middle" class="small" id="batteryLabel">6,0 V</text>
+        <text x="120" y="462" text-anchor="middle" class="tiny">liefert Spannung U</text>
+
+        <!-- switch -->
+        <circle cx="220" cy="155" r="8" fill="#111827"/>
+        <circle cx="310" cy="155" r="8" fill="#111827"/>
+        <line id="switchArm" x1="220" y1="155" x2="306" y2="155" class="switch-arm open"/>
+        <text x="265" y="112" text-anchor="middle" class="label">Schalter</text>
+        <text x="265" y="132" text-anchor="middle" class="small" id="switchLabel">offen</text>
+
+        <!-- ammeter -->
+        <g>
+          <circle cx="425" cy="155" r="62" class="meter"/>
+          <rect x="386" y="174" width="78" height="30" rx="8" class="meterScreen"/>
+          <text x="425" y="146" text-anchor="middle" font-size="42" font-weight="900" fill="#111827">A</text>
+          <text x="425" y="194" text-anchor="middle" class="small" id="ampText">0,00 A</text>
+          <text x="425" y="83" text-anchor="middle" class="label">Amperemeter</text>
+          <text x="425" y="101" text-anchor="middle" class="tiny">misst Stromstärke I in Reihe</text>
+        </g>
+
+        <!-- lamp -->
+        <g id="lampGroup">
+          <circle class="lamp-glow" cx="600" cy="155" r="88" fill="url(#glow)"/>
+          <circle cx="600" cy="155" r="45" class="bulb"/>
+          <path d="M 578 154 C 586 132, 614 132, 622 154 C 612 170, 588 170, 578 154 Z" fill="none" stroke="#111827" stroke-width="3"/>
+          <line x1="563" y1="155" x2="555" y2="155" stroke="#111827" stroke-width="4"/>
+          <line x1="637" y1="155" x2="645" y2="155" stroke="#111827" stroke-width="4"/>
+          <text x="600" y="83" text-anchor="middle" class="label">Lampe / Widerstand</text>
+          <text x="600" y="101" text-anchor="middle" class="tiny" id="resLabel">R = 20 Ω</text>
+        </g>
+
+        <!-- voltmeter parallel branch -->
+        <path class="thin-wire" d="M 555 155 L 555 250 L 505 250"/>
+        <path class="thin-wire" d="M 645 155 L 645 250 L 695 250"/>
+        <path class="thin-wire" d="M 505 250 L 505 328 L 695 328 L 695 250"/>
+        <circle cx="600" cy="328" r="58" class="meter"/>
+        <rect x="562" y="345" width="76" height="30" rx="8" class="meterScreen"/>
+        <text x="600" y="319" text-anchor="middle" font-size="42" font-weight="900" fill="#111827">V</text>
+        <text x="600" y="365" text-anchor="middle" class="small" id="voltText">0,0 V</text>
+        <text x="600" y="412" text-anchor="middle" class="label">Voltmeter</text>
+        <text x="600" y="430" text-anchor="middle" class="tiny">misst Spannung U parallel</text>
+
+        <!-- current direction arrow -->
+        <path id="arrowPath" d="M 160 392 C 245 425, 390 425, 520 392" fill="none" stroke="#2563eb" stroke-width="4" marker-end="url(#arrow)" opacity="0"/>
+        <text id="arrowText" x="348" y="460" text-anchor="middle" class="small" opacity="0">Stromstärke I = Ladungsmenge pro Zeit</text>
+
+        <!-- animated electrons -->
+        <circle class="electron pathFollower e1" r="8"/>
+        <circle class="electron pathFollower e2" r="8"/>
+        <circle class="electron pathFollower e3" r="8"/>
+        <circle class="electron pathFollower e4" r="8"/>
+        <circle class="electron pathFollower e5" r="8"/>
+        <circle class="electron pathFollower e6" r="8"/>
+        <circle class="electron pathFollower e7" r="8"/>
+        <circle class="electron pathFollower e8" r="8"/>
+        <circle class="electron pathFollower e9" r="8"/>
+        <circle class="electron pathFollower e10" r="8"/>
+      </g>
+    </svg>
+
+    <div class="legend">
+      <span><i class="lineorange"></i> Spannung: Antrieb</span>
+      <span><i class="lineblue"></i> Stromstärke: Ladungsfluss</span>
+      <span><i class="linegray"></i> Voltmeter-Messleitung</span>
+    </div>
+
+    <div class="callout c1"><b>Stromstärke:</b> Je mehr blaue Ladungen pro Sekunde vorbeikommen, desto größer ist I.</div>
+    <div class="callout c2"><b>Spannung:</b> Je größer U, desto stärker der elektrische Antrieb durch die Batterie.</div>
+  </section>
+
+  <aside>
+    <section class="panel">
+      <h2>Steuerung und Messwerte</h2>
+
+      <div class="control">
+        <label for="voltage">Spannung der Batterie <span id="voltageVal">6,0 V</span></label>
+        <input id="voltage" type="range" min="1" max="12" step="0.5" value="6">
+      </div>
+
+      <div class="control">
+        <label for="resistance">Widerstand der Lampe <span id="resistanceVal">20 Ω</span></label>
+        <input id="resistance" type="range" min="5" max="80" step="1" value="20">
+      </div>
+
+      <div class="control">
+        <label for="diameter">Kabeldurchmesser im Widerstands-Modell <span id="diameterVal">mittel</span></label>
+        <input id="diameter" type="range" min="1" max="3" step="1" value="2">
+      </div>
+
+      <div class="values">
+        <div class="value">
+          <div class="k">Spannung U</div>
+          <div class="v" id="uOut">0,0 V</div>
+        </div>
+        <div class="value">
+          <div class="k">Stromstärke I</div>
+          <div class="v" id="iOut">0,00 A</div>
+        </div>
+        <div class="value">
+          <div class="k">Widerstand R</div>
+          <div class="v" id="rOut">20 Ω</div>
+        </div>
+        <div class="value">
+          <div class="k">Leistung P</div>
+          <div class="v" id="pOut">0,00 W</div>
+        </div>
+      </div>
+
+      <div class="formula">U = R · I &nbsp;&nbsp; | &nbsp;&nbsp; I = U : R</div>
+      <p class="hint">
+        Wird die Spannung erhöht, werden die Ladungen stärker „angetrieben“. Bei gleichem Widerstand steigt dadurch die Stromstärke.
+        Wird der Widerstand größer, wird der Ladungsfluss gebremst.
+      </p>
+    </section>
+
+    <section class="concept">
+      <h2>Extra-Animation: Spannung und Stromstärke</h2>
+
+      <div class="conceptBox">
+        <strong>Spannung U: der elektrische Antrieb</strong>
+        Die Batterie erzeugt einen Unterschied zwischen Pluspol und Minuspol. Dieser Unterschied wirkt wie ein Antrieb für die Ladungen.
+        <div class="miniAnim">
+          <div class="batteryMini">U</div>
+          <div class="pressureArrow"></div>
+          <div class="pressureArrow" style="animation-delay:-.45s"></div>
+          <div class="pressureArrow" style="animation-delay:-.9s"></div>
+        </div>
+      </div>
+
+      <div class="conceptBox">
+        <strong>Stromstärke I: Ladungsmenge pro Zeit</strong>
+        Die Stromstärke ist groß, wenn viele Ladungen in kurzer Zeit durch eine Stelle des Stromkreises fließen.
+        <div class="miniAnim closedOnly">
+          <div class="charge q1"></div>
+          <div class="charge q2"></div>
+          <div class="charge q3"></div>
+          <div class="charge q4"></div>
+          <div class="charge q5"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="resistanceLab">
+      <h2>Extra-Animation: Widerstand und Kabeldurchmesser</h2>
+      <div class="resistanceWrap">
+        <strong>Widerstand R: Behinderung des Ladungsflusses</strong>
+        <p class="hint">
+          Im Modell stoßen Elektronen an Atomrümpfe im Leiter. Bei kleinerem Kabeldurchmesser ist weniger Platz:
+          Die Elektronen werden stärker behindert, stoßen häufiger an und die Stromstärke sinkt.
+        </p>
+
+        <div class="resistanceAnim">
+          <div class="pipeLabel">Leiter-Modell</div>
+          <div class="diameterText" id="diameterText">mittlerer Durchmesser</div>
+          <div class="pipe medium" id="pipe"></div>
+
+          <div class="wallAtom atom1"></div>
+          <div class="wallAtom atom2"></div>
+          <div class="wallAtom atom3"></div>
+          <div class="wallAtom atom4"></div>
+          <div class="wallAtom atom5"></div>
+          <div class="wallAtom atom6"></div>
+
+          <div class="resElectron rE1"></div>
+          <div class="resElectron rE2"></div>
+          <div class="resElectron rE3"></div>
+          <div class="resElectron rE4"></div>
+          <div class="resElectron rE5"></div>
+          <div class="resElectron rE6"></div>
+
+          <div class="collision cSpark1"></div>
+          <div class="collision cSpark2"></div>
+          <div class="collision cSpark3"></div>
+          <div class="collision cSpark4"></div>
+        </div>
+
+        <div class="resistanceExplanation">
+          <div class="info">
+            <strong>Großer Durchmesser</strong>
+            Viel Platz für Ladungen: weniger Zusammenstöße, kleinerer Widerstand, größere Stromstärke.
+          </div>
+          <div class="info">
+            <strong>Kleiner Durchmesser</strong>
+            Wenig Platz für Ladungen: mehr Zusammenstöße, größerer Widerstand, kleinere Stromstärke.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="explain">
+      <h2>Erklärungen zu den Bauteilen</h2>
+      <div class="explain-grid">
+        <div class="info">
+          <strong>1. Batterie</strong>
+          Sie liefert die elektrische Spannung. Ohne Spannung gibt es keinen elektrischen Antrieb.
+        </div>
+        <div class="info">
+          <strong>2. Schalter</strong>
+          Offen: Kreis unterbrochen. Geschlossen: Ladungen können umlaufen.
+        </div>
+        <div class="info">
+          <strong>3. Amperemeter</strong>
+          Es misst die Stromstärke und wird <b>in Reihe</b> eingebaut.
+        </div>
+        <div class="info">
+          <strong>4. Voltmeter</strong>
+          Es misst die Spannung an der Lampe und wird <b>parallel</b> angeschlossen.
+        </div>
+        <div class="info">
+          <strong>5. Lampe</strong>
+          Sie ist ein Widerstand. Elektrische Energie wird in Licht und Wärme umgewandelt.
+        </div>
+        <div class="info">
+          <strong>6. Zusammenhang</strong>
+          Bei gleicher Lampe gilt: größere Spannung → größere Stromstärke → hellere Lampe.
+        </div>
+      </div>
+    </section>
+  </aside>
+</main>
+
+<script>
+  const switchBtn = document.getElementById("switchBtn");
+  const statusText = document.getElementById("statusText");
+  const statusDot = document.getElementById("statusDot");
+  const svgState = document.getElementById("svgState");
+  const switchArm = document.getElementById("switchArm");
+  const switchLabel = document.getElementById("switchLabel");
+  const lampGroup = document.getElementById("lampGroup");
+  const voltage = document.getElementById("voltage");
+  const resistance = document.getElementById("resistance");
+  const diameter = document.getElementById("diameter");
+
+  const voltageVal = document.getElementById("voltageVal");
+  const resistanceVal = document.getElementById("resistanceVal");
+  const diameterVal = document.getElementById("diameterVal");
+  const diameterText = document.getElementById("diameterText");
+  const pipe = document.getElementById("pipe");
+  const batteryLabel = document.getElementById("batteryLabel");
+  const resLabel = document.getElementById("resLabel");
+
+  const ampText = document.getElementById("ampText");
+  const voltText = document.getElementById("voltText");
+  const uOut = document.getElementById("uOut");
+  const iOut = document.getElementById("iOut");
+  const rOut = document.getElementById("rOut");
+  const pOut = document.getElementById("pOut");
+
+  const arrowPath = document.getElementById("arrowPath");
+  const arrowText = document.getElementById("arrowText");
+
+  const wires = [...document.querySelectorAll(".wire")];
+
+  let closed = false;
+
+  function de(n, digits=1){
+    return n.toFixed(digits).replace(".", ",");
+  }
+
+  function update(){
+    const U = Number(voltage.value);
+    const R = Number(resistance.value);
+    const D = Number(diameter.value);
+    const diameterFactor = D === 1 ? 1.55 : D === 2 ? 1.0 : 0.65;
+    const effectiveR = Math.round(R * diameterFactor);
+    const I = closed ? U / effectiveR : 0;
+    const P = closed ? U * I : 0;
+
+    voltageVal.textContent = `${de(U,1)} V`;
+    resistanceVal.textContent = `${R} Ω`;
+    batteryLabel.textContent = `${de(U,1)} V`;
+    resLabel.textContent = `R effektiv = ${effectiveR} Ω`;
+
+    if(D === 1){
+      diameterVal.textContent = "eng";
+      diameterText.textContent = "kleiner Durchmesser";
+      pipe.className = "pipe narrow";
+    }else if(D === 2){
+      diameterVal.textContent = "mittel";
+      diameterText.textContent = "mittlerer Durchmesser";
+      pipe.className = "pipe medium";
+    }else{
+      diameterVal.textContent = "weit";
+      diameterText.textContent = "großer Durchmesser";
+      pipe.className = "pipe";
+    }
+
+    ampText.textContent = `${de(I,2)} A`;
+    voltText.textContent = `${de(closed ? U : 0,1)} V`;
+
+    uOut.textContent = `${de(closed ? U : 0,1)} V`;
+    iOut.textContent = `${de(I,2)} A`;
+    rOut.textContent = `${effectiveR} Ω`;
+    pOut.textContent = `${de(P,2)} W`;
+
+    if(closed){
+      document.body.classList.add("circuitClosed");
+      svgState.classList.add("closed");
+      switchArm.classList.remove("open");
+      lampGroup.classList.add("lamp-on");
+      statusDot.classList.add("on");
+      statusText.textContent = "Schalter geschlossen: Strom fließt";
+      switchBtn.textContent = "Schalter öffnen";
+      switchLabel.textContent = "geschlossen";
+      wires.forEach(w => w.classList.add("on"));
+      arrowPath.setAttribute("opacity", "1");
+      arrowText.setAttribute("opacity", "1");
+
+      const speed = Math.max(0.8, 4.8 - I * 6.5);
+      document.querySelectorAll(".electron").forEach(e => {
+        e.style.animationDuration = `${speed}s`;
+      });
+
+      const chargeSpeed = Math.max(0.75, 2.8 - I * 2.7);
+      document.querySelectorAll(".charge").forEach(q => {
+        q.style.animationDuration = `${chargeSpeed}s`;
+      });
+
+      const resSpeed = Math.max(1.15, 4.4 - I * 5.2 + (3 - D) * 0.45);
+      document.querySelectorAll(".resElectron").forEach(e => {
+        e.style.animationDuration = `${resSpeed}s`;
+      });
+
+      const sparkSpeed = D === 1 ? 1.45 : D === 2 ? 2.15 : 3.2;
+      const sparkOpacity = D === 1 ? "1" : D === 2 ? ".65" : ".28";
+      document.querySelectorAll(".collision").forEach(s => {
+        s.style.animationDuration = `${sparkSpeed}s`;
+        s.style.opacity = sparkOpacity;
+      });
+
+      const pushSpeed = Math.max(0.65, 1.75 - U * 0.08);
+      document.querySelectorAll(".pressureArrow").forEach(a => {
+        a.style.animationDuration = `${pushSpeed}s`;
+      });
+      document.querySelectorAll(".pressurePulse").forEach(p => {
+        p.style.animationDuration = `${pushSpeed}s`;
+      });
+
+      const lampIntensity = Math.min(1, P / 8);
+      lampGroup.style.opacity = 0.75 + lampIntensity * 0.25;
+    }else{
+      document.body.classList.remove("circuitClosed");
+      svgState.classList.remove("closed");
+      switchArm.classList.add("open");
+      lampGroup.classList.remove("lamp-on");
+      statusDot.classList.remove("on");
+      statusText.textContent = "Schalter offen: kein Stromfluss";
+      switchBtn.textContent = "Schalter schließen";
+      switchLabel.textContent = "offen";
+      wires.forEach(w => w.classList.remove("on"));
+      arrowPath.setAttribute("opacity", "0");
+      arrowText.setAttribute("opacity", "0");
+      lampGroup.style.opacity = 1;
+    }
+  }
+
+  switchBtn.addEventListener("click", () => {
+    closed = !closed;
+    update();
+  });
+
+  voltage.addEventListener("input", update);
+  resistance.addEventListener("input", update);
+  diameter.addEventListener("input", update);
+
+  update();
+</script>
+</body>
+</html>
