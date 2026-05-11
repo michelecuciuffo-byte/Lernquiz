@@ -1,0 +1,2112 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fortpflanzung und Entwicklung von Säugetieren</title>
+  <style>
+    :root{
+      --bg:#f5fbff;
+      --card:#ffffff;
+      --blue:#2563eb;
+      --blue2:#eaf3ff;
+      --green:#16a34a;
+      --green2:#eafaf1;
+      --orange:#f59e0b;
+      --orange2:#fff7e8;
+      --pink:#ec4899;
+      --pink2:#fff0f7;
+      --purple:#7c3aed;
+      --purple2:#f1ecff;
+      --teal:#0f766e;
+      --teal2:#e6fffb;
+      --text:#1f2937;
+      --muted:#64748b;
+      --bad:#dc2626;
+      --good:#15803d;
+      --border:#dbeafe;
+      --shadow:0 16px 42px rgba(15, 23, 42, .10);
+      --radius:26px;
+    }
+
+    *{box-sizing:border-box}
+
+    html{scroll-behavior:smooth}
+
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;
+      background:
+        radial-gradient(circle at 10% 8%, #dbeafe 0, transparent 30%),
+        radial-gradient(circle at 88% 12%, #ffe4f1 0, transparent 26%),
+        radial-gradient(circle at 50% 100%, #dcfce7 0, transparent 30%),
+        var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      line-height:1.55;
+    }
+
+    header{
+      padding:38px 18px 24px;
+      text-align:center;
+    }
+
+    .title-card{
+      max-width:1100px;
+      margin:0 auto;
+      background:rgba(255,255,255,.9);
+      border:1px solid rgba(255,255,255,.9);
+      border-radius:34px;
+      box-shadow:var(--shadow);
+      padding:30px 22px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .title-card::before,
+    .title-card::after{
+      content:"";
+      position:absolute;
+      border-radius:50%;
+      filter:blur(.2px);
+      z-index:0;
+    }
+
+    .title-card::before{
+      width:190px;
+      height:190px;
+      background:rgba(37,99,235,.12);
+      left:-60px;
+      top:-70px;
+    }
+
+    .title-card::after{
+      width:210px;
+      height:210px;
+      background:rgba(236,72,153,.13);
+      right:-70px;
+      bottom:-90px;
+    }
+
+    h1{
+      margin:0;
+      font-size:clamp(2rem,4.5vw,3.7rem);
+      line-height:1.05;
+      letter-spacing:-.04em;
+      color:#124a93;
+      position:relative;
+      z-index:1;
+    }
+
+    .subtitle{
+      margin:15px auto 0;
+      max-width:830px;
+      color:var(--muted);
+      font-size:clamp(1rem,2vw,1.16rem);
+      position:relative;
+      z-index:1;
+    }
+
+    main{
+      max-width:1160px;
+      margin:0 auto;
+      padding:0 18px 54px;
+    }
+
+    .nav{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:center;
+      margin:8px auto 28px;
+      position:sticky;
+      top:8px;
+      z-index:50;
+    }
+
+    .nav button{
+      border:0;
+      background:#fff;
+      color:#174b8f;
+      padding:11px 15px;
+      border-radius:999px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:0 6px 18px rgba(41,89,160,.12);
+      transition:.18s;
+      border:1px solid #dbeafe;
+    }
+
+    .nav button:hover,
+    .nav button.active{
+      transform:translateY(-2px);
+      background:#edf5ff;
+      color:#1d4ed8;
+    }
+
+    .section{
+      display:none;
+      animation:fade .25s ease;
+    }
+
+    .section.active{display:block}
+
+    @keyframes fade{
+      from{opacity:.3; transform:translateY(6px)}
+      to{opacity:1; transform:translateY(0)}
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:18px;
+    }
+
+    .card{
+      background:rgba(255,255,255,.94);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:22px;
+      border:1px solid rgba(210,225,245,.9);
+      backdrop-filter:blur(8px);
+    }
+
+    .card h2,.card h3{
+      margin-top:0;
+      color:#174b8f;
+      line-height:1.2;
+    }
+
+    .card p,.card li{
+      font-size:1.02rem;
+    }
+
+    .notice{
+      background:linear-gradient(135deg,#eaf4ff,#fff);
+      border-left:8px solid var(--blue);
+    }
+
+    .icon{
+      font-size:2.6rem;
+      display:block;
+      margin-bottom:10px;
+    }
+
+    .pill-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:15px;
+    }
+
+    .pill{
+      border-radius:999px;
+      padding:9px 13px;
+      background:#eff6ff;
+      color:#1d4ed8;
+      font-weight:850;
+      border:1px solid #bfdbfe;
+      display:inline-flex;
+      align-items:center;
+      gap:7px;
+    }
+
+    .animal-row{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(185px,1fr));
+      gap:14px;
+      margin-top:14px;
+    }
+
+    .animal{
+      background:linear-gradient(135deg,#ffffff,#f4f9ff);
+      border:2px solid #d8e8ff;
+      border-radius:22px;
+      padding:16px;
+      text-align:center;
+      min-height:158px;
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      transition:.18s;
+    }
+
+    .animal:hover{
+      transform:translateY(-3px);
+      box-shadow:0 10px 24px rgba(37,99,235,.12);
+    }
+
+    .animal .emoji{
+      font-size:3.1rem;
+      margin-bottom:8px;
+    }
+
+    .animal b{color:#174b8f}
+
+    .flow{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
+      gap:14px;
+      align-items:stretch;
+      margin-top:16px;
+    }
+
+    .step{
+      background:#fff;
+      border-radius:22px;
+      padding:18px;
+      text-align:center;
+      box-shadow:0 8px 18px rgba(41,89,160,.10);
+      border:2px solid #e2ecff;
+      position:relative;
+    }
+
+    .step-num{
+      width:34px;
+      height:34px;
+      border-radius:50%;
+      background:var(--blue);
+      color:white;
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      margin:0 auto 10px;
+    }
+
+    .step .big{
+      font-size:2.6rem;
+      display:block;
+      margin:8px 0;
+    }
+
+    .micro-stage{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+      gap:14px;
+      margin-top:16px;
+    }
+
+    .micro{
+      border-radius:22px;
+      padding:16px;
+      background:#fff;
+      border:2px solid #e9d5ff;
+      box-shadow:0 8px 18px rgba(124,58,237,.10);
+      text-align:center;
+      min-height:170px;
+    }
+
+    .micro .visual{
+      height:72px;
+      display:grid;
+      place-items:center;
+      margin-bottom:8px;
+      position:relative;
+    }
+
+    .egg{
+      width:58px;
+      height:58px;
+      border-radius:50%;
+      background:radial-gradient(circle at 35% 30%, #fff, #f9a8d4 55%, #ec4899);
+      border:4px solid #fff;
+      box-shadow:0 8px 18px rgba(236,72,153,.25);
+      display:grid;
+      place-items:center;
+      color:#9d174d;
+      font-weight:900;
+    }
+
+    .sperm{
+      width:104px;
+      height:38px;
+      position:relative;
+      background:transparent;
+    }
+
+    .sperm::before{
+      content:"";
+      position:absolute;
+      right:0;
+      top:6px;
+      width:34px;
+      height:25px;
+      border-radius:62% 42% 48% 58%;
+      background:
+        radial-gradient(circle at 72% 36%, rgba(255,255,255,.95) 0 16%, transparent 17%),
+        radial-gradient(circle at 58% 42%, #dbeafe, #60a5fa 58%, #2563eb);
+      border:2px solid #fff;
+      box-shadow:0 6px 12px rgba(37,99,235,.22);
+      transform:rotate(-4deg);
+    }
+
+    .sperm::after{
+      content:"";
+      position:absolute;
+      right:29px;
+      top:14px;
+      width:76px;
+      height:18px;
+      background:
+        radial-gradient(ellipse at 100% 50%, #93c5fd 0 7px, transparent 8px),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='92' height='24' viewBox='0 0 92 24'%3E%3Cpath d='M90 12 C72 3, 58 21, 40 12 S14 3, 2 12' fill='none' stroke='%2360a5fa' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E")
+        left center / 72px 18px no-repeat;
+      transform-origin:right center;
+      animation:tail .8s infinite ease-in-out;
+      filter:drop-shadow(0 4px 5px rgba(37,99,235,.15));
+    }
+
+    @keyframes tail{
+      0%,100%{transform:rotate(7deg) scaleY(1)}
+      50%{transform:rotate(-8deg) scaleY(.9)}
+    }
+
+    .zygote{
+      width:64px;
+      height:64px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#f9a8d4,#93c5fd);
+      border:4px solid #fff;
+      box-shadow:0 8px 18px rgba(124,58,237,.25);
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      color:#3b0764;
+    }
+
+    .cells{
+      width:70px;
+      height:70px;
+      position:relative;
+      margin:auto;
+    }
+
+    .cell{
+      width:34px;
+      height:34px;
+      border-radius:50%;
+      background:#c4b5fd;
+      border:3px solid white;
+      position:absolute;
+      box-shadow:0 6px 14px rgba(124,58,237,.20);
+    }
+
+    .cell:nth-child(1){left:18px; top:2px}
+    .cell:nth-child(2){left:3px; top:28px}
+    .cell:nth-child(3){left:32px; top:30px}
+    .cell:nth-child(4){left:19px; top:35px; background:#f9a8d4}
+
+    .embryoIcon{
+      width:72px;
+      height:50px;
+      border-radius:55% 45% 50% 50%;
+      background:linear-gradient(135deg,#fecdd3,#f472b6);
+      border:4px solid #fff;
+      box-shadow:0 8px 18px rgba(236,72,153,.20);
+      position:relative;
+    }
+
+    .embryoIcon::after{
+      content:"";
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      background:#fff;
+      position:absolute;
+      right:12px;
+      top:13px;
+      opacity:.75;
+    }
+
+    .process-demo{
+      background:linear-gradient(180deg,#f8fbff,#ffffff);
+      border-radius:28px;
+      border:2px dashed #bfdbfe;
+      padding:18px;
+      margin-top:18px;
+      overflow:hidden;
+    }
+
+    .demo-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-bottom:12px;
+    }
+
+    .stage{
+      height:210px;
+      border-radius:24px;
+      background:
+        radial-gradient(circle at 25% 50%, rgba(236,72,153,.10), transparent 25%),
+        radial-gradient(circle at 75% 50%, rgba(37,99,235,.10), transparent 25%),
+        #ffffff;
+      border:1px solid #dbeafe;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .stage .eggDemo{
+      position:absolute;
+      right:16%;
+      top:72px;
+      width:68px;
+      height:68px;
+      border-radius:50%;
+      background:radial-gradient(circle at 35% 30%, #fff, #f9a8d4 55%, #ec4899);
+      border:5px solid #fff;
+      box-shadow:0 9px 22px rgba(236,72,153,.25);
+      display:grid;
+      place-items:center;
+      font-size:1.4rem;
+    }
+
+    .stage .spermDemo{
+      position:absolute;
+      left:8%;
+      top:92px;
+      width:118px;
+      height:30px;
+      background:transparent;
+      z-index:3;
+    }
+
+    .stage .spermDemo::before{
+      content:"";
+      position:absolute;
+      left:0;
+      top:4px;
+      width:35px;
+      height:25px;
+      border-radius:58% 42% 48% 52%;
+      background:radial-gradient(circle at 35% 32%, #eaf3ff, #60a5fa 58%, #2563eb);
+      border:3px solid #fff;
+      box-shadow:0 7px 14px rgba(37,99,235,.22);
+      transform:rotate(-7deg);
+    }
+
+    .stage .spermDemo::after{
+      content:"";
+      position:absolute;
+      left:34px;
+      top:17px;
+      width:88px;
+      height:12px;
+      border-radius:999px;
+      border-top:5px solid #60a5fa;
+      transform-origin:left center;
+      animation:tail .75s infinite ease-in-out;
+      filter:drop-shadow(0 4px 5px rgba(37,99,235,.14));
+    }
+
+    .stage.run .spermDemo{
+      animation:swim 3.2s ease-in-out forwards, fadeSperm 1s ease forwards 3.05s;
+    }
+
+    @keyframes swim{
+      0%{left:8%; top:92px; transform:rotate(0deg)}
+      25%{top:72px; transform:rotate(-7deg)}
+      55%{top:108px; transform:rotate(6deg)}
+      100%{left:calc(84% - 142px); top:91px; transform:rotate(0deg)}
+    }
+
+    @keyframes fadeSperm{
+      to{opacity:0; transform:scale(.75)}
+    }
+
+    .stage .zygoteDemo{
+      position:absolute;
+      right:16%;
+      top:72px;
+      width:68px;
+      height:68px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#f9a8d4,#93c5fd);
+      border:5px solid white;
+      box-shadow:0 9px 22px rgba(124,58,237,.24);
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      color:#3b0764;
+      opacity:0;
+      transform:scale(.6);
+      z-index:2;
+    }
+
+    .stage.run .zygoteDemo{
+      animation:zygoteToEmbryo 8.4s ease forwards;
+    }
+
+    @keyframes zygoteToEmbryo{
+      0%,35%{
+        opacity:0;
+        transform:scale(.6);
+        border-radius:50%;
+        background:linear-gradient(135deg,#f9a8d4,#93c5fd);
+      }
+      39%,48%{
+        opacity:1;
+        transform:scale(1);
+        border-radius:50%;
+        background:
+          linear-gradient(90deg, transparent 47%, rgba(255,255,255,.95) 48%, rgba(255,255,255,.95) 52%, transparent 53%),
+          linear-gradient(135deg,#f9a8d4,#93c5fd);
+      }
+      55%,64%{
+        opacity:1;
+        transform:scale(1.08);
+        border-radius:50%;
+        background:
+          radial-gradient(circle at 35% 35%, #f9a8d4 0 26%, transparent 27%),
+          radial-gradient(circle at 65% 35%, #bfdbfe 0 26%, transparent 27%),
+          radial-gradient(circle at 35% 65%, #c4b5fd 0 26%, transparent 27%),
+          radial-gradient(circle at 65% 65%, #fecdd3 0 26%, transparent 27%),
+          #ffffff;
+      }
+      72%,82%{
+        opacity:1;
+        width:82px;
+        height:70px;
+        transform:scale(1.05);
+        border-radius:55% 45% 50% 50%;
+        background:
+          radial-gradient(circle at 34% 34%, #f9a8d4 0 18%, transparent 19%),
+          radial-gradient(circle at 55% 29%, #bfdbfe 0 17%, transparent 18%),
+          radial-gradient(circle at 68% 48%, #c4b5fd 0 18%, transparent 19%),
+          radial-gradient(circle at 42% 62%, #fecdd3 0 19%, transparent 20%),
+          radial-gradient(circle at 59% 66%, #f0abfc 0 16%, transparent 17%),
+          #fff;
+      }
+      100%{
+        opacity:1;
+        width:86px;
+        height:60px;
+        transform:scale(1.08);
+        border-radius:55% 45% 50% 50%;
+        background:linear-gradient(135deg,#fecdd3,#f472b6);
+      }
+    }
+
+    .stage .zygoteDemo::after{
+      content:"";
+      width:18px;
+      height:18px;
+      border-radius:50%;
+      background:#fff;
+      position:absolute;
+      right:14px;
+      top:16px;
+      opacity:0;
+    }
+
+    .stage.run .zygoteDemo::after{
+      animation:embryoSpot 8.4s ease forwards;
+    }
+
+    @keyframes embryoSpot{
+      0%,82%{opacity:0}
+      100%{opacity:.75}
+    }
+
+    .stage-note{
+      margin-top:12px;
+      background:#eff6ff;
+      border:1px solid #bfdbfe;
+      border-radius:18px;
+      padding:12px 14px;
+      color:#1e3a8a;
+      font-weight:750;
+    }
+
+    .timeline{
+      position:relative;
+      display:grid;
+      gap:16px;
+      margin-top:16px;
+    }
+
+    .time-item{
+      display:grid;
+      grid-template-columns:76px 1fr;
+      gap:15px;
+      align-items:start;
+    }
+
+    .bubble{
+      background:var(--purple);
+      color:#fff;
+      width:64px;
+      height:64px;
+      display:grid;
+      place-items:center;
+      border-radius:50%;
+      font-size:1.9rem;
+      box-shadow:0 8px 18px rgba(112,87,255,.22);
+      font-weight:900;
+    }
+
+    .time-text{
+      background:#fff;
+      border-radius:20px;
+      padding:16px 18px;
+      box-shadow:0 8px 18px rgba(41,89,160,.10);
+      border:1px solid #e4eaff;
+    }
+
+    .time-text h3{margin:0 0 6px}
+
+    .mini-model{
+      min-height:275px;
+      background:
+        radial-gradient(circle at 50% 55%, rgba(236,72,153,.12), transparent 34%),
+        radial-gradient(circle at 20% 20%, rgba(37,99,235,.08), transparent 24%),
+        linear-gradient(180deg,#fff7fb,#ffffff);
+      border-radius:24px;
+      border:2px solid #ffd5e5;
+      display:grid;
+      place-items:center;
+      position:relative;
+      overflow:hidden;
+      margin-top:14px;
+      padding:24px;
+    }
+
+    .mini-model::before{
+      content:"";
+      position:absolute;
+      width:360px;
+      height:230px;
+      border-radius:50%;
+      background:rgba(255,255,255,.55);
+      border:1px solid rgba(254,205,211,.8);
+      box-shadow:inset 0 0 35px rgba(236,72,153,.10);
+    }
+
+    .uterus-model{
+      width:min(420px, 100%);
+      min-height:250px;
+      border-radius:54% 54% 45% 45%;
+      background:
+        radial-gradient(circle at 50% 52%, rgba(255,255,255,.72) 0 31%, transparent 32%),
+        radial-gradient(circle at 50% 55%, rgba(251,207,232,.95) 0 44%, rgba(249,168,212,.86) 45% 100%);
+      border:8px solid #fff;
+      box-shadow:0 16px 38px rgba(236,72,153,.20), inset 0 -18px 32px rgba(190,24,93,.08);
+      position:relative;
+      display:grid;
+      place-items:center;
+      z-index:1;
+    }
+
+    .uterus-model::before,
+    .uterus-model::after{
+      content:"";
+      position:absolute;
+      top:35px;
+      width:105px;
+      height:34px;
+      background:#f9a8d4;
+      border-radius:999px;
+      border:6px solid white;
+    }
+
+    .uterus-model::before{
+      left:-58px;
+      transform:rotate(-18deg);
+    }
+
+    .uterus-model::after{
+      right:-58px;
+      transform:rotate(18deg);
+    }
+
+    .baby-symbol{
+      width:110px;
+      height:82px;
+      border-radius:55% 45% 55% 45%;
+      background:linear-gradient(135deg,#fff,#fecdd3);
+      border:5px solid white;
+      box-shadow:0 10px 20px rgba(190,24,93,.18);
+      display:grid;
+      place-items:center;
+      font-size:2.7rem;
+      animation:pulse 2.2s infinite ease-in-out;
+      position:relative;
+      z-index:2;
+    }
+
+    .baby-symbol::after{
+      content:"";
+      position:absolute;
+      left:82px;
+      top:36px;
+      width:78px;
+      height:38px;
+      border-top:6px solid rgba(236,72,153,.42);
+      border-radius:50%;
+      transform:rotate(16deg);
+    }
+
+    @keyframes pulse{
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(1.05)}
+    }
+
+    .label{
+      position:absolute;
+      padding:8px 10px;
+      border-radius:999px;
+      background:white;
+      color:#9d174d;
+      border:1px solid #fecdd3;
+      font-weight:850;
+      box-shadow:0 6px 14px rgba(190,24,93,.10);
+      font-size:.9rem;
+      z-index:4;
+    }
+
+    .label.one{left:18px; bottom:20px}
+    .label.two{right:24px; top:58px}
+
+    .uterus-model::before,
+    .uterus-model::after,
+    .baby-symbol::after{
+      display:none;
+    }
+
+    .interactive-box{
+      background:linear-gradient(135deg,#ffffff,#f7fbff);
+      border:2px dashed #b8d7ff;
+      border-radius:24px;
+      padding:20px;
+      margin-top:18px;
+    }
+
+    .btn{
+      border:0;
+      padding:12px 16px;
+      border-radius:14px;
+      background:var(--blue);
+      color:#fff;
+      font-weight:900;
+      cursor:pointer;
+      transition:.18s;
+      margin:5px;
+      box-shadow:0 8px 18px rgba(37,99,235,.14);
+    }
+
+    .btn:hover{
+      transform:translateY(-2px);
+      filter:brightness(1.03);
+    }
+
+    .btn.secondary{
+      background:#eef5ff;
+      color:#174b8f;
+      border:1px solid #bfdbfe;
+      box-shadow:none;
+    }
+
+    .btn.green{background:var(--green)}
+    .btn.orange{background:var(--orange)}
+    .btn.pink{background:var(--pink)}
+    .btn.purple{background:var(--purple)}
+
+    .feedback{
+      margin-top:12px;
+      padding:14px 16px;
+      border-radius:16px;
+      font-weight:800;
+      display:none;
+    }
+
+    .feedback.good{
+      display:block;
+      background:var(--green2);
+      color:var(--good);
+      border:1px solid #b9ebd4;
+    }
+
+    .feedback.bad{
+      display:block;
+      background:#fff0f0;
+      color:var(--bad);
+      border:1px solid #ffd0d0;
+    }
+
+    .milk-model{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:16px;
+      align-items:center;
+    }
+
+    .milk-card{
+      background:#fff;
+      border-radius:22px;
+      padding:16px;
+      border:2px solid #e5f3ff;
+      text-align:center;
+      box-shadow:0 8px 18px rgba(41,89,160,.10);
+    }
+
+    .milk-card .emoji{
+      font-size:3.2rem;
+      display:block;
+      margin:5px 0 10px;
+    }
+
+    .comparison{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(245px,1fr));
+      gap:16px;
+      margin-top:16px;
+    }
+
+    .compare-card{
+      padding:18px;
+      border-radius:22px;
+      border:1px solid #dbeafe;
+      background:#fff;
+    }
+
+    .tiny{
+      font-size:.92rem;
+      color:var(--muted);
+    }
+
+    .quiz-card{
+      background:#fff;
+      border-radius:22px;
+      padding:18px;
+      margin:14px 0;
+      box-shadow:0 8px 18px rgba(41,89,160,.10);
+      border:1px solid #e4eaff;
+    }
+
+    .quiz-card h3{
+      margin:0 0 12px;
+      color:#174b8f;
+    }
+
+    .answers{display:grid; gap:9px}
+
+    .answer{
+      border:2px solid #dbeafe;
+      background:#f8fbff;
+      border-radius:14px;
+      padding:12px;
+      cursor:pointer;
+      transition:.18s;
+      font-weight:750;
+    }
+
+    .answer:hover{
+      background:#eef6ff;
+      transform:translateX(3px);
+    }
+
+    .answer.correct{
+      background:#e9f8f1;
+      border-color:#7ad8ae;
+      color:#117348;
+    }
+
+    .answer.wrong{
+      background:#fff0f0;
+      border-color:#ffb4b4;
+      color:#b72f2f;
+    }
+
+    .score{
+      background:linear-gradient(135deg,#fff9e8,#ffffff);
+      border:2px solid #ffe0a3;
+      border-radius:24px;
+      padding:18px;
+      text-align:center;
+      margin-top:20px;
+      font-size:1.2rem;
+      font-weight:900;
+      color:#8a5600;
+    }
+
+    .match-area{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      align-items:start;
+    }
+
+    @media(max-width:780px){
+      .match-area{grid-template-columns:1fr}
+      .nav{position:relative; top:auto}
+      .time-item{grid-template-columns:1fr}
+      .bubble{width:52px; height:52px}
+    }
+
+    .drag-list,.drop-list{
+      background:#fff;
+      border-radius:22px;
+      padding:16px;
+      box-shadow:0 8px 18px rgba(41,89,160,.10);
+      border:1px solid #e4eaff;
+      min-height:250px;
+    }
+
+    .drag-list{
+      position:sticky;
+      top:88px;
+      max-height:min(430px, calc(100vh - 120px));
+      overflow:auto;
+      align-self:start;
+    }
+
+    @media(max-width:780px){
+      .drag-list{
+        top:10px;
+        max-height:45vh;
+        z-index:4;
+      }
+    }
+
+    .drag{
+      background:#edf5ff;
+      color:#174b8f;
+      padding:12px;
+      border-radius:14px;
+      margin:9px 0;
+      cursor:grab;
+      font-weight:900;
+      border:2px solid #cde1ff;
+    }
+
+    .drop{
+      border:2px dashed #b8d7ff;
+      border-radius:16px;
+      padding:12px;
+      margin:10px 0;
+      min-height:66px;
+      background:#f8fbff;
+    }
+
+    .drop strong{color:#174b8f}
+
+    .drop.over{
+      background:#edf7ff;
+      border-color:#2878ff;
+    }
+
+    .summary-list{
+      list-style:none;
+      padding:0;
+      margin:0;
+    }
+
+    .summary-list li{
+      background:#f8fbff;
+      border:1px solid #dbeafe;
+      margin:10px 0;
+      padding:12px 14px;
+      border-radius:16px;
+    }
+
+    .summary-list b{color:#174b8f}
+
+    footer{
+      text-align:center;
+      color:#64748b;
+      padding:30px 10px;
+      font-size:.95rem;
+    }
+
+    @media print{
+      body{background:white}
+      .nav,.btn,footer{display:none!important}
+      .section{display:block!important; page-break-inside:auto}
+      .card,.quiz-card,.compare-card{box-shadow:none; break-inside:avoid}
+      header{padding:12px}
+    }
+  
+    /* Neue, deutlich sichtbarere Animation: Spermium -> Zygote -> Zellteilungen -> Embryo */
+    .stage{
+      height:260px;
+      border-radius:24px;
+      background:
+        radial-gradient(circle at 78% 50%, rgba(236,72,153,.13), transparent 27%),
+        radial-gradient(circle at 25% 50%, rgba(37,99,235,.10), transparent 28%),
+        #ffffff;
+      border:1px solid #dbeafe;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .stage .eggDemo{
+      position:absolute;
+      right:12%;
+      top:86px;
+      width:82px;
+      height:82px;
+      border-radius:50%;
+      background:radial-gradient(circle at 34% 30%, #fff, #f9a8d4 56%, #ec4899);
+      border:6px solid #fff;
+      box-shadow:0 10px 24px rgba(236,72,153,.25);
+      display:grid;
+      place-items:center;
+      font-size:1.4rem;
+      color:#9d174d;
+      font-weight:900;
+      z-index:2;
+    }
+
+    .stage.run .eggDemo{
+      animation:eggVanish 3.35s ease forwards;
+    }
+
+    @keyframes eggVanish{
+      0%,88%{opacity:1; transform:scale(1)}
+      100%{opacity:0; transform:scale(.75)}
+    }
+
+    .stage .spermDemo{
+      position:absolute;
+      left:7%;
+      top:104px;
+      width:160px;
+      height:56px;
+      background:transparent;
+      z-index:5;
+      transform-origin:30px 28px;
+    }
+
+    /* Kopf und Mittelstück des Spermiums; die Spitze zeigt zur Eizelle. */
+    .stage .spermDemo::before{
+      content:"";
+      position:absolute;
+      left:auto;
+      right:0;
+      top:12px;
+      width:48px;
+      height:33px;
+      border-radius:64% 42% 48% 58%;
+      background:
+        radial-gradient(circle at 73% 34%, rgba(255,255,255,.95) 0 15%, transparent 16%),
+        radial-gradient(circle at 58% 42%, #eaf3ff, #60a5fa 58%, #1d4ed8);
+      border:3px solid #fff;
+      box-shadow:0 8px 16px rgba(37,99,235,.25);
+      transform:rotate(-4deg);
+    }
+
+    /* Eine einzelne Geißel mit kurzem Mittelstück. */
+    .stage .spermDemo::after{
+      content:"";
+      position:absolute;
+      left:auto;
+      right:43px;
+      top:24px;
+      width:122px;
+      height:28px;
+      border:0;
+      border-radius:0;
+      background:
+        radial-gradient(ellipse at 100% 50%, #93c5fd 0 10px, transparent 11px),
+        url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='132' height='32' viewBox='0 0 132 32'%3E%3Cpath d='M130 16 C108 5, 92 27, 70 16 S34 5, 2 16' fill='none' stroke='%2360a5fa' stroke-width='5' stroke-linecap='round'/%3E%3C/svg%3E")
+        left center / 112px 26px no-repeat;
+      transform-origin:right center;
+      animation:spermTailWave .55s infinite ease-in-out;
+      filter:drop-shadow(0 4px 4px rgba(37,99,235,.16));
+    }
+
+    @keyframes spermTailWave{
+      0%,100%{transform:rotate(6deg) scaleY(1)}
+      50%{transform:rotate(-8deg) scaleY(.86)}
+    }
+
+    .stage.run .spermDemo{
+      animation:spermSwimNew 3.25s ease-in-out forwards, spermFadeNew .75s ease forwards 3.05s;
+    }
+
+    @keyframes spermSwimNew{
+      0%{left:7%; top:104px; transform:rotate(0deg)}
+      22%{top:80px; transform:rotate(-8deg)}
+      48%{top:122px; transform:rotate(7deg)}
+      78%{top:98px; transform:rotate(-2deg)}
+      100%{left:calc(88% - 205px); top:102px; transform:rotate(0deg)}
+    }
+
+    @keyframes spermFadeNew{
+      to{opacity:0; transform:scale(.55)}
+    }
+
+    .stage .zygoteDemo{
+      position:absolute;
+      right:12%;
+      top:86px;
+      width:82px;
+      height:82px;
+      border-radius:50%;
+      background:linear-gradient(135deg,#f9a8d4,#bfdbfe);
+      border:6px solid white;
+      box-shadow:0 10px 24px rgba(124,58,237,.24);
+      opacity:0;
+      z-index:4;
+      display:block;
+      transform:scale(.65);
+      color:transparent;
+      font-size:0;
+    }
+
+    .stage.run .zygoteDemo{
+      animation:zygoteMainNew 9.2s ease forwards;
+    }
+
+    .stage .zygoteDemo .cellDot{
+      position:absolute;
+      width:32px;
+      height:32px;
+      border-radius:50%;
+      background:#f9a8d4;
+      border:3px solid #fff;
+      box-shadow:0 5px 12px rgba(124,58,237,.18);
+      opacity:0;
+    }
+
+    .stage .zygoteDemo .c1{left:23px; top:23px; background:#f9a8d4;}
+    .stage .zygoteDemo .c2{left:43px; top:23px; background:#bfdbfe;}
+    .stage .zygoteDemo .c3{left:23px; top:43px; background:#c4b5fd;}
+    .stage .zygoteDemo .c4{left:43px; top:43px; background:#fecdd3;}
+    .stage .zygoteDemo .c5{left:32px; top:12px; background:#f0abfc;}
+    .stage .zygoteDemo .c6{left:12px; top:32px; background:#a7f3d0;}
+    .stage .zygoteDemo .c7{left:52px; top:32px; background:#fde68a;}
+    .stage .zygoteDemo .c8{left:32px; top:52px; background:#fca5a5;}
+
+    .stage.run .zygoteDemo .c1{animation:cellOne 9.2s ease forwards;}
+    .stage.run .zygoteDemo .c2{animation:cellTwo 9.2s ease forwards;}
+    .stage.run .zygoteDemo .c3{animation:cellThree 9.2s ease forwards;}
+    .stage.run .zygoteDemo .c4{animation:cellFour 9.2s ease forwards;}
+    .stage.run .zygoteDemo .c5,
+    .stage.run .zygoteDemo .c6,
+    .stage.run .zygoteDemo .c7,
+    .stage.run .zygoteDemo .c8{animation:moreCells 9.2s ease forwards;}
+
+    @keyframes zygoteMainNew{
+      0%,34%{
+        opacity:0;
+        transform:scale(.65);
+        width:82px;
+        height:82px;
+        border-radius:50%;
+        background:linear-gradient(135deg,#f9a8d4,#bfdbfe);
+      }
+      38%,47%{
+        opacity:1;
+        transform:scale(1);
+        width:82px;
+        height:82px;
+        border-radius:50%;
+        background:
+          linear-gradient(90deg, transparent 47%, rgba(255,255,255,.95) 48%, rgba(255,255,255,.95) 52%, transparent 53%),
+          linear-gradient(135deg,#f9a8d4,#bfdbfe);
+      }
+      48%,66%{
+        opacity:1;
+        transform:scale(1);
+        width:82px;
+        height:82px;
+        border-radius:50%;
+        background:transparent;
+        border-color:transparent;
+        box-shadow:none;
+      }
+      67%,84%{
+        opacity:1;
+        transform:scale(1.08);
+        width:98px;
+        height:88px;
+        border-radius:50%;
+        background:transparent;
+        border-color:transparent;
+        box-shadow:none;
+      }
+      85%,100%{
+        opacity:1;
+        transform:scale(1.08);
+        width:104px;
+        height:76px;
+        border-radius:56% 44% 52% 48%;
+        background:linear-gradient(135deg,#fecdd3,#f472b6);
+        border-color:white;
+        box-shadow:0 10px 24px rgba(236,72,153,.23);
+      }
+    }
+
+    @keyframes cellOne{
+      0%,47%{opacity:0}
+      48%,66%{opacity:1; left:15px; top:25px; width:34px; height:34px;}
+      67%,84%{opacity:1; left:24px; top:12px; width:30px; height:30px;}
+      85%,100%{opacity:0}
+    }
+
+    @keyframes cellTwo{
+      0%,47%{opacity:0}
+      48%,66%{opacity:1; left:38px; top:25px; width:34px; height:34px;}
+      67%,84%{opacity:1; left:48px; top:18px; width:30px; height:30px;}
+      85%,100%{opacity:0}
+    }
+
+    @keyframes cellThree{
+      0%,57%{opacity:0}
+      58%,66%{opacity:1; left:15px; top:48px; width:34px; height:34px;}
+      67%,84%{opacity:1; left:18px; top:42px; width:30px; height:30px;}
+      85%,100%{opacity:0}
+    }
+
+    @keyframes cellFour{
+      0%,57%{opacity:0}
+      58%,66%{opacity:1; left:38px; top:48px; width:34px; height:34px;}
+      67%,84%{opacity:1; left:50px; top:48px; width:30px; height:30px;}
+      85%,100%{opacity:0}
+    }
+
+    @keyframes moreCells{
+      0%,66%{opacity:0; transform:scale(.7)}
+      67%,84%{opacity:1; transform:scale(1)}
+      85%,100%{opacity:0; transform:scale(.7)}
+    }
+
+    .stage .embryoLabel{
+      position:absolute;
+      right:calc(12% + 16px);
+      top:174px;
+      padding:7px 12px;
+      border-radius:999px;
+      background:#fff0f7;
+      color:#9d174d;
+      border:1px solid #fecdd3;
+      font-weight:900;
+      font-size:.92rem;
+      opacity:0;
+      z-index:6;
+    }
+
+    .stage.run .embryoLabel{
+      animation:embryoLabelNew 9.2s ease forwards;
+    }
+
+    @keyframes embryoLabelNew{
+      0%,82%{opacity:0; transform:translateY(5px)}
+      86%,100%{opacity:1; transform:translateY(0)}
+    }
+
+    .stage .eggDemo,
+    .stage .spermDemo,
+    .stage .zygoteDemo,
+    .stage .zygoteDemo .cellDot,
+    .stage .embryoLabel{
+      transition:opacity .35s ease, transform .5s ease, left .9s ease-in-out, top .9s ease-in-out, width .45s ease, height .45s ease, border-radius .45s ease, background .35s ease, box-shadow .35s ease, border-color .35s ease;
+    }
+
+    .stage.no-step-transition .eggDemo,
+    .stage.no-step-transition .spermDemo,
+    .stage.no-step-transition .zygoteDemo,
+    .stage.no-step-transition .zygoteDemo .cellDot,
+    .stage.no-step-transition .embryoLabel{
+      transition:none!important;
+    }
+
+    .stage.step-1 .spermDemo{
+      left:calc(88% - 205px);
+      top:102px;
+      transform:rotate(0deg);
+    }
+
+    .stage.step-2 .spermDemo,
+    .stage.step-3 .spermDemo,
+    .stage.step-4 .spermDemo,
+    .stage.step-5 .spermDemo{
+      left:calc(88% - 205px);
+      top:102px;
+      opacity:0;
+      transform:scale(.55);
+    }
+
+    .stage.step-2 .eggDemo,
+    .stage.step-3 .eggDemo,
+    .stage.step-4 .eggDemo,
+    .stage.step-5 .eggDemo{
+      opacity:0;
+      transform:scale(.75);
+    }
+
+    .stage.step-2 .zygoteDemo{
+      opacity:1;
+      transform:scale(1);
+      width:82px;
+      height:82px;
+      border-radius:50%;
+      background:
+        linear-gradient(90deg, transparent 47%, rgba(255,255,255,.95) 48%, rgba(255,255,255,.95) 52%, transparent 53%),
+        linear-gradient(135deg,#f9a8d4,#bfdbfe);
+      border-color:white;
+      box-shadow:0 10px 24px rgba(124,58,237,.24);
+    }
+
+    .stage.step-3 .zygoteDemo,
+    .stage.step-4 .zygoteDemo{
+      opacity:1;
+      transform:scale(1);
+      width:98px;
+      height:88px;
+      border-radius:50%;
+      background:transparent;
+      border-color:transparent;
+      box-shadow:none;
+    }
+
+    .stage.step-3 .zygoteDemo .c1{
+      opacity:1;
+      left:15px;
+      top:25px;
+      width:34px;
+      height:34px;
+    }
+
+    .stage.step-3 .zygoteDemo .c2{
+      opacity:1;
+      left:38px;
+      top:25px;
+      width:34px;
+      height:34px;
+    }
+
+    .stage.step-4 .zygoteDemo .cellDot{
+      opacity:1;
+      transform:scale(1);
+    }
+
+    .stage.step-5 .zygoteDemo{
+      opacity:1;
+      transform:scale(1.08);
+      width:104px;
+      height:76px;
+      border-radius:56% 44% 52% 48%;
+      background:linear-gradient(135deg,#fecdd3,#f472b6);
+      border-color:white;
+      box-shadow:0 10px 24px rgba(236,72,153,.23);
+    }
+
+    .stage.step-5 .zygoteDemo .cellDot{
+      opacity:0;
+      transform:scale(.7);
+    }
+
+    .stage.step-5 .embryoLabel{
+      opacity:1;
+      transform:translateY(0);
+    }
+
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="title-card">
+      <h1>Fortpflanzung und Entwicklung von Säugetieren</h1>
+      <p class="subtitle">
+        Hier lernst du, wie bei Säugetieren neues Leben entsteht: von Eizelle und Spermium
+        über Befruchtung, Zygote und Embryo bis zur Geburt und zur Versorgung der Jungtiere mit Milch.
+      </p>
+    </div>
+  </header>
+
+  <main>
+    <div class="nav" id="nav">
+      <button onclick="showSection('start', this)" class="active">Start</button>
+      <button onclick="showSection('merkmale', this)">Merkmale</button>
+      <button onclick="showSection('vorgang', this)">Vorgang</button>
+      <button onclick="showSection('entwicklung', this)">Entwicklung</button>
+      <button onclick="showSection('jungtiere', this)">Jungtiere</button>
+      <button onclick="showSection('vergleich', this)">Vergleich</button>
+      <button onclick="showSection('quiz', this)">Quiz</button>
+      <button onclick="showSection('zuordnung', this)">Zuordnung</button>
+    </div>
+
+    <section id="start" class="section active">
+      <div class="card notice">
+        <h2>Worum geht es?</h2>
+        <p>
+          Säugetiere bekommen Nachwuchs. Bei den meisten Säugetieren entwickelt sich das Jungtier im Körper des Muttertieres.
+          Nach der Geburt trinken die Jungtiere Milch. Deshalb nennt man diese Tiergruppe <b>Säugetiere</b>.
+        </p>
+      </div>
+
+      <div class="grid" style="margin-top:18px;">
+        <div class="card">
+          <span class="icon">🐶</span>
+          <h3>Beispiele</h3>
+          <p>Hund, Katze, Pferd, Rind, Wal, Fledermaus und Mensch gehören zu den Säugetieren.</p>
+        </div>
+        <div class="card">
+          <span class="icon">🍼</span>
+          <h3>Typisch</h3>
+          <p>Säugetiere haben Milchdrüsen. Damit können Muttertiere ihre Jungtiere nach der Geburt mit Milch ernähren.</p>
+        </div>
+        <div class="card">
+          <span class="icon">🌱</span>
+          <h3>Entwicklung</h3>
+          <p>Aus einer befruchteten Eizelle entsteht zuerst eine Zygote, dann ein Embryo und später ein Jungtier.</p>
+        </div>
+      </div>
+
+      <div class="interactive-box">
+        <h3>Mini-Frage zum Einstieg</h3>
+        <p><b>Warum nennt man diese Tiergruppe „Säugetiere“?</b></p>
+        <button class="btn secondary" onclick="singleFeedback('startFeedback', false)">Weil sie immer Eier legen.</button>
+        <button class="btn secondary" onclick="singleFeedback('startFeedback', true)">Weil die Jungtiere Milch trinken.</button>
+        <button class="btn secondary" onclick="singleFeedback('startFeedback', false)">Weil sie alle im Wasser leben.</button>
+        <div id="startFeedback" class="feedback"></div>
+      </div>
+    </section>
+
+    <section id="merkmale" class="section">
+      <div class="card">
+        <h2>Wichtige Merkmale von Säugetieren</h2>
+        <p>
+          Säugetiere können sehr unterschiedlich aussehen. Trotzdem haben sie gemeinsame Merkmale.
+        </p>
+
+        <div class="animal-row">
+          <div class="animal">
+            <span class="emoji">🐱</span>
+            <b>Haare oder Fell</b>
+            <span class="tiny">schützt zum Beispiel vor Kälte</span>
+          </div>
+          <div class="animal">
+            <span class="emoji">🍼</span>
+            <b>Milch</b>
+            <span class="tiny">Jungtiere werden gesäugt</span>
+          </div>
+          <div class="animal">
+            <span class="emoji">🌡️</span>
+            <b>Gleichwarm</b>
+            <span class="tiny">Körpertemperatur bleibt ziemlich gleich</span>
+          </div>
+          <div class="animal">
+            <span class="emoji">👶</span>
+            <b>Meist Lebendgeburt</b>
+            <span class="tiny">die Jungtiere wachsen im Muttertier heran</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px;">
+        <h3>Nicht alle sehen gleich aus</h3>
+        <p>
+          Ein Wal lebt im Wasser und hat kaum sichtbares Fell. Eine Fledermaus kann fliegen.
+          Trotzdem sind beide Säugetiere, weil sie wichtige Säugetier-Merkmale besitzen.
+        </p>
+      </div>
+    </section>
+
+    <section id="vorgang" class="section">
+      <div class="card">
+        <h2>Der Fortpflanzungsvorgang Schritt für Schritt</h2>
+        <p>
+          Bei der Fortpflanzung treffen eine <b>Eizelle</b> und eine <b>Samenzelle</b> aufeinander.
+          Die Samenzelle wird auch <b>Spermium</b> genannt. Verschmelzen beide Zellkerne, nennt man das
+          <b>Befruchtung</b>. Danach entsteht die <b>Zygote</b>, also die erste Zelle des neuen Lebewesens.
+        </p>
+
+        <div class="process-demo">
+          <div class="demo-title">
+            <h3 style="margin:0;color:#174b8f;">Animation: Befruchtung und Zellteilung bis zum Embryo</h3>
+            <button class="btn purple" id="fertilisationBtn" onclick="nextFertilisationStep()">Animation starten</button>
+          </div>
+          <div class="stage" id="fertilisationStage">
+            <div class="spermDemo" title="Spermium"></div>
+            <div class="eggDemo" title="Eizelle">E</div>
+            <div class="zygoteDemo" title="Zygote teilt sich">
+              <span class="cellDot c1"></span>
+              <span class="cellDot c2"></span>
+              <span class="cellDot c3"></span>
+              <span class="cellDot c4"></span>
+              <span class="cellDot c5"></span>
+              <span class="cellDot c6"></span>
+              <span class="cellDot c7"></span>
+              <span class="cellDot c8"></span>
+            </div>
+            <div class="embryoLabel">Embryo</div>
+          </div>
+          <div class="stage-note" id="stageNote">
+            1. Links siehst du ein Spermium. Rechts siehst du eine Eizelle. Starte die Animation.
+          </div>
+        </div>
+
+        <div class="micro-stage">
+          <div class="micro">
+            <div class="visual"><div class="egg">E</div></div>
+            <h3>Eizelle</h3>
+            <p>Die Eizelle ist die weibliche Keimzelle.</p>
+          </div>
+          <div class="micro">
+            <div class="visual"><div class="sperm"></div></div>
+            <h3>Spermium</h3>
+            <p>Das Spermium ist die männliche Keimzelle.</p>
+          </div>
+          <div class="micro">
+            <div class="visual"><div class="zygote">Z</div></div>
+            <h3>Zygote</h3>
+            <p>Die Zygote entsteht direkt nach der Befruchtung.</p>
+          </div>
+          <div class="micro">
+            <div class="visual">
+              <div class="cells">
+                <div class="cell"></div><div class="cell"></div><div class="cell"></div><div class="cell"></div>
+              </div>
+            </div>
+            <h3>Zellteilung</h3>
+            <p>Die Zygote teilt sich. Aus einer Zelle werden viele Zellen.</p>
+          </div>
+          <div class="micro">
+            <div class="visual"><div class="embryoIcon"></div></div>
+            <h3>Embryo</h3>
+            <p>Aus vielen Zellen entsteht ein Embryo. Erste Körperanlagen sind zum Beispiel Kopf, Herz, Rücken und Gliedmaßen.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="interactive-box">
+        <h3>Begriff prüfen</h3>
+        <p><b>Wie nennt man die erste Zelle nach der Befruchtung?</b></p>
+        <button class="btn secondary" onclick="singleFeedback('zygoteFeedback', false)">Fetus/Fötus</button>
+        <button class="btn secondary" onclick="singleFeedback('zygoteFeedback', true)">Zygote</button>
+        <button class="btn secondary" onclick="singleFeedback('zygoteFeedback', false)">Nesthocker</button>
+        <div id="zygoteFeedback" class="feedback"></div>
+      </div>
+    </section>
+
+    <section id="entwicklung" class="section">
+      <div class="card">
+        <h2>Entwicklung im Körper des Muttertieres</h2>
+        <p>
+          Bei den meisten Säugetieren entwickelt sich das Jungtier im Körper des Muttertieres.
+          Es ist dort geschützt und wird versorgt, bis es geboren wird.
+        </p>
+
+        <div class="mini-model">
+          <div class="uterus-model">
+            <div class="baby-symbol">👶</div>
+            <div class="label one">geschützt</div>
+            <div class="label two">wächst heran</div>
+          </div>
+        </div>
+
+        <div class="timeline">
+          <div class="time-item">
+            <div class="bubble">1</div>
+            <div class="time-text">
+              <h3>Zygote</h3>
+              <p>Nach der Befruchtung entsteht die Zygote. Sie ist die erste Zelle des neuen Lebewesens.</p>
+            </div>
+          </div>
+          <div class="time-item">
+            <div class="bubble">2</div>
+            <div class="time-text">
+              <h3>Zellteilungen</h3>
+              <p>Die Zelle teilt sich immer wieder. So entstehen immer mehr Zellen.</p>
+            </div>
+          </div>
+          <div class="time-item">
+            <div class="bubble">3</div>
+            <div class="time-text">
+              <h3>Embryo</h3>
+              <p>Beim Embryo entstehen die ersten Körperanlagen, zum Beispiel Kopf, Herz, Rücken und Gliedmaßen. Man erkennt noch nicht alles so deutlich.</p>
+            </div>
+          </div>
+          <div class="time-item">
+            <div class="bubble">4</div>
+            <div class="time-text">
+              <h3>Fetus/Fötus</h3>
+              <p>Später spricht man vom Fetus oder Fötus. Die wichtigsten Körperteile sind schon angelegt und werden nun größer und deutlicher erkennbar.</p>
+            </div>
+          </div>
+          <div class="time-item">
+            <div class="bubble">5</div>
+            <div class="time-text">
+              <h3>Geburt</h3>
+              <p>Wenn das Jungtier weit genug entwickelt ist, wird es geboren.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px;">
+        <h3>Tragezeit</h3>
+        <p>
+          Die Zeit, in der sich das Jungtier im Körper des Muttertieres entwickelt, nennt man <b>Tragezeit</b>.
+          Sie ist je nach Tierart unterschiedlich lang.
+        </p>
+        <div class="comparison">
+          <div class="compare-card" style="background:var(--purple2);"><h3>🐭 Maus</h3><p>ungefähr 3 Wochen</p></div>
+          <div class="compare-card" style="background:var(--blue2);"><h3>🐶 Hund</h3><p>ungefähr 2 Monate</p></div>
+          <div class="compare-card" style="background:var(--pink2);"><h3>👶 Mensch</h3><p>ungefähr 9 Monate</p></div>
+          <div class="compare-card" style="background:var(--orange2);"><h3>🐘 Elefant</h3><p>fast 2 Jahre</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="jungtiere" class="section">
+      <div class="card">
+        <h2>Nach der Geburt: Säugen und Fürsorge</h2>
+        <p>
+          Nach der Geburt sind viele Jungtiere noch hilflos. Sie brauchen Wärme, Schutz und Nahrung.
+          Die Mutter versorgt ihre Jungen mit Milch. Das nennt man <b>Säugen</b>.
+        </p>
+
+        <div class="milk-model">
+          <div class="milk-card">
+            <span class="emoji">🍼</span>
+            <h3>Milch</h3>
+            <p>Milch enthält wichtige Nährstoffe für das Wachstum.</p>
+          </div>
+          <div class="milk-card">
+            <span class="emoji">🛡️</span>
+            <h3>Schutz</h3>
+            <p>Viele Eltern beschützen ihre Jungtiere vor Gefahren.</p>
+          </div>
+          <div class="milk-card">
+            <span class="emoji">🏃</span>
+            <h3>Lernen</h3>
+            <p>Jungtiere lernen nach und nach, sich selbstständig zu bewegen und Nahrung zu finden.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid" style="margin-top:18px;">
+        <div class="card">
+          <h3>Nesthocker</h3>
+          <p>
+            Manche Jungtiere sind nach der Geburt noch sehr hilflos. Sie können oft noch nicht sehen
+            und bleiben zunächst im Nest oder Bau.
+          </p>
+          <p><b>Beispiele:</b> Maus, Katze, Hund</p>
+        </div>
+        <div class="card">
+          <h3>Nestflüchter</h3>
+          <p>
+            Andere Jungtiere können kurz nach der Geburt schon stehen oder laufen.
+            Trotzdem brauchen sie weiterhin Schutz und Nahrung.
+          </p>
+          <p><b>Beispiele:</b> Pferd, Reh, Rind</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="vergleich" class="section">
+      <div class="card">
+        <h2>Vergleich: Säugetiere und andere Tiergruppen</h2>
+        <p>
+          Säugetiere unterscheiden sich von vielen anderen Tiergruppen besonders durch die Ernährung der Jungtiere mit Milch.
+        </p>
+
+        <div class="comparison">
+          <div class="compare-card" style="background:var(--blue2);">
+            <h3>🐶 Säugetiere</h3>
+            <ul>
+              <li>meist lebend geborene Jungtiere</li>
+              <li>Jungtiere trinken Milch</li>
+              <li>haben Haare oder Fell</li>
+              <li>sind gleichwarm</li>
+            </ul>
+          </div>
+          <div class="compare-card" style="background:var(--orange2);">
+            <h3>🐦 Vögel</h3>
+            <ul>
+              <li>legen Eier</li>
+              <li>haben Federn</li>
+              <li>füttern ihre Jungen mit Nahrung</li>
+              <li>sind gleichwarm</li>
+            </ul>
+          </div>
+          <div class="compare-card" style="background:var(--green2);">
+            <h3>🐸 Amphibien</h3>
+            <ul>
+              <li>legen meist Eier im Wasser</li>
+              <li>Entwicklung oft über Larven</li>
+              <li>keine Milch</li>
+              <li>wechselwarm</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="interactive-box">
+        <h3>Schnellcheck</h3>
+        <p><b>Welches Merkmal passt besonders gut zu Säugetieren?</b></p>
+        <button class="btn secondary" onclick="singleFeedback('vergleichFeedback', false)">Sie haben Federn.</button>
+        <button class="btn secondary" onclick="singleFeedback('vergleichFeedback', true)">Die Jungtiere werden mit Milch ernährt.</button>
+        <button class="btn secondary" onclick="singleFeedback('vergleichFeedback', false)">Sie legen immer Eier ins Wasser.</button>
+        <div id="vergleichFeedback" class="feedback"></div>
+      </div>
+    </section>
+
+    <section id="quiz" class="section">
+      <div class="card">
+        <h2>Quiz: Teste dein Wissen</h2>
+        <p>Klicke jeweils die richtige Antwort an. Du bekommst sofort eine Rückmeldung und sammelst kleine Pokale.</p>
+      </div>
+
+      <div id="quizContainer"></div>
+
+      <div class="score" id="scoreBox">
+        🏆 Punkte: <span id="score">0</span> / <span id="total">0</span>
+      </div>
+
+      <div style="text-align:center; margin-top:16px;">
+        <button class="btn green" onclick="resetQuiz()">Quiz neu starten</button>
+      </div>
+    </section>
+
+    <section id="zuordnung" class="section">
+      <div class="card">
+        <h2>Zuordnungsaufgabe</h2>
+        <p>
+          Ziehe die Begriffe zu den passenden Erklärungen.
+        </p>
+
+        <div class="match-area">
+          <div class="drag-list">
+            <h3>Begriffe</h3>
+            <div class="drag" draggable="true" data-match="eizelle">Eizelle</div>
+            <div class="drag" draggable="true" data-match="spermium">Spermium</div>
+            <div class="drag" draggable="true" data-match="befruchtung">Befruchtung</div>
+            <div class="drag" draggable="true" data-match="zygote">Zygote</div>
+            <div class="drag" draggable="true" data-match="embryo">Embryo</div>
+            <div class="drag" draggable="true" data-match="tragezeit">Tragezeit</div>
+            <div class="drag" draggable="true" data-match="saeugen">Säugen</div>
+            <div class="drag" draggable="true" data-match="nesthocker">Nesthocker</div>
+          </div>
+
+          <div class="drop-list">
+            <h3>Erklärungen</h3>
+            <div class="drop" data-match="saeugen"><strong>?</strong><br>Jungtiere trinken Milch beim Muttertier.</div>
+            <div class="drop" data-match="befruchtung"><strong>?</strong><br>Eizelle und Samenzelle verschmelzen.</div>
+            <div class="drop" data-match="zygote"><strong>?</strong><br>Die erste Zelle des neuen Lebewesens nach der Befruchtung.</div>
+            <div class="drop" data-match="eizelle"><strong>?</strong><br>Weibliche Keimzelle.</div>
+            <div class="drop" data-match="embryo"><strong>?</strong><br>Entwicklungsstadium mit ersten Körperanlagen, zum Beispiel Kopf, Herz, Rücken und Gliedmaßen.</div>
+            <div class="drop" data-match="spermium"><strong>?</strong><br>Männliche Keimzelle.</div>
+            <div class="drop" data-match="nesthocker"><strong>?</strong><br>Jungtier ist nach der Geburt noch sehr hilflos.</div>
+            <div class="drop" data-match="tragezeit"><strong>?</strong><br>Zeit, in der sich das Jungtier im Körper des Muttertieres entwickelt.</div>
+          </div>
+        </div>
+
+        <div id="matchFeedback" class="feedback"></div>
+        <div style="margin-top:15px;">
+          <button class="btn green" onclick="checkMatching()">Zuordnung prüfen</button>
+          <button class="btn orange" onclick="resetMatching()">Zuordnung neu starten</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:18px;">
+        <h2>Merksätze</h2>
+        <ul class="summary-list">
+          <li><b>Säugetiere</b> ernähren ihre Jungtiere nach der Geburt mit Milch.</li>
+          <li><b>Befruchtung</b> bedeutet: Eizelle und Samenzelle verschmelzen.</li>
+          <li><b>Zygote</b> nennt man die erste Zelle nach der Befruchtung.</li>
+          <li><b>Embryo</b> nennt man ein frühes Entwicklungsstadium mit ersten Körperanlagen. Das bedeutet: Erste Teile wie Kopf, Herz, Rücken und Gliedmaßen entstehen.</li>
+          <li><b>Fetus/Fötus</b> nennt man ein späteres Entwicklungsstadium: Die Körperteile sind schon angelegt und wachsen weiter.</li>
+          <li><b>Tragezeit</b> ist die Entwicklungszeit des Jungtieres im Körper des Muttertieres.</li>
+          <li><b>Nesthocker</b> sind zunächst sehr hilflos, <b>Nestflüchter</b> können oft schnell stehen oder laufen.</li>
+        </ul>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    Biologie Klasse 5 – Fortpflanzung und Entwicklung von Säugetieren
+  </footer>
+
+  <script>
+    function showSection(id, btn){
+      document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+
+      document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+      if(btn) btn.classList.add('active');
+
+      window.scrollTo({top:0, behavior:'smooth'});
+    }
+
+    function singleFeedback(id, correct){
+      const box = document.getElementById(id);
+      box.className = 'feedback ' + (correct ? 'good' : 'bad');
+      box.innerHTML = correct
+        ? '🏆 Richtig! Sehr gut erkannt.'
+        : 'Noch nicht ganz. Lies den Abschnitt noch einmal genau.';
+    }
+
+    let fertilisationStep = 0;
+
+    const fertilisationNotes = [
+      '1. Links siehst du ein Spermium. Rechts siehst du eine Eizelle. Starte die Animation.',
+      '2. Das Spermium bewegt sich zur Eizelle.',
+      '3. Befruchtung: Eizelle und Spermium verschmelzen. Es entsteht eine Zygote.',
+      '4. Die Zygote teilt sich: Aus einer Zelle werden zwei Zellen.',
+      '5. Durch weitere Zellteilungen entstehen mehrere Zellen.',
+      '6. Ein früher Embryo entsteht. Erste Körperanlagen sind zum Beispiel Kopf, Herz, Rücken und Gliedmaßen.'
+    ];
+
+    function setFertilisationStep(step){
+      const stage = document.getElementById('fertilisationStage');
+      const note = document.getElementById('stageNote');
+      const btn = document.getElementById('fertilisationBtn');
+
+      const resetWithoutAnimation = step === 0 && fertilisationStep > 0;
+      fertilisationStep = step;
+      if(resetWithoutAnimation) stage.classList.add('no-step-transition');
+      stage.classList.remove('run', 'step-1', 'step-2', 'step-3', 'step-4', 'step-5');
+      if(step > 0) stage.classList.add(`step-${step}`);
+      if(resetWithoutAnimation){
+        void stage.offsetWidth;
+        setTimeout(() => stage.classList.remove('no-step-transition'), 30);
+      }
+
+      note.innerHTML = fertilisationNotes[step];
+      btn.textContent = step === 0 ? 'Animation starten' : (step === 5 ? 'Neu starten' : 'Weiter');
+    }
+
+    function nextFertilisationStep(){
+      const nextStep = fertilisationStep >= 5 ? 0 : fertilisationStep + 1;
+      setFertilisationStep(nextStep);
+    }
+
+    const quizQuestions = [
+      {
+        q: "Warum nennt man Säugetiere „Säugetiere“?",
+        a: ["Weil ihre Jungtiere Milch trinken.","Weil viele von ihnen Fell haben.","Weil die Jungtiere im Körper wachsen.","Weil sie ihre Jungen oft beschützen."],
+        correct: 0
+      },
+      {
+        q: "Was passiert bei der Befruchtung?",
+        a: ["Eine Zygote teilt sich viele Male.","Ein Jungtier wird geboren.","Eizelle und Samenzelle verschmelzen.","Der Embryo wächst im Körper weiter."],
+        correct: 2
+      },
+      {
+        q: "Wie heißt die erste Zelle nach der Befruchtung?",
+        a: ["Embryo","Zygote","Fetus/Fötus","Eizelle"],
+        correct: 1
+      },
+      {
+        q: "Was entsteht durch viele Zellteilungen aus der Zygote?",
+        a: ["eine neue Eizelle","ein Fetus/Fötus","ein Embryo","ein fertig geborenes Jungtier"],
+        correct: 2
+      },
+      {
+        q: "Was bedeutet Tragezeit?",
+        a: ["Die Zeit, in der ein Jungtier Milch trinkt.","Die Zeit, in der sich das Jungtier im Körper des Muttertieres entwickelt.","Die Zeit direkt nach der Geburt.","Die Zeit, in der Jungtiere laufen lernen."],
+        correct: 1
+      },
+      {
+        q: "Welches Tier ist ein Säugetier, obwohl es fliegen kann?",
+        a: ["Amsel","Schmetterling","Fledermaus","Biene"],
+        correct: 2
+      },
+      {
+        q: "Was brauchen viele Jungtiere nach der Geburt?",
+        a: ["Schutz, Wärme und Nahrung","Nur ein Fell","Nur einen Schlafplatz","Sofort feste Nahrung"],
+        correct: 0
+      },
+      {
+        q: "Was ist ein Nesthocker?",
+        a: ["Ein Jungtier, das nach der Geburt schon schnell mitläuft.","Ein Jungtier, das nach der Geburt noch sehr hilflos ist.","Ein Jungtier, das sofort allein Nahrung sucht.","Ein erwachsenes Tier, das ein Nest baut."],
+        correct: 1
+      },
+      {
+        q: "Was ist ein Nestflüchter?",
+        a: ["Ein Jungtier, das oft kurz nach der Geburt stehen oder laufen kann.","Ein Jungtier, das nach der Geburt noch blind und sehr hilflos ist.","Ein Jungtier, das sofort ohne Schutz überlebt.","Ein Jungtier, das nie bei der Mutter bleibt."],
+        correct: 0
+      },
+      {
+        q: "Welches Merkmal passt zu den meisten Säugetieren?",
+        a: ["Federn am Körper","Schuppen und Kiemen","Haare oder Fell","Eier mit harter Schale"],
+        correct: 3
+      }
+    ];
+
+    let score = 0;
+    let answered = Array(quizQuestions.length).fill(false);
+
+    function shuffleArray(array){
+      const copy = [...array];
+      for(let i = copy.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function renderQuiz(){
+      const container = document.getElementById('quizContainer');
+      container.innerHTML = "";
+      score = 0;
+      answered = Array(quizQuestions.length).fill(false);
+
+      const shuffledQuestions = shuffleArray(quizQuestions).map(question => {
+        const answersWithInfo = question.a.map((text, index) => ({
+          text,
+          correct: index === question.correct
+        }));
+        return {
+          q: question.q,
+          answers: shuffleArray(answersWithInfo)
+        };
+      });
+
+      window.currentQuiz = shuffledQuestions;
+
+      shuffledQuestions.forEach((item, qIndex) => {
+        const card = document.createElement('div');
+        card.className = 'quiz-card';
+
+        const title = document.createElement('h3');
+        title.textContent = `Frage ${qIndex + 1}: ${item.q}`;
+        card.appendChild(title);
+
+        const answers = document.createElement('div');
+        answers.className = 'answers';
+
+        item.answers.forEach(ans => {
+          const btn = document.createElement('div');
+          btn.className = 'answer';
+          btn.textContent = ans.text;
+          btn.onclick = () => answerQuestion(qIndex, btn, ans.correct);
+          answers.appendChild(btn);
+        });
+
+        card.appendChild(answers);
+        container.appendChild(card);
+      });
+
+      document.getElementById('score').textContent = score;
+      document.getElementById('total').textContent = quizQuestions.length;
+    }
+
+    function answerQuestion(qIndex, element, correct){
+      if(answered[qIndex]) return;
+      answered[qIndex] = true;
+
+      const allAnswers = element.parentElement.querySelectorAll('.answer');
+      allAnswers.forEach(ans => ans.style.pointerEvents = 'none');
+
+      if(correct){
+        element.classList.add('correct');
+        element.innerHTML = "🏆 " + element.textContent + " — richtig!";
+        score++;
+      } else {
+        element.classList.add('wrong');
+        element.innerHTML = "✘ " + element.textContent + " — nicht richtig";
+
+        allAnswers.forEach((ans, index) => {
+          if(window.currentQuiz[qIndex].answers[index].correct){
+            ans.classList.add('correct');
+            ans.innerHTML = "🏆 " + ans.textContent + " — richtige Antwort";
+          }
+        });
+      }
+
+      document.getElementById('score').textContent = score;
+    }
+
+    function resetQuiz(){
+      renderQuiz();
+      showSection('quiz', document.querySelectorAll('.nav button')[6]);
+    }
+
+    renderQuiz();
+
+    let dragged = null;
+
+    function setupDragDrop(){
+      document.querySelectorAll('.drag').forEach(item => {
+        item.addEventListener('dragstart', () => {
+          dragged = item;
+          setTimeout(() => item.style.opacity = '0.4', 0);
+        });
+
+        item.addEventListener('dragend', () => {
+          item.style.opacity = '1';
+        });
+      });
+
+      document.querySelectorAll('.drop').forEach(zone => {
+        zone.addEventListener('dragover', e => {
+          e.preventDefault();
+          zone.classList.add('over');
+        });
+
+        zone.addEventListener('dragleave', () => {
+          zone.classList.remove('over');
+        });
+
+        zone.addEventListener('drop', e => {
+          e.preventDefault();
+          zone.classList.remove('over');
+
+          if(dragged){
+            const oldDrag = zone.querySelector('.drag');
+            if(oldDrag){
+              document.querySelector('.drag-list').appendChild(oldDrag);
+            }
+            zone.appendChild(dragged);
+            dragged = null;
+          }
+        });
+      });
+    }
+
+    function checkMatching(){
+      const drops = document.querySelectorAll('.drop');
+      let correct = 0;
+
+      drops.forEach(drop => {
+        const item = drop.querySelector('.drag');
+        drop.style.borderColor = '#b8d7ff';
+        drop.style.background = '#f8fbff';
+
+        if(item && item.dataset.match === drop.dataset.match){
+          correct++;
+          drop.style.borderColor = '#7ad8ae';
+          drop.style.background = '#e9f8f1';
+        } else {
+          drop.style.borderColor = '#ffb4b4';
+          drop.style.background = '#fff0f0';
+        }
+      });
+
+      const box = document.getElementById('matchFeedback');
+      if(correct === drops.length){
+        box.className = 'feedback good';
+        box.innerHTML = `🏆 Super! Alle ${correct} Zuordnungen sind richtig.`;
+      } else {
+        box.className = 'feedback bad';
+        box.innerHTML = `Du hast ${correct} von ${drops.length} Zuordnungen richtig. Prüfe die roten Felder noch einmal.`;
+      }
+    }
+
+    function resetMatching(){
+      const list = document.querySelector('.drag-list');
+      document.querySelectorAll('.drag').forEach(drag => list.appendChild(drag));
+      document.querySelectorAll('.drop').forEach(drop => {
+        drop.style.borderColor = '#b8d7ff';
+        drop.style.background = '#f8fbff';
+      });
+      const box = document.getElementById('matchFeedback');
+      box.className = 'feedback';
+      box.innerHTML = '';
+    }
+
+    setupDragDrop();
+  </script>
+</body>
+</html>
