@@ -1,0 +1,1218 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Fraktionierte Destillation von Erdöl</title>
+<style>
+:root{
+  --ink:#152033;
+  --muted:#526071;
+  --paper:#ffffff;
+  --soft:#f5f8fb;
+  --line:#c7d3e2;
+  --navy:#123b68;
+  --blue:#1f6fb2;
+  --cyan:#8bd3e6;
+  --green:#4f9d69;
+  --yellow:#f7c948;
+  --orange:#e67827;
+  --red:#c93c35;
+  --brown:#7b4b2a;
+  --purple:#7756a8;
+  --shadow:0 14px 36px #17324d1c;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  color:var(--ink);
+  background:linear-gradient(180deg,#edf5fb 0,#ffffff 46%,#f6faf7 100%);
+}
+button,select,textarea{font:inherit}
+button{
+  border:0;
+  border-radius:10px;
+  padding:11px 15px;
+  font-weight:800;
+  cursor:pointer;
+  color:var(--ink);
+  background:#e8eef5;
+  box-shadow:0 5px 12px #0f22351a;
+}
+button:hover{filter:brightness(.98)}
+button.primary{background:var(--blue);color:#fff}
+button.success{background:var(--green);color:#fff}
+button.warning{background:var(--yellow);color:#2a2200}
+button.ghost{background:#ffffff;border:1px solid var(--line);box-shadow:none}
+.shell{max-width:1500px;margin:auto;padding:18px}
+.topbar{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:18px;
+  margin-bottom:14px;
+}
+.titleBlock{
+  background:#fff;
+  border:1px solid var(--line);
+  border-left:10px solid var(--orange);
+  border-radius:8px;
+  padding:18px 22px;
+  box-shadow:var(--shadow);
+  max-width:950px;
+}
+h1{margin:0;font-size:clamp(30px,4vw,52px);line-height:1.03}
+.subtitle{margin:8px 0 0;color:var(--muted);font-size:18px;line-height:1.4}
+.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+.focusToggle{white-space:nowrap}
+.lessonTabs{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  margin:14px 0 18px;
+}
+.lessonTabs button[aria-pressed="true"]{
+  background:var(--navy);
+  color:white;
+}
+.page{display:none}
+.page.active{display:block}
+.intro{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 360px;
+  gap:18px;
+  align-items:stretch;
+  margin-bottom:18px;
+}
+.note,.goalBox{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:16px 18px;
+  box-shadow:0 8px 22px #17324d12;
+  font-size:18px;
+  line-height:1.45;
+}
+.goalBox{border-top:5px solid var(--green)}
+.note b,.goalBox b{color:var(--navy)}
+.workspace{
+  display:block;
+}
+.panel{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:8px;
+  box-shadow:var(--shadow);
+}
+.panelHeader{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:14px 16px;
+  border-bottom:1px solid var(--line);
+}
+.panelHeader h2{margin:0;font-size:24px;color:var(--navy)}
+.apparatusPanel{overflow:hidden}
+.apparatusFrame{
+  position:relative;
+  background:linear-gradient(180deg,#f9fcff,#ffffff);
+  padding:12px;
+}
+.apparatusSvg{
+  width:100%;
+  height:auto;
+  display:block;
+  min-height:520px;
+}
+.svg-label{font-size:19px;font-weight:800;fill:#152033}
+.svg-title{font-size:22px;font-weight:900;fill:#142339;text-anchor:middle}
+.svg-small{font-size:13px;font-weight:700;fill:#526071}
+.svg-temp{font-size:18px;font-weight:900;fill:#152033}
+.fraction-name{font-size:16px;font-weight:900;fill:#152033}
+.fraction-temp{font-size:13px;font-weight:800;fill:#667385}
+.svg-light{font-size:13px;font-weight:800;fill:#ffffff}
+.fraction-light{font-size:16px;font-weight:900;fill:#ffffff}
+.metal{fill:#dbe4ed;stroke:#617186;stroke-width:3}
+.glass{fill:#dff5ffcc;stroke:#22506d;stroke-width:3}
+.pipe{fill:none;stroke:#2c5e83;stroke-width:6;stroke-linecap:round;stroke-linejoin:round}
+.pipe.hot{stroke:#b94d23}
+.pipe.cool{stroke:#227a95}
+.tray{stroke:#33475b;stroke-width:5;stroke-linecap:round}
+.capTrayLine{stroke:#2d4053;stroke-width:4;stroke-linecap:round}
+.capTrayCap{fill:none;stroke:#2d4053;stroke-width:3.2;stroke-linecap:round;stroke-linejoin:round}
+.capTraySlot{stroke:#ffffffcc;stroke-width:2;stroke-linecap:round}
+.liquid{fill:#55351f}
+.flame1{fill:#f04438}
+.flame2{fill:#f79009}
+.coil{fill:none;stroke:#f26a21;stroke-width:8;stroke-linecap:round}
+.vapour{
+  fill:none;
+  stroke:#ffffffcc;
+  stroke-width:5;
+  stroke-linecap:round;
+  stroke-dasharray:10 14;
+  animation:vapour 2.8s linear infinite;
+}
+.flow{
+  fill:none;
+  stroke-width:4;
+  stroke-linecap:round;
+  stroke-dasharray:10 12;
+  animation:flow 2.2s linear infinite;
+  opacity:.75;
+}
+@keyframes flow{to{stroke-dashoffset:-88}}
+@keyframes vapour{to{stroke-dashoffset:-96}}
+.apparatusPart{opacity:.2;filter:grayscale(.4)}
+.apparatusPart.visible{opacity:1;filter:none}
+.apparatusPart.active{filter:drop-shadow(0 0 10px #f7c948cc)}
+.capTray.highlight{filter:drop-shadow(0 0 7px #f7c948)}
+.fraction-zone{opacity:.38}
+.fraction-zone.visible{opacity:1}
+.fraction-zone.active{filter:drop-shadow(0 0 8px #34d399)}
+.stepPanel{
+  position:absolute;
+  z-index:4;
+  left:28px;
+  top:30px;
+  width:min(520px,49%);
+  min-height:190px;
+  padding:18px 20px 16px;
+  background:linear-gradient(180deg,#fffdf4,#fff8db);
+  border:3px solid #f2bd2f;
+  border-left:10px solid var(--yellow);
+  border-radius:16px;
+  box-shadow:0 18px 36px #7a560026, inset 0 1px 0 #ffffffcc;
+}
+.infoHead{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.infoIcon{
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:#fff;
+  color:#8a5a00;
+  border:2px solid #f2bd2f;
+  font-size:24px;
+  font-weight:900;
+  flex:0 0 auto;
+}
+.stepCount{font-weight:900;color:var(--orange);margin-bottom:8px}
+.stepPanel h2{margin:0;color:#5b3900;font-size:25px}
+.stepPanel p{font-size:18px;line-height:1.45;margin:0 0 10px;color:#2d3542}
+.stepNav{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.stepPanel .stepNav{
+  gap:5px;
+  margin-top:6px;
+}
+.stepPanel .stepNav button{
+  padding:4px 7px;
+  border-radius:6px;
+  font-size:12px;
+  font-weight:800;
+  box-shadow:none;
+  border:1px solid #e2c56d;
+  background:#fffdf4;
+  color:#6b4b00;
+}
+.stepPanel .stepNav button.primary{
+  background:#f8e7a6;
+  color:#5b3900;
+}
+.stepList{margin:12px 0 0;padding:0;list-style:none;display:flex;gap:5px;flex-wrap:wrap}
+.stepList li{
+  border:1px solid var(--line);
+  width:21px;
+  height:21px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  padding:0;
+  margin:0;
+  background:#f8fafc;
+  border-radius:50%;
+  color:#405064;
+  font-size:11px;
+  font-weight:800;
+  cursor:pointer;
+}
+.stepList li.active{border-color:var(--orange);background:#fff4e8;color:#40220c;font-weight:900}
+.miniLegend{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:8px;
+  padding:12px 16px 16px;
+  border-top:1px solid var(--line);
+}
+.legendItem{
+  min-height:58px;
+  border-radius:8px;
+  border:1px solid #d4dce8;
+  padding:8px;
+  background:#fff;
+  font-size:14px;
+}
+.legendItem b{display:block;color:var(--navy);font-size:16px}
+.practiceLayout{
+  display:grid;
+  grid-template-columns:minmax(0,1fr) 470px;
+  gap:18px;
+  align-items:start;
+}
+.practiceLeft{display:grid;gap:14px}
+.practiceAside{position:sticky;top:12px}
+.wordbox{
+  padding:18px;
+  border-top:6px solid var(--yellow);
+}
+.wordbox h2,.practiceText h2{margin:0 0 12px;color:var(--navy)}
+.terms{display:flex;flex-wrap:wrap;gap:8px}
+.term{
+  display:inline-flex;
+  align-items:center;
+  min-height:34px;
+  border:1px solid #d9a521;
+  background:#fff7dc;
+  color:#3b2b06;
+  border-radius:8px;
+  padding:7px 10px;
+  font-weight:800;
+}
+.practiceText{padding:18px;font-size:19px;line-height:1.85}
+.blank{
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  min-width:170px;
+  border-bottom:3px solid #8795a8;
+  margin:0 4px;
+  vertical-align:middle;
+}
+.num{
+  width:27px;
+  height:27px;
+  border-radius:50%;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--navy);
+  color:#fff;
+  font-size:14px;
+  font-weight:900;
+  flex:0 0 auto;
+}
+select{
+  max-width:155px;
+  border:1px solid #b8c5d4;
+  border-radius:7px;
+  padding:4px 6px;
+  background:#f9fbfd;
+}
+select.correct{background:#e2f7ea;border-color:#2e8b57;color:#145c34;font-weight:800}
+select.wrong{background:#fde8e6;border-color:#d64037;color:#8f201a;font-weight:800}
+.controls{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px}
+.result{
+  display:none;
+  margin-top:14px;
+  border-radius:8px;
+  padding:12px;
+  font-weight:900;
+}
+.progress{height:12px;background:#dfe7ef;border-radius:99px;overflow:hidden;margin-top:12px}
+.bar{height:100%;width:0;background:linear-gradient(90deg,var(--orange),var(--green));transition:.25s}
+.writeTasks{
+  margin-top:18px;
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:14px;
+}
+.taskCard{
+  border:1px solid var(--line);
+  border-radius:8px;
+  padding:14px;
+  background:#fff;
+}
+.taskCard h3{margin:0 0 8px;color:var(--navy)}
+.mcOption{
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  margin:8px 0;
+  padding:9px 10px;
+  border:1px solid #d8e1ec;
+  border-radius:8px;
+  background:#f9fbfd;
+  line-height:1.35;
+}
+.mcOption input{margin-top:3px}
+.mcOption.correctChoice{
+  border-color:#2e8b57;
+  background:#e9f7ee;
+}
+.mcOption.wrongChoice{
+  border-color:#d64037;
+  background:#fdecea;
+}
+.conceptFeedback{
+  display:none;
+  margin-top:10px;
+  padding:9px 10px;
+  border-radius:8px;
+  font-weight:800;
+}
+.solutionPills{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:10px;
+}
+.pill{
+  display:inline-flex;
+  align-items:center;
+  min-height:30px;
+  padding:5px 10px;
+  border-radius:999px;
+  background:#fff7dc;
+  border:1px solid #d9a521;
+  color:#4a3300;
+  font-weight:900;
+  font-size:14px;
+}
+.solution{
+  display:none;
+  margin-top:14px;
+  padding:14px;
+  background:#eef8f1;
+  border:1px solid #94caa3;
+  border-radius:8px;
+  line-height:1.5;
+}
+.towerCard{
+  background:#fff;
+  border:1px solid var(--line);
+  border-radius:8px;
+  box-shadow:var(--shadow);
+  padding:14px;
+}
+.towerTitle{
+  background:var(--navy);
+  color:#fff;
+  font-weight:900;
+  text-align:center;
+  padding:9px;
+  border-radius:7px;
+  margin-bottom:12px;
+  font-size:20px;
+}
+.towerWrap{
+  display:grid;
+  grid-template-columns:170px 1fr;
+  gap:12px;
+  align-items:center;
+}
+.tower{
+  width:140px;
+  height:560px;
+  margin:auto;
+  border:5px solid #34495e;
+  border-radius:64px 64px 54px 54px;
+  overflow:hidden;
+  position:relative;
+  background:linear-gradient(180deg,#bde9ff 0 16%,#caefd1 16% 33%,#fff0a6 33% 50%,#ffb238 50% 68%,#ef5b2a 68% 84%,#60131e 84% 100%);
+  box-shadow:inset 0 0 18px #ffffff66,0 10px 24px #17324d1a;
+}
+.tower::before{
+  content:"";
+  position:absolute;
+  inset:18px 56px 18px 56px;
+  border-left:5px dashed #ffffffcc;
+  border-radius:50%;
+  animation:riseLine 3s linear infinite;
+}
+@keyframes riseLine{to{transform:translateY(-28px)}}
+.bubble{position:absolute;border-radius:50%;background:#ffffff99;animation:rise 4s infinite ease-in}
+.b1{width:18px;height:18px;left:25px;bottom:25px}.b2{width:12px;height:12px;left:80px;bottom:80px;animation-delay:.7s}.b3{width:24px;height:24px;left:52px;bottom:160px;animation-delay:1.3s}
+@keyframes rise{0%{transform:translateY(0);opacity:.1}50%{opacity:.8}100%{transform:translateY(-500px);opacity:.1}}
+.tower .tray{
+  position:absolute;
+  left:10px;
+  right:10px;
+  height:11px;
+  border-top:4px solid #243447;
+  border-bottom:4px solid #243447;
+}
+.tower .tray:nth-child(1){top:95px}.tower .tray:nth-child(2){top:185px}.tower .tray:nth-child(3){top:275px}.tower .tray:nth-child(4){top:365px}.tower .tray:nth-child(5){top:455px}
+.tower .outlet{position:absolute;right:-12px;width:45px;height:10px;background:#34495e;border-radius:6px}
+.tower .o1{top:60px}.tower .o2{top:132px}.tower .o3{top:220px}.tower .o4{top:310px}.tower .o5{top:405px}.tower .o6{top:500px}
+.fraction{
+  border:2px solid #cbd5e1;
+  border-radius:9px;
+  padding:8px 10px;
+  margin:8px 0;
+  background:#fff;
+  transition:.25s;
+  font-size:16px;
+}
+.fraction.active{
+  transform:scale(1.035);
+  border-color:#16a34a;
+  background:#ecfdf5;
+  box-shadow:0 0 0 4px #22c55e22;
+}
+.fraction b{font-size:20px;color:var(--navy)}
+.temp{color:#0b3b78;font-weight:900}
+.practiceStepBox{
+  margin-top:14px;
+  background:#fff8e7;
+  border:1px solid #edc36a;
+  border-left:7px solid var(--yellow);
+  border-radius:8px;
+  padding:14px;
+}
+.practiceStepBox h3{margin:0 0 8px;color:#7a4300;font-size:20px}
+.practiceStepBox p{margin:0;line-height:1.45}
+.pageNavBottom{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  margin-top:18px;
+}
+.focusHint{
+  display:none;
+  position:fixed;
+  right:18px;
+  bottom:18px;
+  background:#10253d;
+  color:white;
+  border-radius:8px;
+  padding:10px 12px;
+  box-shadow:0 10px 24px #0003;
+  z-index:20;
+}
+body.focus-mode{
+  background:#f7f9fb;
+}
+body.focus-mode .topbar,
+body.focus-mode .lessonTabs,
+body.focus-mode .intro,
+body.focus-mode .pageNavBottom,
+body.focus-mode .practiceLeft,
+body.focus-mode .miniLegend{
+  display:none;
+}
+body.focus-mode .shell{max-width:1320px;padding:8px}
+body.focus-mode .workspace,
+body.focus-mode .practiceLayout{
+  grid-template-columns:1fr;
+}
+body.focus-mode .panelHeader{
+  position:fixed;
+  z-index:30;
+  right:18px;
+  top:18px;
+  width:auto;
+  border:1px solid var(--line);
+  border-radius:8px;
+  background:#ffffffee;
+  box-shadow:0 8px 24px #0002;
+}
+body.focus-mode .panelHeader h2{display:none}
+body.focus-mode .apparatusSvg{min-height:calc(100vh - 58px)}
+body.focus-mode .focusHint{display:block}
+@media(max-width:1120px){
+  .topbar,.intro,.workspace,.practiceLayout{grid-template-columns:1fr}
+  .toolbar{justify-content:flex-start}
+  .stepPanel{position:relative;left:auto;top:auto;width:auto;margin-bottom:12px}
+  .miniLegend{grid-template-columns:repeat(2,1fr)}
+  .writeTasks{grid-template-columns:1fr}
+}
+@media(max-width:720px){
+  .shell{padding:10px}
+  .panelHeader{align-items:flex-start;flex-direction:column}
+  .miniLegend{grid-template-columns:1fr}
+  .blank{min-width:145px}
+  select{max-width:130px}
+}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="topbar">
+    <div class="titleBlock">
+      <h1>Fraktionierte Destillation von Erdöl</h1>
+      <p class="subtitle">Vom Rohöl-Gemisch zu einzelnen Fraktionen.</p>
+    </div>
+    <div class="toolbar">
+      <button class="focusToggle warning" onclick="toggleFocus()">Konzentrationsmodus</button>
+    </div>
+  </header>
+
+  <nav class="lessonTabs" aria-label="Seitennavigation">
+    <button class="primary" id="tab-apparatus" aria-pressed="true" onclick="showPage('apparatus')">1. Apparatur</button>
+    <button id="tab-practice" aria-pressed="false" onclick="showPage('practice')">2. Sicherung</button>
+  </nav>
+
+  <section class="page active" id="page-apparatus">
+    <div class="intro">
+      <div class="note"><b>Beobachtungsauftrag:</b> Verfolge den Weg des Erdöls: Rohöl wird vor dem Turm im Ofen erhitzt, gelangt als Dampf in die Kolonne und kondensiert je nach Siedetemperatur auf unterschiedlichen Höhen.</div>
+      <div class="goalBox"><b>Wichtig:</b> Das Erdöl ist kein Reinstoff, sondern ein Gemisch. Die Bestandteile werden getrennt, weil sie unterschiedliche Siedebereiche besitzen.</div>
+    </div>
+
+    <div class="workspace">
+      <main class="panel apparatusPanel">
+        <div class="panelHeader">
+          <h2>Destillationsapparatur mit Stoffwegen</h2>
+          <div class="stepNav">
+            <button class="ghost" onclick="prevStep()">Zurück</button>
+            <button class="primary" onclick="nextStep()">Weiter</button>
+            <button class="ghost focusLocal" onclick="toggleFocus()">Konzentrationsmodus</button>
+          </div>
+        </div>
+        <div class="apparatusFrame">
+          <aside class="stepPanel">
+            <div class="stepCount" id="stepCount">Schritt 1 von 12</div>
+            <div class="infoHead">
+              <span class="infoIcon" aria-hidden="true">i</span>
+              <h2 id="stepTitle">Rohöl bereitstellen</h2>
+            </div>
+            <p id="stepText">Rohöl ist ein Stoffgemisch. Es enthält viele verschiedene Kohlenwasserstoffe mit unterschiedlichen Siedebereichen.</p>
+            <ul class="stepList" id="stepList"></ul>
+          </aside>
+          <svg class="apparatusSvg" viewBox="0 0 1120 650" role="img" aria-label="Apparatur zur fraktionierten Destillation von Erdöl">
+            <defs>
+              <linearGradient id="towerGrad" x1="0" x2="0" y1="0" y2="1">
+                <stop offset="0%" stop-color="#c9f1ff"/>
+                <stop offset="20%" stop-color="#d9f6df"/>
+                <stop offset="43%" stop-color="#fff0ac"/>
+                <stop offset="62%" stop-color="#ffbe62"/>
+                <stop offset="82%" stop-color="#d56b3e"/>
+                <stop offset="100%" stop-color="#5a2d22"/>
+              </linearGradient>
+              <linearGradient id="furnaceGrad" x1="0" x2="1">
+                <stop offset="0%" stop-color="#70422a"/>
+                <stop offset="50%" stop-color="#b25a2b"/>
+                <stop offset="100%" stop-color="#5d3326"/>
+              </linearGradient>
+              <marker id="arrowHot" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+                <path d="M0,0 L10,4 L0,8 Z" fill="#b94d23"></path>
+              </marker>
+              <marker id="arrowCool" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto" markerUnits="userSpaceOnUse">
+                <path d="M0,0 L10,4 L0,8 Z" fill="#227a95"></path>
+              </marker>
+            </defs>
+
+            <rect x="24" y="590" width="1072" height="20" rx="8" fill="#d6dde7"/>
+            <text x="34" y="628" class="svg-small">schematische, vereinfachte Raffinerie-Apparatur</text>
+
+            <g class="apparatusPart" data-show="0" id="part-tank">
+              <rect x="42" y="375" width="150" height="130" rx="18" class="metal"/>
+              <ellipse cx="117" cy="375" rx="75" ry="24" fill="#e7edf4" stroke="#617186" stroke-width="3"/>
+              <path d="M42 410 C78 432,155 387,192 410 L192 505 L42 505 Z" class="liquid"/>
+              <text x="117" y="354" class="svg-title">Rohöltank</text>
+              <text x="64" y="532" class="svg-small">Gemisch vieler Kohlenwasserstoffe</text>
+            </g>
+
+            <g class="apparatusPart" data-show="1" id="part-pump">
+              <path class="pipe hot flow" marker-end="url(#arrowHot)" d="M192 438 C232 438 250 438 285 438"></path>
+              <circle cx="316" cy="438" r="31" fill="#eef4fa" stroke="#617186" stroke-width="4"/>
+              <path d="M301 454 L335 438 L301 422 Z" fill="#1f6fb2"/>
+              <text x="270" y="500" class="svg-small">Pumpe</text>
+            </g>
+
+            <g class="apparatusPart" data-show="1" id="part-furnace">
+              <rect x="365" y="350" width="190" height="175" rx="14" fill="url(#furnaceGrad)" stroke="#3f2b24" stroke-width="4"/>
+              <rect x="385" y="374" width="150" height="98" rx="10" fill="#231f20" stroke="#e5a15d" stroke-width="3"/>
+              <path class="coil" d="M397 448 C425 408 447 488 475 448 C503 408 525 488 553 448"/>
+              <path class="flame1" d="M443 505 C421 469 458 458 451 422 C487 462 507 477 486 505 Z"/>
+              <path class="flame2" d="M456 505 C445 482 465 468 464 446 C484 473 491 486 479 505 Z"/>
+              <text x="460" y="336" class="svg-title">Ofen</text>
+              <text x="370" y="548" class="svg-small">Erhitzung auf etwa 350 °C</text>
+            </g>
+
+            <g class="apparatusPart" data-show="2" id="part-hotpipe">
+              <path class="pipe hot flow" marker-end="url(#arrowHot)" d="M555 438 C620 438 625 512 680 512"></path>
+              <rect x="544" y="382" width="145" height="35" rx="7" fill="#ffffff" stroke="#e3b08a" stroke-width="1.5"/>
+              <text x="616" y="396" class="svg-small" text-anchor="middle">heißes Dampf-</text>
+              <text x="616" y="411" class="svg-small" text-anchor="middle">Flüssigkeits-Gemisch</text>
+            </g>
+
+            <g class="apparatusPart" data-show="2" id="part-column">
+              <rect x="680" y="80" width="150" height="460" rx="60" fill="url(#towerGrad)" stroke="#2e4053" stroke-width="5"/>
+              <g class="capTray" transform="translate(696 157)">
+                <path class="capTrayLine" d="M0 0 H118"/>
+                <path class="capTrayCap" d="M10 0 V-8 Q10 -13 17 -13 H25 Q32 -13 32 -8 V0 M45 0 V-8 Q45 -13 52 -13 H60 Q67 -13 67 -8 V0 M80 0 V-8 Q80 -13 87 -13 H95 Q102 -13 102 -8 V0"/>
+                <path class="capTraySlot" d="M13 -4 H29 M48 -4 H64 M83 -4 H99"/>
+              </g>
+              <g class="capTray" transform="translate(696 222)">
+                <path class="capTrayLine" d="M0 0 H118"/>
+                <path class="capTrayCap" d="M10 0 V-8 Q10 -13 17 -13 H25 Q32 -13 32 -8 V0 M45 0 V-8 Q45 -13 52 -13 H60 Q67 -13 67 -8 V0 M80 0 V-8 Q80 -13 87 -13 H95 Q102 -13 102 -8 V0"/>
+                <path class="capTraySlot" d="M13 -4 H29 M48 -4 H64 M83 -4 H99"/>
+              </g>
+              <g class="capTray" transform="translate(696 287)">
+                <path class="capTrayLine" d="M0 0 H118"/>
+                <path class="capTrayCap" d="M10 0 V-8 Q10 -13 17 -13 H25 Q32 -13 32 -8 V0 M45 0 V-8 Q45 -13 52 -13 H60 Q67 -13 67 -8 V0 M80 0 V-8 Q80 -13 87 -13 H95 Q102 -13 102 -8 V0"/>
+                <path class="capTraySlot" d="M13 -4 H29 M48 -4 H64 M83 -4 H99"/>
+              </g>
+              <g class="capTray" transform="translate(696 352)">
+                <path class="capTrayLine" d="M0 0 H118"/>
+                <path class="capTrayCap" d="M10 0 V-8 Q10 -13 17 -13 H25 Q32 -13 32 -8 V0 M45 0 V-8 Q45 -13 52 -13 H60 Q67 -13 67 -8 V0 M80 0 V-8 Q80 -13 87 -13 H95 Q102 -13 102 -8 V0"/>
+                <path class="capTraySlot" d="M13 -4 H29 M48 -4 H64 M83 -4 H99"/>
+              </g>
+              <g class="capTray" transform="translate(696 417)">
+                <path class="capTrayLine" d="M0 0 H118"/>
+                <path class="capTrayCap" d="M10 0 V-8 Q10 -13 17 -13 H25 Q32 -13 32 -8 V0 M45 0 V-8 Q45 -13 52 -13 H60 Q67 -13 67 -8 V0 M80 0 V-8 Q80 -13 87 -13 H95 Q102 -13 102 -8 V0"/>
+                <path class="capTraySlot" d="M13 -4 H29 M48 -4 H64 M83 -4 H99"/>
+              </g>
+              <g class="capTray" transform="translate(696 482)">
+                <path class="capTrayLine" d="M0 0 H118"/>
+                <path class="capTrayCap" d="M10 0 V-8 Q10 -13 17 -13 H25 Q32 -13 32 -8 V0 M45 0 V-8 Q45 -13 52 -13 H60 Q67 -13 67 -8 V0 M80 0 V-8 Q80 -13 87 -13 H95 Q102 -13 102 -8 V0"/>
+                <path class="capTraySlot" d="M13 -4 H29 M48 -4 H64 M83 -4 H99"/>
+              </g>
+              <path class="vapour" d="M755 515 C728 474 790 444 755 398 C728 360 792 326 755 286 C728 247 790 216 755 177 C733 148 769 121 755 92"/>
+              <text x="755" y="62" class="svg-title">Destillationsturm</text>
+              <g>
+                <path d="M636 125 L636 495" stroke="#d1dae6" stroke-width="5" stroke-linecap="round"/>
+                <path d="M636 125 L636 245" stroke="#227a95" stroke-width="5" stroke-linecap="round"/>
+                <path d="M636 375 L636 495" stroke="#b94d23" stroke-width="5" stroke-linecap="round"/>
+                <path d="M636 113 L625 129 H647 Z" fill="#227a95"/>
+                <path d="M636 507 L625 491 H647 Z" fill="#b94d23"/>
+                <text x="574" y="112" class="svg-temp">oben kühler</text>
+                <text x="566" y="529" class="svg-temp">unten heißer</text>
+              </g>
+            </g>
+
+            <g class="fraction-zone" data-zone="0" data-show="3">
+              <path class="pipe cool flow" marker-end="url(#arrowCool)" d="M826 116 H930"/>
+              <rect x="930" y="86" width="148" height="56" rx="8" fill="#dff5ff" stroke="#227a95" stroke-width="3"/>
+              <text x="944" y="110" class="fraction-name">Gase</text>
+              <text x="944" y="131" class="fraction-temp">bis ca. 20 °C</text>
+            </g>
+            <g class="fraction-zone" data-zone="1" data-show="4">
+              <path class="pipe cool flow" marker-end="url(#arrowCool)" d="M826 178 H943"/>
+              <rect x="943" y="148" width="148" height="56" rx="8" fill="#e9f7d7" stroke="#4f9d69" stroke-width="3"/>
+              <text x="957" y="172" class="fraction-name">Benzin</text>
+              <text x="957" y="193" class="fraction-temp">20-40 °C</text>
+            </g>
+            <g class="fraction-zone" data-zone="2" data-show="5">
+              <path class="pipe cool flow" marker-end="url(#arrowCool)" d="M826 243 H930"/>
+              <rect x="930" y="213" width="148" height="56" rx="8" fill="#fff3b8" stroke="#d1a01e" stroke-width="3"/>
+              <text x="944" y="237" class="fraction-name">Kerosin</text>
+              <text x="944" y="258" class="fraction-temp">40-150 °C</text>
+            </g>
+            <g class="fraction-zone" data-zone="3" data-show="6">
+              <path class="pipe cool flow" marker-end="url(#arrowCool)" d="M826 310 H943"/>
+              <rect x="943" y="280" width="148" height="56" rx="8" fill="#ffd5a3" stroke="#e67827" stroke-width="3"/>
+              <text x="957" y="304" class="fraction-name">Diesel</text>
+              <text x="957" y="325" class="fraction-temp">150-250 °C</text>
+            </g>
+            <g class="fraction-zone" data-zone="4" data-show="7">
+              <path class="pipe cool flow" marker-end="url(#arrowCool)" d="M826 377 H930"/>
+              <rect x="930" y="347" width="148" height="56" rx="8" fill="#f0a775" stroke="#c35b2c" stroke-width="3"/>
+              <text x="944" y="371" class="fraction-name">Heizöl</text>
+              <text x="944" y="392" class="fraction-temp">250-350 °C</text>
+            </g>
+            <g class="fraction-zone" data-zone="5" data-show="8">
+              <path class="pipe cool flow" marker-end="url(#arrowCool)" d="M826 443 H943"/>
+              <rect x="943" y="413" width="148" height="56" rx="8" fill="#b98068" stroke="#7b4b2a" stroke-width="3"/>
+              <text x="957" y="437" class="fraction-name">Schmieröle</text>
+              <text x="957" y="458" class="fraction-temp">350-450 °C</text>
+            </g>
+            <g class="fraction-zone" data-zone="6" data-show="9">
+              <path class="pipe cool flow" marker-end="url(#arrowCool)" d="M826 505 H930"/>
+              <rect x="930" y="475" width="148" height="56" rx="8" fill="#8b5e4a" stroke="#5a352b" stroke-width="3"/>
+              <text x="944" y="499" class="fraction-light">Paraffin</text>
+              <text x="944" y="520" class="svg-light">450-550 °C</text>
+            </g>
+            <g class="fraction-zone" data-zone="7" data-show="10">
+              <path class="pipe hot flow" marker-end="url(#arrowHot)" d="M742 540 V580 H930"/>
+              <rect x="930" y="551" width="148" height="56" rx="8" fill="#3a2723" stroke="#231815" stroke-width="3"/>
+              <text x="944" y="575" class="fraction-light">Bitumen</text>
+              <text x="944" y="596" class="svg-light">&gt; 550 °C</text>
+            </g>
+          </svg>
+        </div>
+        <div class="miniLegend">
+          <div class="legendItem"><b>1. Erhitzen</b> Rohöl wird im Ofen teilweise verdampft.</div>
+          <div class="legendItem"><b>2. Aufsteigen</b> Dampf steigt im Turm nach oben.</div>
+          <div class="legendItem"><b>3. Abkühlen</b> Oben ist es deutlich kühler als unten.</div>
+          <div class="legendItem"><b>4. Kondensieren</b> Fraktionen werden auf passenden Höhen flüssig.</div>
+        </div>
+      </main>
+
+    </div>
+
+    <div class="pageNavBottom">
+      <span></span>
+      <button class="primary" onclick="showPage('practice')">Weiter zur vereinfachten Abbildung</button>
+    </div>
+  </section>
+
+  <section class="page" id="page-practice">
+    <div class="intro">
+      <div class="note"><b>Sicherung:</b> Nutze die vereinfachte Abbildung, um den Ablauf sprachlich sauber zu beschreiben. Erst danach kontrollierst du deine Einträge.</div>
+      <div class="goalBox"><b>Merke:</b> Es wird nicht ein einzelner Stoff gewonnen, sondern mehrere Fraktionen mit unterschiedlichen Siedebereichen.</div>
+    </div>
+
+    <div class="practiceLayout">
+      <div class="practiceLeft">
+        <section class="panel wordbox">
+          <h2>Begriffbox</h2>
+          <div class="terms" id="termBox"></div>
+        </section>
+
+        <section class="panel practiceText">
+          <h2>Lückentext</h2>
+          <p>
+            Bei der fraktionierten Destillation wird <span class="blank"><span class="num">1</span><select data-answer="Rohöl"></select></span>
+            zuerst in einem <span class="blank"><span class="num">2</span><select data-answer="Ofen"></select></span>
+            stark <span class="blank"><span class="num">3</span><select data-answer="erhitzt"></select></span>.
+            Ein großer Teil des Gemisches geht in den gasförmigen Zustand über. Der
+            <span class="blank"><span class="num">4</span><select data-answer="Dampf"></select></span>
+            wird in den <span class="blank"><span class="num">5</span><select data-answer="Destillationsturm"></select></span>
+            geleitet.
+          </p>
+          <p>
+            Im Turm ist es <span class="blank"><span class="num">6</span><select data-answer="unten"></select></span>
+            heißer und <span class="blank"><span class="num">7</span><select data-answer="oben"></select></span>
+            kühler. Beim Aufsteigen <span class="blank"><span class="num">8</span><select data-answer="kühlt"></select></span>
+            der Dampf ab. Stoffe mit hohen
+            <span class="blank"><span class="num">9</span><select data-answer="Siedetemperaturen"></select></span>
+            kondensieren weiter unten, Stoffe mit niedrigen Siedetemperaturen weiter oben.
+          </p>
+          <p>
+            Dabei entstehen mehrere <span class="blank"><span class="num">10</span><select data-answer="Fraktionen"></select></span>.
+            Ganz oben entweichen <span class="blank"><span class="num">11</span><select data-answer="Gase"></select></span>.
+            Darunter sammelt man zum Beispiel <span class="blank"><span class="num">12</span><select data-answer="Benzin"></select></span>,
+            <span class="blank"><span class="num">13</span><select data-answer="Kerosin"></select></span>,
+            <span class="blank"><span class="num">14</span><select data-answer="Diesel"></select></span>
+            und <span class="blank"><span class="num">15</span><select data-answer="Heizöl"></select></span>.
+            Unten bleiben schwere Rückstände wie <span class="blank"><span class="num">16</span><select data-answer="Bitumen"></select></span>.
+          </p>
+          <div class="controls">
+            <button class="primary" onclick="checkAnswers()">Antworten überprüfen</button>
+            <button onclick="resetQuiz()">Zurücksetzen</button>
+            <button class="success" onclick="fillSolutions()">Lösung einblenden</button>
+          </div>
+          <div class="result" id="result"></div>
+          <div class="progress"><div class="bar" id="bar"></div></div>
+          <div class="solution" id="solution">
+            <b>Merksatz:</b> Fraktionierte Destillation trennt Erdöl nach Siedebereichen. Je niedriger die Siedetemperatur eines Bestandteils ist, desto weiter oben kondensiert er im Turm.
+            <div class="solutionPills">
+              <span class="pill">Erhitzen: Stoffe verdampfen</span>
+              <span class="pill">Benzin: niedrigere Siedetemperatur</span>
+              <span class="pill">Diesel: kondensiert weiter unten</span>
+            </div>
+          </div>
+
+          <div class="writeTasks">
+            <div class="taskCard">
+              <h3>Erklären</h3>
+              <p>Warum muss das Rohöl vor dem Destillationsturm erhitzt werden?</p>
+              <label class="mcOption"><input type="radio" name="mc-heat" value="0"> Damit sich die Bestandteile im Rohöl chemisch in neue Stoffe umwandeln.</label>
+              <label class="mcOption"><input type="radio" name="mc-heat" value="1" data-correct="true"> Damit viele Bestandteile verdampfen und im Turm getrennt werden können.</label>
+              <label class="mcOption"><input type="radio" name="mc-heat" value="0"> Damit alle Bestandteile gleichzeitig bei derselben Temperatur kondensieren.</label>
+            </div>
+            <div class="taskCard">
+              <h3>Begründen</h3>
+              <p>Warum findet man Benzin weiter oben im Turm als Diesel?</p>
+              <label class="mcOption"><input type="radio" name="mc-position" value="1" data-correct="true"> Benzin hat eine niedrigere Siedetemperatur und kondensiert erst im kühleren oberen Bereich.</label>
+              <label class="mcOption"><input type="radio" name="mc-position" value="0"> Benzin hat eine höhere Siedetemperatur und kondensiert deshalb im heißeren oberen Bereich.</label>
+              <label class="mcOption"><input type="radio" name="mc-position" value="0"> Diesel steigt schneller nach oben, kondensiert aber erst dort, wo es besonders kalt ist.</label>
+            </div>
+          </div>
+          <div class="conceptFeedback" id="conceptFeedback"></div>
+        </section>
+      </div>
+
+      <aside class="practiceAside">
+        <div class="towerCard">
+          <div class="panelHeader">
+            <h2>Vereinfachte Darstellung</h2>
+            <button class="ghost" onclick="toggleFocus()">Konzentrationsmodus</button>
+          </div>
+          <div class="towerTitle">DESTILLATIONSTURM</div>
+          <div class="towerWrap">
+            <div class="tower">
+              <div class="tray"></div><div class="tray"></div><div class="tray"></div><div class="tray"></div><div class="tray"></div>
+              <div class="outlet o1"></div><div class="outlet o2"></div><div class="outlet o3"></div><div class="outlet o4"></div><div class="outlet o5"></div><div class="outlet o6"></div>
+              <div class="bubble b1"></div><div class="bubble b2"></div><div class="bubble b3"></div>
+            </div>
+            <div>
+              <div class="fraction" data-practice-step="0"><span class="temp">bis ca. 20 °C</span> - <b>Gase</b><br><small>z. B. Heizgas</small></div>
+              <div class="fraction" data-practice-step="1"><span class="temp">20-40 °C</span> - <b>Benzin</b><br><small>z. B. für Autos</small></div>
+              <div class="fraction" data-practice-step="2"><span class="temp">40-150 °C</span> - <b>Kerosin</b><br><small>z. B. für Flugzeuge</small></div>
+              <div class="fraction" data-practice-step="3"><span class="temp">150-250 °C</span> - <b>Diesel</b><br><small>z. B. für LKWs, Traktoren</small></div>
+              <div class="fraction" data-practice-step="4"><span class="temp">250-350 °C</span> - <b>Heizöl</b><br><small>z. B. zum Heizen</small></div>
+              <div class="fraction" data-practice-step="5"><span class="temp">350-450 °C</span> - <b>Schmieröle</b><br><small>z. B. für Motoren</small></div>
+              <div class="fraction" data-practice-step="6"><span class="temp">450-550 °C</span> - <b>Paraffin</b><br><small>z. B. Kerzen, Kosmetik</small></div>
+              <div class="fraction" data-practice-step="7"><span class="temp">&gt; 550 °C</span> - <b>Bitumen</b><br><small>z. B. Straßenbau</small></div>
+            </div>
+          </div>
+
+          <div class="practiceStepBox">
+            <h3 id="practiceStepTitle">Schritt 1: Gase</h3>
+            <p id="practiceStepText">Die leichtesten Bestandteile haben die niedrigsten Siedetemperaturen und bleiben bis ganz oben gasförmig.</p>
+            <div class="controls">
+              <button class="primary" onclick="nextPracticeStep()">Weiter</button>
+              <button onclick="prevPracticeStep()">Zurück</button>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <div class="pageNavBottom">
+      <button onclick="showPage('apparatus')">Zurück zur Apparatur</button>
+      <span></span>
+    </div>
+  </section>
+</div>
+
+<div class="focusHint">Konzentrationsmodus: Zum Beenden wieder auf den Button klicken.</div>
+
+<script>
+const termList = [
+  "Rohöl","Ofen","erhitzt","Dampf","Destillationsturm","unten","oben","kühlt",
+  "Siedetemperaturen","Fraktionen","Gase","Benzin","Kerosin","Diesel","Heizöl","Bitumen"
+];
+
+const steps = [
+  {
+    title:"Rohöl bereitstellen",
+    text:"Rohöl ist ein Stoffgemisch. Es enthält viele verschiedene Kohlenwasserstoffe mit unterschiedlichen Siedebereichen.",
+    show:[0],
+    active:["part-tank"]
+  },
+  {
+    title:"Zum Ofen pumpen",
+    text:"Das Rohöl wird aus dem Tank in Richtung Ofen gepumpt. Die Apparatur ist geschlossen, damit Stoffe gezielt weitergeleitet werden.",
+    show:[0,1],
+    active:["part-pump"]
+  },
+  {
+    title:"Im Ofen stark erhitzen",
+    text:"Im Ofen wird das Rohöl stark erhitzt. Leichtere Bestandteile verdampfen, schwere Bestandteile bleiben eher flüssig.",
+    show:[0,1],
+    active:["part-furnace"]
+  },
+  {
+    title:"In den Destillationsturm leiten",
+    text:"Das heiße Dampf-Flüssigkeits-Gemisch gelangt seitlich unten in den Destillationsturm.",
+    show:[0,1,2],
+    active:["part-hotpipe","part-column"]
+  },
+  {
+    title:"Dampf steigt nach oben",
+    text:"Im Turm ist es unten heiß und oben kühler. Der Dampf steigt auf und verliert dabei Wärme.",
+    show:[0,1,2],
+    active:["part-column"]
+  },
+  {
+    title:"Glockenböden vergrößern den Kontakt",
+    text:"Die Zwischenböden im Turm heißen Glockenböden. Die kleinen Ausstülpungen sind Hauben: Der Dampf strömt darunter hindurch und kommt besonders gut mit der Flüssigkeit auf dem Boden in Kontakt.",
+    show:[0,1,2],
+    active:["part-column"],
+    highlightTrays:true
+  },
+  {
+    title:"Gase bleiben oben gasförmig",
+    text:"Die leichtesten Bestandteile haben sehr niedrige Siedebereiche. Sie werden ganz oben abgeführt und können zum Beispiel als Heizgas oder Flüssiggas genutzt werden.",
+    show:[0,1,2,3],
+    activeZones:[0]
+  },
+  {
+    title:"Benzin kondensiert weit oben",
+    text:"Benzin wird schon bei relativ niedriger Temperatur flüssig und sammelt sich daher weit oben im Turm. Es wird vor allem als Kraftstoff für Autos verwendet.",
+    show:[0,1,2,3,4],
+    activeZones:[1]
+  },
+  {
+    title:"Kerosin und Diesel folgen darunter",
+    text:"Kerosin und Diesel besitzen höhere Siedebereiche. Kerosin wird als Flugzeugtreibstoff genutzt, Diesel zum Beispiel für LKWs, Busse, Traktoren und viele Autos.",
+    show:[0,1,2,3,4,5,6],
+    activeZones:[2,3]
+  },
+  {
+    title:"Schwere Fraktionen sammeln sich unten",
+    text:"Heizöl, Schmieröle und Paraffin kondensieren erst in heißeren Bereichen des Turms. Heizöl dient zum Heizen, Schmieröle verringern Reibung in Motoren und Maschinen, Paraffin wird zum Beispiel für Kerzen oder Kosmetik verwendet.",
+    show:[0,1,2,3,4,5,6,7,8,9],
+    activeZones:[4,5,6]
+  },
+  {
+    title:"Bitumen bleibt als Rückstand",
+    text:"Sehr schwere Bestandteile verdampfen kaum. Bitumen bleibt im unteren Bereich als Rückstand zurück und wird vor allem im Straßenbau und für Dachabdichtungen verwendet.",
+    show:[0,1,2,3,4,5,6,7,8,9,10],
+    activeZones:[7]
+  },
+  {
+    title:"Ergebnis: Fraktionen",
+    text:"Die Trennung gelingt, weil die Bestandteile des Erdöls unterschiedliche Siedetemperaturen haben.",
+    show:[0,1,2,3,4,5,6,7,8,9,10],
+    activeZones:[0,1,2,3,4,5,6,7]
+  }
+];
+
+let currentStep = 0;
+let currentPracticeStep = 0;
+
+const practiceSteps = [
+  ["Schritt 1: Gase","Die leichtesten Bestandteile haben die niedrigsten Siedetemperaturen und bleiben bis ganz oben gasförmig. Sie werden zum Beispiel als Heizgas oder Flüssiggas genutzt.",0],
+  ["Schritt 2: Benzin","Benzin kondensiert sehr weit oben, weil es schon bei niedrigen Temperaturen wieder flüssig wird. Es dient vor allem als Kraftstoff für Autos.",1],
+  ["Schritt 3: Kerosin","Kerosin kondensiert etwas weiter unten. Es wird vor allem als Treibstoff für Flugzeuge verwendet.",2],
+  ["Schritt 4: Diesel","Diesel besitzt einen höheren Siedebereich als Benzin und Kerosin. Er wird zum Beispiel als Kraftstoff für LKWs, Busse, Traktoren und viele Autos genutzt.",3],
+  ["Schritt 5: Heizöl","Heizöl kondensiert in einem noch heißeren Bereich des Turms. Es kann zum Heizen von Gebäuden verwendet werden.",4],
+  ["Schritt 6: Schmieröle","Schmieröle gehören zu den schweren Fraktionen. Sie verringern Reibung in Motoren, Maschinen und Getrieben.",5],
+  ["Schritt 7: Paraffin","Paraffin kondensiert im unteren, heißen Bereich. Es wird zum Beispiel für Kerzen, Wachse und Kosmetikprodukte verwendet.",6],
+  ["Schritt 8: Bitumen","Bitumen ist besonders schwer und bleibt als Rückstand ganz unten zurück. Es wird vor allem für Asphalt im Straßenbau und für Dachabdichtungen genutzt.",7]
+];
+
+function initTerms(){
+  const box = document.getElementById("termBox");
+  termList.forEach(term=>{
+    const span = document.createElement("span");
+    span.className = "term";
+    span.textContent = term;
+    box.appendChild(span);
+  });
+  document.querySelectorAll("select").forEach(select=>{
+    const empty = document.createElement("option");
+    empty.value = "";
+    empty.textContent = "---";
+    select.appendChild(empty);
+    termList.forEach(term=>{
+      const option = document.createElement("option");
+      option.value = term;
+      option.textContent = term;
+      select.appendChild(option);
+    });
+    select.addEventListener("change", ()=>{
+      validateSelect(select);
+      updateLiveResult();
+    });
+  });
+}
+
+function renderStepList(){
+  const list = document.getElementById("stepList");
+  steps.forEach((step,index)=>{
+    const li = document.createElement("li");
+    li.textContent = String(index + 1);
+    li.title = step.title;
+    li.dataset.index = index;
+    li.onclick = () => { currentStep = index; renderStep(); };
+    list.appendChild(li);
+  });
+}
+
+function renderStep(){
+  const step = steps[currentStep];
+  document.getElementById("stepCount").textContent = `Schritt ${currentStep + 1} von ${steps.length}`;
+  document.getElementById("stepTitle").textContent = step.title;
+  document.getElementById("stepText").textContent = step.text;
+
+  document.querySelectorAll(".apparatusPart").forEach(part=>{
+    const showIndex = Number(part.dataset.show);
+    part.classList.toggle("visible", step.show.includes(showIndex));
+    part.classList.remove("active");
+  });
+  (step.active || []).forEach(id=>{
+    const element = document.getElementById(id);
+    if(element) element.classList.add("active","visible");
+  });
+
+  document.querySelectorAll(".fraction-zone").forEach(zone=>{
+    const showIndex = Number(zone.dataset.show);
+    const zoneIndex = Number(zone.dataset.zone);
+    zone.classList.toggle("visible", step.show.includes(showIndex));
+    zone.classList.toggle("active", (step.activeZones || []).includes(zoneIndex));
+  });
+  document.querySelectorAll(".capTray").forEach(tray=>{
+    tray.classList.toggle("highlight", step.highlightTrays === true);
+  });
+
+  document.querySelectorAll(".stepList li").forEach((li,index)=>{
+    li.classList.toggle("active", index === currentStep);
+  });
+}
+
+function nextStep(){
+  currentStep = Math.min(currentStep + 1, steps.length - 1);
+  renderStep();
+}
+
+function prevStep(){
+  currentStep = Math.max(currentStep - 1, 0);
+  renderStep();
+}
+
+function resetSteps(){
+  currentStep = 0;
+  renderStep();
+}
+
+function showPage(pageName){
+  document.querySelectorAll(".page").forEach(page=>page.classList.remove("active"));
+  document.getElementById(`page-${pageName}`).classList.add("active");
+  document.querySelectorAll(".lessonTabs button").forEach(button=>button.setAttribute("aria-pressed","false"));
+  document.getElementById(`tab-${pageName}`).setAttribute("aria-pressed","true");
+  if(document.body.classList.contains("focus-mode")){
+    document.body.classList.remove("focus-mode");
+    updateFocusButtons();
+  }
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+
+function toggleFocus(){
+  document.body.classList.toggle("focus-mode");
+  updateFocusButtons();
+}
+
+function updateFocusButtons(){
+  const active = document.body.classList.contains("focus-mode");
+  document.querySelectorAll(".focusToggle, .focusLocal, .towerCard .panelHeader button").forEach(button=>{
+    button.textContent = active ? "Konzentrationsmodus beenden" : "Konzentrationsmodus";
+  });
+}
+
+function checkAnswers(){
+  let correct = 0;
+  const selects = document.querySelectorAll(".practiceText select");
+  selects.forEach(select=>{
+    if(validateSelect(select)){
+      correct++;
+    }
+  });
+  const percent = Math.round(correct / selects.length * 100);
+  const result = document.getElementById("result");
+  result.style.display = "block";
+  result.style.background = percent >= 80 ? "#e2f7ea" : percent >= 50 ? "#fff3cd" : "#fde8e6";
+  result.style.color = percent >= 80 ? "#145c34" : percent >= 50 ? "#7a5600" : "#8f201a";
+  result.textContent = `Du hast ${correct} von ${selects.length} Lücken richtig ausgefüllt.`;
+  document.getElementById("bar").style.width = `${percent}%`;
+  document.getElementById("solution").style.display = "block";
+  checkConceptAnswers(true);
+}
+
+function resetQuiz(){
+  document.querySelectorAll(".practiceText select").forEach(select=>{
+    select.value = "";
+    select.classList.remove("correct","wrong");
+  });
+  document.getElementById("result").style.display = "none";
+  document.getElementById("bar").style.width = "0%";
+  document.getElementById("solution").style.display = "none";
+  document.querySelectorAll(".mcOption").forEach(option=>option.classList.remove("correctChoice","wrongChoice"));
+  document.querySelectorAll(".taskCard input[type='radio']").forEach(input=>{ input.checked = false; });
+  const conceptFeedback = document.getElementById("conceptFeedback");
+  conceptFeedback.style.display = "none";
+  conceptFeedback.textContent = "";
+}
+
+function fillSolutions(){
+  document.querySelectorAll(".practiceText select").forEach(select=>{
+    select.value = select.dataset.answer;
+  });
+  document.querySelectorAll(".taskCard input[data-correct='true']").forEach(input=>{
+    input.checked = true;
+  });
+  checkAnswers();
+}
+
+function validateSelect(select){
+  select.classList.remove("correct","wrong");
+  if(select.value === ""){
+    return false;
+  }
+  if(select.value === select.dataset.answer){
+    select.classList.add("correct");
+    return true;
+  }
+  select.classList.add("wrong");
+  return false;
+}
+
+function updateLiveResult(){
+  const selects = [...document.querySelectorAll(".practiceText select")];
+  const answered = selects.filter(select=>select.value !== "").length;
+  const correct = selects.filter(select=>select.value === select.dataset.answer).length;
+  const result = document.getElementById("result");
+  if(answered === 0){
+    result.style.display = "none";
+    document.getElementById("bar").style.width = "0%";
+    return;
+  }
+  result.style.display = "block";
+  result.style.background = "#eef6ff";
+  result.style.color = "#123b68";
+  result.textContent = `Sofortfeedback: ${correct} von ${answered} ausgefüllten Lücken richtig.`;
+  document.getElementById("bar").style.width = `${Math.round(correct / selects.length * 100)}%`;
+}
+
+function initImmediateFeedback(){
+  document.querySelectorAll(".taskCard input[type='radio']").forEach(input=>{
+    input.addEventListener("change", ()=>checkConceptAnswers(false));
+  });
+}
+
+function checkConceptAnswers(showCorrectAnswers = false){
+  const groups = ["mc-heat","mc-position"];
+  let conceptCorrect = 0;
+  document.querySelectorAll(".mcOption").forEach(option=>option.classList.remove("correctChoice","wrongChoice"));
+  groups.forEach(group=>{
+    const selected = document.querySelector(`input[name="${group}"]:checked`);
+    if(selected && selected.dataset.correct === "true"){
+      conceptCorrect++;
+      selected.closest(".mcOption").classList.add("correctChoice");
+    }else if(selected){
+      selected.closest(".mcOption").classList.add("wrongChoice");
+      if(showCorrectAnswers){
+        const correct = document.querySelector(`input[name="${group}"][data-correct="true"]`);
+        if(correct) correct.closest(".mcOption").classList.add("correctChoice");
+      }
+    }else{
+      if(showCorrectAnswers){
+        const correct = document.querySelector(`input[name="${group}"][data-correct="true"]`);
+        if(correct) correct.closest(".mcOption").classList.add("correctChoice");
+      }
+    }
+  });
+  const feedback = document.getElementById("conceptFeedback");
+  feedback.style.display = "block";
+  feedback.style.background = conceptCorrect === groups.length ? "#e2f7ea" : "#fff3cd";
+  feedback.style.color = conceptCorrect === groups.length ? "#145c34" : "#7a5600";
+  feedback.textContent = `Zusatzfragen: ${conceptCorrect} von ${groups.length} richtig.`;
+}
+
+function renderPracticeStep(){
+  const step = practiceSteps[currentPracticeStep];
+  document.getElementById("practiceStepTitle").textContent = step[0];
+  document.getElementById("practiceStepText").textContent = step[1];
+  document.querySelectorAll(".fraction").forEach(fraction=>{
+    fraction.classList.toggle("active", Number(fraction.dataset.practiceStep) === step[2]);
+  });
+}
+
+function nextPracticeStep(){
+  currentPracticeStep = Math.min(currentPracticeStep + 1, practiceSteps.length - 1);
+  renderPracticeStep();
+}
+
+function prevPracticeStep(){
+  currentPracticeStep = Math.max(currentPracticeStep - 1, 0);
+  renderPracticeStep();
+}
+
+initTerms();
+initImmediateFeedback();
+renderStepList();
+renderStep();
+renderPracticeStep();
+updateFocusButtons();
+</script>
+</body>
+</html>
