@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lückentext: Entstehung von Erdöl</title>
+
+  <style>
+    :root {
+      --bg: #f3f6fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #64748b;
+      --blue: #2563eb;
+      --blue-light: #eaf2ff;
+      --green: #16a34a;
+      --green-light: #dcfce7;
+      --red: #dc2626;
+      --red-light: #fee2e2;
+      --yellow: #facc15;
+      --yellow-light: #fef3c7;
+      --brown: #7c4a24;
+      --brown-light: #fff4e6;
+      --oil: #111827;
+      --border: #d7dee9;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, #dbeafe 0, transparent 32%),
+        radial-gradient(circle at bottom right, #fef3c7 0, transparent 28%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.7;
+      padding: 28px;
+    }
+
+    .container {
+      max-width: 1050px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.96);
+      border-radius: 24px;
+      box-shadow: 0 18px 50px rgba(15, 23, 42, 0.12);
+      overflow: hidden;
+      border: 1px solid rgba(215, 222, 233, 0.9);
+    }
+
+    header {
+      padding: 34px 36px;
+      background: linear-gradient(135deg, #1e3a8a, #2563eb);
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      width: 220px;
+      height: 220px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.12);
+      right: -70px;
+      top: -80px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: rgba(255,255,255,0.18);
+      border: 1px solid rgba(255,255,255,0.35);
+      padding: 6px 12px;
+      border-radius: 999px;
+      font-size: 0.9rem;
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 2.2rem;
+      line-height: 1.2;
+    }
+
+    .subtitle {
+      margin: 12px 0 0;
+      max-width: 760px;
+      color: #dbeafe;
+      font-size: 1.05rem;
+    }
+
+    main {
+      padding: 32px 36px 38px;
+    }
+
+    .notice {
+      background: var(--blue-light);
+      border-left: 6px solid var(--blue);
+      padding: 16px 18px;
+      border-radius: 16px;
+      margin-bottom: 24px;
+    }
+
+    .notice strong {
+      color: #1e3a8a;
+    }
+
+    .wordbank {
+      background: linear-gradient(135deg, #fff7d6, #fff);
+      border: 1px solid #fde68a;
+      border-radius: 20px;
+      padding: 18px;
+      margin-bottom: 28px;
+      box-shadow: 0 8px 24px rgba(250, 204, 21, 0.14);
+    }
+
+    .wordbank-title {
+      font-weight: bold;
+      margin-bottom: 10px;
+      color: #92400e;
+    }
+
+    .wordbank span {
+      display: inline-block;
+      background: white;
+      padding: 7px 12px;
+      margin: 5px;
+      border-radius: 999px;
+      border: 1px solid #facc15;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      font-size: 0.95rem;
+    }
+
+    .text-card {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      padding: 24px;
+      box-shadow: 0 10px 28px rgba(15,23,42,0.06);
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-top: 0;
+      color: #1e3a8a;
+    }
+
+    .icon {
+      width: 32px;
+      height: 32px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: #dbeafe;
+      color: #1e3a8a;
+      border-radius: 50%;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    p {
+      margin: 16px 0;
+    }
+
+    select {
+      font-size: 1rem;
+      padding: 7px 11px;
+      border-radius: 10px;
+      border: 2px solid #cbd5e1;
+      background: #f8fafc;
+      margin: 0 4px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    select:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    }
+
+    .correct {
+      border-color: var(--green);
+      background: var(--green-light);
+    }
+
+    .wrong {
+      border-color: var(--red);
+      background: var(--red-light);
+    }
+
+    .buttons {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 26px;
+    }
+
+    button {
+      border: none;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .primary-btn {
+      background: var(--blue);
+      color: white;
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.24);
+    }
+
+    .primary-btn:hover {
+      background: #1d4ed8;
+      transform: translateY(-1px);
+    }
+
+    .secondary-btn {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    .secondary-btn:hover {
+      background: #d1d5db;
+      transform: translateY(-1px);
+    }
+
+    #result {
+      margin-top: 22px;
+      padding: 16px 18px;
+      border-radius: 16px;
+      display: none;
+      font-weight: bold;
+    }
+
+    .result-good {
+      background: var(--green-light);
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+
+    .result-mid {
+      background: #fef9c3;
+      color: #854d0e;
+      border: 1px solid #fde047;
+    }
+
+    .result-low {
+      background: var(--red-light);
+      color: #991b1b;
+      border: 1px solid #fecaca;
+    }
+
+    .progress-wrap {
+      margin-top: 14px;
+      height: 12px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      display: none;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2563eb, #16a34a);
+      transition: width 0.5s ease;
+    }
+
+    #summary {
+      display: none;
+      margin-top: 34px;
+    }
+
+    .summary-hero {
+      background: linear-gradient(135deg, #111827, #374151);
+      color: white;
+      padding: 26px;
+      border-radius: 24px;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .summary-hero::after {
+      content: "";
+      position: absolute;
+      right: -40px;
+      bottom: -60px;
+      width: 180px;
+      height: 180px;
+      background: radial-gradient(circle, rgba(250,204,21,0.35), transparent 62%);
+      border-radius: 50%;
+    }
+
+    .summary-hero h2 {
+      margin: 0 0 8px;
+      font-size: 1.8rem;
+    }
+
+    .summary-hero p {
+      margin: 0;
+      color: #e5e7eb;
+      max-width: 780px;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 18px;
+      margin-bottom: 24px;
+    }
+
+    .summary-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 10px 26px rgba(15,23,42,0.07);
+    }
+
+    .summary-box h3 {
+      margin-top: 0;
+      color: #1e3a8a;
+    }
+
+    .summary-box ul {
+      margin-bottom: 0;
+      padding-left: 22px;
+    }
+
+    .timeline {
+      background: var(--brown-light);
+      border: 1px solid #fed7aa;
+      border-radius: 22px;
+      padding: 22px;
+      margin-bottom: 24px;
+    }
+
+    .timeline h3 {
+      margin-top: 0;
+      color: #7c2d12;
+    }
+
+    .steps {
+      display: grid;
+      gap: 14px;
+    }
+
+    .step {
+      display: grid;
+      grid-template-columns: 42px 1fr;
+      gap: 12px;
+      align-items: start;
+      background: white;
+      border-radius: 16px;
+      padding: 14px;
+      border: 1px solid #fed7aa;
+    }
+
+    .step-number {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #f97316;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      box-shadow: 0 6px 14px rgba(249, 115, 22, 0.22);
+    }
+
+    .step strong {
+      color: #7c2d12;
+    }
+
+    .memory-box {
+      background: #ecfdf5;
+      border: 1px solid #86efac;
+      border-left: 7px solid var(--green);
+      border-radius: 20px;
+      padding: 20px;
+      margin-top: 22px;
+    }
+
+    .memory-box h3 {
+      margin-top: 0;
+      color: #166534;
+    }
+
+    .oil-drop {
+      display: inline-block;
+      width: 18px;
+      height: 24px;
+      background: #111827;
+      border-radius: 50% 50% 55% 55%;
+      transform: rotate(45deg);
+      margin-right: 8px;
+      vertical-align: middle;
+    }
+
+    .mini-note {
+      color: var(--muted);
+      font-size: 0.95rem;
+      margin-top: 12px;
+    }
+
+    @media (max-width: 760px) {
+      body {
+        padding: 12px;
+      }
+
+      header, main {
+        padding: 24px 20px;
+      }
+
+      h1 {
+        font-size: 1.7rem;
+      }
+
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+
+      select {
+        max-width: 100%;
+        margin-top: 4px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="container">
+  <header>
+    <div class="badge">Chemie / Natur und Technik</div>
+    <h1>Wie entsteht Erdöl?</h1>
+    <p class="subtitle">
+      Ergänze den Lückentext und wiederhole anschließend die wichtigsten Schritte zur Entstehung von Erdöl.
+    </p>
+  </header>
+
+  <main>
+    <div class="notice">
+      <strong>Aufgabe:</strong> Wähle in jeder Lücke den passenden Begriff aus. Danach kannst du deine Antworten überprüfen.
+    </div>
+
+    <div class="wordbank">
+      <div class="wordbank-title">Begriffebox:</div>
+      <span>Hitze</span>
+      <span>Salz</span>
+      <span>Erdöllagerstätte</span>
+      <span>Sauerstoff</span>
+      <span>Ton</span>
+      <span>porösen</span>
+      <span>Muttergestein</span>
+      <span>Plankton</span>
+      <span>Druck</span>
+      <span>undurchlässigen</span>
+      <span>Kohlenwasserstoffen</span>
+      <span>Sedimente</span>
+      <span>Sand</span>
+      <span>Speichergestein</span>
+    </div>
+
+    <section class="text-card">
+      <h2 class="section-title"><span class="icon">1</span>Lückentext</h2>
+
+      <p>
+        Erdöl wird oft als „schwarzes Gold“ bezeichnet. Seine Entstehung begann schon vor vielen Millionen Jahren.
+        Damals lebten in den Meeren unzählige kleine pflanzliche und tierische Kleinstlebewesen. Diese nennt man
+        <select data-answer="Plankton">
+          <option value="">---</option>
+          <option>Plankton</option>
+          <option>Sand</option>
+          <option>Salz</option>
+          <option>Ton</option>
+        </select>.
+      </p>
+
+      <p>
+        Wenn diese Kleinstlebewesen starben, sanken sie auf den Grund von Meeren und Seen. In größerer Tiefe gelangte
+        kaum
+        <select data-answer="Sauerstoff">
+          <option value="">---</option>
+          <option>Sauerstoff</option>
+          <option>Hitze</option>
+          <option>Sand</option>
+          <option>Speichergestein</option>
+        </select>
+        an das tote organische Material. Deshalb verweste es nicht vollständig.
+      </p>
+
+      <p>
+        Mit der Zeit mischten sich
+        <select data-answer="Sedimente">
+          <option value="">---</option>
+          <option>Druck</option>
+          <option>Sedimente</option>
+          <option>Kohlenwasserstoffen</option>
+          <option>Salz</option>
+        </select>
+        wie Sand und Ton mit der Planktonschicht. Daraus entstand das sogenannte
+        <select data-answer="Muttergestein">
+          <option value="">---</option>
+          <option>Speichergestein</option>
+          <option>Muttergestein</option>
+          <option>Ton</option>
+          <option>Erdöllagerstätte</option>
+        </select>.
+      </p>
+
+      <p>
+        Unter dem Gewicht weiterer Ablagerungen sank das Gestein immer tiefer in die Erde. Dort nahmen
+        <select data-answer="Druck">
+          <option value="">---</option>
+          <option>Sauerstoff</option>
+          <option>Druck</option>
+          <option>Plankton</option>
+          <option>Sand</option>
+        </select>
+        und
+        <select data-answer="Hitze">
+          <option value="">---</option>
+          <option>Hitze</option>
+          <option>Ton</option>
+          <option>Salz</option>
+          <option>Sauerstoff</option>
+        </select>
+        zu.
+      </p>
+
+      <p>
+        Bei hohen Temperaturen wurden große Moleküle aus dem organischen Material in kleinere Verbindungen umgewandelt.
+        So entstand ein zähflüssiges Öl aus
+        <select data-answer="Kohlenwasserstoffen">
+          <option value="">---</option>
+          <option>Sedimente</option>
+          <option>Kohlenwasserstoffen</option>
+          <option>Sauerstoff</option>
+          <option>Ton</option>
+        </select>.
+      </p>
+
+      <p>
+        Da Erdöl leichter ist als Wasser und viele Gesteine, wanderte es in
+        <select data-answer="porösen">
+          <option value="">---</option>
+          <option>undurchlässigen</option>
+          <option>porösen</option>
+          <option>kalten</option>
+          <option>fest geschlossenen</option>
+        </select>
+        Gesteinsschichten nach oben.
+      </p>
+
+      <p>
+        Diese Wanderung endete, wenn das Öl unter einer
+        <select data-answer="undurchlässigen">
+          <option value="">---</option>
+          <option>porösen</option>
+          <option>undurchlässigen</option>
+          <option>flüssigen</option>
+          <option>lockeren</option>
+        </select>
+        Schicht, zum Beispiel aus Ton oder Salz, eingeschlossen wurde.
+      </p>
+
+      <p>
+        In einer Art Kuppel sammelten sich immer mehr Erdöltröpfchen. Nach Millionen von Jahren entstand so eine
+        <select data-answer="Erdöllagerstätte">
+          <option value="">---</option>
+          <option>Erdöllagerstätte</option>
+          <option>Planktonschicht</option>
+          <option>Sauerstoffzone</option>
+          <option>Sandwolke</option>
+        </select>,
+        die später durch Bohrungen genutzt werden kann.
+      </p>
+
+      <div class="buttons">
+        <button class="primary-btn" onclick="checkAnswers()">Antworten überprüfen</button>
+        <button class="secondary-btn" onclick="resetAnswers()">Zurücksetzen</button>
+      </div>
+
+      <div id="result"></div>
+
+      <div class="progress-wrap" id="progressWrap">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <p class="mini-note">
+        Tipp: Falsche Antworten werden rot markiert. Du kannst sie verbessern und erneut überprüfen.
+      </p>
+    </section>
+
+    <section id="summary">
+      <div class="summary-hero">
+        <h2><span class="oil-drop"></span>Zusammenfassung: Entstehung von Erdöl</h2>
+        <p>
+          Erdöl entsteht nicht plötzlich, sondern über Millionen von Jahren aus abgestorbenen Kleinstlebewesen,
+          die unter besonderen Bedingungen umgewandelt werden.
+        </p>
+      </div>
+
+      <div class="summary-grid">
+        <div class="summary-box">
+          <h3>Woraus entsteht Erdöl?</h3>
+          <ul>
+            <li>Aus abgestorbenem <strong>Plankton</strong>.</li>
+            <li>Plankton sind winzige pflanzliche und tierische Lebewesen im Wasser.</li>
+            <li>Die Reste sinken auf den Meeresboden.</li>
+            <li>Bei wenig Sauerstoff verwesen sie nicht vollständig.</li>
+          </ul>
+        </div>
+
+        <div class="summary-box">
+          <h3>Woraus besteht Erdöl?</h3>
+          <ul>
+            <li>Erdöl ist ein Gemisch aus vielen verschiedenen Stoffen.</li>
+            <li>Wichtig sind vor allem <strong>Kohlenwasserstoffe</strong>.</li>
+            <li>Viele davon sind <strong>langkettige Kohlenwasserstoffe</strong>.</li>
+            <li>Das bedeutet: Ihre Moleküle bestehen aus längeren Ketten von Kohlenstoff- und Wasserstoffatomen.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="timeline">
+        <h3>Die Entstehung in Schritten</h3>
+
+        <div class="steps">
+          <div class="step">
+            <div class="step-number">1</div>
+            <div>
+              <strong>Plankton stirbt ab:</strong><br>
+              Kleine Lebewesen im Meer sterben und sinken auf den Boden.
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">2</div>
+            <div>
+              <strong>Wenig Sauerstoff:</strong><br>
+              In der Tiefe gelangt kaum Sauerstoff an die Reste. Sie verwesen daher nicht vollständig.
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">3</div>
+            <div>
+              <strong>Sedimente lagern sich ab:</strong><br>
+              Sand und Ton bedecken die organischen Reste. Es entsteht Muttergestein.
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">4</div>
+            <div>
+              <strong>Druck und Hitze nehmen zu:</strong><br>
+              Das Muttergestein sinkt tiefer. Dort verändern Druck und Hitze die organischen Stoffe.
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">5</div>
+            <div>
+              <strong>Kohlenwasserstoffe entstehen:</strong><br>
+              Große Moleküle werden in kleinere Verbindungen umgewandelt. Es bildet sich Erdöl.
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">6</div>
+            <div>
+              <strong>Erdöl wandert nach oben:</strong><br>
+              Das Öl steigt durch poröse Gesteinsschichten auf.
+            </div>
+          </div>
+
+          <div class="step">
+            <div class="step-number">7</div>
+            <div>
+              <strong>Erdöllagerstätte entsteht:</strong><br>
+              Eine undurchlässige Schicht hält das Öl auf. Dort sammelt es sich über sehr lange Zeit.
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="memory-box">
+        <h3>Merksatz</h3>
+        <p>
+          Erdöl entsteht aus abgestorbenem Plankton, das ohne viel Sauerstoff von Sedimenten bedeckt wird.
+          Durch Druck und Hitze entstehen über Millionen Jahre viele verschiedene Kohlenwasserstoffe.
+          Das Erdöl wandert nach oben und sammelt sich unter einer undurchlässigen Gesteinsschicht.
+        </p>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+  function checkAnswers() {
+    const selects = document.querySelectorAll("select");
+    const result = document.getElementById("result");
+    const progressWrap = document.getElementById("progressWrap");
+    const progressBar = document.getElementById("progressBar");
+    const summary = document.getElementById("summary");
+
+    let correct = 0;
+
+    selects.forEach(select => {
+      select.classList.remove("correct", "wrong");
+
+      if (select.value === select.dataset.answer) {
+        select.classList.add("correct");
+        correct++;
+      } else {
+        select.classList.add("wrong");
+      }
+    });
+
+    const total = selects.length;
+    const percent = Math.round((correct / total) * 100);
+
+    result.style.display = "block";
+    result.className = "";
+
+    if (percent >= 80) {
+      result.classList.add("result-good");
+      result.innerHTML = "Sehr gut! Du hast " + correct + " von " + total + " Antworten richtig.";
+    } else if (percent >= 50) {
+      result.classList.add("result-mid");
+      result.innerHTML = "Schon gut! Du hast " + correct + " von " + total + " Antworten richtig. Verbessere noch die roten Felder.";
+    } else {
+      result.classList.add("result-low");
+      result.innerHTML = "Du hast " + correct + " von " + total + " Antworten richtig. Schau dir die Begriffebox noch einmal genau an.";
+    }
+
+    progressWrap.style.display = "block";
+    progressBar.style.width = percent + "%";
+
+    summary.style.display = "block";
+    summary.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function resetAnswers() {
+    const selects = document.querySelectorAll("select");
+    const result = document.getElementById("result");
+    const progressWrap = document.getElementById("progressWrap");
+    const progressBar = document.getElementById("progressBar");
+    const summary = document.getElementById("summary");
+
+    selects.forEach(select => {
+      select.value = "";
+      select.classList.remove("correct", "wrong");
+    });
+
+    result.style.display = "none";
+    result.innerHTML = "";
+    result.className = "";
+
+    progressWrap.style.display = "none";
+    progressBar.style.width = "0%";
+
+    summary.style.display = "none";
+  }
+</script>
+
+</body>
+</html>
