@@ -1,0 +1,1232 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chemische Reaktionen – Interaktives Quiz</title>
+  <style>
+    :root {
+      --bg: #f7fbff;
+      --bg2: #eef6ff;
+      --ink: #162033;
+      --muted: #617084;
+      --card: #ffffff;
+      --line: #d8e4f2;
+      --blue: #2563eb;
+      --blue-dark: #1d4ed8;
+      --blue-soft: #dbeafe;
+      --red: #dc2626;
+      --red-soft: #fee2e2;
+      --orange: #f97316;
+      --orange-soft: #ffedd5;
+      --green: #16a34a;
+      --green-soft: #dcfce7;
+      --violet: #7c3aed;
+      --violet-soft: #ede9fe;
+      --yellow: #facc15;
+      --yellow-soft: #fef9c3;
+      --shadow: 0 18px 45px rgba(15, 23, 42, 0.10);
+      --shadow-soft: 0 10px 25px rgba(15, 23, 42, 0.07);
+      --radius: 26px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 10% 0%, rgba(37,99,235,.18), transparent 32%),
+        radial-gradient(circle at 88% 8%, rgba(249,115,22,.16), transparent 30%),
+        radial-gradient(circle at 50% 100%, rgba(22,163,74,.13), transparent 30%),
+        linear-gradient(135deg, var(--bg), var(--bg2));
+      color: var(--ink);
+      line-height: 1.55;
+      min-height: 100vh;
+    }
+
+    header {
+      min-height: 82vh;
+      display: grid;
+      place-items: center;
+      padding: 42px 18px 30px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .hero {
+      width: min(1160px, 100%);
+      display: grid;
+      grid-template-columns: 1.12fr .88fr;
+      align-items: center;
+      gap: 30px;
+      background: rgba(255,255,255,.9);
+      border: 1px solid rgba(216,228,242,.9);
+      border-radius: 36px;
+      padding: clamp(26px, 4vw, 56px);
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(16px);
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--blue-soft);
+      color: var(--blue-dark);
+      border: 1px solid #bfdbfe;
+      padding: 8px 13px;
+      border-radius: 999px;
+      font-size: .92rem;
+      font-weight: 850;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.15rem, 5vw, 4.65rem);
+      line-height: .98;
+      letter-spacing: -.06em;
+    }
+
+    .hero p {
+      margin: 18px 0 0;
+      color: var(--muted);
+      font-size: clamp(1.04rem, 1.35vw, 1.22rem);
+      max-width: 720px;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-top: 26px;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 850;
+      cursor: pointer;
+      color: white;
+      background: linear-gradient(135deg, var(--blue), var(--blue-dark));
+      box-shadow: 0 12px 24px rgba(37,99,235,.22);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font: inherit;
+    }
+
+    .btn.secondary {
+      background: white;
+      color: var(--blue-dark);
+      border: 1px solid #bfdbfe;
+      box-shadow: none;
+    }
+
+    .reaction-visual {
+      position: relative;
+      min-height: 330px;
+      display: grid;
+      place-items: center;
+    }
+
+    .beaker-card {
+      width: min(360px, 92vw);
+      background: linear-gradient(135deg, #eff6ff, #fff7ed);
+      border: 1px solid #dbe4f0;
+      border-radius: 30px;
+      padding: 22px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .beakers {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .beaker {
+      height: 150px;
+      border: 5px solid #334155;
+      border-top: 0;
+      border-radius: 0 0 26px 26px;
+      position: relative;
+      background: rgba(255,255,255,.8);
+      overflow: hidden;
+    }
+
+    .liquid {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 72%;
+      background: linear-gradient(180deg, rgba(96,165,250,.55), rgba(37,99,235,.75));
+    }
+
+    .liquid.orange {
+      background: linear-gradient(180deg, rgba(253,186,116,.65), rgba(249,115,22,.78));
+    }
+
+    .bubble {
+      position: absolute;
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.75);
+      animation: bubble 2.8s infinite ease-in-out;
+    }
+
+    .bubble.b1 { left: 25%; bottom: 22%; animation-delay: 0s; }
+    .bubble.b2 { left: 55%; bottom: 15%; animation-delay: .6s; }
+    .bubble.b3 { left: 72%; bottom: 35%; animation-delay: 1.1s; }
+
+    @keyframes bubble {
+      0% { transform: translateY(0) scale(.8); opacity: .35; }
+      60% { opacity: 1; }
+      100% { transform: translateY(-70px) scale(1.1); opacity: 0; }
+    }
+
+    .arrow {
+      font-size: 2rem;
+      font-weight: 900;
+      color: var(--blue-dark);
+    }
+
+    .mini-caption {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 14px;
+      font-size: .92rem;
+      color: var(--muted);
+    }
+
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 20;
+      background: rgba(255,255,255,.92);
+      border-bottom: 1px solid var(--line);
+      backdrop-filter: blur(16px);
+    }
+
+    .nav-inner {
+      width: min(1160px, 100%);
+      margin: auto;
+      padding: 10px 18px;
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+    }
+
+    .nav-inner a {
+      white-space: nowrap;
+      text-decoration: none;
+      color: var(--blue-dark);
+      background: #eff6ff;
+      border: 1px solid #dbeafe;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 800;
+      font-size: .9rem;
+    }
+
+    main {
+      width: min(1160px, 100%);
+      margin: auto;
+      padding: 36px 18px 80px;
+    }
+
+    section { margin: 38px 0; }
+
+    .section-title { margin-bottom: 18px; }
+
+    .section-title h2 {
+      margin: 0;
+      font-size: clamp(1.7rem, 3vw, 2.65rem);
+      line-height: 1.08;
+      letter-spacing: -.04em;
+    }
+
+    .section-title p {
+      margin: 8px 0 0;
+      color: var(--muted);
+      max-width: 880px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 18px;
+    }
+
+    .grid.two { grid-template-columns: repeat(2, 1fr); }
+
+    .card, .quiz {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .card h3, .quiz h3 { margin: 0 0 10px; font-size: 1.28rem; }
+    .card p { margin: 0; color: var(--muted); }
+
+    .icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 18px;
+      display: grid;
+      place-items: center;
+      font-size: 1.75rem;
+      margin-bottom: 14px;
+    }
+
+    .blue-soft { background: var(--blue-soft); }
+    .orange-soft { background: var(--orange-soft); }
+    .green-soft { background: var(--green-soft); }
+    .violet-soft { background: var(--violet-soft); }
+
+    .tag {
+      display: inline-flex;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: .78rem;
+      font-weight: 850;
+      margin: 10px 6px 0 0;
+      border: 1px solid transparent;
+    }
+
+    .tag.blue { background: var(--blue-soft); color: var(--blue-dark); border-color: #bfdbfe; }
+    .tag.orange { background: var(--orange-soft); color: #9a3412; border-color: #fed7aa; }
+    .tag.green { background: var(--green-soft); color: #166534; border-color: #86efac; }
+    .tag.violet { background: var(--violet-soft); color: #5b21b6; border-color: #ddd6fe; }
+
+    .formula-box {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 12px;
+      align-items: center;
+      background: linear-gradient(135deg,#ffffff,#eff6ff);
+      border: 1px solid #dbeafe;
+      border-radius: 24px;
+      padding: 18px;
+      margin-top: 14px;
+      text-align: center;
+      font-weight: 900;
+    }
+
+    .formula-part {
+      background: white;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    .plus-arrow { color: var(--blue-dark); font-size: 1.55rem; }
+
+    .diagram-card {
+      background: #ffffff;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .energy-diagram {
+      width: 100%;
+      height: 320px;
+      background: linear-gradient(180deg,#ffffff,#f8fbff);
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+    }
+
+    .diagram-legend {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 12px;
+      color: var(--muted);
+      font-size: .94rem;
+    }
+
+    .legend-mini {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 10px;
+    }
+
+    .quiz-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .score-badge {
+      background: #eff6ff;
+      color: var(--blue-dark);
+      border: 1px solid #bfdbfe;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-weight: 900;
+      white-space: nowrap;
+    }
+
+    .question {
+      border-top: 1px dashed #cbd5e1;
+      padding: 15px 0;
+    }
+
+    .question:first-of-type { border-top: none; }
+    .question p { margin: 0 0 10px; font-weight: 850; }
+
+    .options { display: grid; gap: 9px; }
+
+    .option {
+      border: 1px solid #d5e0ee;
+      background: #f8fafc;
+      border-radius: 16px;
+      padding: 11px 13px;
+      cursor: pointer;
+      font-weight: 700;
+      color: var(--ink);
+      font-family: inherit;
+      text-align: left;
+      transition: .15s ease;
+    }
+
+    .option:hover { transform: translateY(-1px); border-color: var(--blue); }
+    .option.correct { background: var(--green-soft); border-color: #86efac; color: #166534; }
+    .option.wrong { background: var(--red-soft); border-color: #fecaca; color: #991b1b; }
+    .option.selected { box-shadow: inset 0 0 0 2px rgba(37,99,235,.18); }
+
+    .feedback {
+      display: none;
+      margin-top: 10px;
+      border-radius: 16px;
+      padding: 12px 14px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+    }
+
+    .feedback.show { display: block; }
+    .feedback.good { background: var(--green-soft); color: #166534; border-color: #86efac; }
+    .feedback.bad { background: var(--red-soft); color: #991b1b; border-color: #fecaca; }
+    .feedback.hint { background: var(--yellow-soft); color: #854d0e; border-color: #fde68a; }
+
+    .trophy {
+      display: inline-grid;
+      place-items: center;
+      width: 30px;
+      height: 30px;
+      margin-left: 6px;
+      border-radius: 50%;
+      background: #fff4bf;
+      border: 1px solid #e4c75b;
+      animation: pop .35s ease;
+      vertical-align: middle;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(.2) rotate(-20deg); opacity: 0; }
+      80% { transform: scale(1.15) rotate(6deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0); }
+    }
+
+    .match-grid {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .drag-bank, .drop-list { display: grid; gap: 10px; }
+
+    .drag-item, .dropzone {
+      border-radius: 18px;
+      padding: 13px;
+      min-height: 58px;
+    }
+
+    .drag-item {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: var(--blue-dark);
+      cursor: grab;
+      font-weight: 850;
+      box-shadow: 0 8px 18px rgba(37,99,235,.06);
+    }
+
+    .drag-item.dragging { opacity: .5; }
+    .drag-item.correct { background: var(--green-soft); color: #166534; border-color: #86efac; }
+    .drag-item.wrong { background: var(--red-soft); color: #991b1b; border-color: #fecaca; }
+
+    .dropzone {
+      background: #ffffff;
+      border: 2px dashed #cbd5e1;
+    }
+
+    .dropzone strong {
+      display: block;
+      color: #334155;
+      margin-bottom: 8px;
+    }
+
+    .dropzone.hover { background: #eff6ff; border-color: var(--blue); }
+
+    .select-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .select-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 18px;
+      padding: 14px;
+    }
+
+    select {
+      width: 100%;
+      padding: 11px 12px;
+      border-radius: 14px;
+      border: 1px solid #cbd5e1;
+      background: white;
+      font: inherit;
+      margin-top: 8px;
+    }
+
+    select.correct { background: var(--green-soft); border-color: #86efac; }
+    select.wrong { background: var(--red-soft); border-color: #fecaca; }
+
+    .mass-balance {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      gap: 14px;
+      align-items: center;
+      margin-top: 14px;
+    }
+
+    .scale-pan {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 20px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .big-number {
+      font-size: 2.3rem;
+      font-weight: 950;
+      color: var(--blue-dark);
+    }
+
+    .summary-box {
+      background: #172033;
+      color: #f8fbff;
+      border-radius: 30px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+    }
+
+    .summary-box p { color: #d8e4f2; }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .summary-mini {
+      background: rgba(255,255,255,.08);
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: 20px;
+      padding: 15px;
+    }
+
+    .summary-mini strong { display: block; margin-bottom: 5px; color: white; }
+
+    @media (max-width: 900px) {
+      .hero, .grid, .grid.two, .match-grid, .mass-balance, .summary-grid, .select-grid { grid-template-columns: 1fr; }
+      .reaction-visual { min-height: auto; }
+      .formula-box { grid-template-columns: 1fr; }
+      .plus-arrow { transform: rotate(90deg); }
+    }
+
+    @media (max-width: 560px) {
+      header { min-height: auto; }
+      .card, .quiz, .summary-box { padding: 18px; }
+      .quiz-head { flex-direction: column; align-items: flex-start; }
+      .diagram-legend { grid-template-columns: 1fr; }
+    }
+
+
+    .diagram-task {
+      background: linear-gradient(135deg, #ffffff, #f8fbff);
+      border: 1px solid #dbe4ee;
+      border-radius: 26px;
+      padding: 24px;
+      margin: 38px 0;
+      box-shadow: var(--shadow-soft);
+    }
+
+    .diagram-task h2 { margin: 0 0 8px; font-size: clamp(1.55rem, 2.6vw, 2.35rem); letter-spacing: -.035em; }
+    .diagram-note { color: var(--muted); margin: 0 0 18px; max-width: 900px; }
+
+    .diagram-work {
+      display: grid;
+      grid-template-columns: 1.35fr .65fr;
+      gap: 18px;
+      align-items: start;
+    }
+
+    .energy-board {
+      position: relative;
+      background: #ffffff;
+      border: 1px solid #dbe4ee;
+      border-radius: 24px;
+      min-height: 500px;
+      overflow: hidden;
+      padding: 8px;
+      box-shadow: inset 0 0 0 1px rgba(219,228,238,.35);
+    }
+
+    .energy-board svg { width: 100%; height: 500px; display: block; }
+
+    .term-bank {
+      background: #f8fafc;
+      border: 1px solid #dbe4ee;
+      border-radius: 22px;
+      padding: 16px;
+      position: sticky;
+      top: 70px;
+    }
+
+    .term-bank h3 { margin: 0 0 10px; }
+
+    .term-pill {
+      background: #eff6ff;
+      border: 1px solid #93c5fd;
+      color: #1d4ed8;
+      border-radius: 999px;
+      padding: 10px 12px;
+      margin: 9px 0;
+      font-weight: 850;
+      cursor: grab;
+      text-align: center;
+      box-shadow: 0 6px 14px rgba(37,99,235,.08);
+      user-select: none;
+    }
+
+    .term-pill.dragging { opacity: .45; }
+
+    .target-box {
+      position: absolute;
+      border: 2px dashed #94a3b8;
+      background: rgba(255,255,255,.9);
+      border-radius: 16px;
+      min-height: 46px;
+      padding: 6px;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      font-size: .86rem;
+      color: #64748b;
+      box-shadow: 0 8px 18px rgba(15,23,42,.06);
+    }
+
+    .target-box.hover { background: #eff6ff; border-color: var(--blue); }
+    .target-box .term-pill { margin: 0; width: 100%; font-size: .84rem; box-shadow: none; }
+    .target-box.ok { border-color: #22c55e; background: #dcfce7; }
+    .target-box.no { border-color: #ef4444; background: #fee2e2; }
+
+    .target-edukte { left: 14%; top: 48%; width: 125px; }
+    .target-produkte { right: 9%; top: 66%; width: 130px; }
+    .target-aktivierung { left: 35%; top: 18%; width: 165px; }
+    .target-reaktion { right: 17%; top: 47%; width: 165px; }
+    .target-exo { left: 9%; top: 8%; width: 195px; }
+    .target-merkmal { right: 7%; top: 8%; width: 225px; }
+
+    .diagram-actions { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+
+    .diagram-feedback {
+      display: none;
+      border-radius: 16px;
+      padding: 12px 14px;
+      margin-top: 12px;
+      border: 1px solid var(--line);
+    }
+
+    .diagram-feedback.show { display: block; }
+    .diagram-feedback.good { background: var(--green-soft); color: #166534; border-color: #86efac; }
+    .diagram-feedback.bad { background: var(--red-soft); color: #991b1b; border-color: #fecaca; }
+    .diagram-feedback.hint { background: var(--yellow-soft); color: #854d0e; border-color: #fde68a; }
+
+    @media (max-width: 900px) {
+      .diagram-work { grid-template-columns: 1fr; }
+      .term-bank { position: static; }
+      .energy-board { min-height: 450px; }
+      .energy-board svg { height: 450px; }
+      .target-box { font-size: .76rem; }
+      .target-edukte { left: 12%; top: 50%; width: 108px; }
+      .target-produkte { right: 6%; top: 66%; width: 112px; }
+      .target-aktivierung { left: 32%; top: 20%; width: 140px; }
+      .target-reaktion { right: 11%; top: 49%; width: 142px; }
+      .target-exo { left: 5%; top: 8%; width: 165px; }
+      .target-merkmal { right: 5%; top: 8%; width: 178px; }
+    }
+
+  </style>
+</head>
+<body>
+  <header id="top">
+    <div class="hero">
+      <div>
+        <div class="eyebrow">⚗️ Chemie · Interaktives Quiz</div>
+        <h1>Chemische Reaktionen erkennen und verstehen</h1>
+        <p>
+          In diesem Quiz übst du die wichtigsten Merkmale chemischer Reaktionen: Stoffumwandlung, Edukte und Produkte,
+          Massenerhaltung, exotherme und endotherme Reaktionen sowie Aktivierungsenergie und Reaktionsenergie.
+        </p>
+        <div class="hero-actions">
+          <a class="btn" href="#start">Loslegen</a>
+          <a class="btn secondary" href="#diagramme">Energiediagramme ansehen</a>
+        </div>
+      </div>
+      <div class="reaction-visual" aria-hidden="true">
+        <div class="beaker-card">
+          <div class="beakers">
+            <div class="beaker"><div class="liquid"><span class="bubble b1"></span><span class="bubble b2"></span><span class="bubble b3"></span></div></div>
+            <div class="arrow">→</div>
+            <div class="beaker"><div class="liquid orange"><span class="bubble b1"></span><span class="bubble b2"></span><span class="bubble b3"></span></div></div>
+          </div>
+          <div class="mini-caption">
+            <span><strong>Edukte:</strong> Ausgangsstoffe</span>
+            <span><strong>Produkte:</strong> neue Stoffe</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="#start">Merkmale</a>
+      <a href="#schema">Edukte & Produkte</a>
+      <a href="#diagramme">Energiediagramme</a>
+      <a href="#masse">Massenerhaltung</a>
+      <a href="#quizmix">Aufgabenmix</a>
+      <a href="#abschluss">Zusammenfassung</a>
+    </div>
+  </nav>
+
+  <main>
+    <section id="start">
+      <div class="section-title">
+        <h2>1. Woran erkennt man eine chemische Reaktion?</h2>
+        <p>
+          Bei einer chemischen Reaktion werden Ausgangsstoffe umgewandelt. Dabei entstehen Produkte mit neuen Eigenschaften.
+          Nicht jede sichtbare Veränderung ist automatisch eine chemische Reaktion.
+        </p>
+      </div>
+
+      <div class="grid">
+        <article class="card">
+          <div class="icon blue-soft">🔁</div>
+          <h3>Stoffumwandlung</h3>
+          <p>Aus Edukten entstehen Produkte. Die Produkte besitzen andere Eigenschaften als die Ausgangsstoffe.</p>
+          <span class="tag blue">zentrales Merkmal</span>
+        </article>
+        <article class="card">
+          <div class="icon orange-soft">🔥</div>
+          <h3>Energieumsatz</h3>
+          <p>Bei chemischen Reaktionen wird Energie aufgenommen oder abgegeben, zum Beispiel als Wärme oder Licht.</p>
+          <span class="tag orange">exotherm / endotherm</span>
+        </article>
+        <article class="card">
+          <div class="icon green-soft">⚖️</div>
+          <h3>Massenerhaltung</h3>
+          <p>In einem geschlossenen System bleibt die Gesamtmasse erhalten: Nichts geht verloren, nichts entsteht aus dem Nichts.</p>
+          <span class="tag green">geschlossenes System</span>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="quiz" data-quiz="q1">
+        <div class="quiz-head">
+          <h3>Quiz 1: Chemische Reaktion oder nicht?</h3>
+          <div class="score-badge" id="score-q1">0/4</div>
+        </div>
+
+        <div class="question" data-answer="B" data-explain="Beim Verbrennen entstehen neue Stoffe, zum Beispiel Kohlenstoffdioxid, Wasserdampf und Asche. Das ist eine chemische Reaktion.">
+          <p>Holz brennt in einer Feuerschale. Welche Aussage passt am besten?</p>
+          <div class="options">
+            <button class="option" data-value="A">Es handelt sich nur um eine Formänderung.</button>
+            <button class="option" data-value="B">Es entstehen neue Stoffe mit neuen Eigenschaften.</button>
+            <button class="option" data-value="C">Die Stoffe verschwinden, ohne Produkte zu bilden.</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-answer="A" data-explain="Beim Schmelzen ändert sich der Aggregatzustand, aber es entsteht kein neuer Stoff. Es ist daher eine physikalische Veränderung.">
+          <p>Eis schmilzt zu flüssigem Wasser. Warum ist das keine chemische Reaktion?</p>
+          <div class="options">
+            <button class="option" data-value="A">Der Stoff bleibt Wasser, nur der Zustand ändert sich.</button>
+            <button class="option" data-value="B">Es entstehen mehrere neue Stoffe.</button>
+            <button class="option" data-value="C">Die Masse kann dabei nicht gemessen werden.</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-answer="C" data-explain="Eine Gasentwicklung kann ein Hinweis auf eine chemische Reaktion sein, besonders wenn dabei ein neuer Stoff entsteht.">
+          <p>Essig reagiert mit Natron und es bilden sich Gasbläschen. Was ist daran ein wichtiger Hinweis?</p>
+          <div class="options">
+            <button class="option" data-value="A">Gasbläschen bedeuten immer nur Verdampfung.</button>
+            <button class="option" data-value="B">Das Natron wird nur kleiner gerieben.</button>
+            <button class="option" data-value="C">Es kann ein neuer gasförmiger Stoff entstehen.</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-answer="B" data-explain="Farbänderung kann ein Hinweis sein, reicht allein aber nicht immer aus. Entscheidend ist, ob neue Stoffe entstehen.">
+          <p>Welche Aussage zu Merkmalen chemischer Reaktionen ist am genauesten?</p>
+          <div class="options">
+            <button class="option" data-value="A">Jede Farbänderung ist sicher eine chemische Reaktion.</button>
+            <button class="option" data-value="B">Farbänderung kann ein Hinweis sein, muss aber mit Stoffumwandlung zusammenhängen.</button>
+            <button class="option" data-value="C">Wenn Wärme frei wird, ist niemals eine chemische Reaktion beteiligt.</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="schema">
+      <div class="section-title">
+        <h2>2. Edukte und Produkte</h2>
+        <p>Eine Reaktionsgleichung beschreibt, welche Stoffe reagieren und welche Stoffe entstehen.</p>
+      </div>
+
+      <div class="card">
+        <h3>Grundschema einer chemischen Reaktion</h3>
+        <div class="formula-box">
+          <div class="formula-part">Edukte<br><span style="color:var(--muted); font-weight:700;">Ausgangsstoffe</span></div>
+          <div class="plus-arrow">→</div>
+          <div class="formula-part">Produkte<br><span style="color:var(--muted); font-weight:700;">entstehende Stoffe</span></div>
+        </div>
+        <div class="formula-box">
+          <div class="formula-part">Eisen + Schwefel</div>
+          <div class="plus-arrow">→</div>
+          <div class="formula-part">Eisensulfid</div>
+        </div>
+        <p style="margin-top:12px; color:var(--muted);">
+          Eisen und Schwefel sind die Edukte. Eisensulfid ist das Produkt. Das Produkt hat andere Eigenschaften als die Ausgangsstoffe.
+        </p>
+      </div>
+    </section>
+
+    <section id="diagramme">
+      <div class="section-title">
+        <h2>3. Energiediagramme: exotherm und endotherm</h2>
+        <p>
+          Energiediagramme zeigen den Energieverlauf während einer Reaktion. Die Aktivierungsenergie ist die Energie,
+          die zum Starten der Reaktion überwunden werden muss. Die Reaktionsenergie ist der Energieunterschied zwischen Edukten und Produkten.
+        </p>
+      </div>
+
+      <div class="grid two">
+        <article class="diagram-card">
+          <h3>Exotherme Reaktion</h3>
+          <svg class="energy-diagram" viewBox="0 0 520 320" role="img" aria-label="Energiediagramm exotherme Reaktion">
+            <defs>
+              <marker id="arrowX" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker>
+              <marker id="arrowRed" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#dc2626"/></marker>
+              <marker id="arrowGreen" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#16a34a"/></marker>
+            </defs>
+            <line x1="58" y1="270" x2="480" y2="270" stroke="#334155" stroke-width="2.5" marker-end="url(#arrowX)"/>
+            <line x1="58" y1="270" x2="58" y2="34" stroke="#334155" stroke-width="2.5" marker-end="url(#arrowX)"/>
+            <text x="250" y="305" text-anchor="middle" fill="#334155" font-size="15" font-weight="700">Reaktionsverlauf</text>
+            <text x="18" y="160" transform="rotate(-90 18 160)" text-anchor="middle" fill="#334155" font-size="15" font-weight="700">Energie</text>
+            <line x1="82" y1="178" x2="176" y2="178" stroke="#2563eb" stroke-width="5" stroke-linecap="round"/>
+            <text x="86" y="165" fill="#1d4ed8" font-size="15" font-weight="800">Edukte</text>
+            <path d="M176 178 C230 178, 237 72, 290 72 C334 72, 336 228, 404 228" fill="none" stroke="#ef4444" stroke-width="5" stroke-linecap="round"/>
+            <line x1="404" y1="228" x2="474" y2="228" stroke="#16a34a" stroke-width="5" stroke-linecap="round"/>
+            <text x="405" y="250" fill="#166534" font-size="15" font-weight="800">Produkte</text>
+            <line x1="176" y1="178" x2="176" y2="72" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrowRed)"/>
+            <text x="183" y="118" fill="#991b1b" font-size="14" font-weight="800">Aktivierungsenergie</text>
+            <line x1="456" y1="178" x2="456" y2="228" stroke="#16a34a" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrowGreen)"/>
+            <text x="360" y="202" fill="#166534" font-size="14" font-weight="800">Energie wird frei</text>
+            <text x="78" y="44" fill="#991b1b" font-size="15" font-weight="900">Produkte energieärmer als Edukte</text>
+          </svg>
+          <div class="diagram-legend">
+            <div class="legend-mini"><strong>Exotherm:</strong> Die Produkte liegen energetisch tiefer als die Edukte.</div>
+            <div class="legend-mini"><strong>Folge:</strong> Energie wird an die Umgebung abgegeben, z. B. Wärme oder Licht.</div>
+          </div>
+        </article>
+
+        <article class="diagram-card">
+          <h3>Endotherme Reaktion</h3>
+          <svg class="energy-diagram" viewBox="0 0 520 320" role="img" aria-label="Energiediagramm endotherme Reaktion">
+            <defs>
+              <marker id="arrowX2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"/></marker>
+              <marker id="arrowRed2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#dc2626"/></marker>
+              <marker id="arrowBlue2" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#2563eb"/></marker>
+            </defs>
+            <line x1="58" y1="270" x2="480" y2="270" stroke="#334155" stroke-width="2.5" marker-end="url(#arrowX2)"/>
+            <line x1="58" y1="270" x2="58" y2="34" stroke="#334155" stroke-width="2.5" marker-end="url(#arrowX2)"/>
+            <text x="250" y="305" text-anchor="middle" fill="#334155" font-size="15" font-weight="700">Reaktionsverlauf</text>
+            <text x="18" y="160" transform="rotate(-90 18 160)" text-anchor="middle" fill="#334155" font-size="15" font-weight="700">Energie</text>
+            <line x1="82" y1="220" x2="176" y2="220" stroke="#2563eb" stroke-width="5" stroke-linecap="round"/>
+            <text x="86" y="242" fill="#1d4ed8" font-size="15" font-weight="800">Edukte</text>
+            <path d="M176 220 C230 220, 238 72, 292 72 C337 72, 339 148, 404 148" fill="none" stroke="#7c3aed" stroke-width="5" stroke-linecap="round"/>
+            <line x1="404" y1="148" x2="474" y2="148" stroke="#16a34a" stroke-width="5" stroke-linecap="round"/>
+            <text x="405" y="136" fill="#166534" font-size="15" font-weight="800">Produkte</text>
+            <line x1="176" y1="220" x2="176" y2="72" stroke="#dc2626" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrowRed2)"/>
+            <text x="183" y="137" fill="#991b1b" font-size="14" font-weight="800">Aktivierungsenergie</text>
+            <line x1="456" y1="220" x2="456" y2="148" stroke="#2563eb" stroke-width="2.5" stroke-dasharray="6 5" marker-end="url(#arrowBlue2)"/>
+            <text x="324" y="190" fill="#1d4ed8" font-size="14" font-weight="800">Energie wird aufgenommen</text>
+            <text x="78" y="44" fill="#5b21b6" font-size="15" font-weight="900">Produkte energiereicher als Edukte</text>
+          </svg>
+          <div class="diagram-legend">
+            <div class="legend-mini"><strong>Endotherm:</strong> Die Produkte liegen energetisch höher als die Edukte.</div>
+            <div class="legend-mini"><strong>Folge:</strong> Energie muss aus der Umgebung aufgenommen werden.</div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section>
+      <div class="quiz" data-quiz="q2">
+        <div class="quiz-head">
+          <h3>Quiz 2: Energiediagramme verstehen</h3>
+          <div class="score-badge" id="score-q2">0/5</div>
+        </div>
+        <div class="question" data-answer="A" data-explain="Bei einer exothermen Reaktion sind die Produkte energieärmer als die Edukte. Die Differenz wird an die Umgebung abgegeben."><p>Woran erkennt man im Energiediagramm eine exotherme Reaktion?</p><div class="options"><button class="option" data-value="A">Die Produkte liegen energetisch tiefer als die Edukte.</button><button class="option" data-value="B">Die Produkte liegen energetisch höher als die Edukte.</button><button class="option" data-value="C">Edukte und Produkte müssen immer auf gleicher Höhe liegen.</button></div><div class="feedback"></div></div>
+        <div class="question" data-answer="C" data-explain="Die Aktivierungsenergie ist die Energie, die benötigt wird, um eine Reaktion zu starten. Im Diagramm ist sie der Anstieg bis zum Gipfel."><p>Was beschreibt die Aktivierungsenergie im Energiediagramm?</p><div class="options"><button class="option" data-value="A">Die Masse der Produkte nach der Reaktion.</button><button class="option" data-value="B">Die gesamte Energie der Umgebung.</button><button class="option" data-value="C">Die Energie, die zum Starten der Reaktion überwunden werden muss.</button></div><div class="feedback"></div></div>
+        <div class="question" data-answer="B" data-explain="Bei einer endothermen Reaktion wird Energie aufgenommen. Die Produkte besitzen mehr Energie als die Edukte."><p>Eine Reaktion läuft nur weiter, wenn dauerhaft Wärme zugeführt wird. Welche Einordnung passt am besten?</p><div class="options"><button class="option" data-value="A">Sie ist sicher exotherm.</button><button class="option" data-value="B">Sie kann endotherm sein.</button><button class="option" data-value="C">Sie hat keine Aktivierungsenergie.</button></div><div class="feedback"></div></div>
+        <div class="question" data-answer="A" data-explain="Die Reaktionsenergie ist der Unterschied zwischen der Energie der Edukte und der Energie der Produkte."><p>Was gibt die Reaktionsenergie an?</p><div class="options"><button class="option" data-value="A">Den Energieunterschied zwischen Edukten und Produkten.</button><button class="option" data-value="B">Die Anzahl der Atome in einem Molekül.</button><button class="option" data-value="C">Die Temperatur, bei der ein Stoff schmilzt.</button></div><div class="feedback"></div></div>
+        <div class="question" data-answer="C" data-explain="Eine exotherme Reaktion braucht häufig trotzdem eine Startenergie. Ein Beispiel ist das Anzünden von Holz."><p>Welche Aussage ist fachlich richtig?</p><div class="options"><button class="option" data-value="A">Exotherme Reaktionen benötigen keine Startenergie.</button><button class="option" data-value="B">Endotherme Reaktionen geben Energie an die Umgebung ab.</button><button class="option" data-value="C">Auch exotherme Reaktionen können eine Aktivierungsenergie benötigen.</button></div><div class="feedback"></div></div>
+      </div>
+    </section>
+
+    <section id="masse">
+      <div class="section-title"><h2>4. Gesetz der Erhaltung der Masse</h2><p>Bei einer chemischen Reaktion werden Atome nicht vernichtet und nicht neu erzeugt. Sie werden neu angeordnet. In einem geschlossenen Gefäß bleibt deshalb die Gesamtmasse gleich.</p></div>
+      <div class="card"><h3>Geschlossenes System</h3><div class="mass-balance"><div class="scale-pan"><div class="big-number">32 g</div><strong>Edukte</strong><p>Ausgangsstoffe im geschlossenen Gefäß</p></div><div class="arrow">→</div><div class="scale-pan"><div class="big-number">32 g</div><strong>Produkte</strong><p>Produkte im selben geschlossenen Gefäß</p></div></div></div>
+    </section>
+
+    <section>
+      <div class="quiz" data-quiz="q3"><div class="quiz-head"><h3>Quiz 3: Massenerhaltung</h3><div class="score-badge" id="score-q3">0/4</div></div>
+        <div class="question" data-answer="B" data-explain="In einem geschlossenen System bleibt die Gesamtmasse gleich. Aus 12 g und 20 g Edukten entstehen insgesamt 32 g Produkte."><p>12 g Stoff A reagieren mit 20 g Stoff B in einem geschlossenen Gefäß. Welche Produktmasse ist zu erwarten?</p><div class="options"><button class="option" data-value="A">20 g, weil nur der schwerere Stoff zählt.</button><button class="option" data-value="B">32 g, weil die Gesamtmasse erhalten bleibt.</button><button class="option" data-value="C">Mehr als 32 g, weil neue Stoffe entstehen.</button></div><div class="feedback"></div></div>
+        <div class="question" data-answer="C" data-explain="Wenn ein Gas entweicht, wirkt es so, als wäre Masse verloren gegangen. In Wirklichkeit ist ein Teil der Produkte aus dem offenen Gefäß entwichen."><p>Bei einer Reaktion in einem offenen Becherglas entweicht Gas. Danach zeigt die Waage weniger Masse. Wie erklärt man das richtig?</p><div class="options"><button class="option" data-value="A">Ein Teil der Atome wurde vernichtet.</button><button class="option" data-value="B">Das Gesetz der Massenerhaltung gilt bei Gasen nicht.</button><button class="option" data-value="C">Ein gasförmiger Stoff ist aus dem offenen Gefäß entwichen.</button></div><div class="feedback"></div></div>
+        <div class="question" data-answer="A" data-explain="Atome werden bei chemischen Reaktionen neu angeordnet. Die Atomsorten bleiben dabei erhalten."><p>Was passiert mit den Atomen bei einer chemischen Reaktion?</p><div class="options"><button class="option" data-value="A">Sie werden neu angeordnet.</button><button class="option" data-value="B">Sie verschwinden nach und nach.</button><button class="option" data-value="C">Sie werden automatisch schwerer.</button></div><div class="feedback"></div></div>
+        <div class="question" data-answer="B" data-explain="Für eine genaue Überprüfung der Massenerhaltung muss das System geschlossen sein, damit keine Stoffe entweichen oder hinzukommen."><p>Welche Versuchsanordnung eignet sich am besten, um die Massenerhaltung zu überprüfen?</p><div class="options"><button class="option" data-value="A">Ein offenes Becherglas, aus dem Gas entweichen kann.</button><button class="option" data-value="B">Ein geschlossenes Gefäß auf einer Waage.</button><button class="option" data-value="C">Ein Filterpapier ohne Waage.</button></div><div class="feedback"></div></div>
+      </div>
+    </section>
+
+    <section id="quizmix">
+      <div class="section-title"><h2>5. Großer Aufgabenmix</h2><p>Hier werden die wichtigsten Begriffe und Diagrammdeutungen noch einmal gemischt abgefragt.</p></div>
+      <div class="quiz" id="dragQuiz"><div class="quiz-head"><h3>Zuordnung: Fachbegriffe und Bedeutung</h3><div class="score-badge" id="score-drag">0/8</div></div><p style="color:var(--muted); margin-top:0;">Ziehe die Begriffe zu den passenden Bedeutungen und prüfe anschließend deine Lösung.</p><div class="match-grid"><div class="drag-bank" id="dragBank"><div class="drag-item" draggable="true" data-match="edukte">Edukte</div><div class="drag-item" draggable="true" data-match="produkte">Produkte</div><div class="drag-item" draggable="true" data-match="aktivierung">Aktivierungsenergie</div><div class="drag-item" draggable="true" data-match="reaktionsenergie">Reaktionsenergie</div><div class="drag-item" draggable="true" data-match="exotherm">exotherm</div><div class="drag-item" draggable="true" data-match="endotherm">endotherm</div><div class="drag-item" draggable="true" data-match="stoffumwandlung">Stoffumwandlung</div><div class="drag-item" draggable="true" data-match="massenerhaltung">Massenerhaltung</div></div><div class="drop-list"><div class="dropzone" data-accept="edukte"><strong>Ausgangsstoffe einer chemischen Reaktion</strong></div><div class="dropzone" data-accept="produkte"><strong>Stoffe, die bei der Reaktion entstehen</strong></div><div class="dropzone" data-accept="aktivierung"><strong>Energie, die zum Starten überwunden werden muss</strong></div><div class="dropzone" data-accept="reaktionsenergie"><strong>Energieunterschied zwischen Edukten und Produkten</strong></div><div class="dropzone" data-accept="exotherm"><strong>Produkte sind energieärmer; Energie wird abgegeben</strong></div><div class="dropzone" data-accept="endotherm"><strong>Produkte sind energiereicher; Energie wird aufgenommen</strong></div><div class="dropzone" data-accept="stoffumwandlung"><strong>neue Stoffe mit neuen Eigenschaften entstehen</strong></div><div class="dropzone" data-accept="massenerhaltung"><strong>Gesamtmasse bleibt im geschlossenen System gleich</strong></div></div></div><div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;"><button class="btn" onclick="checkDragQuiz()">Zuordnung prüfen</button><button class="btn secondary" onclick="resetDragQuiz()">Zurücksetzen</button></div><div class="feedback" id="dragFeedback"></div></div>
+    </section>
+
+    <section>
+      <div class="quiz" data-select-quiz="diagramMix"><div class="quiz-head"><h3>Auswahlaufgabe: Diagrammbegriffe</h3><div class="score-badge" id="score-diagramMix">0/6</div></div><div class="select-grid"><div class="select-card"><strong>Produkte liegen tiefer als Edukte.</strong><select data-answer="exotherm"><option value="">Bitte wählen</option><option value="exotherm">exotherm</option><option value="endotherm">endotherm</option><option value="aktivierungsenergie">Aktivierungsenergie</option></select></div><div class="select-card"><strong>Produkte liegen höher als Edukte.</strong><select data-answer="endotherm"><option value="">Bitte wählen</option><option value="exotherm">exotherm</option><option value="endotherm">endotherm</option><option value="massenerhaltung">Massenerhaltung</option></select></div><div class="select-card"><strong>Energiebarriere am Anfang der Reaktion.</strong><select data-answer="aktivierungsenergie"><option value="">Bitte wählen</option><option value="reaktionsenergie">Reaktionsenergie</option><option value="aktivierungsenergie">Aktivierungsenergie</option><option value="produkt">Produkt</option></select></div><div class="select-card"><strong>Unterschied zwischen Eduktenergie und Produktenergie.</strong><select data-answer="reaktionsenergie"><option value="">Bitte wählen</option><option value="reaktionsenergie">Reaktionsenergie</option><option value="aktivierungsenergie">Aktivierungsenergie</option><option value="edukt">Edukt</option></select></div><div class="select-card"><strong>Ausgangsstoff vor der Reaktion.</strong><select data-answer="edukt"><option value="">Bitte wählen</option><option value="produkt">Produkt</option><option value="edukt">Edukt</option><option value="exotherm">exotherm</option></select></div><div class="select-card"><strong>Stoff nach der Reaktion.</strong><select data-answer="produkt"><option value="">Bitte wählen</option><option value="produkt">Produkt</option><option value="edukt">Edukt</option><option value="endotherm">endotherm</option></select></div></div><div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:14px;"><button class="btn" onclick="checkSelectQuiz('diagramMix')">Auswertung anzeigen</button><button class="btn secondary" onclick="resetSelectQuiz('diagramMix')">Zurücksetzen</button></div><div class="feedback" id="feedback-diagramMix"></div></div>
+    </section>
+
+
+
+    <section class="diagram-task" id="kaestchen-diagramm">
+      <h2>6. Kästchen-Zuordnung im Energiediagramm</h2>
+      <p class="diagram-note">
+        Ziehe die durcheinandergewürfelten Begriffe in die passenden Kästchen des exothermen Energiediagramms. Dabei sollen nicht nur Edukte und Produkte erkannt werden, sondern auch Aktivierungsenergie, Reaktionsenergie und das entscheidende Merkmal einer exothermen Reaktion.
+      </p>
+
+      <div class="diagram-work">
+        <div class="energy-board" id="energyBoard">
+          <svg viewBox="0 0 760 500" aria-label="Exothermes Energiediagramm mit Zuordnungskästchen">
+            <defs>
+              <marker id="boxAxisArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#334155"></path></marker>
+              <marker id="boxRedArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#dc2626"></path></marker>
+              <marker id="boxGreenArrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L8,3 L0,6 Z" fill="#16a34a"></path></marker>
+            </defs>
+            <rect x="0" y="0" width="760" height="500" rx="22" fill="#ffffff"></rect>
+            <rect x="18" y="18" width="724" height="464" rx="20" fill="#f8fbff" stroke="#e2e8f0"></rect>
+
+            <line x1="72" y1="425" x2="705" y2="425" stroke="#334155" stroke-width="3" marker-end="url(#boxAxisArrow)"></line>
+            <line x1="72" y1="425" x2="72" y2="58" stroke="#334155" stroke-width="3" marker-end="url(#boxAxisArrow)"></line>
+            <text x="388" y="468" text-anchor="middle" font-size="18" font-weight="800" fill="#334155">Reaktionsverlauf</text>
+            <text x="28" y="248" transform="rotate(-90 28 248)" text-anchor="middle" font-size="18" font-weight="800" fill="#334155">Energie</text>
+
+            <line x1="120" y1="275" x2="245" y2="275" stroke="#2563eb" stroke-width="7" stroke-linecap="round"></line>
+            <path d="M245 275 C315 275, 322 108, 392 108 C455 108, 462 348, 570 348" fill="none" stroke="#ef4444" stroke-width="7" stroke-linecap="round"></path>
+            <line x1="570" y1="348" x2="670" y2="348" stroke="#16a34a" stroke-width="7" stroke-linecap="round"></line>
+
+            <line x1="245" y1="275" x2="245" y2="108" stroke="#dc2626" stroke-width="3" stroke-dasharray="8 7" marker-end="url(#boxRedArrow)"></line>
+            <line x1="640" y1="275" x2="640" y2="348" stroke="#16a34a" stroke-width="3" stroke-dasharray="8 7" marker-end="url(#boxGreenArrow)"></line>
+
+            <line x1="120" y1="275" x2="670" y2="275" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 7"></line>
+            <line x1="120" y1="348" x2="670" y2="348" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5 7"></line>
+
+            <circle cx="245" cy="275" r="7" fill="#2563eb"></circle>
+            <circle cx="392" cy="108" r="7" fill="#dc2626"></circle>
+            <circle cx="640" cy="348" r="7" fill="#16a34a"></circle>
+          </svg>
+
+          <div class="target-box target-edukte" data-accept="edukte">Kästchen 1</div>
+          <div class="target-box target-produkte" data-accept="produkte">Kästchen 2</div>
+          <div class="target-box target-aktivierung" data-accept="aktivierungsenergie">Kästchen 3</div>
+          <div class="target-box target-reaktion" data-accept="reaktionsenergie">Kästchen 4</div>
+          <div class="target-box target-exo" data-accept="exotherm">Kästchen 5</div>
+          <div class="target-box target-merkmal" data-accept="merkmal">Kästchen 6</div>
+        </div>
+
+        <div class="term-bank" id="diagramTermBank">
+          <h3>Begriffe</h3>
+          <div class="term-pill" draggable="true" data-term="reaktionsenergie">Reaktionsenergie</div>
+          <div class="term-pill" draggable="true" data-term="produkte">Produkte</div>
+          <div class="term-pill" draggable="true" data-term="merkmal">Energie wird abgegeben</div>
+          <div class="term-pill" draggable="true" data-term="aktivierungsenergie">Aktivierungsenergie</div>
+          <div class="term-pill" draggable="true" data-term="edukte">Edukte</div>
+          <div class="term-pill" draggable="true" data-term="exotherm">exotherme Reaktion</div>
+        </div>
+      </div>
+
+      <div class="diagram-actions">
+        <button class="btn" onclick="checkEnergyDiagramTask()">Kästchen prüfen</button>
+        <button class="btn secondary" onclick="resetEnergyDiagramTask()">Zurücksetzen</button>
+      </div>
+      <div class="diagram-feedback" id="energyDiagramFeedback"></div>
+    </section>
+
+    <section id="abschluss"><div class="summary-box"><h2>Zusammenfassung</h2><p>Bei chemischen Reaktionen entstehen aus Edukten Produkte mit neuen Eigenschaften. Dabei wird Energie aufgenommen oder abgegeben. In einem geschlossenen System bleibt die Gesamtmasse erhalten, weil Atome nicht verschwinden, sondern neu angeordnet werden.</p><div class="summary-grid"><div class="summary-mini"><strong>🔁 Stoffumwandlung</strong>Neue Stoffe mit neuen Eigenschaften entstehen.</div><div class="summary-mini"><strong>🔥 Exotherm</strong>Produkte energieärmer; Energie wird abgegeben.</div><div class="summary-mini"><strong>❄️ Endotherm</strong>Produkte energiereicher; Energie wird aufgenommen.</div><div class="summary-mini"><strong>⛰️ Aktivierungsenergie</strong>Startenergie, die überwunden werden muss.</div><div class="summary-mini"><strong>↕️ Reaktionsenergie</strong>Energieunterschied zwischen Edukten und Produkten.</div><div class="summary-mini"><strong>⚖️ Massenerhaltung</strong>Gesamtmasse bleibt im geschlossenen System gleich.</div></div></div></section>
+  </main>
+
+  <script>
+    function normalizeText(value) {
+      return String(value || '').trim().toLowerCase().replace(/ä/g, 'ae').replace(/ö/g, 'oe').replace(/ü/g, 'ue').replace(/ß/g, 'ss').replace(/[^a-z0-9 ]/g, '').replace(/\s+/g, ' ');
+    }
+
+    document.querySelectorAll('.option').forEach(button => {
+      button.addEventListener('click', () => {
+        const question = button.closest('.question');
+        const quiz = button.closest('.quiz');
+        if (question.dataset.locked === 'true') return;
+        const answer = question.dataset.answer;
+        const selected = button.dataset.value;
+        const explain = question.dataset.explain || '';
+        const feedback = question.querySelector('.feedback');
+        const options = question.querySelectorAll('.option');
+        options.forEach(opt => {
+          opt.classList.remove('selected', 'correct', 'wrong');
+          opt.disabled = true;
+          if (opt.dataset.value === answer) opt.classList.add('correct');
+        });
+        button.classList.add('selected');
+        question.dataset.locked = 'true';
+        if (selected === answer) {
+          feedback.className = 'feedback show good';
+          feedback.innerHTML = `Richtig! <span class="trophy">🏆</span><br>${explain}`;
+        } else {
+          button.classList.add('wrong');
+          feedback.className = 'feedback show bad';
+          feedback.innerHTML = `Noch nicht richtig.<br>${explain}`;
+        }
+        updateQuizScore(quiz);
+      });
+    });
+
+    function updateQuizScore(quiz) {
+      if (!quiz || !quiz.dataset.quiz) return;
+      const questions = Array.from(quiz.querySelectorAll('.question'));
+      const correct = questions.filter(q => {
+        const selected = q.querySelector('.option.selected');
+        return selected && selected.dataset.value === q.dataset.answer;
+      }).length;
+      const badge = document.getElementById('score-' + quiz.dataset.quiz);
+      if (badge) badge.textContent = `${correct}/${questions.length}`;
+    }
+
+    let draggedItem = null;
+    document.querySelectorAll('.drag-item').forEach(item => {
+      item.addEventListener('dragstart', () => { draggedItem = item; item.classList.add('dragging'); });
+      item.addEventListener('dragend', () => { item.classList.remove('dragging'); draggedItem = null; });
+    });
+
+    document.querySelectorAll('.dropzone, #dragBank').forEach(zone => {
+      zone.addEventListener('dragover', event => { event.preventDefault(); zone.classList.add('hover'); });
+      zone.addEventListener('dragleave', () => zone.classList.remove('hover'));
+      zone.addEventListener('drop', event => {
+        event.preventDefault();
+        zone.classList.remove('hover');
+        if (!draggedItem) return;
+        if (zone.classList.contains('dropzone')) {
+          const existing = zone.querySelector('.drag-item');
+          if (existing) document.getElementById('dragBank').appendChild(existing);
+          zone.appendChild(draggedItem);
+        } else {
+          zone.appendChild(draggedItem);
+        }
+      });
+    });
+
+    function checkDragQuiz() {
+      const zones = Array.from(document.querySelectorAll('#dragQuiz .dropzone'));
+      let correct = 0;
+      let filled = 0;
+      zones.forEach(zone => {
+        const item = zone.querySelector('.drag-item');
+        if (!item) return;
+        filled++;
+        item.classList.remove('correct', 'wrong');
+        if (item.dataset.match === zone.dataset.accept) { item.classList.add('correct'); correct++; }
+        else { item.classList.add('wrong'); }
+      });
+      document.getElementById('score-drag').textContent = `${correct}/${zones.length}`;
+      const feedback = document.getElementById('dragFeedback');
+      if (filled < zones.length) { feedback.className = 'feedback show hint'; feedback.textContent = 'Bitte ordne zuerst alle Begriffe zu.'; return; }
+      if (correct === zones.length) { feedback.className = 'feedback show good'; feedback.innerHTML = `Perfekt zugeordnet! <span class="trophy">🏆</span>`; }
+      else { feedback.className = 'feedback show bad'; feedback.textContent = `${correct} von ${zones.length} Zuordnungen stimmen. Die rot markierten Begriffe müssen noch verschoben werden.`; }
+    }
+
+    function resetDragQuiz() {
+      const bank = document.getElementById('dragBank');
+      document.querySelectorAll('.drag-item').forEach(item => { item.classList.remove('correct', 'wrong'); bank.appendChild(item); });
+      document.getElementById('score-drag').textContent = '0/8';
+      const feedback = document.getElementById('dragFeedback');
+      feedback.className = 'feedback';
+      feedback.textContent = '';
+    }
+
+    function checkSelectQuiz(name) {
+      const quiz = document.querySelector(`[data-select-quiz="${name}"]`);
+      const controls = Array.from(quiz.querySelectorAll('select[data-answer]'));
+      let correct = 0;
+      let allFilled = true;
+      controls.forEach(control => {
+        const user = normalizeText(control.value);
+        const answer = normalizeText(control.dataset.answer);
+        control.classList.remove('correct', 'wrong');
+        if (!user) { allFilled = false; return; }
+        if (user === answer) { correct++; control.classList.add('correct'); }
+        else { control.classList.add('wrong'); }
+      });
+      const badge = document.getElementById('score-' + name);
+      if (badge) badge.textContent = `${correct}/${controls.length}`;
+      const feedback = document.getElementById('feedback-' + name);
+      if (!allFilled) { feedback.className = 'feedback show hint'; feedback.textContent = 'Bitte fülle zuerst alle Felder aus.'; return; }
+      if (correct === controls.length) { feedback.className = 'feedback show good'; feedback.innerHTML = `Alles richtig! <span class="trophy">🏆</span>`; }
+      else { feedback.className = 'feedback show bad'; feedback.textContent = `${correct} von ${controls.length} Antworten stimmen. Die farbigen Felder helfen dir beim Verbessern.`; }
+    }
+
+    function resetSelectQuiz(name) {
+      const quiz = document.querySelector(`[data-select-quiz="${name}"]`);
+      const controls = Array.from(quiz.querySelectorAll('select[data-answer]'));
+      controls.forEach(control => { control.value = ''; control.classList.remove('correct', 'wrong'); });
+      const badge = document.getElementById('score-' + name);
+      if (badge) badge.textContent = `0/${controls.length}`;
+      const feedback = document.getElementById('feedback-' + name);
+      feedback.className = 'feedback';
+      feedback.textContent = '';
+    }
+
+
+    let energyDraggedTerm = null;
+
+    function setupEnergyDiagramDrag() {
+      document.querySelectorAll('.term-pill').forEach(item => {
+        item.addEventListener('dragstart', () => {
+          energyDraggedTerm = item;
+          item.classList.add('dragging');
+        });
+        item.addEventListener('dragend', () => {
+          item.classList.remove('dragging');
+          energyDraggedTerm = null;
+        });
+      });
+
+      document.querySelectorAll('.target-box, #diagramTermBank').forEach(zone => {
+        zone.addEventListener('dragover', event => {
+          event.preventDefault();
+          zone.classList.add('hover');
+        });
+        zone.addEventListener('dragleave', () => zone.classList.remove('hover'));
+        zone.addEventListener('drop', event => {
+          event.preventDefault();
+          zone.classList.remove('hover');
+          if (!energyDraggedTerm) return;
+
+          if (zone.classList.contains('target-box')) {
+            const old = zone.querySelector('.term-pill');
+            if (old) document.getElementById('diagramTermBank').appendChild(old);
+            zone.textContent = '';
+            zone.appendChild(energyDraggedTerm);
+          } else {
+            zone.appendChild(energyDraggedTerm);
+          }
+        });
+      });
+    }
+
+    function checkEnergyDiagramTask() {
+      const targets = Array.from(document.querySelectorAll('.target-box'));
+      let correct = 0;
+      let filled = 0;
+
+      targets.forEach(target => {
+        target.classList.remove('ok', 'no');
+        const item = target.querySelector('.term-pill');
+        if (!item) return;
+        filled++;
+        if (item.dataset.term === target.dataset.accept) {
+          correct++;
+          target.classList.add('ok');
+        } else {
+          target.classList.add('no');
+        }
+      });
+
+      const feedback = document.getElementById('energyDiagramFeedback');
+      if (filled < targets.length) {
+        feedback.className = 'diagram-feedback show hint';
+        feedback.textContent = 'Bitte fülle zuerst alle Kästchen im Energiediagramm.';
+        return;
+      }
+
+      if (correct === targets.length) {
+        feedback.className = 'diagram-feedback show good';
+        feedback.innerHTML = 'Perfekt zugeordnet! <span class="trophy">🏆</span><br>Alle Begriffe sitzen an der richtigen Stelle im Energiediagramm.';
+      } else {
+        feedback.className = 'diagram-feedback show bad';
+        feedback.textContent = correct + ' von ' + targets.length + ' Kästchen stimmen. Die rot markierten Kästchen müssen noch verbessert werden.';
+      }
+    }
+
+    function resetEnergyDiagramTask() {
+      const bank = document.getElementById('diagramTermBank');
+      document.querySelectorAll('.target-box').forEach((target, index) => {
+        target.classList.remove('ok', 'no', 'hover');
+        const item = target.querySelector('.term-pill');
+        if (item) bank.appendChild(item);
+        target.textContent = 'Kästchen ' + (index + 1);
+      });
+      const feedback = document.getElementById('energyDiagramFeedback');
+      feedback.className = 'diagram-feedback';
+      feedback.textContent = '';
+    }
+
+    setupEnergyDiagramDrag();
+
+  </script>
+</body>
+</html>
