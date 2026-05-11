@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teilchenmodell, Wärmelehre und Klima – Interaktive Lernumgebung</title>
+  <style>
+    :root{
+      --bg:#f7fbff;
+      --card:#ffffff;
+      --ink:#14213d;
+      --muted:#516070;
+      --blue:#2563eb;
+      --cyan:#0891b2;
+      --green:#16a34a;
+      --orange:#f97316;
+      --red:#dc2626;
+      --violet:#7c3aed;
+      --yellow:#facc15;
+      --line:#d7e3f5;
+      --shadow:0 14px 34px rgba(20,33,61,.11);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(37,99,235,.14), transparent 35%),
+        radial-gradient(circle at 85% 8%, rgba(249,115,22,.12), transparent 34%),
+        linear-gradient(180deg,#f7fbff 0%,#eef7ff 55%,#f8fafc 100%);
+      line-height:1.55;
+    }
+
+    header{
+      position:relative;
+      overflow:hidden;
+      padding:54px 22px 36px;
+      background:linear-gradient(135deg,#0f172a,#1e3a8a 54%,#0891b2);
+      color:white;
+    }
+    header::after{
+      content:"";
+      position:absolute;
+      width:430px;height:430px;
+      border-radius:50%;
+      right:-130px;top:-140px;
+      background:radial-gradient(circle, rgba(255,255,255,.24), transparent 66%);
+    }
+    .hero{max-width:1180px;margin:0 auto;position:relative;z-index:1}
+    .eyebrow{
+      display:inline-flex;gap:8px;align-items:center;
+      background:rgba(255,255,255,.14);
+      border:1px solid rgba(255,255,255,.28);
+      padding:8px 13px;border-radius:999px;font-size:.9rem;
+    }
+    h1{font-size:clamp(2.05rem,5vw,4rem);line-height:1.06;margin:18px 0 12px;max-width:980px}
+    .hero p{font-size:1.1rem;max-width:880px;color:#e5f3ff;margin:0}
+
+    nav{
+      position:sticky;top:0;z-index:20;
+      background:rgba(255,255,255,.86);
+      backdrop-filter:blur(14px);
+      border-bottom:1px solid var(--line);
+    }
+    .navwrap{max-width:1180px;margin:auto;display:flex;gap:10px;align-items:center;overflow-x:auto;padding:10px 16px}
+    .navwrap a{
+      white-space:nowrap;text-decoration:none;color:var(--ink);
+      border:1px solid var(--line);background:white;
+      padding:8px 12px;border-radius:999px;font-size:.92rem;
+      transition:.2s;
+    }
+    .navwrap a:hover{transform:translateY(-1px);box-shadow:0 8px 18px rgba(15,23,42,.12)}
+
+    main{max-width:1180px;margin:0 auto;padding:26px 16px 80px}
+    section{margin:28px 0 44px}
+    body.page-mode main > section{display:none}
+    body.page-mode main > section.page-active{display:block}
+    .card{
+      background:var(--card);border:1px solid var(--line);border-radius:var(--radius);
+      box-shadow:var(--shadow);padding:24px;margin:18px 0;
+    }
+    .grid{display:grid;gap:18px}
+    .grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+    @media(max-width:850px){.grid.two,.grid.three{grid-template-columns:1fr}}
+
+    h2{font-size:clamp(1.55rem,3vw,2.35rem);margin:0 0 12px}
+    h3{font-size:1.26rem;margin:0 0 10px}
+    h4{margin:18px 0 8px;font-size:1.05rem}
+    .lead{font-size:1.06rem;color:var(--muted);max-width:920px}
+    .tag{
+      display:inline-block;padding:5px 10px;border-radius:999px;
+      font-size:.84rem;font-weight:700;margin:0 7px 8px 0;
+      background:#e0f2fe;color:#075985;border:1px solid #bae6fd;
+    }
+    .tag.orange{background:#ffedd5;color:#9a3412;border-color:#fed7aa}
+    .tag.green{background:#dcfce7;color:#166534;border-color:#bbf7d0}
+    .tag.violet{background:#ede9fe;color:#5b21b6;border-color:#ddd6fe}
+    .tag.red{background:#fee2e2;color:#991b1b;border-color:#fecaca}
+    .tag.gray{background:#f1f5f9;color:#334155;border-color:#cbd5e1}
+    .note{
+      border-left:5px solid var(--blue);background:#eff6ff;border-radius:16px;
+      padding:14px 16px;color:#1e3a8a;margin:12px 0;
+    }
+    .warning{border-left-color:var(--orange);background:#fff7ed;color:#9a3412}
+    .success{border-left-color:var(--green);background:#f0fdf4;color:#166534}
+
+    .simbox{
+      display:grid;grid-template-columns:1.2fr .8fr;gap:18px;align-items:stretch;
+    }
+    @media(max-width:900px){.simbox{grid-template-columns:1fr}}
+    canvas{
+      width:100%;height:360px;border-radius:20px;background:#f8fbff;border:1px solid var(--line);
+      display:block;
+    }
+    .controls{
+      background:#f8fafc;border:1px solid var(--line);border-radius:20px;padding:16px;
+    }
+    label{display:block;font-weight:700;margin:10px 0 5px}
+    input[type=range]{width:100%}
+    .value{font-weight:800;color:var(--blue)}
+    .pillrow{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+    .quickButtons{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0 4px}
+    button{
+      border:none;border-radius:999px;background:var(--blue);color:white;
+      padding:10px 15px;font-weight:800;cursor:pointer;transition:.2s;
+    }
+    button:hover{transform:translateY(-1px);filter:brightness(1.05)}
+    button:disabled{opacity:.45;cursor:not-allowed;transform:none}
+    button.secondary{background:#e2e8f0;color:#0f172a}
+    button.green{background:var(--green)}
+    button.orange{background:var(--orange)}
+    button.red{background:var(--red)}
+    button.violet{background:var(--violet)}
+    button.ghost{background:#ffffff;color:var(--ink);border:1px solid var(--line)}
+    button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,summary:focus-visible{
+      outline:3px solid rgba(37,99,235,.35);
+      outline-offset:3px;
+    }
+
+    .sectionTop{
+      display:flex;align-items:flex-start;justify-content:space-between;gap:14px;
+      margin-bottom:8px;
+    }
+    .sectionTop h2{margin-bottom:0}
+    .focusTools{display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .focusBadge{
+      display:none;
+      position:fixed;right:18px;bottom:18px;z-index:60;
+      background:#0f172a;color:white;border-radius:18px;padding:12px 14px;
+      box-shadow:0 18px 40px rgba(15,23,42,.25);
+      align-items:center;gap:10px;max-width:calc(100vw - 36px);
+    }
+    .focusBadge button{background:white;color:#0f172a;padding:8px 12px}
+    .pageControls{
+      display:flex;justify-content:space-between;align-items:center;gap:10px;
+      margin-top:22px;padding-top:16px;border-top:1px solid var(--line);
+    }
+    .pageCounter{font-weight:900;color:var(--muted);font-size:.92rem}
+    body.focus-mode header,
+    body.focus-mode nav,
+    body.focus-mode .printHint{display:none}
+    body.focus-mode main{max-width:980px;padding-top:16px}
+    body.focus-mode section{display:none;margin:0}
+    body.focus-mode section.focus-active{display:block}
+    body.focus-mode section.focus-active>.card{display:none}
+    body.focus-mode section.focus-active>.card.focus-card-active{display:block;box-shadow:none;margin:0;border-color:#cbd5e1}
+    body.focus-mode section.focus-active .note:not(.keep-focus),
+    body.focus-mode section.focus-active details,
+    body.focus-mode section.focus-active .task{display:none}
+    body.focus-mode section.focus-active .simbox{grid-template-columns:1fr;gap:14px}
+    body.focus-mode section.focus-active .simbox .controls{display:block}
+    body.focus-mode section.focus-active .simbox .controls h3,
+    body.focus-mode section.focus-active .simbox .controls p,
+    body.focus-mode section.focus-active .simbox .controls .mini{display:block}
+    body.focus-mode .focusBadge{display:flex}
+    @media(max-width:650px){
+      .sectionTop{display:block}
+      .focusTools{margin-top:10px}
+    }
+
+    .formula{
+      font-family:"Cambria Math","Times New Roman",serif;
+      background:#0f172a;color:white;padding:14px 16px;border-radius:16px;
+      margin:12px 0;font-size:1.08rem;overflow-x:auto;
+    }
+    .formula var{font-style:italic}
+    .mini{
+      font-size:.92rem;color:var(--muted)
+    }
+    .barwrap{background:#e2e8f0;border-radius:999px;height:16px;overflow:hidden;margin:8px 0 14px}
+    .bar{height:100%;width:40%;background:linear-gradient(90deg,var(--cyan),var(--orange));border-radius:999px;transition:.25s}
+    .chartLegend{display:flex;flex-wrap:wrap;gap:8px;margin:10px 0}
+    .legendItem{
+      display:inline-flex;align-items:center;gap:7px;
+      background:white;border:1px solid var(--line);border-radius:999px;
+      padding:6px 10px;font-size:.88rem;font-weight:700;
+    }
+    .legendDot{width:11px;height:11px;border-radius:50%;background:var(--blue)}
+    .legendDot.orange{background:var(--orange)}
+    .legendDot.green{background:var(--green)}
+    .legendDot.violet{background:var(--violet)}
+
+    .phaseDiagram{position:relative;height:260px;border:1px solid var(--line);border-radius:20px;background:linear-gradient(180deg,#f8fbff,#eff6ff);overflow:hidden}
+    .phaseIcon{position:absolute;inset:auto;display:flex;align-items:center;justify-content:center;font-weight:900;color:white;transition:.45s;text-align:center}
+    .solid{left:8%;bottom:28%;width:110px;height:90px;background:#60a5fa;border-radius:18px}
+    .liquid{left:42%;bottom:22%;width:118px;height:105px;background:#0284c7;border-radius:45% 45% 18px 18px}
+    .gas{right:8%;bottom:25%;width:120px;height:100px;background:#f97316;border-radius:50%;opacity:.82}
+    .arrow{position:absolute;top:42%;font-size:2.6rem;color:#334155;font-weight:900}
+    .arrow.a1{left:29%}.arrow.a2{right:29%}
+
+    details{
+      border:1px solid var(--line);background:#fbfdff;border-radius:16px;padding:12px 14px;margin:10px 0;
+    }
+    summary{font-weight:900;cursor:pointer}
+    .task{
+      border:1px solid #dbeafe;background:#f8fbff;border-radius:18px;padding:15px;margin:12px 0;
+    }
+    .task strong{color:#1d4ed8}
+    .taskHeader{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:6px}
+    .level{
+      display:inline-flex;align-items:center;gap:4px;
+      border-radius:999px;padding:3px 8px;font-size:.78rem;font-weight:900;
+      background:#e0f2fe;color:#075985;border:1px solid #bae6fd;
+    }
+    .level.mid{background:#ede9fe;color:#5b21b6;border-color:#ddd6fe}
+    .level.high{background:#fff7ed;color:#9a3412;border-color:#fed7aa}
+    .checklist{margin:10px 0 0;padding-left:20px}
+    .checklist li{margin:5px 0}
+    .quizOption{
+      display:block;margin:8px 0;padding:10px 12px;border-radius:13px;border:1px solid var(--line);background:white;cursor:pointer;
+    }
+    .quizOption:hover{background:#eff6ff}
+    .feedback{font-weight:800;margin-top:8px;min-height:22px}
+    .ok{color:var(--green)}.bad{color:var(--red)}
+    textarea,input[type=text]{width:100%;border:1px solid var(--line);border-radius:14px;padding:10px;font-family:inherit;font-size:1rem;background:white}
+
+    .flow{
+      display:grid;grid-template-columns:repeat(5,1fr);gap:8px;align-items:center;text-align:center;
+    }
+    .flow div{background:#f8fafc;border:1px solid var(--line);border-radius:16px;padding:12px;font-weight:800}
+    @media(max-width:850px){.flow{grid-template-columns:1fr}.flow .arr{display:none}}
+
+    .climateCanvas{height:420px}
+    .printHint{font-size:.86rem;color:var(--muted);text-align:center;margin-top:30px}
+
+    @media print{
+      nav,button,.controls,.pageControls{display:none!important}
+      body.page-mode main > section{display:block}
+      body{background:white}
+      .card{box-shadow:none;break-inside:avoid}
+      canvas{height:240px}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="hero">
+    <span class="eyebrow">Interaktive Physik-Lernumgebung · Teilchenmodell · Wärme · Druck · Klima</span>
+    <h1>Wärmelehre mit Teilchenmodell: Temperatur, innere Energie, Aggregatzustände, Druck und Klimaphysik</h1>
+    <p>Mit dynamischen Visualisierungen, Erklärungen, Modell-Realität-Vergleichen, Experimentieraufträgen, Quizfragen und Transferaufgaben.</p>
+  </div>
+</header>
+
+<nav>
+  <div class="navwrap">
+    <a href="#ziel">Überblick</a>
+    <a href="#temperatur">Temperatur</a>
+    <a href="#energie">Innere Energie</a>
+    <a href="#aggregation">Aggregatzustände</a>
+    <a href="#druck">Gasdruck</a>
+    <a href="#waerme">Wärme & Arbeit</a>
+    <a href="#transport">Energietransport</a>
+    <a href="#klima">Treibhauseffekt</a>
+    <a href="#vertiefung">Vertiefung</a>
+    <a href="#aufgaben">Arbeitsaufträge</a>
+  </div>
+</nav>
+
+<main>
+<section id="ziel">
+  <div class="card">
+    <h2>1. Worum geht es?</h2>
+    <p class="lead">In diesem Lernmodul wird die Wärmelehre konsequent mit dem Teilchenmodell verknüpft. Dabei wird immer unterschieden zwischen der <strong>Modellebene</strong> und der <strong>Realitätsebene</strong>.</p>
+    <div class="grid three">
+      <div class="card">
+        <span class="tag">Teilchenmodell</span>
+        <h3>Temperatur und Bewegung</h3>
+        <p>Temperatur beschreibt im Modell, wie stark sich Teilchen im Mittel bewegen. Je größer die mittlere kinetische Energie, desto höher die Temperatur.</p>
+      </div>
+      <div class="card">
+        <span class="tag orange">Energie</span>
+        <h3>Innere Energie</h3>
+        <p>Die innere Energie umfasst Bewegungsenergie der Teilchen und potentielle Energie durch Wechselwirkungen zwischen Teilchen.</p>
+      </div>
+      <div class="card">
+        <span class="tag green">Druck & Klima</span>
+        <h3>Anwendungen</h3>
+        <p>Gasdruck, Teilchenströme, Wärmetransport und Treibhauseffekt lassen sich mithilfe des Teilchenmodells physikalisch begründen.</p>
+      </div>
+    </div>
+    <div class="note">
+      <strong>Merksatz:</strong> Das Teilchenmodell ist ein Denkmodell. Es hilft, beobachtbare Vorgänge zu erklären. Die gezeichneten Teilchen sind aber nicht die Wirklichkeit selbst.
+    </div>
+    <div class="grid two">
+      <div class="card">
+        <span class="tag gray">Lernziele</span>
+        <h3>Das solltest du am Ende können</h3>
+        <ul class="checklist">
+          <li>Temperatur, innere Energie und Wärme fachsprachlich unterscheiden.</li>
+          <li>Kurven in Temperatur-Zeit-Diagrammen beschreiben und deuten.</li>
+          <li>Aggregatzustandsänderungen mit kinetischer und potentieller Energie erklären.</li>
+          <li>Gasdruck mit Teilchenstößen begründen und halbquantitativ vorhersagen.</li>
+          <li>Wärmetransport und Treibhauseffekt modellhaft erklären und Grenzen des Modells nennen.</li>
+        </ul>
+      </div>
+      <div class="card">
+        <span class="tag violet">Operatoren</span>
+        <h3>So arbeitest du gymnasial</h3>
+        <ul class="checklist">
+          <li><strong>Beschreiben:</strong> Beobachtungen, Kurven oder Abläufe geordnet wiedergeben.</li>
+          <li><strong>Erklären:</strong> Ursache und Wirkung mit Fachbegriffen verknüpfen.</li>
+          <li><strong>Begründen:</strong> eine Aussage mit einem physikalischen Zusammenhang stützen.</li>
+          <li><strong>Bewerten:</strong> Modellgrenzen, Aussagekraft und Folgen abwägen.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="temperatur">
+  <div class="card">
+    <h2>2. Temperatur und mittlere kinetische Energie</h2>
+    <p>In einem Stoff bewegen sich die Teilchen ständig. Die einzelnen Teilchen sind nicht alle gleich schnell. Für die Temperatur ist deshalb die <strong>mittlere kinetische Energie</strong> entscheidend.</p>
+    <div class="formula">höhere mittlere kinetische Energie der Teilchen → höhere Temperatur</div>
+    <div class="note warning">
+      <strong>Wichtig:</strong> Temperatur ist nicht dasselbe wie innere Energie. Ein heißer Tropfen Wasser kann eine hohe Temperatur haben, aber ein großer Eimer lauwarmes Wasser kann insgesamt mehr innere Energie besitzen.
+    </div>
+
+    <div class="simbox">
+      <canvas id="particleCanvas"></canvas>
+      <div class="controls">
+        <h3>Simulation: Teilchenbewegung</h3>
+        <label>Temperatur in °C: <span id="tempCVal" class="value">20</span> °C</label>
+        <input id="tempSlider" type="range" min="-273.15" max="220" step="0.05" value="20" />
+        <p>Absolute Temperatur: <strong><span id="tempKVal">293</span> K</strong></p>
+        <div class="barwrap"><div id="kineticBar" class="bar"></div></div>
+        <div class="quickButtons">
+          <button class="secondary" onclick="setAbsoluteZero()">Absoluter Nullpunkt</button>
+          <button class="secondary" onclick="setRoomTemperature()">Raumtemperatur</button>
+        </div>
+        <p id="absoluteZeroNote" class="mini"><strong>Absoluter Nullpunkt:</strong> 0 K = −273,15 °C. Im einfachen Modell ist die mittlere Bewegungsenergie dann minimal.</p>
+        <p class="mini">Je höher die Temperatur, desto schneller bewegen sich die Modellteilchen. Bei 0 K wäre die mittlere Bewegungsenergie im klassischen Modell minimal.</p>
+        <button onclick="resetParticles()">Teilchen neu mischen</button>
+      </div>
+    </div>
+
+    <h3>Absolute Temperaturskala</h3>
+    <p>Die Kelvin-Skala beginnt beim absoluten Nullpunkt. Dort wäre die mittlere kinetische Energie der Teilchen im einfachen klassischen Modell am kleinsten.</p>
+    <div class="formula keep-focus"><var>T</var> (K) = <var>ϑ</var> (°C) + 273,15</div>
+    <details>
+      <summary>Warum ist die Kelvin-Skala für die Physik besonders sinnvoll?</summary>
+      <p>Weil sie bei einem physikalisch bedeutsamen Nullpunkt beginnt: 0 K entspricht dem absoluten Nullpunkt. Dadurch ist die Temperatur direkt mit der mittleren kinetischen Energie der Teilchen verknüpft.</p>
+    </details>
+
+    <h3>Temperaturdiagramm: Erwärmen von Eis, Wasser und Wasserdampf</h3>
+    <p>Das Diagramm zeigt ein idealisiertes Temperatur-Zeit-Diagramm bei gleichmäßiger Energiezufuhr. Untersuche besonders, wann die Kurve steigt und wann sie waagerecht verläuft.</p>
+    <div class="simbox">
+      <canvas id="tempDiagramCanvas"></canvas>
+      <div class="controls">
+        <h3>Diagramm untersuchen</h3>
+        <label>Zeitpunkt markieren: <span id="diagramTimeVal" class="value">0</span> min</label>
+        <input id="diagramProgress" type="range" min="0" max="100" value="0" />
+        <p>Temperatur: <strong><span id="diagramTempVal">−20</span> °C</strong></p>
+        <p>Markierter Abschnitt: <strong><span id="diagramPhaseVal">Abschnitt A</span></strong></p>
+        <div class="chartLegend">
+          <span class="legendItem"><span class="legendDot"></span>steigender Abschnitt</span>
+          <span class="legendItem"><span class="legendDot orange"></span>waagerechter Abschnitt</span>
+          <span class="legendItem"><span class="legendDot violet"></span>markierter Punkt</span>
+        </div>
+        <p class="mini">Die Kurve ist ein Modell: In echten Messungen können Messfehler, Wärmeverluste und unterschiedliche Stoffmengen die Kurve verändern.</p>
+      </div>
+    </div>
+
+    <div class="task">
+      <strong>Interpretationsaufgabe A:</strong> Beschreibe die Kurve in eigenen Worten. In welchen Abschnitten steigt die Temperatur, in welchen bleibt sie konstant?
+      <textarea placeholder="Kurvenbeschreibung ..."></textarea>
+    </div>
+    <div class="task">
+      <strong>Interpretationsaufgabe B:</strong> Erkläre mit dem Teilchenmodell, warum die Temperatur beim Schmelzen und Sieden trotz Energiezufuhr konstant bleibt.
+      <button class="secondary" onclick="toggleSolution('solD1')">Musterlösung anzeigen</button>
+      <div id="solD1" style="display:none" class="note success">Während des Schmelzens und Siedens wird die zugeführte Energie vor allem dafür genutzt, die Anordnung und Abstände der Teilchen zu verändern. Die mittlere kinetische Energie steigt dabei kaum, deshalb bleibt die Temperatur zunächst konstant.</div>
+    </div>
+    <div class="task">
+      <strong>Interpretationsaufgabe C:</strong> Ordne dem markierten Punkt im Diagramm die passende Beschreibung zu: Erwärmung eines Aggregatzustands oder Änderung des Aggregatzustands?
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>Arbeitsauftrag T1</strong><span class="level mid">Transfer</span></div>
+      Ein Thermometer zeigt −40 °C an. Rechne in Kelvin um und erkläre, warum die Kelvin-Temperatur nicht negativ ist.
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>Arbeitsauftrag T2</strong><span class="level high">Begründen</span></div>
+      Zwei Körper haben beide 60 °C: ein kleiner Metallwürfel und ein großer Topf Wasser. Beurteile, ob beide dieselbe innere Energie besitzen müssen. Verwende mindestens drei Fachbegriffe.
+      <textarea placeholder="Begründung mit Temperatur, Masse/Stoffmenge, Teilchenzahl und innerer Energie ..."></textarea>
+    </div>
+
+    <div class="task">
+      <strong>Aufgabe 1:</strong> Erkläre mit dem Teilchenmodell, warum ein Körper bei 80 °C eine höhere Temperatur besitzt als bei 20 °C.
+      <textarea placeholder="Antwort hier eintragen ..."></textarea>
+    </div>
+    <div class="task">
+      <strong>Aufgabe 2:</strong> Rechne um: 25 °C, 0 °C, 100 °C und −173 °C in Kelvin.
+      <button class="secondary" onclick="toggleSolution('solT1')">Lösung anzeigen</button>
+      <div id="solT1" style="display:none" class="note success">25 °C ≈ 298 K; 0 °C ≈ 273 K; 100 °C ≈ 373 K; −173 °C ≈ 100 K.</div>
+    </div>
+  </div>
+</section>
+
+<section id="energie">
+  <div class="card">
+    <h2>3. Innere Energie: kinetische und potentielle Energie der Teilchen</h2>
+    <p>Bei mechanischer Energie unterscheidet man z. B. Bewegungsenergie und Lageenergie. Diese Vorstellung kann man auf das Teilchenmodell übertragen.</p>
+    <div class="grid two">
+      <div class="card">
+        <span class="tag">kinetischer Anteil</span>
+        <h3>Bewegungsenergie der Teilchen</h3>
+        <p>Je schneller sich Teilchen bewegen, desto größer ist ihr Anteil an kinetischer Energie.</p>
+      </div>
+      <div class="card">
+        <span class="tag orange">potentieller Anteil</span>
+        <h3>Energie durch Teilchenabstände</h3>
+        <p>Zwischen Teilchen wirken Anziehungs- und Abstoßungskräfte. Werden Teilchen voneinander getrennt, ändert sich die potentielle Energie.</p>
+      </div>
+    </div>
+    <div class="formula">innere Energie = Summe aus kinetischer Energie und potentieller Energie aller Teilchen</div>
+
+    <div class="simbox">
+      <canvas id="energyCanvas"></canvas>
+      <div class="controls">
+        <h3>Simulation: Energieanteile</h3>
+        <label>Bewegungsenergie: <span id="ekinVal" class="value">50</span>%</label>
+        <input id="ekinSlider" type="range" min="0" max="100" value="50" />
+        <label>Teilchenabstand / potentielle Energie: <span id="epotVal" class="value">35</span>%</label>
+        <input id="epotSlider" type="range" min="0" max="100" value="35" />
+        <p class="mini">Bei 0 % Abstand berühren sich die Modellteilchen direkt. Größere Abstände stehen hier vereinfacht für eine Zunahme der potentiellen Energie.</p>
+      </div>
+    </div>
+
+    <div class="task">
+      <strong>Aufgabe 3:</strong> Ein Becherglas mit Wasser wird erwärmt. Beschreibe, welcher Anteil der inneren Energie zunimmt.
+    </div>
+    <div class="task">
+      <strong>Aufgabe 4:</strong> Beim Verdampfen werden Wasserteilchen voneinander getrennt. Erkläre, warum dabei Energie aufgenommen werden muss, obwohl die Temperatur während des Siedens konstant bleiben kann.
+      <button class="secondary" onclick="toggleSolution('solE1')">Musterlösung anzeigen</button>
+      <div id="solE1" style="display:none" class="note success">Die zugeführte Energie erhöht beim Sieden nicht hauptsächlich die mittlere kinetische Energie, sondern wird für das Überwinden von Anziehungskräften zwischen den Teilchen benötigt. Dadurch steigt die potentielle Energie der Teilchen.</div>
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>Arbeitsauftrag E1</strong><span class="level mid">Analysieren</span></div>
+      Stelle eine Tabelle mit zwei Spalten auf: „Änderung der kinetischen Energie“ und „Änderung der potentiellen Energie“. Trage ein: Erwärmen von Wasser, Schmelzen von Eis, Verdampfen von Wasser, Abkühlen von Wasserdampf.
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>Arbeitsauftrag E2</strong><span class="level high">Argumentieren</span></div>
+      Eine Schülerin sagt: „Wenn Energie zugeführt wird, muss die Temperatur immer steigen.“ Widerlege diese Aussage mit einem Gegenbeispiel und erkläre es auf Teilchenebene.
+      <textarea placeholder="Gegenbeispiel, Teilchenebene, Energieanteile ..."></textarea>
+    </div>
+  </div>
+</section>
+
+<section id="aggregation">
+  <div class="card">
+    <h2>4. Aggregatzustände und Energieänderung</h2>
+    <p>Beim Ändern des Aggregatzustands verändert sich im Teilchenmodell vor allem die Anordnung und der Abstand der Teilchen. Besonders bei Wasser kann man das gut beobachten: Eis schmilzt, Wasser verdampft, Wasserdampf kondensiert.</p>
+    <div class="phaseDiagram">
+      <div class="phaseIcon solid">fest<br>Eis</div>
+      <div class="arrow a1">→</div>
+      <div class="phaseIcon liquid">flüssig<br>Wasser</div>
+      <div class="arrow a2">→</div>
+      <div class="phaseIcon gas">gasförmig<br>Dampf</div>
+    </div>
+    <div class="simbox">
+      <canvas id="phaseParticleCanvas"></canvas>
+      <div class="controls">
+        <h3>Teilchenmodell der Aggregatzustände</h3>
+        <label>Zugeführte Energie als Wärme: <span id="phaseEnergyVal" class="value">0</span>%</label>
+        <input id="phaseEnergy" type="range" min="0" max="100" value="0" />
+        <p>Modellzustand: <strong><span id="phaseStateVal">fest: geordnet, kleine Schwingungen</span></strong></p>
+        <div class="barwrap"><div id="phaseEnergyBar" class="bar"></div></div>
+        <p class="mini">Wichtig: Wärme ist die Energieübertragung. Nach der Übertragung betrachten wir die innere Energie des Stoffes: Beim Erwärmen steigt vor allem die mittlere kinetische Energie, bei Schmelzen und Verdampfen vor allem die potentielle Energie durch veränderte Abstände und Anordnung.</p>
+      </div>
+    </div>
+    <div class="grid two">
+      <div class="note success"><strong>Aufnahme von Energie:</strong> Schmelzen und Verdampfen. Die potentielle Energie der Teilchen nimmt zu.</div>
+      <div class="note warning"><strong>Abgabe von Energie:</strong> Erstarren und Kondensieren. Die potentielle Energie der Teilchen nimmt ab.</div>
+    </div>
+    <h3>Modell- und Realitätsebene bewusst trennen</h3>
+    <div class="grid two">
+      <div class="card">
+        <h3>Modellebene</h3>
+        <p>Man beschreibt Teilchen, Teilchenbewegung, Abstände, Kräfte und Energieanteile. Diese Ebene ist nicht direkt sichtbar.</p>
+      </div>
+      <div class="card">
+        <h3>Realitätsebene</h3>
+        <p>Man beobachtet z. B. Eiswürfel, flüssiges Wasser, Wasserdampf, Temperaturmessungen, Volumenänderungen und Kondensation an kalten Flächen.</p>
+      </div>
+    </div>
+    <div class="task"><strong>Aufgabe 5:</strong> Ordne zu: Was gehört zur Realitätsebene, was zur Modellebene? „Wasser kocht“, „Teilchen bewegen sich schneller“, „Dampf steigt auf“, „Teilchenabstände werden größer“.</div>
+    <div class="task"><strong>Aufgabe 6:</strong> Erkläre, warum beim Schmelzen von Eis Energie aufgenommen wird, obwohl die Temperatur während des Schmelzens zunächst konstant bleibt.</div>
+    <div class="task">
+      <div class="taskHeader"><strong>Arbeitsauftrag A1</strong><span class="level mid">Modellkritik</span></div>
+      Nenne zwei Vorteile und zwei Grenzen des Teilchenmodells bei der Erklärung von Aggregatzustandsänderungen.
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>Arbeitsauftrag A2</strong><span class="level high">Vergleichen</span></div>
+      Vergleiche Verdunsten und Sieden. Gehe auf Ort des Vorgangs, Temperaturbedingung, Teilchenbewegung und Energieaufnahme ein.
+      <textarea placeholder="Vergleich in geordneten Sätzen oder als Tabelle ..."></textarea>
+    </div>
+  </div>
+</section>
+
+<section id="druck">
+  <div class="card">
+    <h2>5. Gasdruck, Temperatur, Volumen und Teilchenstrom</h2>
+    <p>Gasdruck entsteht im Teilchenmodell durch Stöße der Gasteilchen gegen die Wände eines Gefäßes. Je häufiger und heftiger die Stöße sind, desto größer ist der Druck.</p>
+    <div class="formula">mehr Teilchenstöße pro Fläche und Zeit → höherer Druck</div>
+
+    <div class="simbox">
+      <canvas id="gasCanvas"></canvas>
+      <div class="controls">
+        <h3>Simulation: Gasdruck</h3>
+        <label>Temperatur: <span id="gasTempVal" class="value">50</span>%</label>
+        <input id="gasTemp" type="range" min="10" max="100" value="50" />
+        <label>Volumen: <span id="volumeVal" class="value">65</span>%</label>
+        <input id="volume" type="range" min="35" max="100" value="65" />
+        <p>Modell-Druck: <strong><span id="pressureVal">mittel</span></strong></p>
+        <div class="barwrap"><div id="pressureBar" class="bar"></div></div>
+        <p class="mini">Halbquantitativ: Temperatur höher → Druck höher. Volumen kleiner → Druck höher.</p>
+      </div>
+    </div>
+
+    <div class="grid two">
+      <div class="card">
+        <h3>Temperaturänderung bei gleichem Volumen</h3>
+        <p>Wird ein Gas in einem festen Behälter erwärmt, bewegen sich die Teilchen schneller. Sie stoßen häufiger und stärker gegen die Wand. Der Druck steigt.</p>
+      </div>
+      <div class="card">
+        <h3>Volumenänderung bei gleicher Temperatur</h3>
+        <p>Wird ein Gas zusammengedrückt, ist weniger Raum vorhanden. Die Teilchen stoßen häufiger gegen die Wand. Der Druck steigt.</p>
+      </div>
+    </div>
+
+    <h3>Druckunterschiede verursachen Teilchenströme</h3>
+    <p>Teilchen strömen vereinfacht betrachtet von Bereichen höheren Drucks zu Bereichen niedrigeren Drucks, bis sich der Druck ausgleicht.</p>
+    <div class="flow">
+      <div>Bereich A<br>hoher Druck</div><div class="arr">→</div><div>Teilchenstrom</div><div class="arr">→</div><div>Bereich B<br>niedriger Druck</div>
+    </div>
+    <div class="task"><strong>Aufgabe 7:</strong> Erkläre, warum Luft aus einem aufgepumpten Fahrradreifen entweicht, wenn das Ventil geöffnet wird.</div>
+    <div class="task"><strong>Aufgabe 8:</strong> Eine Spraydose wird stark erwärmt. Begründe mithilfe des Teilchenmodells, warum das gefährlich sein kann.</div>
+    <div class="task">
+      <div class="taskHeader"><strong>Arbeitsauftrag D1</strong><span class="level mid">Halbquantitativ</span></div>
+      Beschreibe jeweils mit „größer“, „kleiner“ oder „gleich“: Was passiert mit dem Druck, wenn bei gleicher Teilchenzahl die Temperatur steigt? Was passiert, wenn bei gleicher Temperatur das Volumen kleiner wird?
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>Arbeitsauftrag D2</strong><span class="level high">Anwenden</span></div>
+      Ein Gas befindet sich in einem verschlossenen Kolben. Zuerst wird es erwärmt, danach wird der Kolben zusammengedrückt. Entwickle eine begründete Vorhersage für die Änderung der Stoßhäufigkeit, Stoßstärke und des Drucks.
+      <textarea placeholder="Vorhersage mit zwei Schritten: Erwärmen und Zusammendrücken ..."></textarea>
+    </div>
+  </div>
+</section>
+
+<section id="waerme">
+  <div class="card">
+    <h2>6. Wärme, Arbeit und Energieerhaltung</h2>
+    <p><strong>Wärme</strong> ist Energie, die aufgrund eines Temperaturunterschieds übertragen wird. <strong>Arbeit</strong> ist Energieübertragung durch eine Kraft entlang eines Weges oder durch mechanische Vorgänge.</p>
+    <div class="grid two">
+      <div class="card">
+        <span class="tag red">nicht Alltagssprache</span>
+        <h3>„Ein Körper enthält Wärme“?</h3>
+        <p>Fachsprachlich besser: Ein Körper besitzt innere Energie. Wärme ist eine Prozessgröße: Sie beschreibt eine Energieübertragung.</p>
+      </div>
+      <div class="card">
+        <span class="tag green">fachsprachlich korrekt</span>
+        <h3>„Wärme wird übertragen“</h3>
+        <p>Von einem warmen Körper kann Energie als Wärme auf einen kälteren Körper übertragen werden.</p>
+      </div>
+    </div>
+
+    <h3>Experiment planen: Temperaturerhöhung untersuchen</h3>
+    <p>Eine Flüssigkeit oder ein fester Körper kann unterschiedlich stark erwärmt werden. Die Temperaturerhöhung hängt unter anderem von Masse, Stoffart, zugeführter Energie und Dauer der Erwärmung ab.</p>
+    <div class="task">
+      <strong>Experimentierauftrag:</strong> Formuliere eine Hypothese: Wovon hängt die Temperaturerhöhung von Wasser ab? Plane ein Experiment mit Kontrollvariablen, Messgrößen und Auswertung.
+      <textarea placeholder="Hypothese, Material, Durchführung, Messwerte, Auswertung ..."></textarea>
+    </div>
+    <details>
+      <summary>Hilfen zum Versuchsprotokoll</summary>
+      <ul>
+        <li>Fragestellung: Was soll untersucht werden?</li>
+        <li>Hypothese: Was erwartest du?</li>
+        <li>Material: Welche Geräte und Stoffe werden gebraucht?</li>
+        <li>Durchführung: Welche Größe wird verändert? Welche Größen bleiben gleich?</li>
+        <li>Beobachtung/Messwerte: Tabelle mit Zeit und Temperatur.</li>
+        <li>Auswertung: Deutung der Ergebnisse mit Energieübertragung.</li>
+      </ul>
+    </details>
+    <div class="task">
+      <div class="taskHeader"><strong>Arbeitsauftrag W1</strong><span class="level mid">Fachsprache</span></div>
+      Formuliere die Alltagssätze fachsprachlich korrekt um: „Die Tasse verliert Wärme“, „Das Wasser speichert Wärme“, „Kälte fließt in den Tee“.
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>Arbeitsauftrag W2</strong><span class="level high">Experiment auswerten</span></div>
+      In einem Versuch werden 100 g und 200 g Wasser jeweils gleich lang mit derselben Heizleistung erwärmt. Entwickle eine Hypothese für die Temperaturänderung und begründe sie mit Energie pro Masse.
+      <textarea placeholder="Hypothese und Begründung ..."></textarea>
+    </div>
+  </div>
+</section>
+
+<section id="transport">
+  <div class="card">
+    <h2>7. Thermischer Energietransport</h2>
+    <p>Thermische Energie kann auf verschiedene Arten übertragen werden: durch Wärmeleitung, Konvektion oder Wärmestrahlung.</p>
+    <div class="grid three">
+      <div class="card">
+        <span class="tag">Wärmeleitung</span>
+        <h3>Teilchen geben Energie weiter</h3>
+        <p>Besonders in Festkörpern wird Energie durch Stöße und Wechselwirkungen zwischen benachbarten Teilchen weitergegeben.</p>
+        <p><strong>Beispiel:</strong> Metalllöffel im heißen Tee wird warm.</p>
+      </div>
+      <div class="card">
+        <span class="tag orange">Konvektion</span>
+        <h3>Strömung transportiert Energie</h3>
+        <p>In Flüssigkeiten und Gasen können warme Bereiche aufsteigen und kalte Bereiche absinken. Dadurch entstehen Strömungen.</p>
+        <p><strong>Beispiel:</strong> Warme Luft steigt über einer Heizung auf.</p>
+      </div>
+      <div class="card">
+        <span class="tag red">Wärmestrahlung</span>
+        <h3>Energieübertragung durch Strahlung</h3>
+        <p>Wärmestrahlung benötigt keinen Stoff als Träger und kann sich auch im Vakuum ausbreiten.</p>
+        <p><strong>Beispiel:</strong> Sonnenstrahlung erwärmt die Erdoberfläche.</p>
+      </div>
+    </div>
+    <div class="task"><strong>Aufgabe 9:</strong> Ordne den Beispielen die passende Art des Energietransports zu: Heißluftballon, Topfgriff aus Metall, Sonnenstrahlen auf der Haut, Meeresbrise.</div>
+    <div class="task"><strong>Aufgabe 10:</strong> Erkläre, warum Dämmstoffe oft viele kleine Luftkammern enthalten.</div>
+    <div class="task">
+      <div class="taskHeader"><strong>Arbeitsauftrag TR1</strong><span class="level mid">Vergleichen</span></div>
+      Erstelle eine Tabelle zu Wärmeleitung, Konvektion und Wärmestrahlung mit den Spalten: Träger nötig?, typisches Medium, Teilchenmodell-Erklärung, Alltagsbeispiel.
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>Arbeitsauftrag TR2</strong><span class="level high">Bewerten</span></div>
+      Beurteile, warum eine Thermoskanne mehrere Schutzprinzipien kombiniert. Ordne die Bauteile den Arten des Energietransports zu.
+      <textarea placeholder="Bauteil, verhinderter Energietransport, Begründung ..."></textarea>
+    </div>
+  </div>
+</section>
+
+<section id="klima">
+  <div class="card">
+    <h2>8. Treibhauseffekt und Energieflüsse in der Erdatmosphäre</h2>
+    <p>Die Sonne sendet kurzwellige Strahlung zur Erde. Die Erdoberfläche nimmt einen Teil dieser Energie auf und gibt Energie als langwellige Wärmestrahlung ab. Treibhausgase beeinflussen, wie viel dieser Wärmestrahlung ins Weltall entweicht.</p>
+    <div class="simbox">
+      <canvas id="climateCanvas" class="climateCanvas"></canvas>
+      <div class="controls">
+        <h3>Simulation: Treibhausgase</h3>
+        <label>Anteil Treibhausgase: <span id="ghgVal" class="value">45</span>%</label>
+        <input id="ghg" type="range" min="0" max="100" value="45" />
+        <p>Modelltemperatur der Erdoberfläche: <strong><span id="surfaceTemp">mittel</span></strong></p>
+        <div class="barwrap"><div id="climateBar" class="bar"></div></div>
+        <p class="mini">Die Simulation zeigt nur das Grundprinzip: Mehr absorbierte und zurückgestrahlte Wärmestrahlung erhöht die Gleichgewichtstemperatur der Oberfläche.</p>
+      </div>
+    </div>
+    <div class="note">
+      <strong>Physikalische Grundidee:</strong> Im Strahlungsgleichgewicht gibt die Erde im Mittel so viel Energie ab, wie sie aufnimmt. Verändert sich die Abgabe ins Weltall, verschiebt sich die Gleichgewichtstemperatur.
+    </div>
+
+    <h3>Experiment zum Treibhauseffekt</h3>
+    <div class="task">
+      <strong>Experimentierauftrag:</strong> Zwei transparente Behälter werden mit einer Lampe bestrahlt. Einer enthält normale Luft, der andere eine veränderte Gaszusammensetzung oder eine andere Abdeckung. Miss die Temperatur in festen Zeitabständen und vergleiche die Kurven.
+      <textarea placeholder="Beobachtungen, Parametervariation und Schlussfolgerung ..."></textarea>
+    </div>
+    <div class="task"><strong>Aufgabe 11:</strong> Stelle die Energieflüsse in der Atmosphäre als Pfeildiagramm dar: Sonnenstrahlung, Absorption an der Oberfläche, Wärmestrahlung, Abstrahlung ins Weltall, Rückstrahlung durch Treibhausgase.</div>
+    <div class="task"><strong>Aufgabe 12:</strong> Erkläre, warum man aus einem einfachen Schulversuch nicht direkt das ganze Klimasystem der Erde ableiten darf, aber trotzdem ein physikalisches Grundprinzip erkennen kann.</div>
+    <div class="task"><strong>Aufgabe 13:</strong> Nenne persönliche und gesellschaftliche Maßnahmen zur Verringerung anthropogener Klimaeinflüsse und bewerte ihre Relevanz.</div>
+    <div class="task">
+      <div class="taskHeader"><strong>Arbeitsauftrag K1</strong><span class="level mid">Modellgrenzen</span></div>
+      Markiere in deiner Erklärung zum Treibhauseffekt zwei Aussagen, die sicher durch das Modell gezeigt werden, und zwei Aussagen, die das Modell nicht leisten kann.
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>Arbeitsauftrag K2</strong><span class="level high">Bewerten</span></div>
+      Diskutiere den Satz: „Mehr Treibhausgase bedeuten einfach, dass mehr Wärme in der Atmosphäre gespeichert wird.“ Was ist daran nützlich, was ist fachlich zu ungenau?
+      <textarea placeholder="Nützlicher Kern, fachliche Präzisierung, Modellgrenze ..."></textarea>
+    </div>
+  </div>
+</section>
+
+<section id="vertiefung">
+  <div class="card">
+    <h2>9. Vertiefungsaufgaben: rechnen, argumentieren, bewerten</h2>
+    <p class="lead">Diese Aufgaben sind bewusst anspruchsvoller. Bearbeite sie mit vollständigen Sätzen, passenden Fachbegriffen und klarer Trennung von Beobachtung, Modell und Schlussfolgerung.</p>
+    <div class="grid three">
+      <div class="card">
+        <span class="tag">Basis sichern</span>
+        <h3>Niveau I</h3>
+        <p>Begriffe korrekt verwenden, Diagramme beschreiben, einfache Zusammenhänge erklären.</p>
+      </div>
+      <div class="card">
+        <span class="tag violet">Transfer</span>
+        <h3>Niveau II</h3>
+        <p>Bekannte Modelle auf neue Situationen anwenden und halbquantitative Vorhersagen formulieren.</p>
+      </div>
+      <div class="card">
+        <span class="tag orange">Bewertung</span>
+        <h3>Niveau III</h3>
+        <p>Argumente prüfen, Modellgrenzen nennen und physikalisch begründet Stellung nehmen.</p>
+      </div>
+    </div>
+
+    <div class="task">
+      <div class="taskHeader"><strong>G1 Diagrammkompetenz</strong><span class="level">Niveau I</span></div>
+      Beschreibe das Temperaturdiagramm aus Abschnitt 2 ohne Deutung. Nenne nur Achsen, Kurvenverlauf, steigende Abschnitte und waagerechte Abschnitte.
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>G2 Deutung mit Teilchenmodell</strong><span class="level mid">Niveau II</span></div>
+      Deute anschließend jeden Abschnitt A bis E des Diagramms. Verwende die Begriffe kinetische Energie, potentielle Energie, Teilchenabstand und Aggregatzustand.
+      <textarea placeholder="A: ..., B: ..., C: ..., D: ..., E: ..."></textarea>
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>G3 Rechnen und Begründen</strong><span class="level mid">Niveau II</span></div>
+      Rechne um: −196 °C, −78 °C, 37 °C und 450 K. Entscheide anschließend, welche Werte für Wasser bei Normaldruck fest, flüssig oder gasförmig wären. Begründe kurz.
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>G4 Fehlvorstellung prüfen</strong><span class="level high">Niveau III</span></div>
+      Prüfe die Aussage: „Bei 0 °C bewegen sich die Teilchen nicht mehr.“ Korrigiere sie fachlich und erkläre, woher die Fehlvorstellung kommen kann.
+      <textarea placeholder="Prüfung, Korrektur, Erklärung der Fehlvorstellung ..."></textarea>
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>G5 Druck in Alltag und Technik</strong><span class="level mid">Niveau II</span></div>
+      Vergleiche Fahrradreifen, Spraydose und Heißluftballon. Erkläre jeweils, welche Rolle Temperatur, Volumen, Teilchenzahl und Druck spielen.
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>G6 Experimentkritik</strong><span class="level high">Niveau III</span></div>
+      Ein Experiment zum Treibhauseffekt zeigt in einem geschlossenen Glasgefäß eine Temperaturerhöhung. Bewerte, welche Aussage physikalisch gut begründet ist und welche Übertragung auf das Erdklima zu weit geht.
+      <textarea placeholder="Begründete Aussage, unzulässige Verallgemeinerung, Verbesserung des Experiments ..."></textarea>
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>G7 Klausurtraining</strong><span class="level high">Niveau III</span></div>
+      Schreibe eine zusammenhängende Erklärung: Warum kann beim Verdampfen Energie aufgenommen werden, ohne dass die Temperatur steigt, und warum steigt bei einem erwärmten Gas im geschlossenen Behälter trotzdem der Druck?
+    </div>
+    <details>
+      <summary>Erwartungshorizont für gute Antworten</summary>
+      <ul>
+        <li>Fachbegriffe werden korrekt verwendet und nicht nur aufgezählt.</li>
+        <li>Beobachtung und Modellebene werden getrennt.</li>
+        <li>Ursache und Wirkung sind klar verbunden, zum Beispiel „weil ... deshalb ...“.</li>
+        <li>Bei Modellaufgaben werden Grenzen des Modells genannt.</li>
+        <li>Bei Bewertungen wird nicht nur Meinung formuliert, sondern physikalisch begründet abgewogen.</li>
+      </ul>
+    </details>
+  </div>
+</section>
+
+<section id="aufgaben">
+  <div class="card">
+    <h2>10. Aufgaben zum Anwenden und Auswerten</h2>
+    <p class="lead">Hier tragen Schülerinnen und Schüler eigene Lösungen ein. Die Aufgaben üben: Hypothesen bilden, Experimente planen, fachsprachlich formulieren, Energieflüsse darstellen, Quellen analysieren und Maßnahmen bewerten.</p>
+
+    <div class="task">
+      <div class="taskHeader"><strong>1. Hypothese und Experimentplanung</strong><span class="level mid">Experimentieren</span></div>
+      Formuliere eine Hypothese: Wovon hängt die Temperaturerhöhung einer Flüssigkeit oder eines festen Körpers ab? Plane ein Experiment mit unabhängiger Variable, abhängiger Variable und Kontrollgrößen.
+      <textarea placeholder="Hypothese, Material, Durchführung, Messgrößen, Kontrollgrößen ..."></textarea>
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>2. Versuchsprotokoll</strong><span class="level mid">Dokumentieren</span></div>
+      Lege ein strukturiertes Versuchsprotokoll an. Nutze die Abschnitte Fragestellung, Hypothese, Material, Durchführung, Beobachtung/Messwerte, Auswertung und Fehlerbetrachtung.
+      <textarea placeholder="Versuchsprotokoll ..."></textarea>
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>3. Wärme und Arbeit</strong><span class="level high">Fachsprache</span></div>
+      Grenze die Prozessgröße Wärme von Arbeit ab. Formuliere je zwei fachsprachlich korrekte Beispiele und korrigiere zwei alltagssprachliche Aussagen.
+      <textarea placeholder="Wärme ..., Arbeit ..., fachsprachliche Korrekturen ..."></textarea>
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>4. Thermischer Energietransport</strong><span class="level mid">Erklären</span></div>
+      Erkläre Wärmeleitung, Konvektion und Wärmestrahlung an je einem Beispiel. Nutze dabei das Teilchenmodell, wo es sinnvoll ist.
+      <textarea placeholder="Wärmeleitung ..., Konvektion ..., Wärmestrahlung ..."></textarea>
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>5. Treibhauseffekt-Experiment</strong><span class="level mid">Auswerten</span></div>
+      Dokumentiere ein Experiment zum Treibhauseffekt bei Variation eines Parameters. Beschreibe Beobachtung, Messwerte und Schlussfolgerung.
+      <textarea placeholder="Parameter, Beobachtung, Messwerte, Schlussfolgerung ..."></textarea>
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>6. Energieflüsse in der Atmosphäre</strong><span class="level high">Darstellen</span></div>
+      Stelle die Energieflüsse graphisch dar: Sonnenstrahlung, Absorption an der Erdoberfläche, langwellige Wärmestrahlung, Abstrahlung ins Weltall, Rückstrahlung durch Treibhausgase. Beschreibe anschließend den Einfluss auf die Temperatur im Strahlungsgleichgewicht.
+      <textarea placeholder="Beschreibung deines Pfeildiagramms und Auswertung ..."></textarea>
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>7. Fachquelle analysieren</strong><span class="level high">Analysieren</span></div>
+      Entnimm einer fachwissenschaftlichen Quelle Informationen zu Ursprung und Konsequenzen anthropogener Klimaeinflüsse. Analysiere, welche Argumente physikalisch schlüssig sind.
+      <textarea placeholder="Quelle, Kernaussagen, physikalische Argumentationsweise, Bewertung ..."></textarea>
+    </div>
+    <div class="task">
+      <div class="taskHeader"><strong>8. Klimaschutzmaßnahmen bewerten</strong><span class="level high">Diskutieren</span></div>
+      Stelle persönliche und gesellschaftliche Maßnahmen zur Einhaltung aktueller Klimaschutzziele zusammen. Diskutiere ihre Relevanz mit physikalischer Begründung.
+      <textarea placeholder="Persönliche Maßnahmen, gesellschaftliche Maßnahmen, Relevanz, Begründung ..."></textarea>
+    </div>
+  </div>
+</section>
+
+<p class="printHint">Hinweis: Diese Datei kann auch ausgedruckt werden. Interaktive Simulationen funktionieren nur digital.</p>
+</main>
+
+<script>
+function toggleSolution(id){
+  const el=document.getElementById(id);
+  el.style.display=el.style.display==='none'?'block':'none';
+}
+
+// Konzentrationsmodus: blendet Randinformationen aus und stellt eine Karte in den Mittelpunkt.
+
+function installFocusMode(){
+  document.querySelectorAll('main > section > .card').forEach((card,index)=>{
+    const heading=Array.from(card.children).find(child=>child.tagName==='H2');
+    if(!heading)return;
+    const top=document.createElement('div');
+    top.className='sectionTop';
+    const tools=document.createElement('div');
+    tools.className='focusTools';
+    const button=document.createElement('button');
+    button.type='button';
+    button.className='ghost focusToggle';
+    button.textContent='Konzentrationsmodus';
+    button.title='Blendet Navigation, Zusatztexte und Aufgaben aus, bis der Modus beendet wird.';
+    button.addEventListener('click',()=>startFocusMode(card));
+    card.insertBefore(top,heading);
+    top.appendChild(heading);
+    top.appendChild(tools);
+    tools.appendChild(button);
+    card.dataset.focusIndex=String(index);
+  });
+}
+
+function startFocusMode(card){
+  if(document.body.classList.contains('focus-mode')&&card.classList.contains('focus-card-active')){
+    stopFocusMode();
+    return;
+  }
+  stopFocusMode(false);
+  const section=card.closest('section');
+  document.querySelectorAll('section').forEach(el=>el.classList.remove('focus-active'));
+  document.querySelectorAll('main > section > .card').forEach(el=>el.classList.remove('focus-card-active'));
+  section.classList.add('focus-active');
+  card.classList.add('focus-card-active');
+  document.body.classList.add('focus-mode');
+  updateFocusButtons();
+  card.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function stopFocusMode(scrollBack=true){
+  const active=document.querySelector('.focus-card-active');
+  document.body.classList.remove('focus-mode');
+  document.querySelectorAll('section').forEach(el=>el.classList.remove('focus-active'));
+  document.querySelectorAll('main > section > .card').forEach(el=>el.classList.remove('focus-card-active'));
+  updateFocusButtons();
+  if(scrollBack&&active)active.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+function updateFocusButtons(){
+  document.querySelectorAll('.focusToggle').forEach(button=>{
+    const card=button.closest('.card');
+    const active=document.body.classList.contains('focus-mode')&&card?.classList.contains('focus-card-active');
+    button.textContent=active?'Konzentrationsmodus beenden':'Konzentrationsmodus';
+  });
+}
+
+installFocusMode();
+
+function installLessonPages(){
+  const sections=[...document.querySelectorAll('main > section')];
+  if(!sections.length)return;
+  document.body.classList.add('page-mode');
+  sections.forEach((section,index)=>{
+    const controls=document.createElement('div');
+    controls.className='pageControls';
+    controls.innerHTML=`
+      <button type="button" class="secondary" ${index===0?'disabled':''}>Zurück</button>
+      <span class="pageCounter">Seite ${index+1} von ${sections.length}</span>
+      <button type="button" class="green">${index===sections.length-1?'Zum Anfang':'Weiter'}</button>
+    `;
+    section.querySelector('.card')?.appendChild(controls);
+    const buttons=controls.querySelectorAll('button');
+    buttons[0].addEventListener('click',()=>showLessonPage(index-1));
+    buttons[1].addEventListener('click',()=>showLessonPage(index===sections.length-1?0:index+1));
+  });
+  document.querySelectorAll('nav a[href^="#"]').forEach(link=>{
+    link.addEventListener('click',event=>{
+      const id=link.getAttribute('href').slice(1);
+      const targetIndex=sections.findIndex(section=>section.id===id);
+      if(targetIndex>=0){
+        event.preventDefault();
+        showLessonPage(targetIndex);
+      }
+    });
+  });
+  const startIndex=Math.max(0,sections.findIndex(section=>section.id===location.hash.slice(1)));
+  showLessonPage(startIndex);
+}
+
+function showLessonPage(index){
+  const sections=[...document.querySelectorAll('main > section')];
+  const clamped=(index+sections.length)%sections.length;
+  sections.forEach((section,i)=>section.classList.toggle('page-active',i===clamped));
+  history.replaceState(null,'','#'+sections[clamped].id);
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+installLessonPages();
+
+// Teilchen-Simulation Temperatur
+const pCanvas=document.getElementById('particleCanvas');
+const pCtx=pCanvas.getContext('2d');
+let particles=[];
+function resizeCanvas(c, force=false){
+  const w=Math.max(1,Math.round(c.clientWidth*devicePixelRatio));
+  const h=Math.max(1,Math.round(c.clientHeight*devicePixelRatio));
+  if(force||c.width!==w||c.height!==h){
+    c.width=w;
+    c.height=h;
+    return true;
+  }
+  return false;
+}
+function resetParticles(){
+  resizeCanvas(pCanvas,true);
+  particles=[];
+  for(let i=0;i<70;i++){
+    particles.push({x:Math.random()*pCanvas.width,y:Math.random()*pCanvas.height,vx:(Math.random()-.5)*4,vy:(Math.random()-.5)*4,r:5+Math.random()*3});
+  }
+}
+resetParticles();
+const tempSlider=document.getElementById('tempSlider');
+function formatGermanNumber(value, decimals=0){
+  return Number(value).toLocaleString('de-DE',{minimumFractionDigits:decimals,maximumFractionDigits:decimals});
+}
+function formatCelsius(value){
+  const decimals=Number.isInteger(value)?0:2;
+  return formatGermanNumber(value,decimals);
+}
+function setAbsoluteZero(){
+  tempSlider.value='-273.15';
+}
+function setRoomTemperature(){
+  tempSlider.value='20';
+}
+function drawParticles(){
+  const resized=resizeCanvas(pCanvas);
+  if(resized&&pCanvas.width>80&&pCanvas.height>80){
+    particles=[];
+    for(let i=0;i<70;i++){
+      particles.push({x:Math.random()*pCanvas.width,y:Math.random()*pCanvas.height,vx:(Math.random()-.5)*4,vy:(Math.random()-.5)*4,r:5+Math.random()*3});
+    }
+  }
+  const tempC=+tempSlider.value;
+  const tempK=Math.max(0,tempC+273.15);
+  const isAbsoluteZero=tempK<0.01;
+  const speed=isAbsoluteZero?0:Math.max(.04,tempK/293.15);
+  document.getElementById('tempCVal').textContent=formatCelsius(tempC);
+  document.getElementById('tempKVal').textContent=tempK<10?formatGermanNumber(tempK,2):formatGermanNumber(Math.round(tempK),0);
+  document.getElementById('kineticBar').style.width=Math.min(100,Math.max(0,(tempK/(220+273.15))*100))+'%';
+  pCtx.clearRect(0,0,pCanvas.width,pCanvas.height);
+  pCtx.fillStyle=isAbsoluteZero?'#e2e8f0':'#e0f2fe';
+  pCtx.fillRect(0,0,pCanvas.width,pCanvas.height);
+  particles.forEach(p=>{
+    p.x+=p.vx*speed*devicePixelRatio;
+    p.y+=p.vy*speed*devicePixelRatio;
+    if(p.x<0||p.x>pCanvas.width)p.vx*=-1;
+    if(p.y<0||p.y>pCanvas.height)p.vy*=-1;
+    pCtx.beginPath();
+    pCtx.arc(p.x,p.y,p.r*devicePixelRatio,0,Math.PI*2);
+    pCtx.fillStyle=isAbsoluteZero?'#64748b':tempC>80?'#f97316':tempC<0?'#2563eb':'#0891b2';
+    pCtx.fill();
+    pCtx.strokeStyle='rgba(15,23,42,.25)';pCtx.stroke();
+  });
+  if(isAbsoluteZero){
+    pCtx.fillStyle='rgba(15,23,42,.82)';
+    pCtx.font=18*devicePixelRatio+'px system-ui';
+    pCtx.textAlign='center';
+    pCtx.fillText('Absoluter Nullpunkt: 0 K',pCanvas.width/2,pCanvas.height/2-10*devicePixelRatio);
+    pCtx.font=14*devicePixelRatio+'px system-ui';
+    pCtx.fillText('Die Modellteilchen sind hier eingefroren.',pCanvas.width/2,pCanvas.height/2+18*devicePixelRatio);
+    pCtx.textAlign='start';
+  }
+  requestAnimationFrame(drawParticles);
+}
+drawParticles();
+
+// Temperatur-Zeit-Diagramm
+const tempDiagramCanvas=document.getElementById('tempDiagramCanvas');
+const tempDiagramCtx=tempDiagramCanvas.getContext('2d');
+const diagramProgress=document.getElementById('diagramProgress');
+const diagramSegments=[
+  {start:0,end:20,t1:-20,t2:0,label:'Abschnitt A',color:'#2563eb'},
+  {start:20,end:35,t1:0,t2:0,label:'Abschnitt B',color:'#f97316'},
+  {start:35,end:65,t1:0,t2:100,label:'Abschnitt C',color:'#2563eb'},
+  {start:65,end:82,t1:100,t2:100,label:'Abschnitt D',color:'#f97316'},
+  {start:82,end:100,t1:100,t2:120,label:'Abschnitt E',color:'#2563eb'}
+];
+function diagramTemperature(progress){
+  const segment=diagramSegments.find(s=>progress>=s.start&&progress<=s.end)||diagramSegments[diagramSegments.length-1];
+  const ratio=segment.end===segment.start?0:(progress-segment.start)/(segment.end-segment.start);
+  return {
+    temp:segment.t1+(segment.t2-segment.t1)*ratio,
+    label:segment.label,
+    segment
+  };
+}
+function drawTempDiagram(){
+  resizeCanvas(tempDiagramCanvas);
+  const ctx=tempDiagramCtx;
+  const w=tempDiagramCanvas.width,h=tempDiagramCanvas.height;
+  const d=devicePixelRatio;
+  const padL=58*d,padR=24*d,padT=25*d,padB=48*d;
+  const xFor=p=>padL+(p/100)*(w-padL-padR);
+  const yFor=t=>padT+((120-t)/140)*(h-padT-padB);
+  const progress=+diagramProgress.value;
+  const current=diagramTemperature(progress);
+
+  document.getElementById('diagramTimeVal').textContent=formatGermanNumber(progress/10,1);
+  document.getElementById('diagramTempVal').textContent=formatCelsius(current.temp);
+  document.getElementById('diagramPhaseVal').textContent=current.label;
+
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='#f8fbff';ctx.fillRect(0,0,w,h);
+  ctx.strokeStyle='#d7e3f5';ctx.lineWidth=1*d;
+  for(let t=-20;t<=120;t+=20){
+    ctx.beginPath();ctx.moveTo(padL,yFor(t));ctx.lineTo(w-padR,yFor(t));ctx.stroke();
+  }
+  for(let p=0;p<=100;p+=10){
+    ctx.beginPath();ctx.moveTo(xFor(p),padT);ctx.lineTo(xFor(p),h-padB);ctx.stroke();
+  }
+
+  ctx.strokeStyle='#0f172a';ctx.lineWidth=2*d;
+  ctx.beginPath();ctx.moveTo(padL,padT);ctx.lineTo(padL,h-padB);ctx.lineTo(w-padR,h-padB);ctx.stroke();
+  ctx.fillStyle='#0f172a';ctx.font=13*d+'px system-ui';
+  ctx.textAlign='center';
+  ctx.fillText('Zeit in min',padL+(w-padL-padR)/2,h-12*d);
+  ctx.save();
+  ctx.translate(18*d,padT+(h-padT-padB)/2);
+  ctx.rotate(-Math.PI/2);
+  ctx.fillText('Temperatur in °C',0,0);
+  ctx.restore();
+  ctx.textAlign='right';
+  [-20,0,20,40,60,80,100,120].forEach(t=>ctx.fillText(String(t),padL-8*d,yFor(t)+4*d));
+  ctx.textAlign='center';
+  [0,2,4,6,8,10].forEach(min=>ctx.fillText(String(min),xFor(min*10),h-padB+22*d));
+
+  diagramSegments.forEach(segment=>{
+    ctx.beginPath();
+    ctx.moveTo(xFor(segment.start),yFor(segment.t1));
+    ctx.lineTo(xFor(segment.end),yFor(segment.t2));
+    ctx.strokeStyle=segment.color;
+    ctx.lineWidth=5*d;
+    ctx.stroke();
+  });
+
+  const px=xFor(progress),py=yFor(current.temp);
+  ctx.setLineDash([5*d,5*d]);
+  ctx.strokeStyle='rgba(124,58,237,.55)';
+  ctx.lineWidth=2*d;
+  ctx.beginPath();ctx.moveTo(px,padT);ctx.lineTo(px,h-padB);ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.beginPath();ctx.arc(px,py,8*d,0,Math.PI*2);
+  ctx.fillStyle='#7c3aed';ctx.fill();
+  ctx.strokeStyle='white';ctx.lineWidth=3*d;ctx.stroke();
+}
+diagramProgress.addEventListener('input',drawTempDiagram);
+drawTempDiagram();
+
+// Innere Energie Simulation
+const eCanvas=document.getElementById('energyCanvas');
+const eCtx=eCanvas.getContext('2d');
+const ekin=document.getElementById('ekinSlider');
+const epot=document.getElementById('epotSlider');
+function drawEnergy(){
+  resizeCanvas(eCanvas);eCtx.clearRect(0,0,eCanvas.width,eCanvas.height);
+  const k=+ekin.value,p=+epot.value;
+  document.getElementById('ekinVal').textContent=k;
+  document.getElementById('epotVal').textContent=p;
+  const cx=eCanvas.width/2,cy=eCanvas.height/2;
+  const spacing=(24+p*2.1)*devicePixelRatio;
+  const amp=k===0?0:(2+k*.28)*devicePixelRatio;
+  eCtx.fillStyle='#f8fbff';eCtx.fillRect(0,0,eCanvas.width,eCanvas.height);
+  for(let i=-2;i<=2;i++)for(let j=-1;j<=1;j++){
+    const x=cx+i*spacing+Math.sin(Date.now()/250+i)*amp;
+    const y=cy+j*spacing+Math.cos(Date.now()/260+j)*amp;
+    eCtx.beginPath();eCtx.arc(x,y,12*devicePixelRatio,0,Math.PI*2);
+    eCtx.fillStyle='#7c3aed';eCtx.fill();
+    eCtx.strokeStyle='#312e81';eCtx.stroke();
+    if(i<2){eCtx.beginPath();eCtx.moveTo(x,y);eCtx.lineTo(cx+(i+1)*spacing,cy+j*spacing);eCtx.strokeStyle='rgba(124,58,237,.18)';eCtx.lineWidth=3*devicePixelRatio;eCtx.stroke();}
+  }
+  requestAnimationFrame(drawEnergy);
+}
+drawEnergy();
+
+// Aggregatzustände als Teilchenmodell
+const phaseParticleCanvas=document.getElementById('phaseParticleCanvas');
+const phaseParticleCtx=phaseParticleCanvas.getContext('2d');
+const phaseEnergy=document.getElementById('phaseEnergy');
+function phaseInfo(value){
+  if(value<25)return {state:'fest: geordnet, kleine Schwingungen',mode:'solid'};
+  if(value<42)return {state:'Schmelzbereich: zugeführte Energie verändert vor allem die Anordnung',mode:'melting'};
+  if(value<70)return {state:'flüssig: ungeordnet, Teilchen bleiben nahe beieinander',mode:'liquid'};
+  if(value<86)return {state:'Siedebereich: zugeführte Energie vergrößert vor allem die Abstände',mode:'boiling'};
+  return {state:'gasförmig: große Abstände, schnelle freie Bewegung',mode:'gas'};
+}
+function drawPhaseParticles(){
+  resizeCanvas(phaseParticleCanvas);
+  const ctx=phaseParticleCtx;
+  const w=phaseParticleCanvas.width,h=phaseParticleCanvas.height,d=devicePixelRatio;
+  const energy=+phaseEnergy.value;
+  const info=phaseInfo(energy);
+  document.getElementById('phaseEnergyVal').textContent=energy;
+  document.getElementById('phaseStateVal').textContent=info.state;
+  document.getElementById('phaseEnergyBar').style.width=energy+'%';
+  ctx.clearRect(0,0,w,h);
+  ctx.fillStyle='#f8fbff';ctx.fillRect(0,0,w,h);
+  ctx.fillStyle='#0f172a';ctx.font=14*d+'px system-ui';
+  ctx.fillText('Modellebene: Teilchen, Bewegung, Abstände, Energieanteile',18*d,28*d);
+
+  const particles=[];
+  if(info.mode==='solid'||info.mode==='melting'){
+    const step=30*d;
+    const startX=w/2-2.5*step,startY=h/2-1.5*step;
+    for(let row=0;row<4;row++)for(let col=0;col<6;col++){
+      const wiggle=(info.mode==='solid'?2:7)*d;
+      particles.push({
+        x:startX+col*step+Math.sin(Date.now()/240+row+col)*wiggle,
+        y:startY+row*step+Math.cos(Date.now()/260+row-col)*wiggle,
+        color:info.mode==='solid'?'#2563eb':'#f97316'
+      });
+    }
+  }else if(info.mode==='liquid'||info.mode==='boiling'){
+    const count=26;
+    const spread=info.mode==='liquid'?95*d:135*d;
+    for(let i=0;i<count;i++){
+      const angle=i*.93;
+      const radius=(18+((i*37)%100)/100*spread);
+      particles.push({
+        x:w/2+Math.cos(angle+Date.now()/900)*radius+Math.sin(Date.now()/220+i)*5*d,
+        y:h/2+Math.sin(angle+Date.now()/1000)*radius*.55+Math.cos(Date.now()/240+i)*5*d,
+        color:info.mode==='liquid'?'#0891b2':'#f97316'
+      });
+    }
+  }else{
+    for(let i=0;i<24;i++){
+      const x=(35+((i*67)%260))*d + (w-330*d)/2;
+      const y=(55+((i*43)%210))*d;
+      particles.push({
+        x:x+Math.sin(Date.now()/260+i)*18*d,
+        y:y+Math.cos(Date.now()/230+i)*18*d,
+        color:'#dc2626'
+      });
+    }
+  }
+
+  particles.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,11*d,0,Math.PI*2);
+    ctx.fillStyle=p.color;
+    ctx.fill();
+    ctx.strokeStyle='rgba(15,23,42,.3)';
+    ctx.lineWidth=1.5*d;
+    ctx.stroke();
+  });
+  requestAnimationFrame(drawPhaseParticles);
+}
+drawPhaseParticles();
+
+// Gasdruck Simulation
+const gCanvas=document.getElementById('gasCanvas');
+const gCtx=gCanvas.getContext('2d');
+let gas=[];
+function initGas(){resizeCanvas(gCanvas,true);gas=[];for(let i=0;i<55;i++)gas.push({x:Math.random()*gCanvas.width,y:Math.random()*gCanvas.height,vx:(Math.random()-.5)*4,vy:(Math.random()-.5)*4});}
+initGas();
+function drawGas(){
+  const resized=resizeCanvas(gCanvas);
+  if(resized&&gCanvas.width>80&&gCanvas.height>80){
+    gas=[];
+    for(let i=0;i<55;i++)gas.push({x:Math.random()*gCanvas.width,y:Math.random()*gCanvas.height,vx:(Math.random()-.5)*4,vy:(Math.random()-.5)*4});
+  }
+  const t=+document.getElementById('gasTemp').value;
+  const v=+document.getElementById('volume').value;
+  document.getElementById('gasTempVal').textContent=t;
+  document.getElementById('volumeVal').textContent=v;
+  const boxW=gCanvas.width*(v/100); const boxH=gCanvas.height*.78;
+  const left=(gCanvas.width-boxW)/2; const top=(gCanvas.height-boxH)/2;
+  const pressure=Math.round((t/(v))*100);
+  document.getElementById('pressureBar').style.width=Math.min(100,pressure)+'%';
+  document.getElementById('pressureVal').textContent=pressure<55?'niedrig':pressure<100?'mittel':'hoch';
+  gCtx.clearRect(0,0,gCanvas.width,gCanvas.height);
+  gCtx.fillStyle='#eff6ff';gCtx.fillRect(0,0,gCanvas.width,gCanvas.height);
+  gCtx.strokeStyle='#0f172a';gCtx.lineWidth=4*devicePixelRatio;gCtx.strokeRect(left,top,boxW,boxH);
+  gas.forEach(p=>{
+    p.x+=p.vx*(t/35)*devicePixelRatio;p.y+=p.vy*(t/35)*devicePixelRatio;
+    if(p.x<left||p.x>left+boxW)p.vx*=-1;
+    if(p.y<top||p.y>top+boxH)p.vy*=-1;
+    p.x=Math.min(left+boxW,Math.max(left,p.x));p.y=Math.min(top+boxH,Math.max(top,p.y));
+    gCtx.beginPath();gCtx.arc(p.x,p.y,5*devicePixelRatio,0,Math.PI*2);gCtx.fillStyle='#f97316';gCtx.fill();
+  });
+  requestAnimationFrame(drawGas);
+}
+drawGas();
+
+// Klima Simulation
+const cCanvas=document.getElementById('climateCanvas');
+const cCtx=cCanvas.getContext('2d');
+function arrow(ctx,x1,y1,x2,y2,color,label,width=4,alpha=1){
+  ctx.save();
+  ctx.globalAlpha=alpha;
+  ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=width*devicePixelRatio;
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  const ang=Math.atan2(y2-y1,x2-x1);
+  ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-14*devicePixelRatio*Math.cos(ang-.45),y2-14*devicePixelRatio*Math.sin(ang-.45));ctx.lineTo(x2-14*devicePixelRatio*Math.cos(ang+.45),y2-14*devicePixelRatio*Math.sin(ang+.45));ctx.closePath();ctx.fill();
+  ctx.font=14*devicePixelRatio+'px system-ui';ctx.fillText(label,(x1+x2)/2+8*devicePixelRatio,(y1+y2)/2);
+  ctx.restore();
+}
+function drawClimate(){
+  resizeCanvas(cCanvas); const w=cCanvas.width,h=cCanvas.height; const ghg=+document.getElementById('ghg').value;
+  document.getElementById('ghgVal').textContent=ghg;
+  document.getElementById('climateBar').style.width=(20+ghg*.75)+'%';
+  document.getElementById('surfaceTemp').textContent=ghg<30?'niedrig':ghg<70?'mittel':'hoch';
+  cCtx.clearRect(0,0,w,h);
+  const grad=cCtx.createLinearGradient(0,0,0,h);grad.addColorStop(0,'#bfdbfe');grad.addColorStop(.65,'#e0f2fe');grad.addColorStop(1,'#16a34a');cCtx.fillStyle=grad;cCtx.fillRect(0,0,w,h);
+  cCtx.fillStyle='#facc15';cCtx.beginPath();cCtx.arc(70*devicePixelRatio,70*devicePixelRatio,34*devicePixelRatio,0,Math.PI*2);cCtx.fill();
+  cCtx.fillStyle='rgba(124,58,237,.18)';cCtx.fillRect(0,h*.36,w,50*devicePixelRatio+ghg*devicePixelRatio*.7);
+  cCtx.fillStyle='#0f172a';cCtx.font=16*devicePixelRatio+'px system-ui';cCtx.fillText('Atmosphäre mit Treibhausgasen',30*devicePixelRatio,h*.36-10*devicePixelRatio);
+  cCtx.fillStyle='#166534';cCtx.fillRect(0,h-75*devicePixelRatio,w,75*devicePixelRatio);
+  cCtx.fillStyle='white';cCtx.fillText('Erdoberfläche',30*devicePixelRatio,h-35*devicePixelRatio);
+  const ghgFactor=ghg/100;
+  const escapeWidth=7-ghgFactor*4.5;
+  const backWidth=1.5+ghgFactor*6;
+  const escapeAlpha=.95-ghgFactor*.45;
+  const backAlpha=.3+ghgFactor*.7;
+  arrow(cCtx,100*devicePixelRatio,105*devicePixelRatio,w*.42,h-90*devicePixelRatio,'#facc15','kurzwellige Sonnenstrahlung',4,1);
+  arrow(cCtx,w*.55,h-90*devicePixelRatio,w*.55,h*.22,'#dc2626','langwellige Wärmestrahlung',4,1);
+  arrow(cCtx,w*.68,h*.35,w*.68,h-92*devicePixelRatio,'#7c3aed','Rückstrahlung',backWidth,backAlpha);
+  arrow(cCtx,w*.8,h*.35,w*.9,50*devicePixelRatio,'#64748b','Abstrahlung ins Weltall',escapeWidth,escapeAlpha);
+  cCtx.fillStyle='#0f172a';
+  cCtx.font=13*devicePixelRatio+'px system-ui';
+  cCtx.fillText('mehr Treibhausgase: stärkere Rückstrahlung, geringere direkte Abstrahlung',24*devicePixelRatio,h*.36+82*devicePixelRatio);
+  requestAnimationFrame(drawClimate);
+}
+drawClimate();
+
+window.addEventListener('resize',()=>{resetParticles();initGas();drawTempDiagram();});
+</script>
+</body>
+</html>
