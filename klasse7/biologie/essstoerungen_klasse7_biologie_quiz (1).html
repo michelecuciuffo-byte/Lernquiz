@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Essstörungen verstehen – 7. Klasse Biologie</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --ink:#263238;
+      --muted:#607d8b;
+      --soft:#f6f9fb;
+      --card:#ffffff;
+      --line:#d9e5ea;
+      --accent:#6a8caf;
+      --accent2:#b4d4ee;
+      --accent3:#f8d9c4;
+      --accent4:#d7ead7;
+      --warn:#fff3cd;
+      --warnLine:#f1d47b;
+      --ok:#d7ead7;
+      --bad:#fde2e2;
+      --shadow:0 12px 30px rgba(38,50,56,.12);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at top left, #eef7ff 0, transparent 34%),
+        radial-gradient(circle at bottom right, #fff0e5 0, transparent 33%),
+        #ffffff;
+      line-height:1.55;
+    }
+
+    header{
+      min-height:72vh;
+      display:grid;
+      place-items:center;
+      padding:44px 18px 28px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero{
+      max-width:1080px;
+      width:100%;
+      display:grid;
+      grid-template-columns:1.15fr .85fr;
+      gap:26px;
+      align-items:center;
+    }
+
+    .hero-card{
+      background:rgba(255,255,255,.82);
+      border:1px solid rgba(217,229,234,.95);
+      border-radius:32px;
+      padding:36px;
+      box-shadow:var(--shadow);
+      backdrop-filter: blur(8px);
+    }
+
+    .eyebrow{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 12px;
+      border-radius:999px;
+      background:#eef6fb;
+      color:#365a72;
+      font-weight:700;
+      font-size:.92rem;
+      margin-bottom:16px;
+    }
+
+    h1{
+      margin:0 0 14px;
+      font-size:clamp(2rem,4vw,4.3rem);
+      line-height:1.04;
+      letter-spacing:-.05em;
+    }
+
+    .hero p{
+      font-size:1.1rem;
+      color:#40535c;
+      max-width:70ch;
+      margin:0 0 20px;
+    }
+
+    .hero-buttons{
+      display:flex;
+      flex-wrap:wrap;
+      gap:12px;
+      margin-top:22px;
+    }
+
+    a.button, button.button{
+      border:0;
+      text-decoration:none;
+      background:var(--accent);
+      color:white;
+      padding:12px 18px;
+      border-radius:16px;
+      font-weight:800;
+      cursor:pointer;
+      box-shadow:0 8px 18px rgba(106,140,175,.26);
+      transition:.2s transform,.2s box-shadow,.2s background;
+      font-size:1rem;
+    }
+
+    a.button.secondary, button.button.secondary{
+      background:white;
+      color:#365a72;
+      border:1px solid var(--line);
+      box-shadow:0 6px 14px rgba(38,50,56,.06);
+    }
+
+    a.button:hover, button.button:hover{
+      transform:translateY(-2px);
+      box-shadow:0 12px 22px rgba(106,140,175,.3);
+    }
+
+    .visual{
+      min-height:430px;
+      border-radius:34px;
+      background:
+        linear-gradient(150deg, rgba(255,255,255,.84), rgba(255,255,255,.42)),
+        linear-gradient(145deg, #d7ead7, #b4d4ee 55%, #f8d9c4);
+      border:1px solid rgba(255,255,255,.7);
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+      padding:26px;
+    }
+
+    .bubble{
+      position:absolute;
+      background:rgba(255,255,255,.82);
+      border:1px solid rgba(255,255,255,.95);
+      border-radius:26px;
+      padding:16px;
+      box-shadow:0 10px 22px rgba(38,50,56,.12);
+      max-width:240px;
+      animation:float 5.5s ease-in-out infinite;
+    }
+
+    .bubble strong{display:block;margin-bottom:4px}
+    .bubble span{font-size:.92rem;color:#536b76}
+    .b1{top:34px;left:28px}
+    .b2{right:28px;top:134px;animation-delay:.8s}
+    .b3{left:54px;bottom:36px;animation-delay:1.5s}
+    .circle{
+      position:absolute;
+      width:165px;height:165px;border-radius:50%;
+      background:rgba(255,255,255,.32);
+      border:2px solid rgba(255,255,255,.62);
+      right:54px;bottom:38px;
+      display:grid;place-items:center;
+      font-size:4.4rem;
+    }
+
+    @keyframes float{
+      0%,100%{transform:translateY(0)}
+      50%{transform:translateY(-12px)}
+    }
+
+    nav{
+      position:sticky;
+      top:0;
+      z-index:20;
+      background:rgba(255,255,255,.88);
+      backdrop-filter:blur(10px);
+      border-top:1px solid rgba(217,229,234,.7);
+      border-bottom:1px solid rgba(217,229,234,.9);
+      box-shadow:0 8px 20px rgba(38,50,56,.04);
+    }
+
+    nav .inner{
+      max-width:1120px;
+      margin:auto;
+      padding:10px 18px;
+      display:flex;
+      gap:10px;
+      overflow:auto;
+    }
+
+    nav a{
+      white-space:nowrap;
+      color:#365a72;
+      background:#f6f9fb;
+      border:1px solid var(--line);
+      padding:8px 12px;
+      border-radius:999px;
+      font-weight:750;
+      text-decoration:none;
+      font-size:.94rem;
+    }
+
+    main{
+      max-width:1120px;
+      margin:auto;
+      padding:34px 18px 80px;
+    }
+
+    section{
+      margin:36px 0;
+    }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      gap:14px;
+      margin-bottom:16px;
+    }
+
+    .section-title .icon{
+      width:46px;height:46px;
+      display:grid;place-items:center;
+      border-radius:16px;
+      background:#eef6fb;
+      font-size:1.6rem;
+      flex:0 0 auto;
+    }
+
+    h2{
+      font-size:clamp(1.55rem,2.7vw,2.35rem);
+      margin:0;
+      letter-spacing:-.025em;
+    }
+
+    h3{
+      margin:0 0 10px;
+      font-size:1.25rem;
+    }
+
+    .grid{
+      display:grid;
+      gap:18px;
+    }
+
+    .grid.two{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:22px;
+      box-shadow:0 8px 22px rgba(38,50,56,.06);
+    }
+
+    .soft{
+      background:var(--soft);
+    }
+
+    .notice{
+      background:var(--warn);
+      border:1px solid var(--warnLine);
+      border-radius:var(--radius);
+      padding:18px 20px;
+    }
+
+    .notice strong{display:block;margin-bottom:4px}
+
+    .tag{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#eef6fb;
+      color:#365a72;
+      font-weight:800;
+      font-size:.85rem;
+      margin-bottom:10px;
+    }
+
+    .compare{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:14px;
+    }
+
+    .compare-row{
+      display:grid;
+      grid-template-columns:180px 1fr;
+      gap:12px;
+      align-items:start;
+      background:white;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+    }
+
+    .compare-row strong{
+      color:#365a72;
+    }
+
+    .myth{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:16px;
+      align-items:stretch;
+    }
+
+    .myth > div{
+      border-radius:20px;
+      padding:18px;
+      border:1px solid var(--line);
+      background:white;
+    }
+
+    .myth .wrong{background:#fff7f7}
+    .myth .right{background:#f4fbf4}
+
+    .accordion{
+      display:grid;
+      gap:12px;
+    }
+
+    details{
+      background:white;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px 16px;
+      box-shadow:0 6px 18px rgba(38,50,56,.04);
+    }
+
+    summary{
+      cursor:pointer;
+      font-weight:850;
+      color:#365a72;
+    }
+
+    details p{margin-bottom:0}
+
+    .quiz-panel{
+      background:white;
+      border:1px solid var(--line);
+      border-radius:28px;
+      box-shadow:var(--shadow);
+      overflow:hidden;
+    }
+
+    .quiz-top{
+      padding:22px;
+      background:linear-gradient(135deg,#eef6fb,#fff5ed);
+      border-bottom:1px solid var(--line);
+      display:grid;
+      gap:12px;
+    }
+
+    .progress-wrap{
+      width:100%;
+      height:13px;
+      background:rgba(255,255,255,.85);
+      border:1px solid rgba(217,229,234,.9);
+      border-radius:999px;
+      overflow:hidden;
+    }
+
+    .progress{
+      width:0%;
+      height:100%;
+      background:linear-gradient(90deg,#6a8caf,#98b9d6);
+      transition:.35s;
+    }
+
+    .quiz-body{
+      padding:22px;
+    }
+
+    .question{
+      display:none;
+      animation:fade .24s ease-out;
+    }
+
+    .question.active{display:block}
+
+    @keyframes fade{
+      from{opacity:0;transform:translateY(8px)}
+      to{opacity:1;transform:translateY(0)}
+    }
+
+    .q-title{
+      font-size:1.25rem;
+      font-weight:900;
+      margin-bottom:12px;
+    }
+
+    .options{
+      display:grid;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .option{
+      width:100%;
+      text-align:left;
+      background:#f7fafc;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px 16px;
+      font:inherit;
+      cursor:pointer;
+      transition:.2s;
+    }
+
+    .option:hover{
+      transform:translateY(-1px);
+      background:#eef6fb;
+    }
+
+    .option.selected{
+      border-color:#6a8caf;
+      background:#eaf3fb;
+      box-shadow:0 0 0 3px rgba(106,140,175,.16);
+    }
+
+    .feedback{
+      margin-top:16px;
+      padding:14px 16px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:#f7fafc;
+      display:none;
+    }
+
+    .feedback.good{background:var(--ok)}
+    .feedback.bad{background:var(--bad)}
+
+    .quiz-actions{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+      margin-top:18px;
+    }
+
+    .result{
+      display:none;
+      padding:22px;
+      border-top:1px solid var(--line);
+      background:#fbfdfe;
+    }
+
+    .result.show{display:block}
+
+    .pill-list{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:10px;
+    }
+
+    .pill{
+      padding:8px 11px;
+      background:#f6f9fb;
+      border:1px solid var(--line);
+      border-radius:999px;
+      font-weight:750;
+      color:#365a72;
+    }
+
+    .reflection-box{
+      display:grid;
+      gap:12px;
+    }
+
+    textarea{
+      width:100%;
+      min-height:110px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      resize:vertical;
+      font:inherit;
+      background:white;
+    }
+
+    .small{
+      font-size:.92rem;
+      color:var(--muted);
+    }
+
+    footer{
+      border-top:1px solid var(--line);
+      background:#f6f9fb;
+      padding:28px 18px;
+      color:#4b616b;
+    }
+
+    footer .inner{
+      max-width:1120px;
+      margin:auto;
+    }
+
+    @media(max-width:850px){
+      .hero{grid-template-columns:1fr}
+      .visual{min-height:360px}
+      .grid.two,.grid.three{grid-template-columns:1fr}
+      .compare-row{grid-template-columns:1fr}
+      .myth{grid-template-columns:1fr}
+      header{min-height:auto}
+    }
+
+    @media print{
+      body{background:white}
+      nav,.hero-buttons,.quiz-actions{display:none}
+      header{min-height:auto;padding:10mm 0}
+      main{padding:0}
+      .hero{display:block}
+      .visual{display:none}
+      .card,.quiz-panel,.notice,details{box-shadow:none;break-inside:avoid}
+      .question{display:block;border-top:1px solid #ddd;padding-top:12px;margin-top:12px}
+      .option{padding:8px}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <div class="hero-card">
+        <div class="eyebrow">Biologie · 7. Klasse · sensibel formuliert</div>
+        <h1>Essstörungen verstehen</h1>
+        <p>
+          In dieser Einheit geht es nicht darum, Körper zu bewerten. Es geht darum zu verstehen,
+          dass Essen, Gefühle, Selbstbild und Gesundheit zusammenhängen können – und dass Menschen
+          mit Essstörungen Unterstützung brauchen, nicht Druck oder Kommentare.
+        </p>
+        <div class="notice">
+          <strong>Wichtig für die Klasse:</strong>
+          Niemand muss über eigene Erfahrungen sprechen. Wir benutzen keine Bewertungen wie „richtig“ oder „falsch“ für Körper.
+          Wenn dich das Thema belastet, sprich mit einer vertrauten erwachsenen Person.
+        </div>
+        <div class="hero-buttons">
+          <a class="button" href="#erklaerung">Mit der Erklärung starten</a>
+          <a class="button secondary" href="#quiz">Zum Quiz springen</a>
+        </div>
+      </div>
+
+      <div class="visual" aria-hidden="true">
+        <div class="bubble b1">
+          <strong>Essverhalten</strong>
+          <span>kann sich verändern, wenn Gefühle oder Stress eine große Rolle spielen.</span>
+        </div>
+        <div class="bubble b2">
+          <strong>Körperbild</strong>
+          <span>meint, wie jemand den eigenen Körper wahrnimmt und bewertet.</span>
+        </div>
+        <div class="bubble b3">
+          <strong>Hilfe holen</strong>
+          <span>ist ein Zeichen von Stärke und kann sehr wichtig sein.</span>
+        </div>
+        <div class="circle">💬</div>
+      </div>
+    </div>
+  </header>
+
+  <nav>
+    <div class="inner">
+      <a href="#erklaerung">Grundidee</a>
+      <a href="#formen">Formen</a>
+      <a href="#warnzeichen">Warnzeichen</a>
+      <a href="#umgang">Umgang</a>
+      <a href="#quiz">Quiz</a>
+      <a href="#reflexion">Reflexion</a>
+    </div>
+  </nav>
+
+  <main>
+    <section id="erklaerung">
+      <div class="section-title">
+        <div class="icon">🧠</div>
+        <h2>1. Was ist eine Essstörung?</h2>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <h3>Kurz erklärt:</h3>
+          <p>
+            Eine Essstörung ist eine ernst zu nehmende psychische Erkrankung. Dabei ist nicht einfach
+            „jemand isst zu viel“ oder „jemand isst zu wenig“. Häufig stehen starke Sorgen, Druck,
+            Scham, Angst, Kontrollbedürfnis oder ein schwieriges Körperbild dahinter.
+          </p>
+          <p>
+            Essstörungen können Mädchen, Jungen und nicht-binäre Menschen betreffen. Von außen sieht man
+            nicht immer, ob jemand betroffen ist.
+          </p>
+        </div>
+
+        <div class="card soft">
+          <h3>Warum gehört das in Biologie?</h3>
+          <p>
+            Der Körper braucht Energie und Nährstoffe, damit Organe, Gehirn, Muskeln, Hormone und Wachstum
+            gut funktionieren. Wenn Essen dauerhaft mit Angst, Druck oder Kontrollverlust verbunden ist,
+            kann das körperliche und seelische Folgen haben.
+          </p>
+          <div class="pill-list">
+            <span class="pill">Körper</span>
+            <span class="pill">Psyche</span>
+            <span class="pill">Hormone</span>
+            <span class="pill">Wachstum</span>
+            <span class="pill">Gefühle</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="notice" style="margin-top:18px">
+        <strong>Merksatz:</strong>
+        Essstörungen sind keine Laune, keine Absicht und kein „Aufmerksamkeitsding“. Betroffene brauchen ernsthafte Unterstützung.
+      </div>
+    </section>
+
+    <section id="formen">
+      <div class="section-title">
+        <div class="icon">🔎</div>
+        <h2>2. Drei bekannte Formen</h2>
+      </div>
+
+      <div class="grid three">
+        <article class="card">
+          <span class="tag">Magersucht</span>
+          <h3>Anorexie</h3>
+          <p>
+            Bei Magersucht haben Betroffene oft große Angst zuzunehmen oder empfinden ihren Körper anders,
+            als andere ihn wahrnehmen. Essen, Gewicht, Regeln und Kontrolle können sehr viel Raum im Alltag einnehmen.
+          </p>
+          <p class="small">
+            Wichtig: Nicht jede betroffene Person spricht offen darüber. Auch scheinbar „diszipliniertes“ Verhalten kann krank machen.
+          </p>
+        </article>
+
+        <article class="card">
+          <span class="tag">Bulimie</span>
+          <h3>Ess-Brech-Sucht</h3>
+          <p>
+            Bei Bulimie kommt es häufig zu Phasen, in denen Betroffene beim Essen die Kontrolle verlieren.
+            Danach versuchen sie oft, das Gegessene auf ungesunde Weise „auszugleichen“.
+          </p>
+          <p class="small">
+            Wichtig: Von außen ist Bulimie oft schwer zu erkennen, weil das Körpergewicht nicht unbedingt auffällig sein muss.
+          </p>
+        </article>
+
+        <article class="card">
+          <span class="tag">Binge-Eating</span>
+          <h3>Essanfälle</h3>
+          <p>
+            Bei einer Binge-Eating-Störung kommt es wiederholt zu Essanfällen mit Kontrollverlust.
+            Danach fühlen sich Betroffene häufig belastet, beschämt oder traurig.
+          </p>
+          <p class="small">
+            Wichtig: Es geht nicht um „zu wenig Selbstbeherrschung“, sondern um eine Erkrankung, die Hilfe braucht.
+          </p>
+        </article>
+      </div>
+
+      <div class="card" style="margin-top:18px">
+        <h3>Vergleich ohne Schubladendenken:</h3>
+        <div class="compare">
+          <div class="compare-row">
+            <strong>Gemeinsamkeit</strong>
+            <div>Bei allen Formen können Essen, Körper, Gefühle und Selbstwert sehr stark miteinander verknüpft sein.</div>
+          </div>
+          <div class="compare-row">
+            <strong>Unterschiede</strong>
+            <div>Die Formen unterscheiden sich darin, ob eher Kontrolle, Essanfälle, Ausgleichsverhalten oder Mischformen im Vordergrund stehen.</div>
+          </div>
+          <div class="compare-row">
+            <strong>Wichtig</strong>
+            <div>Die Grenzen sind nicht immer klar. Eine Person kann Merkmale verschiedener Formen zeigen.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="warnzeichen">
+      <div class="section-title">
+        <div class="icon">🧩</div>
+        <h2>3. Mögliche Warnzeichen</h2>
+      </div>
+
+      <div class="grid two">
+        <div class="card">
+          <h3>Verhalten:</h3>
+          <ul>
+            <li>Essen wird plötzlich sehr stark kontrolliert oder heimlich.</li>
+            <li>Die Person vermeidet gemeinsame Mahlzeiten immer häufiger.</li>
+            <li>Es gibt starke Schuldgefühle nach dem Essen.</li>
+            <li>Körper, Figur oder Essen werden gedanklich sehr dominant.</li>
+            <li>Die Person zieht sich zurück oder wirkt stark belastet.</li>
+          </ul>
+        </div>
+        <div class="card">
+          <h3>Körper & Alltag:</h3>
+          <ul>
+            <li>Konzentration, Stimmung oder Energie verändern sich deutlich.</li>
+            <li>Sport oder Bewegung wirken nicht mehr gesund, sondern zwanghaft.</li>
+            <li>Die Person wirkt häufig erschöpft, gereizt oder traurig.</li>
+            <li>Es entstehen Konflikte rund um Essen, Körper oder Kontrolle.</li>
+            <li>Manchmal sieht man Warnzeichen von außen kaum.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="notice" style="margin-top:18px">
+        <strong>Vorsicht:</strong>
+        Ein einzelnes Zeichen beweist keine Essstörung. Aber mehrere deutliche Veränderungen können ein Grund sein,
+        aufmerksam und respektvoll Hilfe anzubieten.
+      </div>
+    </section>
+
+    <section id="umgang">
+      <div class="section-title">
+        <div class="icon">🤝</div>
+        <h2>4. Wie kann man respektvoll reagieren?</h2>
+      </div>
+
+      <div class="myth">
+        <div class="wrong">
+          <h3>Nicht hilfreich:</h3>
+          <ul>
+            <li>Körper oder Gewicht kommentieren</li>
+            <li>Witze über Essen oder Figur machen</li>
+            <li>Vorwürfe machen: „Iss doch einfach normal!“</li>
+            <li>Gerüchte weitererzählen</li>
+            <li>Betroffene bloßstellen</li>
+          </ul>
+        </div>
+        <div class="right">
+          <h3>Hilfreicher:</h3>
+          <ul>
+            <li>ruhig und ohne Druck sprechen</li>
+            <li>Sorgen in Ich-Sätzen ausdrücken</li>
+            <li>zuhören, ohne zu bewerten</li>
+            <li>eine erwachsene Vertrauensperson einbeziehen</li>
+            <li>professionelle Hilfe ernst nehmen</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="accordion" style="margin-top:18px">
+        <details>
+          <summary>Beispiel für einen vorsichtigen Satz</summary>
+          <p>
+            „Mir ist aufgefallen, dass es dir in letzter Zeit nicht gut zu gehen scheint. Ich möchte dich nicht bedrängen,
+            aber ich mache mir Sorgen und bin da, wenn du reden möchtest.“
+          </p>
+        </details>
+        <details>
+          <summary>Was tun, wenn ich selbst betroffen sein könnte?</summary>
+          <p>
+            Sprich mit einer Person, der du vertraust: Eltern, Schulsozialarbeit, Klassenleitung, Ärztin/Arzt oder Beratungsstelle.
+            Hilfe zu holen ist kein Verrat an sich selbst, sondern ein wichtiger Schritt.
+          </p>
+        </details>
+        <details>
+          <summary>Warum sollte man keine Diättipps oder Körpervergleiche geben?</summary>
+          <p>
+            Solche Kommentare können Druck verstärken. Im Mittelpunkt sollte nicht das Aussehen stehen,
+            sondern Gesundheit, Sicherheit und Unterstützung.
+          </p>
+        </details>
+      </div>
+    </section>
+
+    <section id="quiz">
+      <div class="section-title">
+        <div class="icon">🎯</div>
+        <h2>5. Quiz: Erkennst du die Zusammenhänge?</h2>
+      </div>
+
+      <div class="quiz-panel">
+        <div class="quiz-top">
+          <div>
+            <strong id="quizStatus">Frage 1 von 10</strong>
+            <div class="small">Die Fragen sind bewusst nicht ganz offensichtlich. Lies genau und denke an die Zusammenhänge.</div>
+          </div>
+          <div class="progress-wrap"><div class="progress" id="progress"></div></div>
+        </div>
+
+        <div class="quiz-body" id="quizBody"></div>
+
+        <div class="result" id="result">
+          <h3>Auswertung</h3>
+          <p id="scoreText"></p>
+          <p id="scoreHint"></p>
+          <button class="button secondary" onclick="restartQuiz()">Quiz neu starten</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="reflexion">
+      <div class="section-title">
+        <div class="icon">✍️</div>
+        <h2>6. Kurze Reflexion</h2>
+      </div>
+
+      <div class="card reflection-box">
+        <label>
+          <strong>1. Warum ist es problematisch, Körper anderer Menschen zu kommentieren?</strong>
+          <textarea placeholder="Notiere deine Gedanken ..."></textarea>
+        </label>
+        <label>
+          <strong>2. Was wäre ein respektvoller Satz, wenn du dir um jemanden Sorgen machst?</strong>
+          <textarea placeholder="Formuliere einen Ich-Satz ..."></textarea>
+        </label>
+        <label>
+          <strong>3. Was sollte man sich merken?</strong>
+          <textarea placeholder="Ein kurzer Merksatz ..."></textarea>
+        </label>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="inner">
+      <strong>Hinweis:</strong>
+      Dieses Unterrichtsmaterial ersetzt keine Beratung oder Behandlung. Bei Sorgen sollte eine erwachsene Vertrauensperson,
+      die Schulsozialarbeit, eine ärztliche Praxis oder eine Beratungsstelle einbezogen werden.
+    </div>
+  </footer>
+
+  <script>
+    const questions = [
+      {
+        q: "Eine Schülerin sagt häufig ab, wenn in der Gruppe gemeinsam gegessen wird, und wirkt dabei angespannt. Was ist die vorsichtigste Deutung?",
+        options: [
+          "Sie hat sicher eine bestimmte Essstörung.",
+          "Es kann viele Gründe geben, aber wiederholtes Vermeiden kann ein Warnzeichen sein.",
+          "Das ist nur unhöflich und hat nichts mit Gesundheit zu tun.",
+          "Man sollte sie vor der Klasse direkt darauf ansprechen."
+        ],
+        correct: 1,
+        info: "Ein einzelnes Verhalten beweist nichts. Auffällige Veränderungen können aber Anlass sein, respektvoll aufmerksam zu sein."
+      },
+      {
+        q: "Was haben Magersucht, Bulimie und Binge-Eating-Störung am ehesten gemeinsam?",
+        options: [
+          "Alle Betroffenen sehen immer gleich aus.",
+          "Bei allen geht es nur um Ernährung und nicht um Gefühle.",
+          "Essen, Körperbild, Gefühle und Selbstwert können stark miteinander verknüpft sein.",
+          "Alle drei Formen sind leicht von außen zu erkennen."
+        ],
+        correct: 2,
+        info: "Essstörungen betreffen Körper und Psyche. Von außen sieht man sie nicht immer."
+      },
+      {
+        q: "Ein Schüler macht ständig Witze über den Körper anderer. Warum kann das problematisch sein?",
+        options: [
+          "Weil solche Kommentare Druck und Unsicherheit verstärken können.",
+          "Weil Körperkommentare nur bei Erwachsenen problematisch sind.",
+          "Weil Biologieunterricht nichts mit Sprache zu tun hat.",
+          "Weil dann automatisch eine Essstörung entsteht."
+        ],
+        correct: 0,
+        info: "Körperkommentare können belasten. Sie verursachen nicht automatisch eine Erkrankung, können aber Druck verstärken."
+      },
+      {
+        q: "Welche Aussage passt am besten zu Binge-Eating?",
+        options: [
+          "Es bedeutet, dass jemand einfach gerne isst.",
+          "Es geht um wiederholte Essanfälle mit Kontrollverlust und Belastung.",
+          "Es ist immer daran erkennbar, dass jemand sehr dünn ist.",
+          "Es ist keine ernsthafte Erkrankung."
+        ],
+        correct: 1,
+        info: "Bei Binge-Eating stehen wiederholte Essanfälle, Kontrollverlust und seelische Belastung im Vordergrund."
+      },
+      {
+        q: "Warum ist die Aussage „Iss doch einfach normal!“ nicht hilfreich?",
+        options: [
+          "Weil Betroffene dadurch automatisch gesund werden.",
+          "Weil sie das Problem vereinfacht und Druck oder Scham verstärken kann.",
+          "Weil man gar nicht über Essen sprechen darf.",
+          "Weil Essstörungen nur körperliche Erkrankungen sind."
+        ],
+        correct: 1,
+        info: "Essstörungen sind komplex. Druck und Vorwürfe helfen meist nicht."
+      },
+      {
+        q: "Welche Beobachtung passt eher zu Bulimie als zu Binge-Eating?",
+        options: [
+          "Wiederholte Essanfälle können vorkommen.",
+          "Betroffene fühlen sich danach oft belastet.",
+          "Es kann zusätzlich ungesundes Ausgleichsverhalten auftreten.",
+          "Die Person braucht keine Hilfe."
+        ],
+        correct: 2,
+        info: "Bei Bulimie kommt nach Essanfällen häufig ein Versuch des Ausgleichs hinzu. Das kann gesundheitlich gefährlich sein."
+      },
+      {
+        q: "Warum sollte man bei Essstörungen nicht nur auf das Aussehen achten?",
+        options: [
+          "Weil Körper grundsätzlich nie etwas über Gesundheit aussagen können.",
+          "Weil manche Essstörungen von außen kaum sichtbar sind.",
+          "Weil Essstörungen nur bei Erwachsenen vorkommen.",
+          "Weil Warnzeichen immer eindeutig sind."
+        ],
+        correct: 1,
+        info: "Manche Betroffene sehen äußerlich unauffällig aus. Verhalten, Belastung und Gedanken können wichtige Hinweise sein."
+      },
+      {
+        q: "Welche Reaktion wäre am ehesten respektvoll, wenn du dir Sorgen machst?",
+        options: [
+          "Die Person vor anderen fragen, wie viel sie gegessen hat.",
+          "Einen ruhigen Ich-Satz verwenden und Hilfe durch Erwachsene ermöglichen.",
+          "Ein Foto machen und anderen zeigen.",
+          "Die Person unter Druck setzen, damit sie sofort alles erzählt."
+        ],
+        correct: 1,
+        info: "Respekt, Ruhe und Unterstützung sind wichtig. Bloßstellen oder Druck ist nicht hilfreich."
+      },
+      {
+        q: "Welche Aussage über Ursachen ist am passendsten?",
+        options: [
+          "Essstörungen haben meist nur eine einzige Ursache.",
+          "Schuld ist immer die Familie.",
+          "Viele Faktoren können zusammenwirken, zum Beispiel Stress, Selbstbild, Umfeld und Gefühle.",
+          "Nur soziale Medien können Essstörungen auslösen."
+        ],
+        correct: 2,
+        info: "Essstörungen entstehen meist durch ein Zusammenspiel verschiedener Faktoren. Schuldzuweisungen helfen nicht."
+      },
+      {
+        q: "Was ist ein guter Merksatz für die Klasse?",
+        options: [
+          "Man erkennt Essstörungen sofort am Körper.",
+          "Betroffene brauchen Kommentare zu ihrem Aussehen.",
+          "Essstörungen sind ernst zu nehmen und Hilfe ist wichtig.",
+          "Wer betroffen ist, ist selbst schuld."
+        ],
+        correct: 2,
+        info: "Essstörungen sind ernsthafte Erkrankungen. Unterstützung und professionelle Hilfe können wichtig sein."
+      }
+    ];
+
+    let current = 0;
+    let answers = new Array(questions.length).fill(null);
+    let checked = new Array(questions.length).fill(false);
+
+    const quizBody = document.getElementById("quizBody");
+    const statusEl = document.getElementById("quizStatus");
+    const progressEl = document.getElementById("progress");
+    const resultEl = document.getElementById("result");
+    const scoreText = document.getElementById("scoreText");
+    const scoreHint = document.getElementById("scoreHint");
+
+    function renderQuiz(){
+      quizBody.innerHTML = "";
+      questions.forEach((item, index) => {
+        const div = document.createElement("div");
+        div.className = "question" + (index === current ? " active" : "");
+        div.innerHTML = `
+          <div class="q-title">${index + 1}. ${item.q}</div>
+          <div class="options">
+            ${item.options.map((op, i) => `
+              <button class="option ${answers[index] === i ? "selected" : ""}" onclick="selectOption(${index}, ${i})">
+                ${String.fromCharCode(65 + i)} · ${op}
+              </button>
+            `).join("")}
+          </div>
+          <div class="feedback" id="feedback-${index}"></div>
+          <div class="quiz-actions">
+            <button class="button secondary" onclick="prevQuestion()" ${index === 0 ? "disabled" : ""}>Zurück</button>
+            <div>
+              <button class="button secondary" onclick="checkQuestion(${index})">Antwort prüfen</button>
+              <button class="button" onclick="nextQuestion()">${index === questions.length - 1 ? "Auswerten" : "Weiter"}</button>
+            </div>
+          </div>
+        `;
+        quizBody.appendChild(div);
+      });
+      updateTop();
+      restoreFeedbacks();
+    }
+
+    function updateTop(){
+      statusEl.textContent = `Frage ${current + 1} von ${questions.length}`;
+      progressEl.style.width = `${((current) / questions.length) * 100}%`;
+    }
+
+    function selectOption(qIndex, optionIndex){
+      if(checked[qIndex]) return;
+      answers[qIndex] = optionIndex;
+      renderQuiz();
+    }
+
+    function checkQuestion(qIndex){
+      const fb = document.getElementById(`feedback-${qIndex}`);
+      if(answers[qIndex] === null){
+        fb.style.display = "block";
+        fb.className = "feedback";
+        fb.textContent = "Wähle zuerst eine Antwort aus.";
+        return;
+      }
+      checked[qIndex] = true;
+      const good = answers[qIndex] === questions[qIndex].correct;
+      fb.style.display = "block";
+      fb.className = "feedback " + (good ? "good" : "bad");
+      fb.innerHTML = `<strong>${good ? "Richtig." : "Noch nicht ganz."}</strong> ${questions[qIndex].info}`;
+      Array.from(document.querySelectorAll(".question.active .option")).forEach((btn, i) => {
+        if(i === questions[qIndex].correct) btn.style.borderColor = "#4f8f4f";
+        if(i === answers[qIndex] && !good) btn.style.borderColor = "#d36c6c";
+      });
+    }
+
+    function restoreFeedbacks(){
+      questions.forEach((item, index) => {
+        if(checked[index]){
+          const fb = document.getElementById(`feedback-${index}`);
+          if(!fb) return;
+          const good = answers[index] === item.correct;
+          fb.style.display = "block";
+          fb.className = "feedback " + (good ? "good" : "bad");
+          fb.innerHTML = `<strong>${good ? "Richtig." : "Noch nicht ganz."}</strong> ${item.info}`;
+        }
+      });
+    }
+
+    function prevQuestion(){
+      if(current > 0){
+        current--;
+        renderQuiz();
+      }
+    }
+
+    function nextQuestion(){
+      if(current < questions.length - 1){
+        current++;
+        renderQuiz();
+      } else {
+        showResult();
+      }
+    }
+
+    function showResult(){
+      const score = questions.reduce((sum, q, i) => sum + (answers[i] === q.correct ? 1 : 0), 0);
+      progressEl.style.width = "100%";
+      resultEl.classList.add("show");
+      scoreText.textContent = `Du hast ${score} von ${questions.length} Punkten erreicht.`;
+      if(score >= 8){
+        scoreHint.textContent = "Sehr gut: Du erkennst die wichtigsten Zusammenhänge und achtest auf respektvolle Sprache.";
+      } else if(score >= 5){
+        scoreHint.textContent = "Solide: Einige Zusammenhänge sind schon klar. Lies vor allem die Unterschiede und Warnzeichen noch einmal.";
+      } else {
+        scoreHint.textContent = "Wiederhole den Erklärungsteil noch einmal in Ruhe. Wichtig ist besonders: nicht bewerten, nicht bloßstellen, Hilfe holen.";
+      }
+      resultEl.scrollIntoView({behavior:"smooth", block:"center"});
+    }
+
+    function restartQuiz(){
+      current = 0;
+      answers = new Array(questions.length).fill(null);
+      checked = new Array(questions.length).fill(false);
+      resultEl.classList.remove("show");
+      renderQuiz();
+    }
+
+    renderQuiz();
+  </script>
+</body>
+</html>
