@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Interaktive Präsentation: Cracking von Kohlenwasserstoffen</title>
+<style>
+:root{
+  --blue:#0b3b78; --blue2:#155bb8; --line:#2b5ea7; --yellow:#ffc533;
+  --paper:#ffffff; --soft:#f4f8ff; --green:#16a34a; --orange:#f59e0b;
+  --red:#d62828; --text:#172033; --ink:#111827;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0; font-family:"Segoe UI", Candara, Calibri, Arial, sans-serif; color:var(--text);
+  background:linear-gradient(180deg,#f1f7fb,#fff 42%,#f7fbff);
+}
+.page{max-width:1580px;margin:auto;padding:18px}
+.hero{
+  background:linear-gradient(135deg,#082b63,#0d4ea3); color:#fff;
+  padding:26px 34px; border-radius:0 0 28px 0; width:75%;
+  box-shadow:0 8px 20px #0b3b7833; position:relative; overflow:hidden;
+}
+.hero:after{
+  content:""; position:absolute; right:-60px; top:-70px; width:230px; height:230px;
+  border-radius:50%; background:rgba(255,255,255,.13);
+}
+.hero h1{font-size:44px;margin:0;letter-spacing:.3px}
+.hero p{font-size:21px;margin:10px 0 0;color:#dbeafe}
+.drop{color:#ffc533}
+.nav{
+  display:flex;gap:10px;flex-wrap:wrap;margin:18px 0;
+}
+.nav a{
+  text-decoration:none;background:#fff;border:2px solid #9bbbe7;color:#0b3b78;
+  padding:10px 14px;border-radius:999px;font-weight:900;box-shadow:0 3px 9px #0001;
+}
+.task{
+  margin:16px 0; border:2px solid #9bbbe7; border-radius:12px;
+  padding:12px 18px; font-size:22px; background:#f8fbff;
+}
+.task b{color:#0b3b78}
+.grid{display:grid;grid-template-columns:1fr 470px;gap:24px;align-items:start}
+body.focus-mode{background:#f8fbff}
+body.focus-mode .hero,
+body.focus-mode .nav,
+body.focus-mode .task,
+body.focus-mode #start,
+body.focus-mode #aufgaben,
+body.focus-mode #sicherung,
+body.focus-mode .side,
+body.focus-mode #animation > h2,
+body.focus-mode #animation > p,
+body.focus-mode #animation > .eq{display:none}
+body.focus-mode .page{max-width:1680px;padding:10px}
+body.focus-mode .grid{display:block}
+body.focus-mode #animation{margin:0;padding:10px;border:none;box-shadow:none;background:transparent}
+body.focus-mode .moleculeStage{min-height:790px;padding:24px}
+body.focus-mode .zoomBox{left:275px;right:18px;top:22px;bottom:20px}
+body.focus-mode .reactor{transform:scale(1.22);transform-origin:bottom left}
+body.focus-mode .fire{transform:scale(1.16);transform-origin:bottom center}
+body.focus-mode .furnaceLabel{font-size:23px;left:106px;bottom:270px}
+body.focus-mode .zoomTitle{font-size:21px;left:26px;top:20px}
+body.focus-mode .molArea{left:54px;top:94px;right:auto;width:560px;height:430px;transform:scale(1.25);transform-origin:top left}
+body.focus-mode .stepCaption{right:26px;top:82px;width:500px;bottom:auto;max-height:none;min-height:175px;padding:22px;font-size:22px;line-height:1.48}
+body.focus-mode .explainTitle{font-size:17px;padding:8px 15px;margin-bottom:12px}
+body.focus-mode .explainText{font-size:inherit;line-height:inherit;word-break:normal;overflow-wrap:normal;hyphens:none}
+body.focus-mode .catalystSurface{left:30px;right:30px;bottom:22px;height:66px;font-size:16px;padding:14px 12px}
+body.focus-mode .controls{justify-content:center;margin-top:14px}
+body.focus-mode .controls button{font-size:20px;padding:15px 22px}
+.panel{
+  background:#fff;border:1px solid #bfd1e8;border-radius:14px;padding:24px;
+  box-shadow:0 10px 25px #12355d12;margin-bottom:20px;
+}
+.panel h2{margin:0 0 14px;color:#0b3b78;font-size:30px}
+.panel h3{color:#0b3b78}
+.note{
+  background:#f1f8e9;border:2px solid #9ccc65;border-radius:16px;padding:16px;font-size:20px;margin:14px 0;
+}
+.warning{
+  background:#fff7ed;border:2px solid #f0b13a;border-radius:16px;padding:16px;font-size:20px;margin:14px 0;
+}
+.word{
+  display:inline-block;background:#fff8e1;border:2px solid #f0b13a;border-radius:10px;
+  padding:7px 11px;margin:3px;font-weight:900;color:#934d00;
+}
+.moleculeStage{
+  position:relative;min-height:540px;background:linear-gradient(180deg,#fbfdff,#fff);
+  border:1px solid #c5d8ee;border-radius:18px;overflow:hidden;padding:20px;
+}
+.reactor{
+  position:absolute;left:38px;bottom:32px;width:185px;height:190px;border:3px solid #5f3926;
+  border-radius:18px;background:linear-gradient(180deg,#9f6138,#724127);
+  box-shadow:inset 0 -16px 28px #0006,0 8px 20px #0002;
+}
+.reactor:before{
+  content:"";position:absolute;left:20px;right:20px;top:25px;height:72px;border:3px solid #e6a15e;
+  border-radius:10px;background:#241f20;
+}
+.fire{
+  position:absolute;left:87px;bottom:48px;width:82px;height:82px;
+  background:
+    radial-gradient(ellipse at 50% 78%,#ffd166 0 18%,transparent 19%),
+    linear-gradient(135deg,transparent 0 32%,#ef4444 33% 63%,transparent 64%),
+    linear-gradient(45deg,transparent 0 35%,#f97316 36% 66%,transparent 67%);
+  clip-path:polygon(50% 0%,60% 20%,74% 35%,80% 56%,70% 82%,52% 100%,32% 96%,20% 78%,16% 56%,27% 36%,40% 20%);
+  animation:flicker .9s infinite alternate;
+  filter:drop-shadow(0 0 8px #f97316aa);
+}
+.fire:after{
+  content:"";position:absolute;left:27px;bottom:0;width:29px;height:50px;background:#ffd43b;
+  clip-path:polygon(50% 0%,66% 28%,88% 54%,72% 100%,28% 100%,12% 54%,34% 28%);
+}
+.furnaceLabel{position:absolute;left:96px;bottom:229px;font-weight:900;color:#5b2f18;font-size:18px}
+@keyframes flicker{from{transform:scale(.93) rotate(-2deg)}to{transform:scale(1.05) rotate(2deg)}}
+.tube{
+  display:none;
+}
+.zoomConnector{display:none}
+.zoomBox{
+  position:absolute;left:255px;right:22px;top:36px;bottom:24px;background:linear-gradient(180deg,#ffffff,#f8fbff);
+  border:2px solid #f0b13a;border-radius:16px;box-shadow:0 12px 26px #17324d18;overflow:hidden;
+}
+.zoomTitle{
+  position:absolute;left:18px;top:12px;font-weight:900;color:#7a4300;font-size:16px;
+}
+.catalystSurface{
+  position:absolute;left:16px;right:16px;bottom:12px;height:50px;border-radius:12px;
+  background:linear-gradient(180deg,#edf5ff,#dbeafe);border:1px solid #8bb7df;
+  color:#0b3b78;font-size:13px;font-weight:900;padding:9px 12px;text-align:center;
+}
+.catalystSurface:before{
+  content:"";position:absolute;left:0;right:0;top:-6px;height:6px;
+  background:repeating-linear-gradient(90deg,#8bb7df 0 18px,#cfe3f7 18px 34px);
+  border-radius:10px 10px 0 0;opacity:.8;
+}
+.catalystSurface span{
+  display:inline-block;width:9px;height:9px;border-radius:50%;background:#6fa4d4;margin:0 3px;border:1px solid #3777bf;
+}
+.pipeText{position:absolute;left:255px;bottom:175px;font-weight:900;color:#934d00;display:none}
+.molArea{position:absolute;left:24px;right:335px;top:64px;height:330px}
+.atom{
+  width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  font-weight:850;color:#fff;position:absolute;box-shadow:0 3px 8px #0002;border:2px solid #fff;
+}
+.c{background:#1f2937}.h{background:#5aa7e8;width:22px;height:22px;font-size:11px}
+.bond{
+  position:absolute;height:5px;background:#1f2937;border-radius:8px;transform-origin:left center;
+}
+.bond.double{
+  height:4px;background:#0f172a;
+}
+.bond.warn{
+  background:#dc2626;box-shadow:0 0 10px #ef4444cc;
+}
+.breakMark{
+  position:absolute;width:38px;height:38px;border-radius:50%;background:#fff2f0;border:2px solid #dc2626;
+  color:#dc2626;font-size:24px;font-weight:900;display:none;align-items:center;justify-content:center;
+  animation:pulse 1s infinite;
+}
+.radicalDot{
+  position:absolute;width:10px;height:10px;border-radius:50%;background:#dc2626;border:2px solid #fff;
+  box-shadow:0 0 0 2px #dc262655,0 0 10px #dc2626aa;
+}
+.radicalLabel{
+  display:none;
+}
+.hTransfer{
+  position:absolute;width:26px;height:26px;border-radius:50%;background:#5aa7e8;color:#fff;
+  display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:900;border:2px solid #fff;
+  box-shadow:0 0 0 2px #f59e0b66;
+  animation:hMove 1.25s ease-in-out forwards;
+}
+@keyframes hMove{
+  from{transform:translate(0,0)}
+  /* Ziel minimal nach links/oben verschoben, damit das wandernde H mittiger am oberen C-Atom ankommt. */
+  to{transform:translate(56px,-122px)}
+}
+.radicalMoveLeft{
+  animation:radicalMeetLeft 1.25s ease-in-out forwards;
+}
+.radicalMoveSecondTop{
+  animation:radicalMeetSecondTop 1.25s ease-in-out forwards;
+}
+@keyframes radicalMeetLeft{
+  from{transform:translate(0,0)}
+  /* landet leicht links an der entstehenden Bindung zwischen C1 und C2 */
+  to{transform:translate(56px,-3px)}
+}
+@keyframes radicalMeetSecondTop{
+  from{transform:translate(0,0)}
+  /* landet leicht rechts an derselben Bindung, damit beide Punkte nicht übereinanderliegen */
+  to{transform:translate(-8px,34px)}
+}
+.doubleBondHint{
+  position:absolute;height:4px;width:24px;border-radius:8px;background:#dc2626;
+  box-shadow:0 8px 0 #dc2626,0 0 10px #ef4444aa;
+  transform:rotate(0deg);
+}
+@keyframes pulse{50%{transform:scale(1.15)}}
+.arrow{
+  display:none !important;
+}
+.productName{
+  position:absolute;
+  display:none;
+  padding:5px 10px;
+  border-radius:999px;
+  background:#ecfdf5;
+  border:1px solid #16a34a;
+  color:#166534;
+  font-weight:900;
+  font-size:15px;
+}
+.productName sub{font-size:.7em;vertical-align:-0.25em;line-height:0}
+.productName .formula{font-variant-position:normal}
+.productName{gap:6px;align-items:center}
+.controls{display:flex;gap:12px;flex-wrap:wrap;margin-top:18px}
+button{
+  border:0; padding:13px 18px; border-radius:12px; font-weight:900; font-size:18px;
+  cursor:pointer; box-shadow:0 5px 12px #0002;
+}
+.primary{background:#0d4ea3;color:white}.secondary{background:#e8eef7;color:#0b254d}.green{background:#16a34a;color:white}.orange{background:#f59e0b;color:#fff}.focusBtn{background:#111827;color:white}.focusBtn.active{background:#f59e0b;color:#fff}
+.stepCaption{
+  position:absolute;right:16px;top:56px;width:300px;
+  min-height:108px;max-height:calc(100% - 148px);
+  background:#fff8e7;border:2px solid #f0b13a;border-radius:16px;padding:14px;
+  font-size:16px;line-height:1.36;box-shadow:0 8px 18px #7a43001a;overflow:hidden;
+  transition:min-height .25s ease,font-size .2s ease,line-height .2s ease;
+  word-break:normal;
+  overflow-wrap:normal;
+  hyphens:none;
+}
+.stepCaption b{color:#934d00}
+.explainTitle{
+  display:inline-block;background:#0b3b78;color:#fff;border-radius:999px;
+  padding:5px 10px;margin-bottom:8px;font-size:13px;font-weight:900;letter-spacing:.2px;
+}
+.explainText{font-size:inherit;line-height:inherit;word-break:normal;overflow-wrap:normal;hyphens:none}
+.sideStepTitle{
+  display:inline-block;background:#fff8e7;border:1px solid #f0b13a;color:#934d00;
+  border-radius:999px;padding:4px 9px;font-size:14px;font-weight:900;margin-bottom:8px;
+}
+.side{position:sticky;top:10px}
+.sideCard{
+  background:#fff;border:2px solid #b7c7da;border-radius:18px;padding:16px;
+  box-shadow:0 10px 25px #12355d18;margin-bottom:18px;
+}
+.sideTitle{background:#0b3b78;color:#fff;font-weight:900;text-align:center;padding:9px;border-radius:8px;margin-bottom:12px}
+.tempGauge{
+  height:420px;border:4px solid #34495e;border-radius:28px;position:relative;overflow:hidden;
+  background:linear-gradient(180deg,#fee2e2,#fed7aa,#fef3c7,#dbeafe);
+}
+.gaugeFill{
+  position:absolute;bottom:0;left:0;right:0;height:0;background:linear-gradient(180deg,#ffca28,#f97316,#dc2626);
+  transition:1s;
+}
+.gaugeLabel{
+  position:absolute;left:18px;right:18px;bottom:20px;background:#fff;border:2px solid #f97316;
+  border-radius:12px;padding:10px;text-align:center;font-weight:900;color:#9a3412;
+}
+.challenge{
+  background:#f8fbff;border:2px solid #9bbbe7;border-radius:18px;padding:18px;margin-bottom:20px;
+}
+.challenge h3{margin-top:0;color:#0b3b78}
+.option{
+  display:block;width:100%;text-align:left;margin:8px 0;background:#fff;border:2px solid #cbd5e1;
+  color:#172033;box-shadow:none;
+}
+.option sub{font-size:.82em;vertical-align:-0.25em;line-height:0}
+.formulaChoice{font-size:23px;letter-spacing:.2px}
+.option.correct{border-color:#16a34a;background:#dcfce7;color:#166534}
+.option.wrong{border-color:#dc2626;background:#fee2e2;color:#991b1b}
+.sortArea{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.bucket{
+  min-height:220px;background:#fff;border:2px dashed #9bbbe7;border-radius:16px;padding:12px;
+}
+.bucket h4{margin:0 0 8px;color:#0b3b78}
+.chip{
+  display:inline-block;background:#fff8e1;border:2px solid #f0b13a;border-radius:999px;
+  padding:9px 13px;margin:6px;font-weight:900;cursor:grab;
+}
+.chip.dragging{opacity:.4}
+.feedback{font-weight:900;margin-top:12px;padding:12px;border-radius:12px;display:none}
+.solutionLine{
+  display:block;
+  margin-top:8px;
+  font-weight:700;
+  line-height:1.45;
+}
+.eq{
+  text-align:center;font-size:30px;font-weight:900;margin:16px 0;color:#111827;
+  background:#f8fbff;border:2px solid #d5e2f5;border-radius:16px;padding:16px;
+}
+.eq sub{font-size:.65em;vertical-align:-0.25em;line-height:0}
+.red{color:#dc2626}.greenText{color:#16a34a}.blueText{color:#0d4ea3}
+@media(max-width:1100px){.grid{grid-template-columns:1fr}.hero{width:100%}.side{position:static}.sortArea{grid-template-columns:1fr}.moleculeStage{min-height:650px}.products{left:20px;right:auto;top:340px;width:auto}.arrow{top:300px}.tube{width:330px}.molArea{left:24px;right:24px;top:64px;height:330px}.stepCaption{left:16px;right:16px;top:415px;width:auto;bottom:auto;max-height:220px}.task{font-size:19px}}
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="hero">
+    <h1>Interaktive Präsentation: Cracking von Kohlenwasserstoffen <span class="drop">🔥</span></h1>
+    <p>Aus langen Kohlenwasserstoff-Molekülen werden kürzere, nützlichere Moleküle.</p>
+  </header>
+
+  <nav class="nav">
+    <a href="#start">1. Erklärung</a>
+    <a href="#animation">2. Molekül-Animation</a>
+    <a href="#aufgaben">3. Aufgaben</a>
+    <a href="#sicherung">4. Sicherung</a>
+  </nav>
+
+  <div class="task"><b>Ziel:</b> Du erkennst, warum Cracking wichtig ist, wie lange Moleküle gespalten werden und welche Produkte entstehen können.</div>
+
+  <div class="grid">
+    <main>
+      <section class="panel" id="start">
+        <h2>Was bedeutet Cracking?</h2>
+        <p style="font-size:22px;line-height:1.7">
+          Beim <span class="word">Cracking</span> werden lange Kohlenwasserstoff-Moleküle in kürzere Moleküle zerlegt.
+          Das ist wichtig, weil bei der fraktionierten Destillation oft mehr schwere Bestandteile entstehen, als man direkt braucht.
+          Durch Cracking kann man daraus zum Beispiel kürzere Alkane und Alkene gewinnen.
+        </p>
+        <div class="note">
+          <b>Merke:</b> Lange Ketten sind oft zähflüssiger und schwerer nutzbar. Kürzere Kohlenwasserstoffe sind häufig wertvoller, weil sie zum Beispiel als Kraftstoffe oder Ausgangsstoffe für Kunststoffe genutzt werden können.
+        </div>
+        <div class="warning">
+          <b>Typische Bedingungen:</b> hohe Temperatur, oft ein Katalysator und große Kohlenwasserstoff-Moleküle als Ausgangsstoffe.
+        </div>
+      </section>
+
+      <section class="panel" id="animation">
+        <h2>Interaktive Molekül-Darstellung</h2>
+        <p style="font-size:21px;line-height:1.6">
+          Beobachte, wie eine lange Kohlenwasserstoffkette erhitzt wird. An einer Bindung wird die Kette gespalten.
+          Dadurch entstehen zwei kürzere Moleküle.
+        </p>
+
+        <div class="eq">
+          <span class="blueText">C<sub>8</sub>H<sub>18</sub></span>
+          <span class="red"> → </span>
+          <span class="greenText">C<sub>4</sub>H<sub>10</sub></span>
+          +
+          <span class="greenText">C<sub>4</sub>H<sub>8</sub></span>
+        </div>
+
+        <div class="moleculeStage">
+          <div class="furnaceLabel">Ofen</div>
+          <div class="reactor"></div>
+          <div class="fire"></div>
+          <div class="zoomConnector"></div>
+          <div class="zoomBox">
+            <div class="zoomTitle">Vergrößerung im heißen Reaktionsbereich</div>
+            <div class="molArea" id="molArea"></div>
+            <div class="breakMark" id="breakMark">✂</div>
+            <div class="stepCaption" id="caption">
+              <div class="explainTitle">ERKLÄRBOX – Schritt 1</div>
+              <div class="explainText">Ausgangsstoff ist hier Octan, eine lange Kohlenwasserstoffkette mit acht C-Atomen. Beim Cracking wird diese große Kette nicht verbrannt, sondern in kleinere Kohlenwasserstoff-Moleküle zerlegt.</div>
+            </div>
+            <div class="catalystSurface">
+              Katalysator-Oberfläche (Zeolith)
+              <span></span><span></span><span></span><span></span>
+            </div>
+          </div>
+        </div>
+
+        <div class="controls">
+          <button class="primary" onclick="nextCrackStep()">Weiter</button>
+          <button class="secondary" onclick="prevCrackStep()">Zurück</button>
+          <button class="green" onclick="resetCrack()">Neu starten</button>
+          <button class="focusBtn" id="focusBtn" onclick="toggleFocusMode()">Konzentrationsmodus</button>
+        </div>
+      </section>
+
+      <section class="panel" id="aufgaben">
+        <h2>Interaktive Aufgaben</h2>
+
+        <div class="challenge">
+          <h3>Aufgabe 1: Warum wird Cracking durchgeführt?</h3>
+          <button class="option" data-correct="false" onclick="checkOption(this)">Damit Rohöl direkt aus dem Boden trinkbar wird.</button>
+          <button class="option" data-correct="true" onclick="checkOption(this)">Damit aus langen Kohlenwasserstoffen kürzere und oft besser nutzbare Stoffe entstehen.</button>
+          <button class="option" data-correct="false" onclick="checkOption(this)">Damit aus Erdöl ausschließlich Wasser entsteht.</button>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="challenge">
+          <h3>Aufgabe 2: Was entsteht beim Cracking häufig?</h3>
+          <button class="option" data-correct="true" onclick="checkOption(this)">Ein kürzeres Alkan und ein Alken.</button>
+          <button class="option" data-correct="false" onclick="checkOption(this)">Nur Salze und Metalle.</button>
+          <button class="option" data-correct="false" onclick="checkOption(this)">Nur Sauerstoff und Stickstoff.</button>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="challenge">
+          <h3>Aufgabe 3: Sortiere die Stoffe</h3>
+          <p>Ziehe die Begriffe in die passende Spalte.</p>
+          <div>
+            <span class="chip" draggable="true" data-type="start">langes Alkan</span>
+            <span class="chip" draggable="true" data-type="condition">hohe Temperatur</span>
+            <span class="chip" draggable="true" data-type="condition">Katalysator</span>
+            <span class="chip" draggable="true" data-type="product">kürzeres Alkan</span>
+            <span class="chip" draggable="true" data-type="product">Alken</span>
+            <span class="chip" draggable="true" data-type="product">Benzinbestandteile</span>
+          </div>
+          <div class="sortArea">
+            <div class="bucket" data-accept="start"><h4>Ausgangsstoff</h4></div>
+            <div class="bucket" data-accept="condition"><h4>Bedingungen beim Cracking</h4></div>
+            <div class="bucket" data-accept="product"><h4>Mögliche Produkte</h4></div>
+          </div>
+          <button class="primary" onclick="checkSort()">Sortierung prüfen</button>
+          <div class="feedback" id="sortFeedback"></div>
+        </div>
+
+        <div class="challenge">
+          <h3>Aufgabe 4: Reaktionsgleichung ergänzen</h3>
+          <p>Welche Formel passt in die Lücke?</p>
+          <div class="eq">C<sub>8</sub>H<sub>18</sub> → C<sub>4</sub>H<sub>10</sub> + ______</div>
+          <button class="option formulaChoice" data-correct="true" onclick="checkOption(this)">C<sub>4</sub>H<sub>8</sub></button>
+          <button class="option formulaChoice" data-correct="false" onclick="checkOption(this)">C<sub>4</sub>H<sub>10</sub></button>
+          <button class="option formulaChoice" data-correct="false" onclick="checkOption(this)">CO<sub>2</sub></button>
+          <div class="feedback"></div>
+        </div>
+      </section>
+
+      <section class="panel" id="sicherung">
+        <h2>Sicherung: Das Wichtigste kurz zusammengefasst</h2>
+        <div class="note">
+          <b>Cracking:</b> Lange Kohlenwasserstoffketten werden durch Hitze und oft mithilfe eines Katalysators in kürzere Moleküle gespalten.
+        </div>
+        <p style="font-size:22px;line-height:1.8">
+          Dabei entstehen häufig ein kürzeres <span class="word">Alkan</span> und ein <span class="word">Alken</span>.
+          Alkene sind besonders wichtig, weil sie Ausgangsstoffe für viele Kunststoffe sein können.
+        </p>
+        <div class="eq">langes Alkan → kürzeres Alkan + Alken</div>
+      </section>
+    </main>
+
+    <aside class="side">
+      <p id="sideExplain" style="display:none"></p>
+
+      <div class="sideCard">
+        <div class="sideTitle">ATOM-BILANZ</div>
+        <p style="font-size:18px;line-height:1.55">
+          Die C- und H-Atome verschwinden nicht. Sie werden beim Spalten nur neu auf zwei kleinere Moleküle verteilt:
+          Es entstehen <b>Butan</b> als kürzeres Alkan und <b>Buten</b> als Alken mit C=C-Doppelbindung.
+        </p>
+        <div class="eq" style="font-size:22px">C<sub>8</sub>H<sub>18</sub> → C<sub>4</sub>H<sub>10</sub> + C<sub>4</sub>H<sub>8</sub></div>
+      </div>
+
+      <div class="sideCard">
+        <div class="sideTitle">SCHON GEWUSST?</div>
+        <p style="font-size:18px;line-height:1.55">
+          Beim Cracken werden nicht einfach Atome „vernichtet“. Die Atome werden neu auf kleinere Moleküle verteilt.
+          Deshalb muss die Anzahl der C- und H-Atome in der Reaktionsgleichung insgesamt erhalten bleiben.
+        </p>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<script>
+const molArea = document.getElementById("molArea");
+const breakMark = document.getElementById("breakMark");
+const caption = document.getElementById("caption");
+const sideExplain = document.getElementById("sideExplain");
+const focusBtn = document.getElementById("focusBtn");
+let crackStep = 0;
+
+function atom(x,y,label,cls){
+  const a=document.createElement("div");
+  a.className="atom "+cls;
+  a.style.left=x+"px"; a.style.top=y+"px"; a.textContent=label;
+  molArea.appendChild(a);
+}
+function bond(x,y,w,rot=0,extraClass=""){
+  const b=document.createElement("div");
+  b.className=`bond ${extraClass}`.trim();
+  b.style.left=x+"px"; b.style.top=y+"px"; b.style.width=w+"px"; b.style.transform=`rotate(${rot}deg)`;
+  molArea.appendChild(b);
+}
+function drawLongMolecule(split=false,warning=false){
+  molArea.innerHTML="";
+  const startX=0, y=125, gap=48;
+  for(let i=0;i<8;i++){
+    if(i<7 && !(split && i===3)){
+      bond(startX+i*gap+32,y+15,17,0,warning && i===3 ? "warn" : "");
+    }
+    atom(startX+i*gap,y,"C","c");
+    atom(startX+i*gap+6,y-31,"H","h");
+    atom(startX+i*gap+6,y+45,"H","h");
+  }
+  atom(startX-25,y+6,"H","h");
+  atom(startX+7*gap+37,y+6,"H","h");
+}
+function drawSeparatedMolecules(showDouble=false, radicalState=false, missing={}){
+  molArea.innerHTML="";
+  const y1=72,gap=42;
+  for(let i=0;i<4;i++){ if(i<3) bond(0+i*gap+32,y1+15,14); atom(0+i*gap,y1,"C","c"); }
+  atom(-24,y1+6,"H","h");
+  if(!missing.upperRightOpen) atom(3*gap+38,y1+6,"H","h");
+  for(let i=0;i<4;i++){
+    atom(6+i*gap,y1-28,"H","h");
+    atom(6+i*gap,y1+42,"H","h");
+  }
+
+  const y2=230,start=42;
+  for(let i=0;i<4;i++){
+    if(i<3){
+      if(showDouble && i===0){
+        bond(start+i*gap+32,y2+9,14,0,"double");
+        bond(start+i*gap+32,y2+21,14,0,"double");
+      }else{
+        bond(start+i*gap+32,y2+15,14);
+      }
+    }
+    atom(start+i*gap,y2,"C","c");
+  }
+  if(!missing.lowerLeftOpen) atom(start-24,y2+6,"H","h");
+  atom(start+3*gap+38,y2+6,"H","h");
+  for(let i=0;i<4;i++){
+    /* Bei Buten mit C=C zwischen C1 und C2 dürfen an den Doppelbindungs-C-Atomen weniger H-Atome stehen:
+       C1 = CH2, C2 = CH. Deshalb werden in der finalen Buten-Darstellung die oberen H-Atome an C1 und C2 weggelassen. */
+    const omitTopForButenDoubleBond = showDouble && (i===0 || i===1);
+    if(!(missing.lowerSecondTopOpen && i===1) && !omitTopForButenDoubleBond) atom(start+6+i*gap,y2-28,"H","h");
+    atom(start+6+i*gap,y2+42,"H","h");
+  }
+  const butan=document.createElement("div");
+  butan.className="productName moleculeProduct";
+  butan.style.left="34px";
+  butan.style.top="146px";
+  butan.innerHTML="Butan&nbsp;<span class=\"formula\">C<sub>4</sub>H<sub>10</sub></span>";
+  molArea.appendChild(butan);
+  const buten=document.createElement("div");
+  buten.className="productName moleculeProduct";
+  buten.style.left="76px";
+  buten.style.top="304px";
+  buten.innerHTML="Buten&nbsp;<span class=\"formula\">C<sub>4</sub>H<sub>8</sub></span>";
+  molArea.appendChild(buten);
+}
+function addRadical(x,y,label="",dx=-18,dy=-34){
+  const dot=document.createElement("div");
+  dot.className="radicalDot";
+  dot.style.left=x+"px";
+  dot.style.top=y+"px";
+  molArea.appendChild(dot);
+}
+function drawRadicals(){
+  drawSeparatedMolecules(false,true,{upperRightOpen:true, lowerLeftOpen:true});
+  /* Radikalpunkte sitzen jetzt direkt an den offenen Valenzstellen: dort, wo kein H-Atom eingezeichnet ist. */
+  addRadical(162,83,"Radikalstelle",10,8);   // oberes Fragment: rechts am C-Atom ohne H
+  addRadical(13,244,"Radikalstelle",10,8);   // unteres Fragment: links am C-Atom ohne H
+}
+function drawHydrogenTransfer(){
+  drawSeparatedMolecules(false,true,{upperRightOpen:true, lowerLeftOpen:true, lowerSecondTopOpen:true});
+  addRadical(162,83,"nimmt H auf",10,8);       // obere offene Stelle
+  addRadical(13,244,"Radikalstelle",10,8);     // linke offene Stelle unten
+  addRadical(96,207,"neue Radikalstelle",8,-30); // dort fehlt nach der H-Abgabe das H-Atom
+  const h=document.createElement("div");
+  h.className="hTransfer";
+  h.style.left="96px";
+  h.style.top="202px";
+  h.textContent="H";
+  molArea.appendChild(h);
+}
+function drawDoubleBondFormation(){
+  drawSeparatedMolecules(false,true,{lowerLeftOpen:true, lowerSecondTopOpen:true});
+  /* Die Radikalstelle links am ersten C-Atom und die Radikalstelle oben am zweiten C-Atom bewegen sich zur bestehenden C-C-Einfachbindung. Sie landen leicht links/rechts versetzt an der Bindung, damit das Zusammenfliegen nicht wie ein einziger Punkt wirkt. */
+  const leftRadical=document.createElement("div");
+  leftRadical.className="radicalDot radicalMoveLeft";
+  leftRadical.style.left="13px";
+  leftRadical.style.top="244px";
+  molArea.appendChild(leftRadical);
+
+  const secondTopRadical=document.createElement("div");
+  secondTopRadical.className="radicalDot radicalMoveSecondTop";
+  secondTopRadical.style.left="96px";
+  secondTopRadical.style.top="207px";
+  molArea.appendChild(secondTopRadical);
+
+  const hint=document.createElement("div");
+  hint.className="doubleBondHint";
+  hint.style.left="74px";
+  hint.style.top="239px";
+  molArea.appendChild(hint);
+}
+const steps=[
+  {
+    cap:"<b>Schritt 1:</b> Ein langes Alkan-Molekül gelangt in den heißen Reaktionsbereich.",
+    side:"Ausgangsstoff ist hier Octan, eine lange Kohlenwasserstoffkette mit acht C-Atomen. Beim Cracking wird diese große Kette nicht verbrannt, sondern in kleinere Kohlenwasserstoff-Moleküle zerlegt.",
+    mode:"long",break:false,prod:false,warning:false
+  },
+  {
+    cap:"<b>Schritt 2:</b> Das Molekül wird stark erhitzt. Dadurch wird die Kette instabiler.",
+    side:"Durch die hohe Temperatur schwingen und bewegen sich die Atome im Molekül stärker. Dadurch wird die lange Kohlenstoffkette instabiler, sodass einzelne C-C-Bindungen leichter aufbrechen können.",
+    mode:"long",break:false,prod:false,warning:false
+  },
+  {
+    cap:"<b>Schritt 3:</b> In der Mitte der Kette wird eine C-C-Bindung geschwächt.",
+    side:"Der Katalysator bietet eine aktive Oberfläche und erleichtert das Spalten. Die rot markierte C-C-Bindung zeigt die Stelle, an der die lange Kette im Beispiel gleich aufbricht.",
+    mode:"long",break:true,prod:false,warning:true
+  },
+  {
+    cap:"<b>Schritt 4:</b> Die lange Kette reißt an dieser Bindung auf.",
+    side:"Die C-C-Bindung reißt auf. An den beiden Bruchstellen entstehen kurzzeitig Radikalstellen, also sehr reaktive Stellen mit einem ungepaarten Elektron. Die roten Punkte sitzen direkt an den offenen Stellen der C-Atome – also dort, wo in der Zeichnung kein H-Atom eingezeichnet ist.",
+    mode:"radicals",break:false,prod:false,double:false
+  },
+  {
+    cap:"<b>Schritt 5:</b> Ein H-Atom wird übertragen.",
+    side:"Ein H-Atom wird vom unteren Fragment auf die obere offene Radikalstelle übertragen. Dadurch wird das obere Fragment abgesättigt und kann als Butan vorliegen. Unten entsteht dort, wo das H-Atom fehlt, eine neue Radikalstelle.",
+    mode:"htransfer",break:false,prod:false,double:false
+  },
+  {
+    cap:"<b>Schritt 6:</b> Die beiden Radikalstellen im unteren Fragment bilden eine Doppelbindung.",
+    side:"Im unteren Fragment liegen nun zwei Radikalstellen an benachbarten C-Atomen: links am ersten C-Atom und oben am zweiten C-Atom. Beide bewegen sich zur bestehenden C-C-Einfachbindung zwischen diesen beiden C-Atomen. Dort entsteht die zweite Bindung – aus der Einfachbindung wird eine C=C-Doppelbindung. Dadurch entsteht das Alken Buten.",
+    mode:"doubleform",break:false,prod:false,double:false
+  },
+  {
+    cap:"<b>Schritt 7:</b> Zwei kürzere Kohlenwasserstoffe sind entstanden.",
+    side:"Nach der Umordnung sind zwei kürzere Moleküle entstanden: Butan als gesättigtes Alkan und Buten als ungesättigtes Alken. Genau deshalb liefert Cracking häufig kürzere Alkane und Alkene.",
+    mode:"split",break:false,prod:true,double:true
+  },
+  {
+    cap:"<b>Schritt 8:</b> Beim Alken erkennt man die C=C-Doppelbindung deutlich.",
+    side:"Die Atombilanz bleibt erhalten: Aus Octan C₈H₁₈ entstehen in diesem Beispiel Butan C₄H₁₀ und Buten C₄H₈. Insgesamt sind weiterhin 8 C-Atome und 18 H-Atome vorhanden.",
+    mode:"split",break:false,prod:true,double:true
+  }
+];
+
+function fitExplanationBox(){
+  const zoomBox = document.querySelector(".zoomBox");
+  const isFocus = document.body.classList.contains("focus-mode");
+  const title = caption.querySelector(".explainTitle");
+  const text = caption.querySelector(".explainText");
+
+  /* Alles zuerst zurücksetzen, damit kurze Texte wieder wirklich kleiner werden. */
+  caption.style.height = "auto";
+  caption.style.minHeight = "";
+  caption.style.maxHeight = "none";
+  caption.style.overflow = "hidden";
+  caption.style.fontSize = isFocus ? "22px" : "15.8px";
+  caption.style.lineHeight = isFocus ? "1.44" : "1.34";
+  if(text){
+    text.style.fontSize = "inherit";
+    text.style.lineHeight = "inherit";
+  }
+  if(title){
+    title.style.fontSize = isFocus ? "17px" : "13px";
+  }
+
+  const minHeight = isFocus ? 165 : 104;
+  const topOffset = caption.offsetTop || (isFocus ? 82 : 56);
+  const bottomGap = isFocus ? 96 : 82;
+  const maxHeight = Math.max(minHeight, zoomBox.clientHeight - topOffset - bottomGap);
+
+  function applySize(fontSize, lineHeight){
+    caption.style.fontSize = fontSize;
+    caption.style.lineHeight = lineHeight;
+    if(text){
+      text.style.fontSize = "inherit";
+      text.style.lineHeight = "inherit";
+    }
+    const needed = Math.ceil(caption.scrollHeight + 4);
+    caption.style.height = Math.min(Math.max(needed, minHeight), maxHeight) + "px";
+  }
+
+  requestAnimationFrame(()=>{
+    applySize(isFocus ? "22px" : "15.8px", isFocus ? "1.44" : "1.34");
+    requestAnimationFrame(()=>{
+      if(caption.scrollHeight > caption.clientHeight){
+        applySize(isFocus ? "20.5px" : "14.6px", isFocus ? "1.36" : "1.28");
+      }
+      requestAnimationFrame(()=>{
+        if(caption.scrollHeight > caption.clientHeight){
+          applySize(isFocus ? "19px" : "13.7px", isFocus ? "1.28" : "1.22");
+        }
+        /* Falls selbst die kleinste Variante zu lang ist, darf nur dann eine Scrollleiste erscheinen. */
+        if(caption.scrollHeight > caption.clientHeight){
+          caption.style.overflow = "auto";
+        }
+      });
+    });
+  });
+}
+function toggleFocusMode(){
+  document.body.classList.toggle("focus-mode");
+  const active=document.body.classList.contains("focus-mode");
+  focusBtn.classList.toggle("active", active);
+  focusBtn.textContent=active ? "Normalansicht" : "Konzentrationsmodus";
+
+  /* Beim Wechsel in den Konzentrationsmodus ändern sich Breite und Schriftgröße der Box.
+     Deshalb wird der aktuelle Schritt neu gerendert und die Box nach dem Layoutwechsel
+     mehrfach neu vermessen. So passt Schritt 1 sofort korrekt, ohne erst weiter/zurück zu klicken. */
+  renderCrack();
+  requestAnimationFrame(()=>{
+    fitExplanationBox();
+    requestAnimationFrame(()=>{
+      fitExplanationBox();
+      setTimeout(fitExplanationBox, 80);
+    });
+  });
+}
+
+function renderCrack(){
+  const s=steps[crackStep];
+  if(s.mode==="long") drawLongMolecule(false,s.warning);
+  if(s.mode==="cracked") drawLongMolecule(true,false);
+  if(s.mode==="radicals") drawRadicals();
+  if(s.mode==="htransfer") drawHydrogenTransfer();
+  if(s.mode==="doubleform") drawDoubleBondFormation();
+  if(s.mode==="split") drawSeparatedMolecules(s.double);
+  breakMark.style.display=s.break?"flex":"none";
+  breakMark.style.left="188px"; breakMark.style.top="174px";
+  document.querySelectorAll(".moleculeProduct").forEach(label=>{
+    label.style.display=s.prod?"inline-flex":"none";
+  });
+  const stepNumber=crackStep+1;
+  caption.innerHTML=`<div class="explainTitle">ERKLÄRBOX – Schritt ${stepNumber}</div><div class="explainText">${s.side}</div>`;
+  sideExplain.innerHTML=`<span class="sideStepTitle">Schritt ${stepNumber}</span><br>${s.side}`;
+  fitExplanationBox();
+}
+function nextCrackStep(){crackStep=Math.min(crackStep+1,steps.length-1);renderCrack();}
+function prevCrackStep(){crackStep=Math.max(crackStep-1,0);renderCrack();}
+function resetCrack(){crackStep=0;renderCrack();}
+renderCrack();
+
+function checkOption(btn){
+  const box=btn.closest(".challenge");
+  box.querySelectorAll(".option").forEach(o=>o.classList.remove("correct","wrong"));
+  const fb=box.querySelector(".feedback");
+  fb.style.display="block";
+  if(btn.dataset.correct==="true"){
+    btn.classList.add("correct");
+    fb.style.background="#dcfce7"; fb.style.color="#166534";
+    fb.textContent="Richtig! Genau so ist es.";
+  }else{
+    btn.classList.add("wrong");
+    fb.style.background="#fee2e2"; fb.style.color="#991b1b";
+    fb.textContent="Noch nicht richtig. Schau dir die Erklärung oben noch einmal an.";
+  }
+}
+
+let dragged=null;
+document.querySelectorAll(".chip").forEach(chip=>{
+  chip.addEventListener("dragstart",()=>{dragged=chip;chip.classList.add("dragging")});
+  chip.addEventListener("dragend",()=>{chip.classList.remove("dragging")});
+});
+document.querySelectorAll(".bucket").forEach(bucket=>{
+  bucket.addEventListener("dragover",e=>e.preventDefault());
+  bucket.addEventListener("drop",()=>{if(dragged) bucket.appendChild(dragged)});
+});
+function checkSort(){
+  const fb=document.getElementById("sortFeedback");
+  let total=0, good=0;
+  const chips=document.querySelectorAll(".chip");
+  chips.forEach(ch=>{
+    total++;
+    if(ch.parentElement.classList.contains("bucket") && ch.dataset.type===ch.parentElement.dataset.accept) good++;
+  });
+  fb.style.display="block";
+  const solution=`<span class="solutionLine">Lösung: Ausgangsstoff: langes Alkan | Bedingungen: hohe Temperatur, Katalysator | Produkte: kürzeres Alkan, Alken, Benzinbestandteile</span>`;
+  if([...chips].some(ch=>!ch.parentElement.classList.contains("bucket"))){
+    fb.style.background="#fef3c7"; fb.style.color="#92400e";
+    fb.innerHTML="Ziehe erst alle Begriffe in eine passende Spalte." + solution;
+  }else if(good===total){
+    fb.style.background="#dcfce7"; fb.style.color="#166534";
+    fb.innerHTML="Sehr gut! Alle Begriffe sind richtig sortiert.";
+  }else{
+    fb.style.background="#fee2e2"; fb.style.color="#991b1b";
+    fb.innerHTML=`Noch einmal prüfen: ${good} von ${total} liegen richtig.` + solution;
+  }
+}
+</script>
+</body>
+</html>
