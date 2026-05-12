@@ -1,0 +1,1143 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Das Pantoffeltierchen</title>
+
+  <style>
+    :root {
+      --bg: #f4fbff;
+      --card: #ffffff;
+      --blue: #4aa3df;
+      --blue-dark: #176b9c;
+      --green: #65b891;
+      --yellow: #ffd166;
+      --red: #ef476f;
+      --violet: #8e7dff;
+      --text: #213547;
+      --muted: #5f7080;
+      --shadow: 0 14px 35px rgba(20, 70, 110, 0.16);
+      --radius: 24px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(74, 163, 223, 0.25), transparent 32%),
+        radial-gradient(circle at bottom right, rgba(101, 184, 145, 0.22), transparent 35%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+    }
+
+    header {
+      padding: 34px 18px 24px;
+      text-align: center;
+      background: linear-gradient(135deg, #dff5ff, #f7fffb);
+      border-bottom: 4px solid rgba(74, 163, 223, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before,
+    header::after {
+      content: "";
+      position: absolute;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.45);
+      filter: blur(2px);
+    }
+
+    header::before {
+      left: -90px;
+      top: -120px;
+    }
+
+    header::after {
+      right: -100px;
+      bottom: -145px;
+    }
+
+    header > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: #fff;
+      color: var(--blue-dark);
+      font-weight: 700;
+      box-shadow: var(--shadow);
+      margin-bottom: 12px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 5vw, 4rem);
+      color: var(--blue-dark);
+      letter-spacing: -1px;
+    }
+
+    .subtitle {
+      max-width: 850px;
+      margin: 12px auto 0;
+      color: var(--muted);
+      font-size: 1.15rem;
+    }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto;
+      padding: 28px 18px 60px;
+    }
+
+    .hero {
+      display: grid;
+      grid-template-columns: 1.08fr 0.92fr;
+      gap: 24px;
+      align-items: stretch;
+      margin-bottom: 28px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.92);
+      border: 2px solid rgba(74, 163, 223, 0.16);
+      border-radius: var(--radius);
+      padding: 24px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(10px);
+    }
+
+    .hero-text h2,
+    .section-title {
+      margin-top: 0;
+      color: var(--blue-dark);
+      font-size: 1.8rem;
+    }
+
+    .big-fact {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      margin-top: 18px;
+    }
+
+    .fact {
+      border-radius: 18px;
+      padding: 14px 16px;
+      background: #eef9ff;
+      border-left: 7px solid var(--blue);
+      min-height: 92px;
+    }
+
+    .fact strong {
+      display: block;
+      color: var(--blue-dark);
+      margin-bottom: 4px;
+    }
+
+    .image-box {
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .image-box img {
+      width: 100%;
+      max-height: 390px;
+      object-fit: contain;
+      border-radius: 20px;
+      background: #eef9ff;
+      padding: 10px;
+      box-shadow: inset 0 0 0 2px rgba(74, 163, 223, 0.12);
+    }
+
+    .caption {
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    .caption a {
+      color: var(--blue-dark);
+      font-weight: 600;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 18px 0;
+    }
+
+    .tab-btn {
+      border: none;
+      cursor: pointer;
+      padding: 12px 16px;
+      border-radius: 999px;
+      background: #ffffff;
+      color: var(--blue-dark);
+      font-weight: 800;
+      box-shadow: 0 6px 18px rgba(20, 70, 110, 0.11);
+      transition: transform 0.15s ease, background 0.15s ease;
+    }
+
+    .tab-btn:hover {
+      transform: translateY(-2px);
+    }
+
+    .tab-btn.active {
+      background: var(--blue);
+      color: white;
+    }
+
+    .tab-panel {
+      display: none;
+      animation: fadeIn 0.25s ease;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+    }
+
+    .mini-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 18px;
+      border: 2px solid rgba(74, 163, 223, 0.14);
+      box-shadow: 0 10px 24px rgba(20, 70, 110, 0.1);
+    }
+
+    .mini-card h3 {
+      margin: 0 0 10px;
+      color: var(--blue-dark);
+    }
+
+    .mini-card ul {
+      padding-left: 20px;
+      margin: 0;
+    }
+
+    .organism-wrap {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      align-items: center;
+    }
+
+    .paramecium-diagram {
+      position: relative;
+      min-height: 340px;
+      background: linear-gradient(180deg, #eaf9ff, #ffffff);
+      border-radius: 24px;
+      overflow: hidden;
+      border: 2px dashed rgba(74, 163, 223, 0.35);
+    }
+
+    .paramecium-body {
+      position: absolute;
+      width: 260px;
+      height: 125px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(-12deg);
+      border-radius: 58% 42% 45% 55% / 53% 48% 52% 47%;
+      background:
+        radial-gradient(circle at 40% 46%, rgba(255,255,255,0.8), transparent 22%),
+        radial-gradient(circle at 67% 53%, rgba(101,184,145,0.9), transparent 12%),
+        linear-gradient(135deg, rgba(142,125,255,0.42), rgba(74,163,223,0.42));
+      border: 4px solid rgba(23, 107, 156, 0.55);
+      box-shadow: inset 0 0 26px rgba(255,255,255,0.9), 0 14px 30px rgba(23,107,156,0.2);
+    }
+
+    .cilia {
+      position: absolute;
+      width: 290px;
+      height: 155px;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%) rotate(-12deg);
+      border-radius: 50%;
+      background:
+        repeating-conic-gradient(
+          from 0deg,
+          transparent 0deg 7deg,
+          rgba(23,107,156,0.35) 7deg 8deg,
+          transparent 8deg 14deg
+        );
+      mask: radial-gradient(ellipse, transparent 0 61%, #000 62% 69%, transparent 70%);
+      -webkit-mask: radial-gradient(ellipse, transparent 0 61%, #000 62% 69%, transparent 70%);
+    }
+
+    .label {
+      position: absolute;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 2px solid rgba(23, 107, 156, 0.25);
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--blue-dark);
+      box-shadow: 0 8px 16px rgba(20, 70, 110, 0.12);
+    }
+
+    .l1 { left: 25px; top: 42px; }
+    .l2 { right: 18px; top: 70px; }
+    .l3 { left: 28px; bottom: 46px; }
+    .l4 { right: 28px; bottom: 44px; }
+
+    .task-area {
+      margin-top: 30px;
+    }
+
+    .quiz-card {
+      margin-bottom: 18px;
+      background: #ffffff;
+      border-radius: 22px;
+      padding: 20px;
+      border: 2px solid rgba(74, 163, 223, 0.18);
+      box-shadow: 0 10px 24px rgba(20, 70, 110, 0.1);
+    }
+
+    .question {
+      font-size: 1.12rem;
+      font-weight: 800;
+      margin-bottom: 12px;
+      color: var(--text);
+    }
+
+    .answers {
+      display: grid;
+      gap: 10px;
+    }
+
+    .answer {
+      border: 2px solid rgba(74, 163, 223, 0.18);
+      background: #f8fcff;
+      border-radius: 16px;
+      padding: 12px 14px;
+      cursor: pointer;
+      font-size: 1rem;
+      text-align: left;
+      transition: 0.15s ease;
+    }
+
+    .answer:hover {
+      transform: translateX(4px);
+      border-color: var(--blue);
+    }
+
+    .answer.correct {
+      background: rgba(101, 184, 145, 0.18);
+      border-color: var(--green);
+    }
+
+    .answer.wrong {
+      background: rgba(239, 71, 111, 0.13);
+      border-color: var(--red);
+    }
+
+    .answer:disabled {
+      cursor: default;
+    }
+
+    .feedback {
+      display: none;
+      margin-top: 12px;
+      padding: 12px 14px;
+      border-radius: 16px;
+      background: #fff7df;
+      border-left: 7px solid var(--yellow);
+      color: #5c4a1b;
+      font-weight: 600;
+    }
+
+    .score-box {
+      position: sticky;
+      top: 14px;
+      z-index: 5;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      background: #ffffff;
+      border-radius: 999px;
+      padding: 12px 18px;
+      margin-bottom: 18px;
+      box-shadow: var(--shadow);
+      border: 2px solid rgba(74, 163, 223, 0.16);
+    }
+
+    .progress {
+      flex: 1;
+      height: 14px;
+      background: #e8f4fb;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, var(--green), var(--blue));
+      transition: width 0.3s ease;
+    }
+
+    .reset-btn,
+    .check-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      cursor: pointer;
+      font-weight: 800;
+      color: white;
+      background: var(--blue-dark);
+      box-shadow: 0 8px 18px rgba(20, 70, 110, 0.18);
+    }
+
+    .reset-btn:hover,
+    .check-btn:hover {
+      filter: brightness(1.08);
+    }
+
+    .matching {
+      display: grid;
+      gap: 12px;
+    }
+
+    .match-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      align-items: center;
+      background: #f8fcff;
+      border-radius: 18px;
+      padding: 12px;
+      border: 2px solid rgba(74, 163, 223, 0.16);
+    }
+
+    select {
+      width: 100%;
+      padding: 12px;
+      border-radius: 14px;
+      border: 2px solid rgba(74, 163, 223, 0.3);
+      background: white;
+      color: var(--text);
+      font-size: 1rem;
+    }
+
+    .match-result {
+      margin-top: 12px;
+      font-weight: 800;
+    }
+
+    .cloze {
+      display: grid;
+      gap: 12px;
+    }
+
+    .cloze input {
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 2px solid rgba(74, 163, 223, 0.3);
+      font-size: 1rem;
+      width: min(230px, 100%);
+    }
+
+    .word-bank {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .word {
+      background: #eef9ff;
+      border: 2px solid rgba(74, 163, 223, 0.25);
+      color: var(--blue-dark);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 800;
+    }
+
+    .notice {
+      background: #fff7df;
+      border-left: 7px solid var(--yellow);
+      border-radius: 18px;
+      padding: 14px 16px;
+      margin-top: 16px;
+      color: #5c4a1b;
+    }
+
+    footer {
+      text-align: center;
+      padding: 24px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    @media (max-width: 850px) {
+      .hero,
+      .organism-wrap {
+        grid-template-columns: 1fr;
+      }
+
+      .info-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .big-fact {
+        grid-template-columns: 1fr;
+      }
+
+      .match-row {
+        grid-template-columns: 1fr;
+      }
+
+      .score-box {
+        border-radius: 24px;
+        flex-direction: column;
+        align-items: stretch;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .tab-btn,
+      .reset-btn,
+      .check-btn,
+      .score-box {
+        display: none;
+      }
+
+      .tab-panel {
+        display: block !important;
+        margin-bottom: 20px;
+      }
+
+      .card,
+      .mini-card,
+      .quiz-card {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="badge">Biologie · 6. Klasse</div>
+    <h1>Das Pantoffeltierchen</h1>
+    <p class="subtitle">
+      Ein winziger tierischer Einzeller im Süßwasser: durchsichtig, beweglich und voller spannender Besonderheiten.
+    </p>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="card hero-text">
+        <h2>Steckbrief</h2>
+        <p>
+          Das Pantoffeltierchen heißt mit lateinischem Namen <strong>Paramecium</strong>.
+          Es ist ein <strong>tierischer Einzeller</strong>, also eine einzelne Zelle, die trotzdem wichtige Lebensfunktionen ausführen kann.
+        </p>
+
+        <div class="big-fact">
+          <div class="fact">
+            <strong>Aussehen</strong>
+            länglich und pantoffelförmig
+          </div>
+          <div class="fact">
+            <strong>Körper</strong>
+            durchsichtig und elastisch; kann sich durch enge Stellen hindurchzwängen
+          </div>
+          <div class="fact">
+            <strong>Lebensraum</strong>
+            Süßwasser, z. B. Teiche und Pfützen
+          </div>
+          <div class="fact">
+            <strong>Fortbewegung</strong>
+            mit vielen Wimpern auf der Zelloberfläche, den Cilien
+          </div>
+        </div>
+      </div>
+
+      <div class="card image-box">
+        <img
+          src="https://commons.wikimedia.org/wiki/Special:FilePath/Grupo_de_Paramecium_caudatum.jpg"
+          alt="Mehrere Pantoffeltierchen unter dem Mikroskop"
+        />
+        <div class="caption">
+          Bild: Wikimedia Commons · mehrere Pantoffeltierchen unter dem Mikroskop ·
+          <a href="https://commons.wikimedia.org/wiki/File:Grupo_de_Paramecium_caudatum.jpg" target="_blank" rel="noopener">
+            Originaldatei
+          </a>
+        </div>
+        <div class="notice">
+          Auf dem Bild erkennt man die typische längliche, pantoffelartige Form besonders gut.
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2 class="section-title">Lerne die wichtigsten Merkmale</h2>
+
+      <div class="tabs">
+        <button class="tab-btn active" data-tab="tab1">Grundlagen</button>
+        <button class="tab-btn" data-tab="tab2">Ernährung</button>
+        <button class="tab-btn" data-tab="tab3">Feinde</button>
+        <button class="tab-btn" data-tab="tab4">Besonderheiten</button>
+      </div>
+
+      <div id="tab1" class="tab-panel active">
+        <div class="info-grid">
+          <div class="mini-card">
+            <h3>Name</h3>
+            <p>
+              Der deutsche Name lautet <strong>Pantoffeltierchen</strong>.
+              Der lateinische Name ist <strong>Paramecium</strong>.
+            </p>
+          </div>
+
+          <div class="mini-card">
+            <h3>Zelltyp</h3>
+            <p>
+              Es ist ein <strong>tierischer Einzeller</strong>.
+              Das bedeutet: Der ganze Organismus besteht nur aus einer einzigen Zelle.
+            </p>
+          </div>
+
+          <div class="mini-card">
+            <h3>Lebensraum</h3>
+            <p>
+              Pantoffeltierchen leben vor allem im <strong>Süßwasser</strong>,
+              zum Beispiel in Teichen, Pfützen oder Tümpeln.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab2" class="tab-panel">
+        <div class="info-grid">
+          <div class="mini-card">
+            <h3>Nahrung</h3>
+            <ul>
+              <li>Algen</li>
+              <li>Bakterien</li>
+              <li>andere kleine Einzeller</li>
+            </ul>
+          </div>
+
+          <div class="mini-card">
+            <h3>Nahrungsaufnahme</h3>
+            <p>
+              Die Nahrung wird mit dem <strong>Zellmund</strong> aufgenommen.
+              Die Cilien helfen dabei, Nahrungsteilchen zum Zellmund zu strudeln.
+            </p>
+          </div>
+
+          <div class="mini-card">
+            <h3>Verdauung</h3>
+            <p>
+              Die Verdauung findet in <strong>Nahrungsvakuolen</strong> statt.
+              Das sind kleine Bläschen in der Zelle.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab3" class="tab-panel">
+        <div class="info-grid">
+          <div class="mini-card">
+            <h3>Größere Einzeller</h3>
+            <p>
+              Zum Beispiel Amöben können Pantoffeltierchen gefährlich werden.
+            </p>
+          </div>
+
+          <div class="mini-card">
+            <h3>Kleine Wassertiere</h3>
+            <p>
+              Auch kleine Wassertierchen, zum Beispiel Rädertierchen, können Feinde sein.
+            </p>
+          </div>
+
+          <div class="mini-card">
+            <h3>Insektenlarven</h3>
+            <p>
+              Einige Larven, die im Wasser leben, fressen winzige Lebewesen.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div id="tab4" class="tab-panel">
+        <div class="organism-wrap">
+          <div>
+            <h3>Besondere Zellbestandteile</h3>
+            <p>
+              Pantoffeltierchen besitzen besondere Strukturen, die ihnen beim Überleben helfen.
+            </p>
+
+            <div class="mini-card">
+              <h3>Pulsierende Vakuole</h3>
+              <p>
+                Sie nimmt überschüssiges Wasser auf und gibt es nach außen ab.
+                Dadurch platzt die Zelle nicht.
+              </p>
+            </div>
+
+            <br />
+
+            <div class="mini-card">
+              <h3>Trichozysten</h3>
+              <p>
+                Das sind kleine Abwehrkörper oder Fäden. Sie können aus der Zelloberfläche herausgeschossen werden.
+              </p>
+            </div>
+
+            <br />
+
+            <div class="mini-card">
+              <h3>Zystenbildung</h3>
+              <p>
+                Bei schlechten Bedingungen, zum Beispiel Trockenheit, Kälte oder Nahrungsmangel,
+                kapselt sich das Tierchen ein und wartet, bis die Bedingungen wieder besser werden.
+              </p>
+            </div>
+          </div>
+
+          <div class="paramecium-diagram" aria-label="vereinfachte Zeichnung eines Pantoffeltierchens">
+            <div class="cilia"></div>
+            <div class="paramecium-body"></div>
+            <div class="label l1">Cilien</div>
+            <div class="label l2">Zellmund</div>
+            <div class="label l3">Vakuole</div>
+            <div class="label l4">elastischer Körper</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="task-area">
+      <div class="score-box">
+        <strong>Quiz-Fortschritt: <span id="scoreText">0 / 10</span></strong>
+        <div class="progress">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+        <button class="reset-btn" onclick="resetQuiz()">Neu starten</button>
+      </div>
+
+      <div class="card">
+        <h2 class="section-title">Quiz: Was weißt du über das Pantoffeltierchen?</h2>
+        <div id="quiz"></div>
+      </div>
+    </section>
+
+    <section class="task-area card">
+      <h2 class="section-title">Zuordnungsaufgabe</h2>
+      <p>Ordne jedem Begriff die passende Erklärung zu.</p>
+
+      <div class="matching">
+        <div class="match-row">
+          <strong>Cilien</strong>
+          <select data-match="bewegung">
+            <option value="">Bitte auswählen</option>
+            <option value="abwehr">kleine Abwehrfäden</option>
+            <option value="bewegung">Wimpern zur Fortbewegung und zum Herbeistrudeln von Nahrung</option>
+            <option value="wasser">Bläschen, das überschüssiges Wasser abgibt</option>
+          </select>
+        </div>
+
+        <div class="match-row">
+          <strong>Pulsierende Vakuole</strong>
+          <select data-match="wasser">
+            <option value="">Bitte auswählen</option>
+            <option value="zellmund">nimmt Nahrung direkt in den Zellkern auf</option>
+            <option value="wasser">nimmt überschüssiges Wasser auf und gibt es ab</option>
+            <option value="zyste">bildet neue Cilien</option>
+          </select>
+        </div>
+
+        <div class="match-row">
+          <strong>Trichozysten</strong>
+          <select data-match="abwehr">
+            <option value="">Bitte auswählen</option>
+            <option value="abwehr">Abwehrkörper oder Fäden gegen Feinde</option>
+            <option value="nahrung">Ort der Verdauung</option>
+            <option value="lebensraum">Süßwasserbereich</option>
+          </select>
+        </div>
+
+        <div class="match-row">
+          <strong>Nahrungsvakuole</strong>
+          <select data-match="nahrung">
+            <option value="">Bitte auswählen</option>
+            <option value="bewegung">Wimpern zur Fortbewegung</option>
+            <option value="nahrung">Bläschen, in dem Nahrung verdaut wird</option>
+            <option value="wasser">gibt überschüssiges Wasser ab</option>
+          </select>
+        </div>
+      </div>
+
+      <br />
+      <button class="check-btn" onclick="checkMatching()">Zuordnung prüfen</button>
+      <div class="match-result" id="matchResult"></div>
+    </section>
+
+    <section class="task-area card">
+      <h2 class="section-title">Lückentext</h2>
+      <p>Nutze die Wörter aus der Wortbank.</p>
+
+      <div class="word-bank">
+        <span class="word">Süßwasser</span>
+        <span class="word">Zellmund</span>
+        <span class="word">Cilien</span>
+        <span class="word">Nahrungsvakuolen</span>
+        <span class="word">Zyste</span>
+      </div>
+
+      <div class="cloze">
+        <p>
+          Das Pantoffeltierchen lebt vor allem im
+          <input data-answer="Süßwasser" placeholder="..." />.
+        </p>
+
+        <p>
+          Es bewegt sich mit vielen kleinen
+          <input data-answer="Cilien" placeholder="..." /> fort.
+        </p>
+
+        <p>
+          Nahrung wird mit dem
+          <input data-answer="Zellmund" placeholder="..." /> aufgenommen.
+        </p>
+
+        <p>
+          Die Verdauung findet in
+          <input data-answer="Nahrungsvakuolen" placeholder="..." /> statt.
+        </p>
+
+        <p>
+          Bei schlechten Bedingungen kann es eine
+          <input data-answer="Zyste" placeholder="..." /> bilden.
+        </p>
+      </div>
+
+      <button class="check-btn" onclick="checkCloze()">Lückentext prüfen</button>
+      <div class="match-result" id="clozeResult"></div>
+    </section>
+  </main>
+
+  <footer>
+    Pantoffeltierchen-Lernseite · geeignet zur Wiederholung und Sicherung im Biologieunterricht
+  </footer>
+
+  <script>
+    const tabs = document.querySelectorAll(".tab-btn");
+    const panels = document.querySelectorAll(".tab-panel");
+
+    tabs.forEach(btn => {
+      btn.addEventListener("click", () => {
+        tabs.forEach(b => b.classList.remove("active"));
+        panels.forEach(p => p.classList.remove("active"));
+
+        btn.classList.add("active");
+        document.getElementById(btn.dataset.tab).classList.add("active");
+      });
+    });
+
+    const questions = [
+      {
+        q: "Warum nennt man das Pantoffeltierchen einen Einzeller?",
+        a: [
+          "Weil es nur aus einer einzigen Zelle besteht.",
+          "Weil es nur eine einzige Nahrung aufnehmen kann.",
+          "Weil es nur in einer einzigen Pfütze leben kann.",
+          "Weil es nur einen einzigen Feind hat."
+        ],
+        correct: 0,
+        explain: "Ein Einzeller besteht aus nur einer Zelle, kann aber trotzdem leben, sich bewegen und Nahrung aufnehmen."
+      },
+      {
+        q: "Welche Form beschreibt das Pantoffeltierchen besonders gut?",
+        a: [
+          "rund wie eine Kugel",
+          "länglich und pantoffelförmig",
+          "sternförmig mit vielen Armen",
+          "viereckig und fest"
+        ],
+        correct: 1,
+        explain: "Der Name passt zur länglichen, pantoffelähnlichen Form."
+      },
+      {
+        q: "Wo findet man Pantoffeltierchen besonders häufig?",
+        a: [
+          "in trockenem Sand",
+          "in Süßwasser wie Teichen oder Pfützen",
+          "nur im Meerwasser",
+          "auf Baumrinde ohne Wasser"
+        ],
+        correct: 1,
+        explain: "Pantoffeltierchen leben vor allem in Süßwasser, zum Beispiel in Teichen, Tümpeln oder Pfützen."
+      },
+      {
+        q: "Wozu dienen die Cilien beim Pantoffeltierchen?",
+        a: [
+          "Sie ersetzen die Nahrung.",
+          "Sie helfen bei der Fortbewegung und beim Herbeistrudeln von Nahrung.",
+          "Sie machen die Zelle hart wie einen Stein.",
+          "Sie bilden den Zellkern."
+        ],
+        correct: 1,
+        explain: "Cilien sind Wimpern auf der Zelloberfläche. Sie helfen bei Bewegung und Nahrungsaufnahme."
+      },
+      {
+        q: "Was frisst ein Pantoffeltierchen unter anderem?",
+        a: [
+          "kleine Steine und Sandkörner",
+          "Algen, Bakterien und andere kleine Einzeller",
+          "Blätter von Wasserpflanzen",
+          "große Insekten"
+        ],
+        correct: 1,
+        explain: "Pantoffeltierchen ernähren sich von sehr kleinen Lebewesen wie Algen, Bakterien und kleinen Einzellern."
+      },
+      {
+        q: "Welche Aufgabe hat der Zellmund?",
+        a: [
+          "Er nimmt Nahrung auf.",
+          "Er pumpt nur Wasser nach außen.",
+          "Er schützt vor Kälte.",
+          "Er ist für die Fortpflanzung zuständig."
+        ],
+        correct: 0,
+        explain: "Über den Zellmund wird Nahrung aufgenommen."
+      },
+      {
+        q: "Wo wird die Nahrung im Pantoffeltierchen verdaut?",
+        a: [
+          "in Nahrungsvakuolen",
+          "in den Cilien",
+          "außerhalb der Zelle",
+          "in der Zellwand"
+        ],
+        correct: 0,
+        explain: "Nahrungsvakuolen sind kleine Bläschen in der Zelle, in denen die Nahrung verdaut wird."
+      },
+      {
+        q: "Warum ist die pulsierende Vakuole wichtig?",
+        a: [
+          "Sie gibt überschüssiges Wasser ab.",
+          "Sie verwandelt das Pantoffeltierchen in eine Pflanze.",
+          "Sie fängt Licht ein.",
+          "Sie ersetzt alle anderen Zellbestandteile."
+        ],
+        correct: 0,
+        explain: "Die pulsierende Vakuole verhindert, dass zu viel Wasser in der Zelle bleibt."
+      },
+      {
+        q: "Was sind Trichozysten?",
+        a: [
+          "kleine Abwehrkörper oder Fäden",
+          "runde Nahrungsteilchen",
+          "Wasserpflanzen im Teich",
+          "große Feinde des Pantoffeltierchens"
+        ],
+        correct: 0,
+        explain: "Trichozysten können zur Verteidigung gegen Feinde dienen."
+      },
+      {
+        q: "Was passiert bei der Zystenbildung?",
+        a: [
+          "Das Pantoffeltierchen kapselt sich bei schlechten Bedingungen ein.",
+          "Das Pantoffeltierchen verliert alle Zellbestandteile.",
+          "Das Pantoffeltierchen wird zu einem Fisch.",
+          "Das Pantoffeltierchen löst sich sofort im Wasser auf."
+        ],
+        correct: 0,
+        explain: "Bei schlechten Bedingungen kann es sich einkapseln und abwarten."
+      }
+    ];
+
+    const quiz = document.getElementById("quiz");
+    const scoreText = document.getElementById("scoreText");
+    const progressFill = document.getElementById("progressFill");
+
+    let solved = Array(questions.length).fill(false);
+
+    function renderQuiz() {
+      quiz.innerHTML = "";
+
+      questions.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "quiz-card";
+
+        const q = document.createElement("div");
+        q.className = "question";
+        q.textContent = `${index + 1}. ${item.q}`;
+
+        const answers = document.createElement("div");
+        answers.className = "answers";
+
+        const feedback = document.createElement("div");
+        feedback.className = "feedback";
+        feedback.textContent = item.explain;
+
+        item.a.forEach((answerText, answerIndex) => {
+          const btn = document.createElement("button");
+          btn.className = "answer";
+          btn.textContent = answerText;
+
+          btn.addEventListener("click", () => {
+            if (solved[index]) return;
+
+            const allButtons = answers.querySelectorAll(".answer");
+            allButtons.forEach(b => b.disabled = true);
+
+            if (answerIndex === item.correct) {
+              btn.classList.add("correct");
+              solved[index] = true;
+            } else {
+              btn.classList.add("wrong");
+              allButtons[item.correct].classList.add("correct");
+              solved[index] = true;
+            }
+
+            feedback.style.display = "block";
+            updateScore();
+          });
+
+          answers.appendChild(btn);
+        });
+
+        card.appendChild(q);
+        card.appendChild(answers);
+        card.appendChild(feedback);
+        quiz.appendChild(card);
+      });
+    }
+
+    function updateScore() {
+      const score = solved.filter(Boolean).length;
+      scoreText.textContent = `${score} / ${questions.length}`;
+      progressFill.style.width = `${(score / questions.length) * 100}%`;
+    }
+
+    function resetQuiz() {
+      solved = Array(questions.length).fill(false);
+      updateScore();
+      renderQuiz();
+      document.getElementById("matchResult").textContent = "";
+      document.getElementById("clozeResult").textContent = "";
+
+      document.querySelectorAll("select").forEach(select => {
+        select.value = "";
+        select.style.borderColor = "rgba(74, 163, 223, 0.3)";
+      });
+
+      document.querySelectorAll(".cloze input").forEach(input => {
+        input.value = "";
+        input.style.borderColor = "rgba(74, 163, 223, 0.3)";
+        input.style.background = "white";
+      });
+    }
+
+    function checkMatching() {
+      const selects = document.querySelectorAll("select[data-match]");
+      let correct = 0;
+
+      selects.forEach(select => {
+        if (select.value === select.dataset.match) {
+          correct++;
+          select.style.borderColor = "#65b891";
+        } else {
+          select.style.borderColor = "#ef476f";
+        }
+      });
+
+      const result = document.getElementById("matchResult");
+
+      if (correct === selects.length) {
+        result.textContent = "Sehr gut! Alle Zuordnungen sind richtig.";
+        result.style.color = "#287a57";
+      } else {
+        result.textContent = `${correct} von ${selects.length} Zuordnungen sind richtig. Schau dir die rot markierten Felder noch einmal an.`;
+        result.style.color = "#b33a55";
+      }
+    }
+
+    function normalize(text) {
+      return text
+        .trim()
+        .toLowerCase()
+        .replaceAll("ü", "ue")
+        .replaceAll("ä", "ae")
+        .replaceAll("ö", "oe")
+        .replaceAll("ß", "ss");
+    }
+
+    function checkCloze() {
+      const inputs = document.querySelectorAll(".cloze input");
+      let correct = 0;
+
+      inputs.forEach(input => {
+        const user = normalize(input.value);
+        const answer = normalize(input.dataset.answer);
+
+        if (user === answer) {
+          correct++;
+          input.style.borderColor = "#65b891";
+          input.style.background = "rgba(101, 184, 145, 0.12)";
+        } else {
+          input.style.borderColor = "#ef476f";
+          input.style.background = "rgba(239, 71, 111, 0.08)";
+        }
+      });
+
+      const result = document.getElementById("clozeResult");
+
+      if (correct === inputs.length) {
+        result.textContent = "Perfekt! Der Lückentext ist vollständig richtig.";
+        result.style.color = "#287a57";
+      } else {
+        result.textContent = `${correct} von ${inputs.length} Lücken sind richtig. Prüfe besonders Rechtschreibung und Einzahl/Mehrzahl.`;
+        result.style.color = "#b33a55";
+      }
+    }
+
+    renderQuiz();
+    updateScore();
+  </script>
+</body>
+</html>
