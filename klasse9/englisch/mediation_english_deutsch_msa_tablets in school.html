@@ -1,0 +1,1035 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mediation Deutsch–Englisch | MSA Bayern</title>
+  <style>
+    :root{
+      --bg:#f6f8ff;
+      --card:#ffffff;
+      --ink:#1f2937;
+      --muted:#64748b;
+      --blue:#dbeafe;
+      --blue-border:#93c5fd;
+      --green:#dcfce7;
+      --green-border:#86efac;
+      --yellow:#fef3c7;
+      --yellow-border:#facc15;
+      --pink:#fce7f3;
+      --pink-border:#f9a8d4;
+      --accent:#4f46e5;
+      --accent2:#0891b2;
+      --danger:#ef4444;
+      --ok:#16a34a;
+      --shadow:0 12px 30px rgba(15,23,42,.12);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      background:
+        radial-gradient(circle at top left, rgba(79,70,229,.16), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(8,145,178,.14), transparent 30%),
+        var(--bg);
+      color:var(--ink);
+      line-height:1.55;
+    }
+
+    header{
+      padding:34px 20px 22px;
+      text-align:center;
+    }
+
+    .hero{
+      max-width:1100px;
+      margin:0 auto;
+      background:linear-gradient(135deg,#ffffff,#eef2ff);
+      border:1px solid rgba(79,70,229,.15);
+      box-shadow:var(--shadow);
+      border-radius:30px;
+      padding:30px 24px;
+      position:relative;
+      overflow:hidden;
+    }
+
+    .hero::after{
+      content:"";
+      position:absolute;
+      right:-50px;
+      top:-55px;
+      width:190px;
+      height:190px;
+      border-radius:50%;
+      background:rgba(79,70,229,.12);
+    }
+
+    h1{
+      margin:0 0 10px;
+      font-size:clamp(2rem,4vw,3.4rem);
+      color:#312e81;
+      letter-spacing:-.03em;
+    }
+
+    .subtitle{
+      max-width:820px;
+      margin:0 auto;
+      color:#475569;
+      font-size:1.08rem;
+    }
+
+    main{
+      max-width:1100px;
+      margin:0 auto 60px;
+      padding:0 20px;
+    }
+
+    .info-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:18px;
+      margin:24px 0;
+    }
+
+    .info-card{
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:20px;
+      border:1px solid rgba(148,163,184,.25);
+    }
+
+    .info-card h2{
+      font-size:1.15rem;
+      margin:0 0 10px;
+      color:#334155;
+    }
+
+    .info-card ul{
+      margin:0;
+      padding-left:22px;
+    }
+
+    .info-card li{
+      margin:6px 0;
+    }
+
+    .toolbar{
+      position:sticky;
+      top:0;
+      z-index:10;
+      background:rgba(246,248,255,.88);
+      backdrop-filter:blur(10px);
+      padding:12px 0;
+      margin:10px 0 22px;
+    }
+
+    .toolbar-inner{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      justify-content:center;
+      align-items:center;
+    }
+
+    button{
+      border:0;
+      border-radius:999px;
+      padding:11px 16px;
+      background:#4f46e5;
+      color:#fff;
+      font-weight:700;
+      cursor:pointer;
+      box-shadow:0 8px 18px rgba(79,70,229,.22);
+      transition:transform .15s ease, box-shadow .15s ease, background .15s ease;
+    }
+
+    button:hover{
+      transform:translateY(-1px);
+      box-shadow:0 10px 22px rgba(79,70,229,.28);
+      background:#4338ca;
+    }
+
+    button.secondary{
+      background:#0f766e;
+      box-shadow:0 8px 18px rgba(15,118,110,.18);
+    }
+
+    button.light{
+      background:#e0e7ff;
+      color:#312e81;
+      box-shadow:none;
+    }
+
+    .task{
+      background:var(--card);
+      border-radius:30px;
+      box-shadow:var(--shadow);
+      border:1px solid rgba(148,163,184,.25);
+      margin:24px 0;
+      overflow:hidden;
+    }
+
+    .task-head{
+      padding:22px 24px;
+      background:linear-gradient(135deg,#eff6ff,#fdf2f8);
+      border-bottom:1px solid rgba(148,163,184,.25);
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+    }
+
+    .task h2{
+      margin:0;
+      color:#1e3a8a;
+      font-size:1.45rem;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      background:#fff;
+      color:#475569;
+      border:1px solid rgba(148,163,184,.35);
+      padding:7px 11px;
+      border-radius:999px;
+      font-size:.88rem;
+      font-weight:700;
+    }
+
+    .task-body{
+      padding:24px;
+    }
+
+    .situation{
+      background:#f8fafc;
+      border-left:6px solid var(--accent);
+      padding:16px 18px;
+      border-radius:18px;
+      margin-bottom:22px;
+    }
+
+    .situation strong{color:#312e81}
+
+    .chat{
+      display:flex;
+      flex-direction:column;
+      gap:16px;
+      margin:22px 0;
+    }
+
+    .bubble-row{
+      display:flex;
+      gap:12px;
+      align-items:flex-end;
+    }
+
+    .bubble-row.right{
+      justify-content:flex-end;
+    }
+
+    .avatar{
+      width:44px;
+      height:44px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      font-size:1.35rem;
+      background:#e2e8f0;
+      flex:0 0 44px;
+    }
+
+    .bubble{
+      max-width:78%;
+      padding:15px 17px;
+      border-radius:22px;
+      position:relative;
+      border:2px solid transparent;
+    }
+
+    .bubble.de{
+      background:var(--yellow);
+      border-color:var(--yellow-border);
+      border-bottom-left-radius:6px;
+    }
+
+    .bubble.en{
+      background:var(--blue);
+      border-color:var(--blue-border);
+      border-bottom-right-radius:6px;
+    }
+
+    .bubble.task-bubble{
+      background:var(--pink);
+      border-color:var(--pink-border);
+    }
+
+    .bubble.helper{
+      background:var(--green);
+      border-color:var(--green-border);
+      border-bottom-left-radius:6px;
+    }
+
+    .speaker{
+      display:block;
+      font-weight:800;
+      font-size:.86rem;
+      margin-bottom:4px;
+      color:#475569;
+    }
+
+    .prompt-box{
+      margin:20px 0;
+      padding:18px;
+      background:#f0fdf4;
+      border:2px dashed #86efac;
+      border-radius:20px;
+    }
+
+    textarea{
+      width:100%;
+      min-height:125px;
+      padding:14px;
+      border-radius:18px;
+      border:2px solid #cbd5e1;
+      font:inherit;
+      resize:vertical;
+      background:#fff;
+    }
+
+    textarea:focus{
+      outline:none;
+      border-color:#6366f1;
+      box-shadow:0 0 0 4px rgba(99,102,241,.12);
+    }
+
+    .solution{
+      display:none;
+      margin-top:16px;
+      padding:18px;
+      border-radius:20px;
+      background:#ecfeff;
+      border:2px solid #67e8f9;
+    }
+
+    .solution.show{
+      display:block;
+      animation:pop .22s ease;
+    }
+
+    @keyframes pop{
+      from{opacity:0; transform:translateY(5px)}
+      to{opacity:1; transform:translateY(0)}
+    }
+
+    .solution h3{
+      margin:0 0 8px;
+      color:#155e75;
+    }
+
+    .tip{
+      margin-top:12px;
+      color:#475569;
+      font-size:.95rem;
+      background:#fff;
+      border-radius:14px;
+      padding:11px 13px;
+      border:1px solid rgba(103,232,249,.55);
+    }
+
+    .wordbank{
+      display:flex;
+      flex-wrap:wrap;
+      gap:9px;
+      margin:13px 0 2px;
+    }
+
+    .chip{
+      background:#eef2ff;
+      color:#312e81;
+      border:1px solid #c7d2fe;
+      padding:7px 10px;
+      border-radius:999px;
+      font-weight:700;
+      font-size:.92rem;
+    }
+
+    .checklist label{
+      display:block;
+      padding:10px 12px;
+      margin:8px 0;
+      background:#f8fafc;
+      border-radius:14px;
+      border:1px solid #e2e8f0;
+      cursor:pointer;
+    }
+
+    input[type="checkbox"]{
+      transform:scale(1.15);
+      margin-right:8px;
+    }
+
+    .feedback{
+      margin-top:12px;
+      font-weight:800;
+    }
+
+    .feedback.good{color:var(--ok)}
+    .feedback.bad{color:var(--danger)}
+
+    .mini-task{
+      padding:18px;
+      border-radius:22px;
+      background:#f8fafc;
+      border:1px solid #e2e8f0;
+      margin-top:18px;
+    }
+
+    .phrase-table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0 9px;
+      margin-top:10px;
+    }
+
+    .phrase-table th{
+      text-align:left;
+      color:#334155;
+      font-size:.9rem;
+      padding:0 10px;
+    }
+
+    .phrase-table td{
+      background:#fff;
+      border-top:1px solid #e2e8f0;
+      border-bottom:1px solid #e2e8f0;
+      padding:12px 10px;
+    }
+
+    .phrase-table td:first-child{
+      border-left:1px solid #e2e8f0;
+      border-radius:14px 0 0 14px;
+      font-weight:700;
+    }
+
+    .phrase-table td:last-child{
+      border-right:1px solid #e2e8f0;
+      border-radius:0 14px 14px 0;
+    }
+
+    .print-note{
+      text-align:center;
+      color:#64748b;
+      margin:26px 0 0;
+      font-size:.95rem;
+    }
+
+    @media(max-width:700px){
+      .bubble{max-width:88%}
+      .task-head,.task-body{padding:18px}
+      .avatar{width:38px;height:38px;flex-basis:38px}
+    }
+
+    @media print{
+      body{background:#fff}
+      .toolbar, button, textarea, .print-note{display:none!important}
+      .task,.info-card,.hero{box-shadow:none; break-inside:avoid}
+      .solution{display:block!important}
+      .bubble{max-width:88%}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <section class="hero">
+      <h1>Mediation: Deutsch → Englisch</h1>
+      <p class="subtitle">
+        Übung für den Mittleren Schulabschluss an der Mittelschule in Bayern.
+        Du vermittelst Informationen sinngemäß, freundlich und verständlich — nicht Wort für Wort.
+      </p>
+    </section>
+  </header>
+
+  <main>
+    <section class="info-grid">
+      <div class="info-card">
+        <h2>Was bedeutet Mediation?</h2>
+        <ul>
+          <li>Du überträgst wichtige Informationen in die andere Sprache.</li>
+          <li>Du darfst vereinfachen und umformulieren.</li>
+          <li>Du musst nicht jedes einzelne Wort übersetzen.</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h2>So bekommst du gute Punkte</h2>
+        <ul>
+          <li>Alle wichtigen Informationen nennen.</li>
+          <li>Höflich und situationspassend formulieren.</li>
+          <li>Kurze, klare Sätze verwenden.</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h2>Nützliche Satzanfänge</h2>
+        <ul>
+          <li><strong>She says that ...</strong></li>
+          <li><strong>He wants to know if ...</strong></li>
+          <li><strong>You should ... / You can ...</strong></li>
+        </ul>
+      </div>
+    </section>
+
+    <nav class="toolbar">
+      <div class="toolbar-inner">
+        <button onclick="showAllSolutions()">Alle Lösungen anzeigen</button>
+        <button class="secondary" onclick="hideAllSolutions()">Alle Lösungen ausblenden</button>
+        <button class="light" onclick="window.print()">Drucken / als PDF speichern</button>
+      </div>
+    </nav>
+
+    <section class="task" id="task1">
+      <div class="task-head">
+        <h2>Aufgabe 1: Tablets in school</h2>
+        <span class="badge">Thema: Schule & digitale Medien</span>
+      </div>
+      <div class="task-body">
+        <div class="situation">
+          <strong>Situation:</strong> Dein englischer Austauschschüler Ben versteht eine deutsche Nachricht deiner Klassenlehrerin nicht.
+          Er fragt dich Schritt für Schritt, was darin steht. Vermittle die wichtigsten Informationen auf Englisch.
+        </div>
+
+        <div class="chat">
+          <div class="bubble-row right">
+            <div class="bubble en">
+              <span class="speaker">Ben</span>
+              I got this message from your teacher, but it is in German. Is it about tablets?
+            </div>
+            <div class="avatar">🇬🇧</div>
+          </div>
+
+          <div class="bubble-row">
+            <div class="avatar">👩‍🏫</div>
+            <div class="bubble de">
+              <span class="speaker">Klassenlehrerin</span>
+              Ab nächster Woche dürfen Tablets im Unterricht häufiger verwendet werden.
+            </div>
+          </div>
+
+          <div class="bubble-row right">
+            <div class="bubble en">
+              <span class="speaker">Ben</span>
+              Does that mean we can use them in every lesson?
+            </div>
+            <div class="avatar">🇬🇧</div>
+          </div>
+
+          <div class="bubble-row">
+            <div class="avatar">👩‍🏫</div>
+            <div class="bubble de">
+              <span class="speaker">Klassenlehrerin</span>
+              Sie sollen aber nur für Aufgaben, Recherchen und digitale Arbeitsblätter genutzt werden.
+            </div>
+          </div>
+
+          <div class="bubble-row right">
+            <div class="bubble en">
+              <span class="speaker">Ben</span>
+              Okay. What are we not allowed to do?
+            </div>
+            <div class="avatar">🇬🇧</div>
+          </div>
+
+          <div class="bubble-row">
+            <div class="avatar">👩‍🏫</div>
+            <div class="bubble de">
+              <span class="speaker">Klassenlehrerin</span>
+              Spiele, private Chats und soziale Medien bleiben während des Unterrichts verboten.
+            </div>
+          </div>
+
+          <div class="bubble-row right">
+            <div class="bubble en">
+              <span class="speaker">Ben</span>
+              Do I need to bring anything special?
+            </div>
+            <div class="avatar">🇬🇧</div>
+          </div>
+
+          <div class="bubble-row">
+            <div class="avatar">👩‍🏫</div>
+            <div class="bubble de">
+              <span class="speaker">Klassenlehrerin</span>
+              Bitte bringt außerdem Kopfhörer mit, falls wir Lernvideos anschauen.
+            </div>
+          </div>
+        </div>
+
+        <div class="prompt-box">
+          <strong>Deine Aufgabe:</strong> Fasse Ben auf Englisch zusammen, was die Lehrerin sagt. Schreibe 4–6 Sätze.
+          <div class="wordbank">
+            <span class="chip">from next week</span>
+            <span class="chip">use tablets</span>
+            <span class="chip">school tasks</span>
+            <span class="chip">research</span>
+            <span class="chip">private chats</span>
+            <span class="chip">headphones</span>
+          </div>
+        </div>
+
+        <textarea placeholder="Write your mediation here ..."></textarea>
+        <br><br>
+        <button onclick="toggleSolution('sol1')">Lösung anzeigen</button>
+
+        <div class="solution" id="sol1">
+          <h3>Mögliche Lösung</h3>
+          <p>
+            From next week, students can use tablets more often in lessons. They should only use them for school tasks,
+            research and digital worksheets. Games, private chats and social media are not allowed during lessons.
+            Students should also bring headphones in case the class watches learning videos.
+          </p>
+          <div class="tip">
+            Tipp: „dürfen“ kann hier mit <strong>are allowed to</strong> oder einfacher mit <strong>can</strong> wiedergegeben werden.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="task" id="task2">
+      <div class="task-head">
+        <h2>Aufgabe 2: Lighter school bags</h2>
+        <span class="badge">Thema: Vorteile erklären</span>
+      </div>
+      <div class="task-body">
+        <div class="situation">
+          <strong>Situation:</strong> In eurer Schule wird diskutiert, ob Tablets Bücher teilweise ersetzen sollen.
+          Deine englische Freundin Emily fragt nach mehreren Gründen. Erkläre ihr die Aussagen des deutschen Schülers.
+        </div>
+
+        <div class="chat">
+          <div class="bubble-row right">
+            <div class="bubble en">
+              <span class="speaker">Emily</span>
+              Why do some students want to use tablets instead of many books?
+            </div>
+            <div class="avatar">🇬🇧</div>
+          </div>
+
+          <div class="bubble-row">
+            <div class="avatar">👦</div>
+            <div class="bubble de">
+              <span class="speaker">Deutscher Schüler</span>
+              Ich finde Tablets praktisch, weil man dann nicht so viele schwere Bücher tragen muss.
+            </div>
+          </div>
+
+          <div class="bubble-row right">
+            <div class="bubble en">
+              <span class="speaker">Emily</span>
+              So is it mainly about the weight?
+            </div>
+            <div class="avatar">🇬🇧</div>
+          </div>
+
+          <div class="bubble-row">
+            <div class="avatar">👦</div>
+            <div class="bubble de">
+              <span class="speaker">Deutscher Schüler</span>
+              Ja, der Schulranzen ist leichter und man hat trotzdem alle Materialien dabei.
+            </div>
+          </div>
+
+          <div class="bubble-row right">
+            <div class="bubble en">
+              <span class="speaker">Emily</span>
+              But what about worksheets? Don’t students lose them?
+            </div>
+            <div class="avatar">🇬🇧</div>
+          </div>
+
+          <div class="bubble-row">
+            <div class="avatar">👦</div>
+            <div class="bubble de">
+              <span class="speaker">Deutscher Schüler</span>
+              Arbeitsblätter kann man digital speichern. Dann findet man sie später schneller wieder.
+            </div>
+          </div>
+
+          <div class="bubble-row right">
+            <div class="bubble en">
+              <span class="speaker">Emily</span>
+              Does he only see advantages, or is there a problem too?
+            </div>
+            <div class="avatar">🇬🇧</div>
+          </div>
+
+          <div class="bubble-row">
+            <div class="avatar">👦</div>
+            <div class="bubble de">
+              <span class="speaker">Deutscher Schüler</span>
+              Man muss natürlich aufpassen, dass man sich nicht von Spielen oder Nachrichten ablenken lässt.
+            </div>
+          </div>
+        </div>
+
+        <div class="prompt-box">
+          <strong>Deine Aufgabe:</strong> Erkläre Emily auf Englisch, was der Schüler sagt. Nenne auch den möglichen Nachteil.
+          <div class="wordbank">
+            <span class="chip">practical</span>
+            <span class="chip">heavy books</span>
+            <span class="chip">lighter school bag</span>
+            <span class="chip">materials</span>
+            <span class="chip">save worksheets</span>
+            <span class="chip">get distracted</span>
+          </div>
+        </div>
+
+        <textarea placeholder="Write your mediation here ..."></textarea>
+        <br><br>
+        <button onclick="toggleSolution('sol2')">Lösung anzeigen</button>
+
+        <div class="solution" id="sol2">
+          <h3>Mögliche Lösung</h3>
+          <p>
+            He thinks tablets are practical because students do not have to carry so many heavy books.
+            Their school bags are lighter, but they still have all their materials with them.
+            They can also save worksheets digitally and find them faster later.
+            However, students have to be careful not to get distracted by games or messages.
+          </p>
+          <div class="tip">
+            Wichtig: „leichtere Schulranzen“ heißt auf Englisch <strong>lighter school bags</strong>.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="task" id="task3">
+      <div class="task-head">
+        <h2>Aufgabe 3: School rules</h2>
+        <span class="badge">Thema: Regeln vermitteln</span>
+      </div>
+      <div class="task-body">
+        <div class="situation">
+          <strong>Situation:</strong> Eine englische Austauschgruppe besucht deine Schule. Auf dem Bildschirm stehen deutsche Regeln.
+          Ein Gast stellt mehrere Nachfragen. Erkläre die Regeln freundlich auf Englisch.
+        </div>
+
+        <div class="chat">
+          <div class="bubble-row right">
+            <div class="bubble en">
+              <span class="speaker">Guest student</span>
+              I can see some rules on the screen. Are they about tablets during breaks?
+            </div>
+            <div class="avatar">🇬🇧</div>
+          </div>
+
+          <div class="bubble-row">
+            <div class="avatar">📋</div>
+            <div class="bubble de task-bubble">
+              <span class="speaker">Schulregel</span>
+              Während der Pausen bleiben Tablets grundsätzlich in der Tasche.
+            </div>
+          </div>
+
+          <div class="bubble-row right">
+            <div class="bubble en">
+              <span class="speaker">Guest student</span>
+              So I must not use my tablet at all?
+            </div>
+            <div class="avatar">🇬🇧</div>
+          </div>
+
+          <div class="bubble-row">
+            <div class="avatar">📋</div>
+            <div class="bubble de task-bubble">
+              <span class="speaker">Schulregel</span>
+              Ausnahmen gibt es nur, wenn eine Lehrkraft die Nutzung erlaubt.
+            </div>
+          </div>
+
+          <div class="bubble-row right">
+            <div class="bubble en">
+              <span class="speaker">Guest student</span>
+              And what about taking photos with it?
+            </div>
+            <div class="avatar">🇬🇧</div>
+          </div>
+
+          <div class="bubble-row">
+            <div class="avatar">📋</div>
+            <div class="bubble de task-bubble">
+              <span class="speaker">Schulregel</span>
+              Fotos und Videos von anderen Personen dürfen nur mit deren ausdrücklicher Zustimmung gemacht werden.
+            </div>
+          </div>
+
+          <div class="bubble-row right">
+            <div class="bubble en">
+              <span class="speaker">Guest student</span>
+              What if someone says no?
+            </div>
+            <div class="avatar">🇬🇧</div>
+          </div>
+
+          <div class="bubble-row">
+            <div class="avatar">📋</div>
+            <div class="bubble de task-bubble">
+              <span class="speaker">Schulregel</span>
+              Wenn jemand nicht einverstanden ist, darfst du kein Foto oder Video machen.
+            </div>
+          </div>
+        </div>
+
+        <div class="prompt-box">
+          <strong>Deine Aufgabe:</strong> Gib die Regeln freundlich auf Englisch wieder. Schreibe 4–6 Sätze.
+        </div>
+
+        <textarea placeholder="Write your mediation here ..."></textarea>
+        <br><br>
+        <button onclick="toggleSolution('sol3')">Lösung anzeigen</button>
+
+        <div class="solution" id="sol3">
+          <h3>Mögliche Lösung</h3>
+          <p>
+            During breaks, tablets should usually stay in your school bag. You may only use your tablet if a teacher allows it.
+            If you want to take photos or videos of other people, you need their clear permission.
+            If someone does not agree, you are not allowed to take a photo or video of them.
+          </p>
+          <div class="tip">
+            „grundsätzlich“ muss man nicht wörtlich übersetzen. Hier reicht <strong>usually</strong>.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="task" id="task4">
+      <div class="task-head">
+        <h2>Aufgabe 4: Asking for help</h2>
+        <span class="badge">Thema: Alltagssituation</span>
+      </div>
+      <div class="task-body">
+        <div class="situation">
+          <strong>Situation:</strong> Deine Mutter möchte einem englischsprachigen Hotel schreiben, weil ihr Tablet-Ladekabel im Zimmer vergessen wurde.
+          Sie sagt dir die Informationen nacheinander. Formuliere daraus eine höfliche englische Nachricht.
+        </div>
+
+        <div class="chat">
+          <div class="bubble-row">
+            <div class="avatar">👩</div>
+            <div class="bubble de">
+              <span class="speaker">Mutter</span>
+              Könntest du dem Hotel bitte auf Englisch schreiben?
+            </div>
+          </div>
+
+          <div class="bubble-row right">
+            <div class="bubble en">
+              <span class="speaker">Hotel reception</span>
+              Good afternoon. How can we help you?
+            </div>
+            <div class="avatar">🏨</div>
+          </div>
+
+          <div class="bubble-row">
+            <div class="avatar">👩</div>
+            <div class="bubble de">
+              <span class="speaker">Mutter</span>
+              Schreib bitte, dass wir gestern ausgecheckt haben.
+            </div>
+          </div>
+
+          <div class="bubble-row right">
+            <div class="bubble en">
+              <span class="speaker">Hotel reception</span>
+              Could you tell us your room number?
+            </div>
+            <div class="avatar">🏨</div>
+          </div>
+
+          <div class="bubble-row">
+            <div class="avatar">👩</div>
+            <div class="bubble de">
+              <span class="speaker">Mutter</span>
+              Es war Zimmer 214. Wir haben dort wahrscheinlich ein schwarzes Ladekabel für ein Tablet vergessen.
+            </div>
+          </div>
+
+          <div class="bubble-row right">
+            <div class="bubble en">
+              <span class="speaker">Hotel reception</span>
+              What would you like us to do?
+            </div>
+            <div class="avatar">🏨</div>
+          </div>
+
+          <div class="bubble-row">
+            <div class="avatar">👩</div>
+            <div class="bubble de">
+              <span class="speaker">Mutter</span>
+              Frag bitte, ob sie im Zimmer nachsehen und uns kurz Bescheid geben können.
+            </div>
+          </div>
+
+          <div class="bubble-row">
+            <div class="avatar">👩</div>
+            <div class="bubble de">
+              <span class="speaker">Mutter</span>
+              Bedank dich am Ende noch freundlich.
+            </div>
+          </div>
+        </div>
+
+        <div class="prompt-box">
+          <strong>Deine Aufgabe:</strong> Schreibe eine kurze höfliche Nachricht auf Englisch. Du musst nicht jede Sprechblase einzeln übersetzen.
+        </div>
+
+        <textarea placeholder="Write your mediation here ..."></textarea>
+        <br><br>
+        <button onclick="toggleSolution('sol4')">Lösung anzeigen</button>
+
+        <div class="solution" id="sol4">
+          <h3>Mögliche Lösung</h3>
+          <p>
+            Dear Sir or Madam,<br>
+            we checked out yesterday and may have forgotten a black charging cable for a tablet in room 214.
+            Could you please check the room and let us know?<br>
+            Thank you very much.
+          </p>
+          <div class="tip">
+            In einer höflichen Nachricht passen <strong>Could you please ...?</strong> und <strong>Thank you very much.</strong> sehr gut.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="task" id="task5">
+      <div class="task-head">
+        <h2>Mini-Training: Welche Informationen sind wichtig?</h2>
+        <span class="badge">Strategie-Aufgabe</span>
+      </div>
+      <div class="task-body">
+        <div class="situation">
+          <strong>Situation:</strong> Du musst nicht jedes Detail übersetzen. Wähle die Informationen aus, die in einer Mediation wichtig sind.
+        </div>
+
+        <div class="mini-task checklist">
+          <p><strong>Welche Punkte sollte man bei einer guten Mediation beachten?</strong></p>
+          <label><input type="checkbox" data-correct="true"> Die wichtigsten Informationen vollständig weitergeben.</label>
+          <label><input type="checkbox" data-correct="false"> Jedes deutsche Wort einzeln übersetzen, auch wenn der Satz komisch klingt.</label>
+          <label><input type="checkbox" data-correct="true"> Höflich und passend zur Situation formulieren.</label>
+          <label><input type="checkbox" data-correct="false"> Schwierige deutsche Wörter einfach auslassen, auch wenn sie wichtig sind.</label>
+          <label><input type="checkbox" data-correct="true"> Mit einfachen englischen Sätzen klar erklären.</label>
+          <button onclick="checkStrategy()">Antwort prüfen</button>
+          <div class="feedback" id="strategyFeedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="task">
+      <div class="task-head">
+        <h2>Useful phrases</h2>
+        <span class="badge">Satzbausteine</span>
+      </div>
+      <div class="task-body">
+        <table class="phrase-table">
+          <tr>
+            <th>Deutsch</th>
+            <th>Englisch</th>
+          </tr>
+          <tr>
+            <td>Er/Sie sagt, dass ...</td>
+            <td>He/She says that ...</td>
+          </tr>
+          <tr>
+            <td>Er/Sie möchte wissen, ob ...</td>
+            <td>He/She wants to know if ...</td>
+          </tr>
+          <tr>
+            <td>Du darfst ...</td>
+            <td>You are allowed to ... / You can ...</td>
+          </tr>
+          <tr>
+            <td>Du darfst nicht ...</td>
+            <td>You are not allowed to ... / You must not ...</td>
+          </tr>
+          <tr>
+            <td>Könnten Sie bitte ...?</td>
+            <td>Could you please ...?</td>
+          </tr>
+          <tr>
+            <td>Bescheid geben</td>
+            <td>let someone know</td>
+          </tr>
+          <tr>
+            <td>leichtere Schulranzen</td>
+            <td>lighter school bags</td>
+          </tr>
+          <tr>
+            <td>sich ablenken lassen</td>
+            <td>to get distracted</td>
+          </tr>
+        </table>
+      </div>
+    </section>
+
+    <p class="print-note">
+      Hinweis: Beim Drucken werden die Lösungen automatisch sichtbar, damit die Datei auch als Lösungsblatt genutzt werden kann.
+    </p>
+  </main>
+
+  <script>
+    function toggleSolution(id){
+      document.getElementById(id).classList.toggle('show');
+    }
+
+    function showAllSolutions(){
+      document.querySelectorAll('.solution').forEach(s => s.classList.add('show'));
+    }
+
+    function hideAllSolutions(){
+      document.querySelectorAll('.solution').forEach(s => s.classList.remove('show'));
+    }
+
+    function checkStrategy(){
+      const labels = document.querySelectorAll('.checklist label');
+      let correct = 0;
+      let totalCorrect = 0;
+
+      labels.forEach(label => {
+        const box = label.querySelector('input');
+        const isCorrect = box.dataset.correct === "true";
+        if(isCorrect) totalCorrect++;
+
+        label.style.borderColor = "#e2e8f0";
+        label.style.background = "#f8fafc";
+
+        if(box.checked && isCorrect){
+          correct++;
+          label.style.borderColor = "#86efac";
+          label.style.background = "#f0fdf4";
+        } else if(box.checked && !isCorrect){
+          label.style.borderColor = "#fca5a5";
+          label.style.background = "#fef2f2";
+        }
+      });
+
+      const wrongChecked = Array.from(document.querySelectorAll('.checklist input'))
+        .some(box => box.checked && box.dataset.correct === "false");
+
+      const feedback = document.getElementById('strategyFeedback');
+
+      if(correct === totalCorrect && !wrongChecked){
+        feedback.textContent = "Sehr gut! Du hast die wichtigen Strategien erkannt.";
+        feedback.className = "feedback good";
+      } else {
+        feedback.textContent = "Noch nicht ganz. Wichtig sind: vollständig, höflich, passend und in einfachen englischen Sätzen.";
+        feedback.className = "feedback bad";
+      }
+    }
+  </script>
+</body>
+</html>
