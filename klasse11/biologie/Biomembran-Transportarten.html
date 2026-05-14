@@ -1,0 +1,2004 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Biomembran: Aufbau und Transport</title>
+<style>
+  :root{
+    --bg:#ffffff;
+    --paper:#ffffff;
+    --ink:#162033;
+    --muted:#5f6b7a;
+    --blue:#2f6fed;
+    --blue2:#8fc7ff;
+    --yellow:#ffd66b;
+    --green:#bfe7a5;
+    --green2:#eef9e9;
+    --red:#ffb0aa;
+    --red2:#fff0ee;
+    --purple:#b59cff;
+    --card:#f7f9fc;
+    --border:#d9e1ec;
+    --shadow:0 14px 35px rgba(20,35,60,.12);
+    --radius:22px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+    color:var(--ink);
+    background:var(--bg);
+    line-height:1.55;
+  }
+
+  header{
+    position:sticky;
+    top:0;
+    z-index:20;
+    background:rgba(255,255,255,.92);
+    backdrop-filter: blur(14px);
+    border-bottom:1px solid var(--border);
+  }
+
+  .nav{
+    max-width:1180px;
+    margin:auto;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    padding:12px 18px;
+  }
+
+  .brand{
+    font-weight:850;
+    letter-spacing:.2px;
+    margin-right:auto;
+  }
+
+  .nav a{
+    color:var(--ink);
+    text-decoration:none;
+    font-weight:700;
+    font-size:.93rem;
+    padding:8px 10px;
+    border-radius:999px;
+  }
+
+  .nav a:hover{background:#edf4ff}
+
+  .hero{
+    max-width:1180px;
+    margin:26px auto 0;
+    padding:26px 18px 12px;
+    display:grid;
+    grid-template-columns:1.08fr .92fr;
+    gap:22px;
+    align-items:stretch;
+  }
+
+  .heroText{
+    background:linear-gradient(135deg,#eef7ff,#ffffff 55%,#f6fff2);
+    border:1px solid var(--border);
+    border-radius:30px;
+    box-shadow:var(--shadow);
+    padding:32px;
+  }
+
+  .kicker{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    font-size:.88rem;
+    font-weight:800;
+    color:#245b1f;
+    background:#ecffe5;
+    border:1px solid #c8efbc;
+    border-radius:999px;
+    padding:6px 12px;
+  }
+
+  h1{
+    margin:18px 0 12px;
+    font-size:clamp(2rem,5vw,4.25rem);
+    line-height:1;
+    letter-spacing:-2px;
+  }
+
+  h2{
+    font-size:clamp(1.55rem,3.2vw,2.35rem);
+    margin:0 0 12px;
+    line-height:1.08;
+    letter-spacing:-.7px;
+  }
+
+  h3{
+    margin:0 0 10px;
+    font-size:1.25rem;
+  }
+
+  p{margin:0 0 12px}
+  .lead{font-size:1.12rem;color:#324258;max-width:68ch}
+
+  main{
+    max-width:1180px;
+    margin:auto;
+    padding:14px 18px 60px;
+  }
+
+  section{
+    margin-top:28px;
+    border:1px solid var(--border);
+    border-radius:30px;
+    padding:24px;
+    background:var(--paper);
+    box-shadow:0 10px 25px rgba(20,35,60,.07);
+  }
+
+  .grid2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+
+  .grid3{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--radius);
+    padding:18px;
+  }
+
+  .note{
+    background:#fff9e8;
+    border:1px solid #ffe2a1;
+    border-radius:18px;
+    padding:14px 16px;
+    color:#59410d;
+  }
+
+  .phosphoIntro{
+    display:grid;
+    grid-template-columns:.95fr 1.05fr;
+    gap:18px;
+    margin:18px 0;
+    align-items:stretch;
+  }
+
+  .phosphoVisualCard{
+    display:grid;
+    grid-template-columns:190px 1fr;
+    gap:18px;
+    align-items:center;
+  }
+
+  .singleLipidDiagram{
+    position:relative;
+    min-height:245px;
+    border-radius:18px;
+    background:linear-gradient(180deg,#eef8ff,#ffffff);
+    border:1px solid var(--border);
+    overflow:hidden;
+  }
+
+  .singleLipid{
+    position:absolute;
+    left:50%;
+    top:42px;
+    width:92px;
+    height:165px;
+    transform:translateX(-50%);
+  }
+
+  .singleLipidHead{
+    position:absolute;
+    left:50%;
+    top:0;
+    width:58px;
+    height:58px;
+    transform:translateX(-50%);
+    border-radius:50%;
+    background:radial-gradient(circle at 32% 26%,#ffffff 0 11%,#5b87ff 28%,#133dc3 76%);
+    border:2px solid #1637ad;
+    box-shadow:0 5px 12px rgba(0,0,0,.18);
+  }
+
+  .singleLipidLink{
+    position:absolute;
+    left:50%;
+    top:55px;
+    width:18px;
+    height:24px;
+    transform:translateX(-50%);
+    background:#e7b444;
+    border:1px solid #96721e;
+    border-radius:8px;
+  }
+
+  .singleTail{
+    position:absolute;
+    top:76px;
+    width:11px;
+    height:112px;
+    background:#f6c653;
+    border:2px solid #9c7b25;
+    border-radius:999px;
+    transform-origin:top center;
+  }
+
+  .singleTail.left{
+    left:30px;
+    transform:rotate(4deg);
+  }
+
+  .singleTail.right{
+    right:30px;
+    transform:rotate(-4deg);
+  }
+
+  .partLabel{
+    display:grid;
+    gap:7px;
+  }
+
+  .partLabel span{
+    display:block;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:9px 11px;
+    font-weight:850;
+  }
+
+  .partLabel small{
+    display:block;
+    color:var(--muted);
+    font-weight:750;
+    margin-top:2px;
+  }
+
+  .wordParts{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+    margin-top:12px;
+  }
+
+  .wordPart{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:12px;
+  }
+
+  .wordPart strong{
+    display:block;
+    margin-bottom:5px;
+  }
+
+  .good{background:var(--green2);border-color:#cdebbd}
+  .activeBox{background:var(--red2);border-color:#ffd0cb}
+
+  .stage{
+    position:relative;
+    overflow:hidden;
+    min-height:420px;
+    border-radius:28px;
+    border:1px solid var(--border);
+    background:
+      radial-gradient(circle at 20% 16%, rgba(143,199,255,.3), transparent 26%),
+      linear-gradient(180deg,#eaf6ff 0%,#eef7ff 40%,#ffffff 40%,#ffffff 100%);
+    box-shadow:inset 0 0 0 1px rgba(255,255,255,.65);
+  }
+
+  .stage.small{min-height:320px}
+
+  .transportViz{
+    display:grid;
+    gap:10px;
+  }
+
+  .stageInfo,
+  .transportLabels,
+  .demoCaption,
+  .demoCopy,
+  .carrierStates{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+  }
+
+  .stageInfo{
+    justify-content:space-between;
+  }
+
+  .concentrationLegend{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+
+  .concChip{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:9px 12px;
+    font-weight:900;
+    box-shadow:0 5px 14px rgba(20,35,60,.07);
+  }
+
+  .concChip.high{
+    border-color:#a8d58f;
+    background:#f0faeb;
+    color:#255b1e;
+  }
+
+  .concChip.low{
+    border-color:#b9c9df;
+    background:#f5f8fc;
+    color:#405168;
+  }
+
+  .moleculeDots{
+    display:grid;
+    grid-template-columns:repeat(4,8px);
+    gap:4px;
+    flex:0 0 auto;
+  }
+
+  .moleculeDots i{
+    width:8px;
+    height:8px;
+    border-radius:999px;
+    background:#6fb84e;
+    box-shadow:0 1px 3px rgba(0,0,0,.18);
+  }
+
+  .moleculeDots.lowDots i:nth-child(n+3){
+    opacity:.18;
+  }
+
+  .concentrationBand{
+    position:absolute;
+    left:0;
+    right:0;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .concentrationBand.high{
+    top:0;
+    height:118px;
+    background:linear-gradient(180deg,rgba(111,184,78,.14),rgba(111,184,78,0));
+  }
+
+  .concentrationBand.low{
+    bottom:0;
+    height:168px;
+    background:linear-gradient(0deg,rgba(95,107,122,.1),rgba(95,107,122,0));
+  }
+
+  .stageConcLabel{
+    position:absolute;
+    left:18px;
+    z-index:8;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    max-width:270px;
+    background:rgba(255,255,255,.94);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:8px 11px;
+    font-weight:900;
+    box-shadow:0 8px 18px rgba(20,35,60,.09);
+    pointer-events:none;
+  }
+
+  .stageConcLabel.high{
+    top:14px;
+    border-color:#9fd081;
+    color:#255b1e;
+  }
+
+  .stageConcLabel.low{
+    bottom:14px;
+    border-color:#b9c9df;
+    color:#405168;
+  }
+
+  .infoChip,
+  .transportLabels span,
+  .demoCaption,
+  .demoCopy,
+  .carrierStates span{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:14px;
+    box-shadow:0 5px 14px rgba(20,35,60,.07);
+  }
+
+  .infoChip{
+    padding:7px 10px;
+    font-weight:850;
+    font-size:.9rem;
+  }
+
+  .transportLabels{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:8px;
+  }
+
+  .transportLabels span{
+    padding:8px 7px;
+    text-align:center;
+    font-weight:850;
+    font-size:.88rem;
+  }
+
+  #transportStage [data-lane],
+  .transportLabels [data-lane]{
+    transition:opacity .28s ease, filter .28s ease, transform .28s ease;
+  }
+
+  .transportViz.hasSelection #transportStage [data-lane]{
+    opacity:.18;
+    filter:grayscale(.65);
+  }
+
+  .transportViz.hasSelection #transportStage [data-lane].isActive{
+    opacity:1;
+    filter:none;
+  }
+
+  .transportViz.hasSelection .transportLabels [data-lane]{
+    opacity:.48;
+  }
+
+  .transportViz.hasSelection .transportLabels [data-lane].isActive{
+    opacity:1;
+    transform:translateY(-2px);
+  }
+
+  .legend{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:12px;
+  }
+
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:999px;
+    padding:7px 11px;
+    font-weight:700;
+    font-size:.9rem;
+  }
+
+  .dot{
+    width:13px;
+    height:13px;
+    border-radius:999px;
+    background:var(--blue);
+    display:inline-block;
+  }
+
+  .dot.yellow{background:var(--yellow)}
+  .dot.red{background:#e84d42}
+  .dot.green{background:#6fb84e}
+  .dot.purple{background:var(--purple)}
+
+  .membrane{
+    position:absolute;
+    left:0;
+    right:0;
+    top:120px;
+    height:95px;
+    background:rgba(198,220,255,.35);
+    border-top:1px solid rgba(70,115,175,.18);
+    border-bottom:1px solid rgba(70,115,175,.18);
+  }
+
+  .head{
+    position:absolute;
+    width:28px;height:28px;
+    border-radius:50%;
+    background:radial-gradient(circle at 32% 28%,#ffffff 0 10%,#4b78ff 28%,#1235bc 74%);
+    box-shadow:0 2px 7px rgba(0,0,0,.22);
+  }
+
+  .lipid{
+    position:absolute;
+    width:34px;
+    height:78px;
+    opacity:0;
+    transform:translateY(-12px);
+  }
+
+  .lipid.flipped{
+    transform:translateY(12px);
+  }
+
+  .lipid .head{
+    left:3px;
+    top:0;
+  }
+
+  .lipid.flipped .head{
+    top:50px;
+  }
+
+  .tail{
+    position:absolute;
+    width:5px;height:54px;
+    background:#f6c653;
+    border:1px solid #9c7b25;
+    border-radius:3px;
+    transform-origin:top center;
+  }
+
+  .lipid .tail{
+    top:25px;
+  }
+
+  .lipid .tail.t1{
+    left:10px;
+    transform:rotate(3deg);
+  }
+
+  .lipid .tail.t2{
+    left:20px;
+    transform:rotate(-3deg);
+  }
+
+  .lipid.flipped .tail{
+    top:0;
+    transform-origin:bottom center;
+  }
+
+  .lipid.flipped .tail.t1{
+    transform:rotate(-3deg);
+  }
+
+  .lipid.flipped .tail.t2{
+    transform:rotate(3deg);
+  }
+
+  .protein{
+    position:absolute;
+    top:83px;
+    width:72px;
+    height:165px;
+    border-radius:30px;
+    background:linear-gradient(90deg,#9a1708,#e63a18 40%,#8e1105);
+    border:2px solid #5d0c03;
+    box-shadow:0 7px 14px rgba(70,18,0,.22);
+  }
+
+  .pore::after{
+    content:"";
+    position:absolute;
+    left:29px;top:34px;
+    width:14px;height:96px;
+    border-radius:12px;
+    background:#1994ff;
+    box-shadow:inset 0 0 8px rgba(0,0,0,.25);
+  }
+
+  .carrier{
+    background:linear-gradient(90deg,#9f1708,#ef3a15 45%,#8d1204);
+    transform:skewY(-7deg) rotate(-5deg);
+    border-radius:34px 34px 45px 45px;
+  }
+
+  .carrier::after{
+    content:"";
+    position:absolute;
+    left:18px;top:62px;
+    width:38px;height:32px;
+    background:white;
+    clip-path:polygon(0 20%,100% 0,86% 100%,16% 100%);
+  }
+
+  .carrier.flip{
+    transform:skewY(7deg) rotate(5deg);
+  }
+
+  .carrier.flip::after{
+    clip-path:polygon(12% 0,88% 0,100% 80%,0 100%);
+  }
+
+  .transportCarrier{
+    position:absolute;
+    top:76px;
+    width:98px;
+    height:174px;
+    z-index:3;
+  }
+
+  .transportCarrier .carrierLobe{
+    position:absolute;
+    top:0;
+    width:51px;
+    height:174px;
+    background:
+      radial-gradient(circle at 50% 36%, rgba(255,255,255,.2), transparent 22%),
+      linear-gradient(90deg,#7e1005,#e83a17 62%,#a41507);
+    border:2px solid #5d0c03;
+    box-shadow:0 8px 16px rgba(70,18,0,.23);
+  }
+
+  .transportCarrier .carrierLobe.left{
+    left:0;
+    border-radius:32px 18px 18px 32px;
+    transform-origin:51px 87px;
+  }
+
+  .transportCarrier .carrierLobe.right{
+    right:0;
+    border-radius:18px 32px 32px 18px;
+    transform-origin:0 87px;
+  }
+
+  .carrierPocketMain{
+    position:absolute;
+    left:50%;
+    top:52px;
+    width:42px;
+    height:46px;
+    transform:translateX(-50%);
+    z-index:5;
+    background:
+      radial-gradient(circle at 50% 28%, rgba(47,111,237,.18), transparent 36%),
+      #ffffff;
+    border:2px solid rgba(93,12,3,.28);
+    border-radius:0 0 26px 26px;
+    clip-path:polygon(0 0,100% 0,80% 100%,20% 100%);
+    box-shadow:inset 0 0 8px rgba(47,111,237,.18);
+  }
+
+  .carrierGate{
+    position:absolute;
+    left:50%;
+    z-index:6;
+    width:38px;
+    height:5px;
+    transform:translateX(-50%);
+    border-radius:999px;
+    background:rgba(255,255,255,.88);
+    box-shadow:0 0 0 1px rgba(93,12,3,.2);
+  }
+
+  .carrierGate.top{top:37px}
+  .carrierGate.bottom{bottom:37px; opacity:.42}
+
+  .carrierGlow{
+    position:absolute;
+    left:50%;
+    top:50%;
+    width:84px;
+    height:156px;
+    transform:translate(-50%,-50%);
+    border-radius:42px;
+    background:rgba(255,214,107,.18);
+    filter:blur(2px);
+    opacity:0;
+    z-index:1;
+  }
+
+  .activeCarrier .carrierGlow{
+    background:rgba(255,176,170,.28);
+  }
+
+  .carrierBolt{
+    position:absolute;
+    right:3px;
+    top:22px;
+    z-index:7;
+    width:22px;
+    height:34px;
+    background:#ffd66b;
+    clip-path:polygon(45% 0,100% 0,62% 38%,92% 38%,28% 100%,42% 55%,8% 55%);
+    filter:drop-shadow(0 2px 3px rgba(80,48,0,.28));
+  }
+
+  .particle{
+    position:absolute;
+    width:18px;height:18px;
+    border-radius:50%;
+    background:radial-gradient(circle at 35% 30%,#fff 0 12%,#2f6fed 30%,#1138c6 75%);
+    box-shadow:0 2px 8px rgba(0,0,0,.22);
+  }
+
+  #dynamicParticles .particle{
+    z-index:9;
+  }
+
+  .particle.green{
+    background:radial-gradient(circle at 35% 30%,#fff 0 12%,#72ca5b 30%,#2f7f25 75%);
+  }
+
+  .particle.red{
+    background:radial-gradient(circle at 35% 30%,#fff 0 12%,#ff7970 30%,#bf1e16 75%);
+  }
+
+  .particle.purple{
+    background:radial-gradient(circle at 35% 30%,#fff 0 12%,#c6b4ff 30%,#6f55d6 75%);
+  }
+
+  .arrow{
+    position:absolute;
+    width:4px;
+    height:110px;
+    background:#5fa43e;
+    border-radius:999px;
+    opacity:.65;
+  }
+
+  .arrow::after{
+    content:"";
+    position:absolute;
+    left:-10px;
+    bottom:-3px;
+    width:24px;height:24px;
+    border-right:4px solid #5fa43e;
+    border-bottom:4px solid #5fa43e;
+    transform:rotate(45deg);
+  }
+
+  .label{
+    position:absolute;
+    background:white;
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:8px 10px;
+    font-weight:800;
+    box-shadow:0 8px 18px rgba(0,0,0,.09);
+  }
+
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin:16px 0 0;
+  }
+
+  button{
+    border:0;
+    background:#1d5fd1;
+    color:white;
+    padding:11px 15px;
+    border-radius:999px;
+    font-weight:850;
+    cursor:pointer;
+    box-shadow:0 7px 16px rgba(29,95,209,.22);
+  }
+
+  button.secondary{
+    background:#ffffff;
+    color:var(--ink);
+    border:1px solid var(--border);
+    box-shadow:none;
+  }
+
+  button:hover{filter:brightness(.98);transform:translateY(-1px)}
+  button:active{transform:translateY(0)}
+
+  .stepBox{
+    margin-top:14px;
+    background:#ffffff;
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:16px;
+    min-height:88px;
+  }
+
+  .stepTitle{
+    font-weight:900;
+    font-size:1.1rem;
+    margin-bottom:6px;
+  }
+
+  .compare{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+
+  .badge{
+    display:inline-block;
+    font-weight:900;
+    padding:5px 10px;
+    border-radius:999px;
+    margin-bottom:10px;
+  }
+
+  .badge.passiv{background:#d8f1c8;color:#22571a}
+  .badge.aktiv{background:#ffd6d2;color:#7f1b13}
+
+  .quizGrid{
+    display:grid;
+    gap:14px;
+  }
+
+  .question{
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:16px;
+    background:#fff;
+  }
+
+  .answers{
+    display:grid;
+    gap:8px;
+    margin-top:10px;
+  }
+
+  .answer{
+    text-align:left;
+    background:#f4f7fb;
+    color:var(--ink);
+    border:1px solid var(--border);
+    box-shadow:none;
+    border-radius:14px;
+  }
+
+  .answer.correct{background:#e9f9df;border-color:#9bdb7b}
+  .answer.wrong{background:#ffefed;border-color:#ffaaa3}
+
+  .feedback{
+    font-weight:800;
+    margin-top:10px;
+    min-height:24px;
+  }
+
+  .dragArea{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+
+  .terms,.targets{
+    display:grid;
+    gap:10px;
+  }
+
+  .term,
+  .sortTerm{
+    background:#fff;
+    border:2px dashed #b9c5d6;
+    padding:12px;
+    border-radius:16px;
+    cursor:grab;
+    font-weight:800;
+  }
+
+  .target,
+  .sortTarget{
+    min-height:62px;
+    background:#f7f9fc;
+    border:2px dashed #b9c5d6;
+    border-radius:16px;
+    padding:12px;
+  }
+
+  .target strong{display:block;margin-bottom:6px}
+  .target.over{background:#edf6ff;border-color:#4f93ff}
+  .target.ok{border-style:solid;border-color:#7cc763;background:#eefbe8}
+  .target.bad{border-style:solid;border-color:#ff8d85;background:#fff0ef}
+  .sortTarget strong{display:block;margin-bottom:8px}
+  .sortTarget.over{background:#edf6ff;border-color:#4f93ff}
+  .sortTarget.ok{border-style:solid;border-color:#7cc763;background:#eefbe8}
+  .sortTarget.bad{border-style:solid;border-color:#ff8d85;background:#fff0ef}
+
+  .sortTargets{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px;
+  }
+
+  .sortSource{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:10px;
+    margin:12px 0 14px;
+  }
+
+  .sortTerm{
+    overflow-wrap:break-word;
+  }
+
+  .miniResult{
+    margin-top:12px;
+    font-weight:900;
+  }
+
+  .simPanel{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:16px;
+    align-items:start;
+  }
+
+  .choiceRow{
+    display:grid;
+    gap:10px;
+  }
+
+  .choice{
+    width:100%;
+    text-align:left;
+    box-shadow:none;
+    border:1px solid var(--border);
+    color:var(--ink);
+    background:#fff;
+  }
+
+  .progress{
+    height:12px;
+    background:#e6edf7;
+    border-radius:999px;
+    overflow:hidden;
+  }
+
+  .bar{
+    height:100%;
+    width:0%;
+    background:linear-gradient(90deg,#6fb84e,#2f6fed);
+    transition:.35s;
+  }
+
+  .score{
+    font-size:1.2rem;
+    font-weight:950;
+  }
+
+  .floating{
+    animation:float 3s ease-in-out infinite;
+  }
+
+  .pulse{
+    animation:pulse 1.4s ease-in-out infinite;
+  }
+
+  .moveDown{animation:down 3s ease-in-out infinite}
+  .poreMove{animation:poreDown 3.4s ease-in-out infinite}
+  .carrierMove{animation:carrierRide 4.2s ease-in-out infinite}
+  .activeMove{animation:activeRide 4.4s ease-in-out infinite}
+  .proteinWiggle{animation:wiggle 2.1s ease-in-out infinite}
+  .transportCarrier.proteinWiggle{animation:none}
+  .transportCarrier.proteinWiggle .carrierLobe.left{animation:carrierMainLeft 4.2s ease-in-out infinite}
+  .transportCarrier.proteinWiggle .carrierLobe.right{animation:carrierMainRight 4.2s ease-in-out infinite}
+  .transportCarrier.proteinWiggle .carrierPocketMain{animation:carrierPocketMain 4.2s ease-in-out infinite}
+  .transportCarrier.proteinWiggle .carrierGate.top{animation:carrierTopGate 4.2s ease-in-out infinite}
+  .transportCarrier.proteinWiggle .carrierGate.bottom{animation:carrierBottomGate 4.2s ease-in-out infinite}
+  .transportCarrier.proteinWiggle .carrierGlow{animation:carrierGlow 4.2s ease-in-out infinite}
+  .activeCarrier.proteinWiggle .carrierLobe.left{animation:activeCarrierLeft 4.4s ease-in-out infinite}
+  .activeCarrier.proteinWiggle .carrierLobe.right{animation:activeCarrierRight 4.4s ease-in-out infinite}
+  .activeCarrier.proteinWiggle .carrierPocketMain{animation:activePocketMain 4.4s ease-in-out infinite}
+  .activeCarrier.proteinWiggle .carrierGate.top{animation:activeTopGate 4.4s ease-in-out infinite}
+  .activeCarrier.proteinWiggle .carrierGate.bottom{animation:activeBottomGate 4.4s ease-in-out infinite}
+  .activeCarrier.proteinWiggle .carrierBolt{animation:flash 1.2s ease-in-out infinite}
+  .atpFlash{animation:flash 1.2s ease-in-out infinite}
+
+  @keyframes float{
+    0%,100%{transform:translateY(0)}
+    50%{transform:translateY(-8px)}
+  }
+  @keyframes pulse{
+    0%,100%{transform:scale(1)}
+    50%{transform:scale(1.12)}
+  }
+  @keyframes down{
+    0%{transform:translateY(-75px);opacity:0}
+    20%{opacity:1}
+    78%{opacity:1}
+    100%{transform:translateY(150px);opacity:0}
+  }
+  @keyframes poreDown{
+    0%{transform:translateY(-92px);opacity:0}
+    15%{opacity:1}
+    50%{transform:translateY(10px)}
+    90%{opacity:1}
+    100%{transform:translateY(166px);opacity:0}
+  }
+  @keyframes carrierRide{
+    0%{transform:translate(0,-38px);opacity:0}
+    10%{transform:translate(0,0);opacity:1}
+    24%,34%{transform:translate(0,84px);opacity:1}
+    48%,62%{transform:translate(0,104px);opacity:1}
+    82%{transform:translate(0,162px);opacity:1}
+    92%{opacity:1}
+    100%{transform:translate(0,242px);opacity:0}
+  }
+  @keyframes activeRide{
+    0%{transform:translate(0,70px);opacity:0}
+    10%{transform:translate(0,0);opacity:1}
+    24%,44%{transform:translate(0,-56px);opacity:1}
+    58%,70%{transform:translate(0,-64px);opacity:1}
+    86%{transform:translate(0,-126px);opacity:1}
+    92%{opacity:1}
+    100%{transform:translate(0,-188px);opacity:0}
+  }
+  @keyframes wiggle{
+    0%,100%{filter:brightness(1); transform:skewY(-7deg) rotate(-5deg)}
+    50%{filter:brightness(1.14); transform:skewY(7deg) rotate(5deg)}
+  }
+  @keyframes carrierMainLeft{
+    0%,34%{transform:rotate(0deg)}
+    48%,62%{transform:rotate(-14deg)}
+    82%,100%{transform:rotate(9deg)}
+  }
+  @keyframes carrierMainRight{
+    0%,34%{transform:rotate(0deg)}
+    48%,62%{transform:rotate(14deg)}
+    82%,100%{transform:rotate(-9deg)}
+  }
+  @keyframes carrierPocketMain{
+    0%,34%{top:52px; border-radius:0 0 26px 26px; clip-path:polygon(0 0,100% 0,80% 100%,20% 100%);}
+    48%,62%{top:70px; border-radius:24px; clip-path:circle(48% at 50% 50%);}
+    82%,100%{top:92px; border-radius:26px 26px 0 0; clip-path:polygon(20% 0,80% 0,100% 100%,0 100%);}
+  }
+  @keyframes carrierTopGate{
+    0%,34%{opacity:.95; transform:translateX(-50%) scaleX(1)}
+    48%,100%{opacity:.32; transform:translateX(-50%) scaleX(.55)}
+  }
+  @keyframes carrierBottomGate{
+    0%,68%{opacity:.32; transform:translateX(-50%) scaleX(.55)}
+    82%,100%{opacity:.95; transform:translateX(-50%) scaleX(1)}
+  }
+  @keyframes carrierGlow{
+    0%,100%{opacity:0}
+    48%,62%{opacity:1}
+  }
+  @keyframes activeCarrierLeft{
+    0%,44%{transform:rotate(9deg)}
+    58%,70%{transform:rotate(-13deg)}
+    86%,100%{transform:rotate(0deg)}
+  }
+  @keyframes activeCarrierRight{
+    0%,44%{transform:rotate(-9deg)}
+    58%,70%{transform:rotate(13deg)}
+    86%,100%{transform:rotate(0deg)}
+  }
+  @keyframes activePocketMain{
+    0%,44%{top:92px; border-radius:26px 26px 0 0; clip-path:polygon(20% 0,80% 0,100% 100%,0 100%);}
+    58%,70%{top:70px; border-radius:24px; clip-path:circle(48% at 50% 50%);}
+    86%,100%{top:52px; border-radius:0 0 26px 26px; clip-path:polygon(0 0,100% 0,80% 100%,20% 100%);}
+  }
+  @keyframes activeTopGate{
+    0%,74%{opacity:.32; transform:translateX(-50%) scaleX(.55)}
+    86%,100%{opacity:.95; transform:translateX(-50%) scaleX(1)}
+  }
+  @keyframes activeBottomGate{
+    0%,44%{opacity:.95; transform:translateX(-50%) scaleX(1)}
+    58%,100%{opacity:.32; transform:translateX(-50%) scaleX(.55)}
+  }
+  @keyframes flash{
+    0%,100%{opacity:.35;transform:scale(1)}
+    50%{opacity:1;transform:scale(1.07)}
+  }
+
+  @media (max-width:860px){
+    .hero,.grid2,.grid3,.compare,.dragArea,.simPanel,.phosphoIntro,.phosphoVisualCard{grid-template-columns:1fr}
+    .sortSource,.sortTargets{grid-template-columns:1fr}
+    .nav{overflow-x:auto}
+    section{padding:18px}
+  }
+
+  @media print{
+    header,.controls,button{display:none!important}
+    body{background:#fff}
+    section,.heroText{box-shadow:none;break-inside:avoid}
+  }
+
+  .moveDown,
+  .poreMove,
+  .carrierMove,
+  .activeMove{
+    opacity:0;
+    animation-fill-mode:both;
+  }
+
+  /* Deutlichere Carrier-Animation */
+  .carrierDemoWrap{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:22px;
+    margin-top:18px;
+  }
+
+  .carrierDemoWrap .card{
+    max-width:680px;
+    width:100%;
+    margin:0 auto;
+  }
+
+  .carrierDemoWrap .stage.small{
+    min-height:340px;
+  }
+
+  .demoCaption{
+    align-items:center;
+    justify-content:space-between;
+    margin-bottom:10px;
+    padding:8px 11px;
+    font-weight:900;
+  }
+
+  .demoCaption span{
+    color:var(--muted);
+    font-size:.88rem;
+    font-weight:800;
+  }
+
+  .demoCopy{
+    display:block;
+    margin-top:10px;
+    padding:10px 12px;
+    color:#334259;
+    font-weight:720;
+    font-size:.93rem;
+    overflow-wrap:break-word;
+  }
+
+  .demoStage .membrane,
+  .demoStage .bigProtein,
+  .demoStage .poreWater,
+  .demoStage .poreParticleClear,
+  .demoStage .carrierBody,
+  .demoStage .carrierHalf,
+  .demoStage .bindingPocket,
+  .demoStage .carrierParticleClear{
+    animation-delay:var(--demo-delay, 0s);
+  }
+  .bigProtein{
+    position:absolute;
+    top:78px;
+    left:50%;
+    transform:translateX(-50%);
+    width:118px;
+    height:182px;
+    border-radius:40px;
+    background:linear-gradient(90deg,#8d1204,#f04a22 46%,#831004);
+    border:3px solid #5d0c03;
+    box-shadow:0 12px 22px rgba(70,18,0,.24);
+  }
+  .bigPore::after{
+    content:"";
+    position:absolute;
+    left:44px;
+    top:18px;
+    width:30px;
+    height:146px;
+    border-radius:30px;
+    background:#52b7ff;
+    box-shadow:inset 0 0 10px rgba(0,0,0,.28);
+  }
+  .poreWater{
+    position:absolute;
+    left:50%;
+    top:98px;
+    transform:translateX(-50%);
+    width:18px;
+    height:118px;
+    border-radius:999px;
+    background:repeating-linear-gradient(180deg, rgba(255,255,255,.8) 0 10px, rgba(82,183,255,.65) 10px 20px);
+    z-index:2;
+    animation:waterFlow 1.1s linear infinite;
+  }
+  @keyframes waterFlow{
+    from{background-position-y:0}
+    to{background-position-y:20px}
+  }
+  .poreParticleClear{
+    position:absolute;
+    left:calc(50% - 8px);
+    top:42px;
+    z-index:4;
+    animation:poreClear 3.2s ease-in-out infinite;
+  }
+  @keyframes poreClear{
+    0%{transform:translateY(0);opacity:0}
+    12%{opacity:1}
+    48%{transform:translateY(112px);opacity:1}
+    80%{transform:translateY(214px);opacity:1}
+    100%{transform:translateY(250px);opacity:0}
+  }
+  .carrierBody{
+    position:absolute;
+    top:78px;
+    left:50%;
+    transform:translateX(-50%);
+    width:150px;
+    height:182px;
+    z-index:2;
+  }
+  .carrierHalf{
+    position:absolute;
+    top:0;
+    width:76px;
+    height:182px;
+    background:linear-gradient(90deg,#8d1204,#f04a22);
+    border:3px solid #5d0c03;
+    box-shadow:0 12px 22px rgba(70,18,0,.24);
+  }
+  .carrierHalf.left{
+    left:0;
+    border-radius:42px 20px 20px 42px;
+    transform-origin:76px 91px;
+    animation:carrierLeft 5.2s ease-in-out infinite;
+  }
+  .carrierHalf.right{
+    right:0;
+    border-radius:20px 42px 42px 20px;
+    transform-origin:0 91px;
+    animation:carrierRight 5.2s ease-in-out infinite;
+  }
+  .bindingPocket{
+    position:absolute;
+    left:50%;
+    top:74px;
+    transform:translateX(-50%);
+    width:54px;
+    height:42px;
+    background:white;
+    border-radius:0 0 30px 30px;
+    z-index:4;
+    clip-path:polygon(0 0,100% 0,78% 100%,22% 100%);
+    animation:pocketFlip 5.2s ease-in-out infinite;
+  }
+  .carrierParticleClear{
+    position:absolute;
+    left:calc(50% - 11px);
+    top:38px;
+    z-index:5;
+    width:22px;
+    height:22px;
+    animation:carrierClear 5.2s ease-in-out infinite;
+  }
+  .carrierStateTop,.carrierStateBottom{
+    padding:7px 10px;
+    font-weight:900;
+    font-size:.86rem;
+  }
+  .carrierStates{
+    margin-top:10px;
+  }
+  .carrierStateTop{animation:stateTop 5.2s ease-in-out infinite;}
+  .carrierStateBottom{animation:stateBottom 5.2s ease-in-out infinite;}
+  .carrierDemoWrap .card:nth-child(2) .carrierStates span{animation-delay:.65s;}
+  @keyframes carrierLeft{
+    0%,22%{transform:rotate(0deg)}
+    38%,58%{transform:rotate(-18deg)}
+    74%,100%{transform:rotate(12deg)}
+  }
+  @keyframes carrierRight{
+    0%,22%{transform:rotate(0deg)}
+    38%,58%{transform:rotate(18deg)}
+    74%,100%{transform:rotate(-12deg)}
+  }
+  @keyframes pocketFlip{
+    0%,22%{top:74px; border-radius:0 0 30px 30px; clip-path:polygon(0 0,100% 0,78% 100%,22% 100%);}
+    38%,58%{top:86px; border-radius:26px; clip-path:circle(50% at 50% 50%);}
+    74%,100%{top:112px; border-radius:30px 30px 0 0; clip-path:polygon(22% 0,78% 0,100% 100%,0 100%);}
+  }
+  @keyframes carrierClear{
+    0%{transform:translateY(0);opacity:0}
+    10%{opacity:1;transform:translateY(28px)}
+    24%{opacity:1;transform:translateY(74px)}
+    48%{opacity:1;transform:translateY(92px)}
+    72%{opacity:1;transform:translateY(144px)}
+    86%{opacity:1;transform:translateY(208px)}
+    100%{opacity:0;transform:translateY(234px)}
+  }
+  @keyframes stateTop{
+    0%,32%{opacity:1}
+    45%,100%{opacity:.18}
+  }
+  @keyframes stateBottom{
+    0%,55%{opacity:.18}
+    72%,100%{opacity:1}
+  }
+  .threeSteps{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-top:14px;
+  }
+  .miniStep{
+    background:#fff;
+    border:1px solid var(--border);
+    border-radius:18px;
+    padding:12px;
+  }
+  .miniStep strong{display:block;margin-bottom:5px;}
+  @media (max-width:860px){
+    .carrierDemoWrap,.threeSteps{grid-template-columns:1fr}
+    .transportLabels{grid-template-columns:repeat(2,1fr)}
+    .concentrationLegend{grid-template-columns:1fr}
+  }
+
+</style>
+</head>
+<body>
+<header>
+  <nav class="nav">
+    <div class="brand">Biomembran & Transport</div>
+    <a href="#aufbau">Aufbau</a>
+    <a href="#transport">Transportarten</a>
+    <a href="#animation">Animation</a>
+    <a href="#uebungen">Übungen</a>
+  </nav>
+</header>
+
+<div class="hero">
+  <div class="heroText">
+    <span class="kicker">Interaktives Lernprogramm</span>
+    <h1>Aufbau und Transport durch Biomembranen</h1>
+    <p class="lead">
+      Hier lernst du, wie die Phospholipid-Doppelschicht aufgebaut ist und wie Stoffe durch einfache Diffusion,
+      Tunnelproteine/Porenproteine und Carrier-Proteine transportiert werden.
+    </p>
+    <div class="legend">
+      <span class="pill"><span class="dot"></span> hydrophiler Kopf</span>
+      <span class="pill"><span class="dot yellow"></span> hydrophober Schwanz</span>
+      <span class="pill"><span class="dot red"></span> Transportprotein</span>
+      <span class="pill"><span class="dot green"></span> Transportteilchen</span>
+    </div>
+  </div>
+
+  <div class="stage small" id="heroStage" aria-label="Animierte Biomembran">
+    <div class="membrane"></div>
+    <div class="protein pore pulse" style="left:46%;"></div>
+    <div class="carrier protein floating" style="left:67%;"></div>
+    <div class="label" style="left:18px;top:18px;">extrazellulärer Raum</div>
+    <div class="label" style="left:18px;bottom:18px;">Cytoplasma</div>
+    <div class="particle green moveDown" style="left:50%;top:54px;"></div>
+    <div class="particle purple carrierMove" style="left:69%;top:82px;"></div>
+  </div>
+</div>
+
+<main>
+<section id="aufbau">
+  <h2>1. Aufbau der Biomembran</h2>
+  <p>
+    Eine Biomembran besteht vor allem aus einer <strong>Phospholipid-Doppelschicht</strong>. Jedes Phospholipid besitzt einen
+    <strong>hydrophilen Kopf</strong> und zwei <strong>hydrophobe Fettsäureschwänze</strong>.
+  </p>
+
+  <div class="phosphoIntro">
+    <div class="card phosphoVisualCard">
+      <div class="singleLipidDiagram" aria-label="Einzelnes Phospholipid mit Kopf und zwei Fettsäureketten">
+        <div class="singleLipid">
+          <div class="singleLipidHead"></div>
+          <div class="singleLipidLink"></div>
+          <div class="singleTail left"></div>
+          <div class="singleTail right"></div>
+        </div>
+      </div>
+      <div class="partLabel">
+        <span>hydrophiler Kopf<small>enthält eine Phosphatgruppe und liebt Wasser</small></span>
+        <span>zwei Fettsäureketten<small>hydrophob, fettähnlich und wassermeidend</small></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>Was bedeutet Phospholipid?</h3>
+      <p>
+        Ein Phospholipid ist ein Molekül mit zwei sehr unterschiedlichen Bereichen:
+        Der Kopf ist polar und kann gut mit Wasser wechselwirken. Die beiden Schwänze sind unpolar,
+        fettähnlich und meiden Wasser.
+      </p>
+      <div class="wordParts">
+        <div class="wordPart">
+          <strong>Phospho-</strong>
+          steht für die Phosphatgruppe im wasserliebenden Kopf.
+        </div>
+        <div class="wordPart">
+          <strong>-lipid</strong>
+          bedeutet fettähnlicher Stoff; hier sind das die Fettsäureketten.
+        </div>
+      </div>
+      <p style="margin-top:12px;">
+        Weil ein Phospholipid einen wasserliebenden und einen wassermeidenden Teil hat, nennt man es
+        <strong>amphiphil</strong>. Genau deshalb ordnen sich viele Phospholipide im Wasser zu einer Doppelschicht an.
+      </p>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="stage small" id="buildStage">
+      <div class="membrane"></div>
+      <div class="label" style="left:18px;top:18px;">Wasser außen</div>
+      <div class="label" style="left:18px;bottom:18px;">Wasser innen</div>
+    </div>
+    <div class="card">
+      <h3>Warum eine Doppelschicht?</h3>
+      <p><strong>Hydrophile Köpfe:</strong> zeigen zum wässrigen Außenraum und zum wässrigen Zellinneren.</p>
+      <p><strong>Hydrophobe Schwänze:</strong> lagern sich nach innen zusammen und meiden Wasser.</p>
+      <p><strong>Folge:</strong> Kleine unpolare Stoffe können leichter durch die Lipidschicht diffundieren. Geladene oder große polare Stoffe brauchen meist Proteine.</p>
+      <div class="controls">
+        <button onclick="buildMembrane()">Membran animiert aufbauen</button>
+        <button class="secondary" onclick="resetBuild()">Zurücksetzen</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="transport">
+  <h2>2. Die wichtigsten Transportarten</h2>
+  <div class="compare">
+    <div class="card good">
+      <span class="badge passiv">passiver Transport</span>
+      <h3>mit dem Konzentrationsgradienten</h3>
+      <p>Teilchen bewegen sich von hoher zu niedriger Konzentration. Dafür wird keine ATP-Energie benötigt.</p>
+      <p><strong>Beispiele:</strong> einfache Diffusion, Transport durch Tunnelproteine, erleichterte Diffusion über Carrier.</p>
+    </div>
+    <div class="card activeBox">
+      <span class="badge aktiv">aktiver Transport</span>
+      <h3>gegen den Konzentrationsgradienten</h3>
+      <p>Teilchen werden von niedriger zu hoher Konzentration transportiert. Dafür wird Energie benötigt, meist durch ATP.</p>
+      <p><strong>Beispiel:</strong> ATP-abhängige Carrier/Pumpen.</p>
+    </div>
+  </div>
+
+  <div class="grid3" style="margin-top:16px">
+    <div class="card">
+      <h3>Einfache Diffusion</h3>
+      <p>Kleine, unpolare Moleküle bewegen sich direkt durch die Lipiddoppelschicht.</p>
+    </div>
+    <div class="card">
+      <h3>Tunnelprotein / Porenprotein</h3>
+      <p>Ein wassergefüllter Kanal lässt passende Teilchen durch. Das Protein verändert seine Form kaum.</p>
+    </div>
+    <div class="card">
+      <h3>Carrier-Protein</h3>
+      <p>Das Teilchen bindet an eine Bindungsstelle. Danach ändert der Carrier seine Konformation und gibt das Teilchen auf der anderen Seite frei.</p>
+    </div>
+  </div>
+
+  <div class="carrierDemoWrap">
+    <div class="card">
+      <h3>Direkter Vergleich: Tunnelprotein</h3>
+      <div class="demoCaption">
+        <strong>Tunnelprotein</strong>
+        <span>offene Pore</span>
+      </div>
+      <div class="stage small demoStage">
+        <div class="membrane"></div>
+        <div class="bigProtein bigPore"></div>
+        <div class="poreWater"></div>
+        <div class="particle purple poreParticleClear"></div>
+      </div>
+      <div class="demoCopy">Das Teilchen gleitet durch einen durchgehenden Kanal. Es gibt keine Bindungstasche, die das Teilchen einzeln festhält.</div>
+    </div>
+    <div class="card">
+      <h3>Direkter Vergleich: Carrier-Protein</h3>
+      <div class="demoCaption">
+        <strong>Carrier-Protein</strong>
+        <span>Bindung + Formwechsel</span>
+      </div>
+      <div class="stage small demoStage" style="--demo-delay:.65s;">
+        <div class="membrane"></div>
+        <div class="carrierBody">
+          <div class="carrierHalf left"></div>
+          <div class="carrierHalf right"></div>
+          <div class="bindingPocket"></div>
+        </div>
+        <div class="particle red carrierParticleClear"></div>
+      </div>
+      <div class="carrierStates">
+        <span class="carrierStateTop">Konformation 1: außen offen</span>
+        <span class="carrierStateBottom">Konformation 2: innen offen</span>
+      </div>
+      <div class="demoCopy">Das Teilchen bindet zuerst. Dann klappt der Carrier um und öffnet sich zur anderen Seite.</div>
+    </div>
+  </div>
+
+  <div class="threeSteps">
+    <div class="miniStep"><strong>1. Bindung:</strong> Beim Carrier passt das Teilchen in eine spezifische Bindungstasche.</div>
+    <div class="miniStep"><strong>2. Konformationsänderung:</strong> Der Carrier verändert seine räumliche Form.</div>
+    <div class="miniStep"><strong>3. Freisetzung:</strong> Das Teilchen wird auf der anderen Seite der Membran abgegeben.</div>
+  </div>
+</section>
+
+<section id="animation">
+  <h2>3. Animative Erklärung: Stofftransport Schritt für Schritt</h2>
+  <div class="simPanel">
+    <div class="transportViz">
+      <div class="stage" id="transportStage">
+        <div class="concentrationBand high"></div>
+        <div class="concentrationBand low"></div>
+        <div class="stageConcLabel high">
+          <span>oben: hohe Konzentration</span>
+          <span class="moleculeDots" aria-hidden="true">
+            <i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i>
+          </span>
+        </div>
+        <div class="stageConcLabel low">
+          <span>unten: niedrige Konzentration</span>
+          <span class="moleculeDots lowDots" aria-hidden="true">
+            <i></i><i></i><i></i><i></i>
+            <i></i><i></i><i></i><i></i>
+          </span>
+        </div>
+        <div class="membrane"></div>
+
+        <div class="protein pore" data-lane="pore" style="left:35%;"></div>
+        <div class="transportCarrier" id="carrierPassive" data-lane="carrier" style="left:54%;">
+          <div class="carrierGlow"></div>
+          <div class="carrierLobe left"></div>
+          <div class="carrierLobe right"></div>
+          <div class="carrierPocketMain"></div>
+          <div class="carrierGate top"></div>
+          <div class="carrierGate bottom"></div>
+        </div>
+        <div class="transportCarrier activeCarrier" id="carrierActive" data-lane="active" style="left:75%;">
+          <div class="carrierGlow"></div>
+          <div class="carrierLobe left"></div>
+          <div class="carrierLobe right"></div>
+          <div class="carrierPocketMain"></div>
+          <div class="carrierGate top"></div>
+          <div class="carrierGate bottom"></div>
+          <div class="carrierBolt"></div>
+        </div>
+
+        <div id="dynamicParticles"></div>
+        <div class="arrow" data-lane="diffusion" style="left:16%;top:78px;"></div>
+        <div class="arrow" data-lane="pore" style="left:38%;top:78px;"></div>
+        <div class="arrow" data-lane="carrier" style="left:59%;top:78px;"></div>
+        <div class="arrow" data-lane="active" style="left:79%;top:78px; transform:rotate(180deg);"></div>
+
+        <div class="label atpFlash" id="atpLabel" style="right:18px;top:18px; display:none;">ATP → ADP + P<sub>i</sub></div>
+      </div>
+      <div class="transportLabels">
+        <span data-lane="diffusion">Diffusion</span>
+        <span data-lane="pore">Tunnel</span>
+        <span data-lane="carrier">Carrier passiv</span>
+        <span data-lane="active">Carrier aktiv</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 id="stepHeadline">Wähle eine Animation aus.</h3>
+      <div class="stepBox">
+        <div class="stepTitle" id="stepTitle">Start</div>
+        <p id="stepText">Klicke auf eine Transportart. Danach siehst du die Bewegung der Teilchen und eine kurze Erklärung.</p>
+      </div>
+      <div class="controls">
+        <button onclick="showTransport('diffusion')">Einfache Diffusion</button>
+        <button onclick="showTransport('pore')">Tunnelprotein</button>
+        <button onclick="showTransport('carrier')">Carrier passiv</button>
+        <button onclick="showTransport('active')">Carrier aktiv</button>
+      </div>
+      <div class="note" style="margin-top:14px;">
+        <strong>Merke:</strong> Tunnelproteine bilden eher einen Durchgang. Carrier binden ein Teilchen und wechseln zwischen zwei Konformationen.
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="uebungen">
+  <h2>4. Übungen</h2>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Aufgabe A: Begriffe zuordnen</h3>
+      <p>Ziehe die Begriffe in die passende Box.</p>
+      <div class="dragArea">
+        <div class="terms" id="terms">
+          <div class="term" draggable="true" data-match="passiv">Transport ohne ATP, entlang des Gradienten</div>
+          <div class="term" draggable="true" data-match="aktiv">Transport mit ATP, gegen den Gradienten</div>
+          <div class="term" draggable="true" data-match="carrier">Bindung + Konformationsänderung</div>
+          <div class="term" draggable="true" data-match="tunnel">Wassergefüllter Durchgang</div>
+        </div>
+        <div class="targets">
+          <div class="target" data-target="passiv"><strong>Passiver Transport</strong></div>
+          <div class="target" data-target="aktiv"><strong>Aktiver Transport</strong></div>
+          <div class="target" data-target="carrier"><strong>Carrier-Protein</strong></div>
+          <div class="target" data-target="tunnel"><strong>Tunnelprotein</strong></div>
+        </div>
+      </div>
+      <div class="controls">
+        <button onclick="checkDrag()">Zuordnung prüfen</button>
+        <button class="secondary" onclick="resetDrag()">Neu starten</button>
+      </div>
+      <div class="miniResult" id="dragResult"></div>
+    </div>
+
+    <div class="card">
+      <h3>Aufgabe B: Welcher Transport passt?</h3>
+      <div class="choiceRow">
+        <button class="choice" onclick="caseAnswer(this, true)">Sauerstoff gelangt direkt durch die Lipiddoppelschicht.</button>
+        <button class="choice" onclick="caseAnswer(this, false)">Natrium-Ionen bewegen sich direkt durch die hydrophobe Membranmitte.</button>
+        <button class="choice" onclick="caseAnswer(this, false)">Ein großes polares Molekül diffundiert ohne Protein durch die Membran.</button>
+      </div>
+      <div class="feedback" id="caseFeedback"></div>
+      <div class="note" style="margin-top:14px;">
+        <strong>Hinweis:</strong> Kleine unpolare Moleküle passen am ehesten zur einfachen Diffusion.
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:18px;">
+    <h3>Aufgabe C: Transportarten passiv oder aktiv?</h3>
+    <p>Ziehe die gemischten Beispiele in die passende Kategorie.</p>
+    <div class="sortSource" id="transportSortSource">
+      <div class="sortTerm" draggable="true" data-sort="passiv">Einfache Diffusion</div>
+      <div class="sortTerm" draggable="true" data-sort="aktiv">Natrium-Kalium-Pumpe</div>
+      <div class="sortTerm" draggable="true" data-sort="passiv">Tunnelprotein / Kanalprotein</div>
+      <div class="sortTerm" draggable="true" data-sort="aktiv">Carrier transportiert entgegen des Konzentrationsgefälles</div>
+      <div class="sortTerm" draggable="true" data-sort="passiv">Carrier transportiert entlang des Konzentrationsgradienten</div>
+      <div class="sortTerm" draggable="true" data-sort="aktiv">Transport gegen den Konzentrationsgradienten</div>
+    </div>
+    <div class="sortTargets">
+      <div class="sortTarget" data-sort-target="passiv"><strong>Passiver Transport</strong></div>
+      <div class="sortTarget" data-sort-target="aktiv"><strong>Aktiver Transport</strong></div>
+    </div>
+    <div class="controls">
+      <button onclick="checkTransportSort()">Zuordnung prüfen</button>
+      <button class="secondary" onclick="resetTransportSort()">Neu starten</button>
+    </div>
+    <div class="miniResult" id="transportSortResult"></div>
+  </div>
+
+  <div class="quizGrid" style="margin-top:18px;">
+    <div class="question" data-q>
+      <strong>1. Was ist der Unterschied zwischen Tunnelprotein und Carrier?</strong>
+      <div class="answers">
+        <button class="answer" onclick="answer(this,false)">Tunnelproteine verbrauchen immer ATP, Carrier nie.</button>
+        <button class="answer" onclick="answer(this,true)">Tunnelproteine bilden einen Durchgang, Carrier binden Teilchen und ändern ihre Form.</button>
+        <button class="answer" onclick="answer(this,false)">Carrier bestehen aus Phospholipiden, Tunnelproteine aus Stärke.</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="question" data-q>
+      <strong>2. Wann spricht man von aktivem Transport?</strong>
+      <div class="answers">
+        <button class="answer" onclick="answer(this,false)">Wenn Teilchen immer nach unten sinken.</button>
+        <button class="answer" onclick="answer(this,false)">Wenn Teilchen entlang des Konzentrationsgradienten wandern.</button>
+        <button class="answer" onclick="answer(this,true)">Wenn Teilchen gegen den Konzentrationsgradienten transportiert werden und Energie benötigt wird.</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="question" data-q>
+      <strong>3. Warum brauchen geladene Ionen oft Transportproteine?</strong>
+      <div class="answers">
+        <button class="answer" onclick="answer(this,true)">Die hydrophobe Membranmitte ist für geladene Teilchen schlecht durchlässig.</button>
+        <button class="answer" onclick="answer(this,false)">Ionen sind immer größer als Zellen.</button>
+        <button class="answer" onclick="answer(this,false)">Ionen können nur im Zellkern vorkommen.</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+    <div class="question" data-q>
+      <strong>4. Ein Teilchen wird zuerst an eine bestimmte Stelle des Proteins gebunden. Danach öffnet sich das Protein zur anderen Membranseite. Was ist das?</strong>
+      <div class="answers">
+        <button class="answer" onclick="answer(this,false)">Einfache Diffusion</button>
+        <button class="answer" onclick="answer(this,false)">Tunnelprotein</button>
+        <button class="answer" onclick="answer(this,true)">Carrier-Protein</button>
+      </div>
+      <div class="feedback"></div>
+    </div>
+
+  </div>
+
+  <div class="card" style="margin-top:18px;">
+    <h3>Punktestand</h3>
+    <p class="score"><span id="score">0</span> von <span id="maxScore">7</span> Punkten</p>
+    <div class="progress"><div class="bar" id="bar"></div></div>
+  </div>
+</section>
+</main>
+
+<script>
+  const buildStage = document.getElementById("buildStage");
+  let score = 0;
+  let answered = new WeakSet();
+  let dragDone = false;
+  let transportSortDone = false;
+  let caseDone = false;
+  const maxScore = 15;
+
+  document.getElementById("maxScore").textContent = maxScore;
+
+  function makeLipid(x, y, flipped=false, parent=buildStage, delay=0){
+    const group = document.createElement("div");
+    group.className = "lipid" + (flipped ? " flipped" : "");
+    group.style.left = x + "px";
+    group.style.top = y + "px";
+    group.style.transition = "opacity .35s ease " + delay + "ms, transform .35s ease " + delay + "ms";
+    const head = document.createElement("div");
+    head.className = "head";
+    const tail1 = document.createElement("div");
+    tail1.className = "tail t1";
+    const tail2 = document.createElement("div");
+    tail2.className = "tail t2";
+    group.append(tail1, tail2, head);
+    parent.appendChild(group);
+    setTimeout(()=>{group.style.opacity="1"; group.style.transform="translateY(0)";}, 20);
+    return group;
+  }
+
+  function fillMembrane(parent){
+    let step = 0;
+    for(let x=-5; x<parent.clientWidth+20; x+=38){
+      const delay = Math.min(step * 18, 260);
+      makeLipid(x, 88, false, parent, delay);
+      makeLipid(x, 154, true, parent, delay);
+      step++;
+    }
+  }
+
+  function buildMembrane(){
+    resetBuild();
+    fillMembrane(buildStage);
+    const lab1 = document.createElement("div");
+    lab1.className="label";
+    lab1.style.left="50%";
+    lab1.style.top="48px";
+    lab1.style.transform="translateX(-50%)";
+    lab1.textContent="Köpfe zeigen zum Wasser";
+    const lab2 = document.createElement("div");
+    lab2.className="label";
+    lab2.style.left="50%";
+    lab2.style.top="235px";
+    lab2.style.transform="translateX(-50%)";
+    lab2.textContent="Schwänze liegen innen";
+    buildStage.append(lab1, lab2);
+  }
+
+  function resetBuild(){
+    buildStage.querySelectorAll(".head,.tail").forEach(e=>e.parentElement.remove());
+    buildStage.querySelectorAll(".label").forEach((e,i)=>{
+      if(i>1) e.remove();
+    });
+  }
+
+  function initHero(){
+    const hero = document.getElementById("heroStage");
+    fillMembrane(hero);
+  }
+
+  function initTransportStage(){
+    const t = document.getElementById("transportStage");
+    fillMembrane(t);
+  }
+
+  function clearParticles(){
+    document.getElementById("dynamicParticles").innerHTML = "";
+    document.getElementById("carrierPassive").classList.remove("proteinWiggle");
+    document.getElementById("carrierActive").classList.remove("proteinWiggle");
+    document.getElementById("atpLabel").style.display = "none";
+  }
+
+  function addParticle(cls, left, top, anim, delay=0){
+    const p = document.createElement("div");
+    p.className = "particle " + cls + " " + anim;
+    p.style.left = left;
+    p.style.top = top;
+    p.style.animationDelay = delay + "ms";
+    document.getElementById("dynamicParticles").appendChild(p);
+  }
+
+  function setActiveLane(type){
+    const viz = document.querySelector(".transportViz");
+    viz.classList.add("hasSelection");
+    viz.querySelectorAll("[data-lane]").forEach(el=>{
+      el.classList.toggle("isActive", el.dataset.lane === type);
+    });
+  }
+
+  function showTransport(type){
+    clearParticles();
+    setActiveLane(type);
+    const headline = document.getElementById("stepHeadline");
+    const title = document.getElementById("stepTitle");
+    const text = document.getElementById("stepText");
+
+    if(type==="diffusion"){
+      headline.textContent="Einfache Diffusion";
+      title.textContent="Direkt durch die Lipiddoppelschicht";
+      text.textContent="Kleine unpolare Teilchen bewegen sich vom Bereich hoher Konzentration zum Bereich niedriger Konzentration. Sie benötigen kein Protein und kein ATP.";
+      for(let i=0;i<5;i++) addParticle("green", (11+i*2.4)+"%", (35+i*4)+"px", "moveDown", i*520);
+    }
+
+    if(type==="pore"){
+      headline.textContent="Transport durch ein Tunnelprotein";
+      title.textContent="Passender Kanal durch die Membran";
+      text.textContent="Das Teilchen gelangt durch einen wassergefüllten Durchgang. Der Transport erfolgt passiv entlang des Konzentrationsgradienten.";
+      for(let i=0;i<4;i++) addParticle("purple", (36+i*.55)+"%", (35+i*10)+"px", "poreMove", i*620);
+    }
+
+    if(type==="carrier"){
+      headline.textContent="Passiver Carrier-Transport";
+      title.textContent="Bindung, Formänderung, Freisetzung";
+      text.textContent="Das Teilchen bindet an den Carrier. Der Carrier wechselt seine Konformation und gibt das Teilchen auf der anderen Membranseite frei. Weil es entlang des Gradienten läuft, ist kein ATP nötig.";
+      document.getElementById("carrierPassive").classList.add("proteinWiggle");
+      addParticle("red", "59.2%", "34px", "carrierMove");
+    }
+
+    if(type==="active"){
+      headline.textContent="Aktiver Carrier-Transport";
+      title.textContent="Transport gegen den Gradienten";
+      text.textContent="Der Carrier transportiert Teilchen gegen den Konzentrationsgradienten. Dafür wird Energie aus ATP genutzt. ATP wird dabei zu ADP und Phosphat gespalten.";
+      document.getElementById("carrierActive").classList.add("proteinWiggle");
+      document.getElementById("atpLabel").style.display = "block";
+      addParticle("green", "80.6%", "230px", "activeMove");
+    }
+  }
+
+  function answer(btn, isCorrect){
+    const q = btn.closest("[data-q]");
+    if(answered.has(q)) return;
+    answered.add(q);
+    q.querySelectorAll(".answer").forEach(b=>b.disabled=true);
+    btn.classList.add(isCorrect ? "correct" : "wrong");
+    const fb = q.querySelector(".feedback");
+    if(isCorrect){
+      fb.textContent = "Richtig.";
+      addScore(1);
+    } else {
+      fb.textContent = "Noch nicht ganz. Lies die Erklärung darüber noch einmal genau.";
+      const correct = [...q.querySelectorAll(".answer")].find(b => b.getAttribute("onclick").includes("true"));
+      if(correct) correct.classList.add("correct");
+    }
+  }
+
+  function caseAnswer(btn, ok){
+    if(caseDone) return;
+    caseDone = true;
+    document.querySelectorAll(".choice").forEach(b=>b.disabled=true);
+    btn.style.background = ok ? "#e9f9df" : "#ffefed";
+    btn.style.borderColor = ok ? "#9bdb7b" : "#ffaaa3";
+    document.getElementById("caseFeedback").textContent = ok
+      ? "Richtig: Sauerstoff ist klein und unpolar genug für einfache Diffusion."
+      : "Nicht ganz: Geladene oder große polare Teilchen brauchen meist Transportproteine.";
+    if(ok) addScore(1);
+  }
+
+  function addScore(n){
+    score += n;
+    document.getElementById("score").textContent = score;
+    document.getElementById("bar").style.width = Math.min(100, score/maxScore*100) + "%";
+  }
+
+  let dragged = null;
+  let sortDragged = null;
+
+  function wireDrag(){
+    document.querySelectorAll(".term").forEach(term=>{
+      term.addEventListener("dragstart", e=>{
+        dragged = term;
+        e.dataTransfer.setData("text/plain", term.dataset.match);
+      });
+    });
+
+    document.querySelectorAll(".target").forEach(target=>{
+      target.addEventListener("dragover", e=>{
+        e.preventDefault();
+        target.classList.add("over");
+      });
+      target.addEventListener("dragleave", ()=>target.classList.remove("over"));
+      target.addEventListener("drop", e=>{
+        e.preventDefault();
+        target.classList.remove("over");
+        if(dragged && !target.querySelector(".term")){
+          target.appendChild(dragged);
+        }
+      });
+    });
+  }
+
+  function wireTransportSort(){
+    document.querySelectorAll(".sortTerm").forEach(term=>{
+      term.addEventListener("dragstart", e=>{
+        sortDragged = term;
+        e.dataTransfer.setData("text/plain", term.dataset.sort);
+      });
+    });
+
+    document.querySelectorAll(".sortTarget").forEach(target=>{
+      target.addEventListener("dragover", e=>{
+        e.preventDefault();
+        target.classList.add("over");
+      });
+      target.addEventListener("dragleave", ()=>target.classList.remove("over"));
+      target.addEventListener("drop", e=>{
+        e.preventDefault();
+        target.classList.remove("over");
+        if(sortDragged){
+          target.appendChild(sortDragged);
+        }
+      });
+    });
+  }
+
+  function checkDrag(){
+    if(dragDone) return;
+    let correct = 0;
+    document.querySelectorAll(".target").forEach(t=>{
+      const term = t.querySelector(".term");
+      if(term && term.dataset.match === t.dataset.target){
+        t.classList.add("ok");
+        correct++;
+      } else {
+        t.classList.add("bad");
+      }
+    });
+    document.getElementById("dragResult").textContent = correct + " von 4 richtig.";
+    addScore(correct);
+    dragDone = true;
+  }
+
+  function resetDrag(){
+    const terms = document.getElementById("terms");
+    document.querySelectorAll(".target .term").forEach(t=>terms.appendChild(t));
+    document.querySelectorAll(".target").forEach(t=>t.classList.remove("ok","bad","over"));
+    document.getElementById("dragResult").textContent="";
+    if(dragDone){
+      score = Math.max(0, score - 0);
+      document.getElementById("score").textContent = score;
+      document.getElementById("bar").style.width = Math.min(100, score/maxScore*100) + "%";
+    }
+    dragDone = false;
+  }
+
+  function checkTransportSort(){
+    if(transportSortDone) return;
+    let correct = 0;
+    document.querySelectorAll(".sortTarget").forEach(target=>{
+      const terms = target.querySelectorAll(".sortTerm");
+      let targetCorrect = terms.length === 3;
+      terms.forEach(term=>{
+        if(term.dataset.sort === target.dataset.sortTarget){
+          correct++;
+        } else {
+          targetCorrect = false;
+        }
+      });
+      target.classList.add(targetCorrect ? "ok" : "bad");
+    });
+    document.getElementById("transportSortResult").textContent = correct + " von 6 richtig.";
+    addScore(correct);
+    transportSortDone = true;
+  }
+
+  function resetTransportSort(){
+    const source = document.getElementById("transportSortSource");
+    document.querySelectorAll(".sortTarget .sortTerm").forEach(term=>source.appendChild(term));
+    document.querySelectorAll(".sortTarget").forEach(t=>t.classList.remove("ok","bad","over"));
+    document.getElementById("transportSortResult").textContent = "";
+    transportSortDone = false;
+  }
+
+  window.addEventListener("load", ()=>{
+    initHero();
+    buildMembrane();
+    initTransportStage();
+    wireDrag();
+    wireTransportSort();
+  });
+</script>
+</body>
+</html>
