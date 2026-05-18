@@ -1,0 +1,2128 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <title>Verdauungssystem – Klasse 7</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    :root{
+      --bg:#ffffff;
+      --paper:#fffdf8;
+      --ink:#243044;
+      --muted:#5b667a;
+      --accent:#2f80ed;
+      --accent2:#27ae60;
+      --accent3:#f2994a;
+      --danger:#eb5757;
+      --soft-blue:#eaf3ff;
+      --soft-green:#eaf8ef;
+      --soft-orange:#fff2e5;
+      --soft-red:#ffecec;
+      --line:#d9e2ef;
+      --card:#ffffff;
+      --shadow:0 10px 25px rgba(36,48,68,.10);
+      --radius:22px;
+    }
+
+    *{box-sizing:border-box}
+
+    html{
+      scroll-behavior:smooth;
+      background:#ffffff;
+    }
+
+    body{
+      margin:0;
+      font-family:Arial, Helvetica, sans-serif;
+      background:
+        radial-gradient(circle at top left, #eef6ff 0, transparent 34%),
+        radial-gradient(circle at top right, #fff2e5 0, transparent 28%),
+        #ffffff;
+      color:var(--ink);
+      line-height:1.55;
+    }
+
+    header{
+      position:sticky;
+      top:0;
+      z-index:50;
+      background:rgba(255,255,255,.94);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--line);
+      box-shadow:0 4px 18px rgba(36,48,68,.06);
+    }
+
+    .topbar{
+      max-width:1180px;
+      margin:0 auto;
+      padding:14px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      flex-wrap:wrap;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      min-width:270px;
+    }
+
+    .logo{
+      width:46px;
+      height:46px;
+      border-radius:16px;
+      background:linear-gradient(135deg,var(--accent),#56ccf2);
+      display:grid;
+      place-items:center;
+      color:white;
+      font-size:24px;
+      box-shadow:0 8px 18px rgba(47,128,237,.25);
+    }
+
+    .brand h1{
+      margin:0;
+      font-size:20px;
+      line-height:1.15;
+    }
+
+    .brand span{
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    nav{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+    }
+
+    nav a{
+      text-decoration:none;
+      color:var(--ink);
+      background:#f4f7fb;
+      border:1px solid #e1e8f3;
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:14px;
+      transition:.2s;
+    }
+
+    nav a:hover{
+      background:var(--soft-blue);
+      border-color:#b9d6ff;
+      transform:translateY(-1px);
+    }
+
+    main{
+      max-width:1180px;
+      margin:0 auto;
+      padding:30px 18px 70px;
+    }
+
+    .hero{
+      display:grid;
+      grid-template-columns:1.05fr .95fr;
+      gap:24px;
+      align-items:center;
+      margin-bottom:26px;
+    }
+
+    .hero-card{
+      background:rgba(255,255,255,.88);
+      border:1px solid var(--line);
+      border-radius:30px;
+      padding:30px;
+      box-shadow:var(--shadow);
+    }
+
+    .hero h2{
+      margin:0 0 12px;
+      font-size:34px;
+      line-height:1.12;
+    }
+
+    .hero p{
+      font-size:18px;
+      color:var(--muted);
+      margin:0 0 18px;
+    }
+
+    .learning-goals{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:10px;
+      margin-top:8px;
+    }
+
+    .goals-heading{
+      margin:18px 0 0;
+      color:#1f3b66;
+      font-size:18px;
+    }
+
+    .goal{
+      background:#f8fbff;
+      border:1px solid #e3edf9;
+      padding:12px 14px;
+      border-radius:16px;
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      font-size:15px;
+    }
+
+    .goal b{
+      color:var(--accent);
+    }
+
+
+    .video-intro{
+      margin:18px 0 4px;
+      background:linear-gradient(135deg,#eaf3ff,#ffffff);
+      border:1px solid #cfe2fb;
+      border-radius:20px;
+      padding:16px;
+      display:grid;
+      gap:12px;
+    }
+
+    .video-intro h3{
+      margin:0;
+      font-size:19px;
+      color:#1f3b66;
+    }
+
+    .video-intro p{
+      margin:0;
+      font-size:15.5px;
+      color:var(--ink);
+    }
+
+    .video-link{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      width:max-content;
+      max-width:100%;
+      text-decoration:none;
+      color:#ffffff;
+      background:linear-gradient(135deg,#2f80ed,#56ccf2);
+      border-radius:999px;
+      padding:10px 15px;
+      font-weight:bold;
+      box-shadow:0 7px 16px rgba(47,128,237,.22);
+      transition:.2s;
+    }
+
+    .video-link:hover{
+      transform:translateY(-1px);
+      box-shadow:0 9px 20px rgba(47,128,237,.28);
+    }
+
+    .section{
+      background:rgba(255,255,255,.92);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      padding:24px;
+      margin:22px 0;
+      box-shadow:var(--shadow);
+    }
+
+    .section-title{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:14px;
+      border-bottom:1px solid var(--line);
+      padding-bottom:14px;
+      margin-bottom:18px;
+    }
+
+    .section-title h2{
+      margin:0;
+      font-size:27px;
+    }
+
+    .tag{
+      background:var(--soft-blue);
+      color:#205eaf;
+      border:1px solid #c9def7;
+      border-radius:999px;
+      padding:7px 11px;
+      font-weight:bold;
+      font-size:13px;
+      white-space:nowrap;
+    }
+
+    .grid-2{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+    }
+
+    .grid-3{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:16px;
+    }
+
+    .info-card{
+      background:#ffffff;
+      border:1px solid #e5ebf4;
+      border-radius:20px;
+      padding:18px;
+      box-shadow:0 6px 16px rgba(36,48,68,.06);
+    }
+
+    .info-card h3{
+      margin:0 0 10px;
+      color:#1f3b66;
+      font-size:20px;
+    }
+
+    .info-card p{
+      margin:8px 0;
+    }
+
+    .info-card ul{
+      margin:8px 0 0 18px;
+      padding:0;
+    }
+
+    .info-card li{
+      margin:5px 0;
+    }
+
+    .organ-map{
+      display:grid;
+      grid-template-columns:300px 1fr;
+      gap:20px;
+      align-items:start;
+    }
+
+    .body-diagram{
+      position:relative;
+      min-height:690px;
+      background:linear-gradient(180deg,#f9fcff,#ffffff);
+      border:1px solid #dfe8f4;
+      border-radius:28px;
+      overflow:hidden;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.75);
+    }
+
+    .body-diagram:not(.realistic-mode){
+      width:300px;
+      min-height:670px;
+    }
+
+    .organ-visual{
+      display:grid;
+      gap:10px;
+    }
+
+    .diagram-controls{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      justify-content:center;
+    }
+
+    .diagram-hint{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      text-align:center;
+    }
+
+    .diagram-toggle{
+      border:1px solid #d7e3f2;
+      background:#ffffff;
+      color:var(--ink);
+      border-radius:999px;
+      padding:8px 12px;
+      font-size:14px;
+      font-weight:bold;
+      cursor:pointer;
+      transition:.18s;
+    }
+
+    .diagram-toggle:hover,
+    .diagram-toggle.active{
+      background:var(--soft-blue);
+      border-color:#b9d6ff;
+      color:#174a8b;
+    }
+
+    .realistic-diagram{
+      display:none;
+      width:100%;
+      height:690px;
+      object-fit:contain;
+      padding:0;
+    }
+
+    .body-diagram.realistic-mode .body-outline,
+    .body-diagram.realistic-mode .organ{
+      display:none;
+    }
+
+    .body-diagram.realistic-mode .realistic-diagram{
+      display:block;
+    }
+
+    .organ-map:has(.body-diagram.realistic-mode){
+      grid-template-columns:minmax(340px,420px) 1fr;
+    }
+
+    .body-outline{
+      position:absolute;
+      left:50%;
+      top:0;
+      transform:translateX(-50%);
+      width:292px;
+      height:670px;
+      pointer-events:none;
+    }
+
+    .human-svg{
+      width:100%;
+      height:100%;
+      display:block;
+    }
+
+    .organ{
+      position:absolute;
+      border-radius:999px;
+      display:grid;
+      place-items:center;
+      text-align:center;
+      font-size:12px;
+      font-weight:bold;
+      color:#223;
+      padding:4px;
+      box-shadow:0 5px 12px rgba(0,0,0,.08);
+      cursor:pointer;
+      border:2px solid rgba(255,255,255,.9);
+      transition:.2s;
+      user-select:none;
+    }
+
+    .organ:hover, .organ.active{
+      transform:scale(1.07);
+      filter:saturate(1.2);
+      box-shadow:0 8px 20px rgba(47,128,237,.22);
+    }
+
+    .mouth{left:118px; top:64px; width:64px; height:26px; background:#ffd1dc;}
+    .oesophagus{left:144px; top:95px; width:18px; height:124px; background:#f7b7a3; border-radius:14px;}
+    .stomach{left:142px; top:192px; width:88px; height:60px; background:#ffcf70; border-radius:50% 55% 45% 55%; z-index:3;}
+    .liver{left:66px; top:184px; width:104px; height:54px; background:#b86b4b; color:#111827; z-index:2;}
+    .gallbladder{left:124px; top:227px; width:38px; height:26px; background:#5bbd5f; color:#111827; font-size:10px; z-index:4;}
+    .pancreas{left:116px; top:265px; width:132px; height:28px; background:#f5a6c8; z-index:4;}
+    .small-intestine{left:98px; top:316px; width:114px; height:96px; background:#ffd36e; border-radius:26px; color:#463000; z-index:2;}
+    .large-intestine{left:84px; top:297px; width:146px; height:130px; border:13px solid #82c9a8; background:transparent; color:transparent; border-radius:34px; z-index:3; overflow:visible;}
+    .large-intestine::after{
+      content:"Dickdarm";
+      position:absolute;
+      left:-34px;
+      top:50%;
+      transform:translateY(-50%) rotate(-90deg);
+      transform-origin:center;
+      color:#205737;
+      background:#eaf8ef;
+      border:1px solid #82c9a8;
+      border-radius:999px;
+      padding:2px 8px;
+      font-size:11px;
+      white-space:nowrap;
+    }
+    .rectum{left:132px; top:428px; width:38px; height:46px; background:#82c9a8;}
+
+    .organ-info{
+      min-height:190px;
+      background:var(--soft-blue);
+      border:1px solid #bfd8fb;
+      border-radius:22px;
+      padding:18px;
+      transition:.2s;
+    }
+
+    .organ-info h3{margin:0 0 8px;color:#174a8b}
+    .organ-info p{margin:8px 0}
+
+    .organ-list{
+      display:grid;
+      gap:10px;
+    }
+
+    .organ-button{
+      border:none;
+      text-align:left;
+      background:#f7faff;
+      border:1px solid #e1eaf6;
+      border-radius:16px;
+      padding:12px 14px;
+      cursor:pointer;
+      font-size:15px;
+      color:var(--ink);
+      transition:.2s;
+    }
+
+    .organ-button:hover, .organ-button.active{
+      background:var(--soft-blue);
+      border-color:#b9d6ff;
+      transform:translateX(3px);
+    }
+
+    .process-wrap{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:20px;
+      align-items:start;
+    }
+
+    .flow{
+      display:grid;
+      gap:12px;
+    }
+
+    .flow-step{
+      display:grid;
+      grid-template-columns:42px 1fr;
+      gap:12px;
+      align-items:start;
+      background:#ffffff;
+      border:1px solid #e2e9f3;
+      border-radius:18px;
+      padding:14px;
+      position:relative;
+    }
+
+    .flow-step::after{
+      content:"↓";
+      position:absolute;
+      left:27px;
+      bottom:-22px;
+      color:#9aacc4;
+      font-size:20px;
+      font-weight:bold;
+    }
+
+    .flow-step:last-child::after{display:none}
+
+    .num{
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      background:var(--accent);
+      color:white;
+      display:grid;
+      place-items:center;
+      font-weight:bold;
+    }
+
+    .flow-step h3{margin:0 0 4px;font-size:18px}
+    .flow-step p{margin:0;color:var(--muted)}
+
+    .animation-card{
+      background:linear-gradient(180deg,#ffffff,#f9fcff);
+      border:1px solid #dfe8f4;
+      border-radius:24px;
+      padding:18px;
+      overflow:hidden;
+    }
+
+    .tube{
+      position:relative;
+      height:130px;
+      background:linear-gradient(90deg,#ffe3c2,#fff2d9);
+      border:2px solid #f4c58e;
+      border-radius:70px;
+      margin:18px 0 10px;
+      overflow:hidden;
+      box-shadow:inset 0 14px 22px rgba(255,255,255,.55), inset 0 -14px 20px rgba(215,126,61,.10);
+    }
+
+    .tube::before,
+    .tube::after{
+      content:"";
+      position:absolute;
+      left:0;
+      right:0;
+      height:22px;
+      background:rgba(221,112,74,.20);
+      z-index:3;
+    }
+
+    .tube::before{top:0;}
+    .tube::after{bottom:0;}
+
+    .food-ball{
+      position:absolute;
+      top:39px;
+      left:18px;
+      width:52px;
+      height:52px;
+      background:radial-gradient(circle at 30% 30%,#fff6a8,#e7a637 70%,#c98422);
+      border-radius:50%;
+      animation:moveFood 5.6s infinite cubic-bezier(.55,.05,.35,1);
+      box-shadow:0 4px 10px rgba(0,0,0,.14);
+      z-index:2;
+    }
+
+    .muscle-ring{
+      position:absolute;
+      top:-14px;
+      width:62px;
+      height:158px;
+      border-radius:50%;
+      border-left:18px solid rgba(191,80,63,.62);
+      border-right:18px solid rgba(191,80,63,.62);
+      background:rgba(235,126,92,.12);
+      transform:scaleX(1.05);
+      z-index:4;
+      opacity:0;
+      animation:contractRing 5.6s infinite cubic-bezier(.55,.05,.35,1);
+      box-shadow:inset 0 0 16px rgba(191,80,63,.24);
+    }
+
+    .ring-one{left:2%; animation-delay:0s;}
+    .ring-two{left:27%; animation-delay:1.3s;}
+    .ring-three{left:52%; animation-delay:2.6s;}
+    .ring-four{left:76%; animation-delay:3.9s;}
+
+    .squeeze-labels{
+      display:grid;
+      grid-template-columns:repeat(3,1fr);
+      gap:8px;
+      margin-top:8px;
+    }
+
+    .squeeze-labels span{
+      background:#fff7ed;
+      border:1px solid #f2d5b5;
+      color:#6b3d16;
+      border-radius:14px;
+      padding:8px 10px;
+      font-size:13px;
+      text-align:center;
+    }
+
+    @keyframes moveFood{
+      0%{left:7%;opacity:1;transform:scale(1)}
+      17%{left:25%;opacity:1;transform:scale(.86,1.12)}
+      34%{left:44%;opacity:1;transform:scale(1)}
+      51%{left:63%;opacity:1;transform:scale(.86,1.12)}
+      70%{left:82%;opacity:1;transform:scale(1)}
+      84%{left:88%;opacity:1;transform:scale(1)}
+      91%{left:88%;opacity:0;transform:scale(1)}
+      96%{left:7%;opacity:0;transform:scale(1)}
+      100%{left:7%;opacity:1;transform:scale(1)}
+    }
+
+    @keyframes contractRing{
+      0%,10%{opacity:.98;transform:scaleX(.35)}
+      17%{opacity:.55;transform:scaleX(.62)}
+      25%,100%{opacity:0;transform:scaleX(1.2)}
+    }
+
+    .enzyme-demo{
+      position:relative;
+      min-height:190px;
+      background:#f8fbff;
+      border:1px dashed #bcd4f5;
+      border-radius:22px;
+      padding:16px;
+      margin-top:14px;
+    }
+
+    .digestion-flow{
+      display:grid;
+      grid-template-columns:1fr;
+      justify-items:start;
+      gap:10px;
+      margin-top:14px;
+    }
+
+    .molecule{
+      display:inline-flex;
+      gap:6px;
+      margin:0;
+      vertical-align:middle;
+    }
+
+    .molecule.connected{
+      position:relative;
+      gap:0;
+      padding:18px 0 20px;
+    }
+
+    .molecule.connected .bead{
+      margin-left:-2px;
+      border:2px solid rgba(255,255,255,.85);
+    }
+
+    .bead{
+      width:24px;
+      height:24px;
+      border-radius:50%;
+      background:#f2994a;
+      box-shadow:0 2px 6px rgba(0,0,0,.12);
+    }
+
+    .enzyme{
+      display:inline-grid;
+      place-items:center;
+      width:74px;
+      height:46px;
+      border-radius:18px;
+      background:#9bdbb0;
+      border:2px solid #6fbf85;
+      margin:0;
+      font-weight:bold;
+      color:#205737;
+      animation:pulse 2.2s infinite ease-in-out;
+    }
+
+    .scissors{
+      position:absolute;
+      display:grid;
+      place-items:center;
+      width:28px;
+      height:28px;
+      border-radius:10px;
+      background:#ffffff;
+      border:1px dashed #f2994a;
+      color:#c76817;
+      font-size:18px;
+      transform:translateX(-50%) rotate(-18deg);
+      top:-3px;
+      box-shadow:0 3px 8px rgba(36,48,68,.10);
+    }
+
+    .cut-one{left:32%}
+    .cut-two{left:66%}
+
+    .enzyme-label{
+      font-size:12px;
+      color:#5b667a;
+      margin-top:5px;
+      text-align:center;
+      font-weight:bold;
+    }
+
+    .product-set{
+      display:flex;
+      align-items:center;
+      flex-wrap:wrap;
+      gap:18px;
+      margin-top:2px;
+    }
+
+    .product-set .molecule{
+      gap:6px;
+      padding:0;
+    }
+
+    .note-box{
+      display:grid;
+      grid-template-columns:36px 1fr;
+      gap:10px;
+      align-items:start;
+      margin:16px 0 0;
+      padding:13px 14px;
+      background:#fff8df;
+      border:2px solid #f4c95d;
+      border-left-width:8px;
+      border-radius:16px;
+      color:#4f3a05;
+      box-shadow:0 6px 16px rgba(160,110,0,.10);
+    }
+
+    .note-icon{
+      width:34px;
+      height:34px;
+      display:grid;
+      place-items:center;
+      border-radius:50%;
+      background:#ffeaa0;
+      color:#8a6200;
+      font-size:21px;
+    }
+
+    .note-box p{
+      margin:0;
+    }
+
+    .memory-section{
+      background:linear-gradient(180deg,#fff8df,#ffffff);
+      border:2px solid #f4c95d;
+      border-left-width:8px;
+    }
+
+    .memory-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+    }
+
+    @keyframes pulse{
+      0%,100%{transform:scale(1)}
+      50%{transform:scale(1.06)}
+    }
+
+    .arrow{
+      font-size:28px;
+      color:#7790b3;
+      margin:0 8px;
+    }
+
+    .villi-demo{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+      align-items:center;
+    }
+
+    .villus-box{
+      background:#fffaf4;
+      border:1px solid #f1d7b8;
+      border-radius:24px;
+      padding:18px;
+    }
+
+    .villi-svg{
+      width:100%;
+      max-width:480px;
+      display:block;
+      margin:auto;
+      background:#ffffff;
+      border-radius:22px;
+      border:1px solid #e8edf4;
+    }
+
+    .villi-legend{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:8px;
+      margin:10px auto 0;
+      max-width:480px;
+      font-size:13px;
+      color:#334155;
+    }
+
+    .legend-item{
+      display:flex;
+      align-items:center;
+      gap:7px;
+      background:#ffffff;
+      border:1px solid #e8edf4;
+      border-radius:12px;
+      padding:7px 8px;
+    }
+
+    .legend-num{
+      width:22px;
+      height:22px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      flex:0 0 auto;
+      font-weight:bold;
+      font-size:12px;
+    }
+
+    .legend-num.one{background:#eaf3ff;color:#205eaf;border:1px solid #b9d6ff}
+    .legend-num.two{background:#fff2e5;color:#9a5b12;border:1px solid #f1c08b}
+    .legend-num.three{background:#ffecec;color:#b83232;border:1px solid #f2a9a9}
+
+    .micro-photo-card{
+      margin-top:14px;
+      background:#ffffff;
+      border:1px solid #e5ebf4;
+      border-radius:18px;
+      padding:12px;
+    }
+
+    .micro-photo-card img{
+      width:100%;
+      display:block;
+      border-radius:12px;
+      border:1px solid #dfe8f4;
+    }
+
+    .micro-photo-card p{
+      margin:8px 0 0;
+      font-size:13px;
+      color:var(--muted);
+    }
+
+    .micro-photo-card a{
+      color:#205eaf;
+      font-weight:bold;
+    }
+
+    .microscope{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+    }
+
+    .micro-view{
+      background:#111827;
+      border-radius:50%;
+      width:min(420px,100%);
+      aspect-ratio:1/1;
+      margin:auto;
+      position:relative;
+      overflow:hidden;
+      border:14px solid #d7dee9;
+      box-shadow:inset 0 0 35px rgba(255,255,255,.2), 0 10px 22px rgba(36,48,68,.16);
+    }
+
+    .micro-view::before{
+      content:"";
+      position:absolute;
+      inset:10%;
+      border-radius:50%;
+      background:
+        radial-gradient(circle at 35% 30%,rgba(255,255,255,.25),transparent 16%),
+        linear-gradient(160deg,#fbd3b2,#ffe6c5 48%,#f6bf98);
+    }
+
+    .villus-shape{
+      position:absolute;
+      bottom:25%;
+      width:36px;
+      height:110px;
+      background:linear-gradient(180deg,#ffe2be,#f0aa81);
+      border-radius:24px 24px 14px 14px;
+      border:2px solid rgba(165,80,52,.3);
+      z-index:2;
+    }
+
+    .v1{left:22%;height:120px}
+    .v2{left:38%;height:150px}
+    .v3{left:55%;height:130px}
+    .v4{left:70%;height:105px}
+
+    .capillary{
+      position:absolute;
+      width:10px;
+      height:80%;
+      left:50%;
+      top:12%;
+      transform:translateX(-50%);
+      background:#eb5757;
+      border-radius:10px;
+    }
+
+    .lacteal{
+      position:absolute;
+      width:7px;
+      height:65%;
+      left:63%;
+      top:20%;
+      background:#56ccf2;
+      border-radius:10px;
+    }
+
+    details{
+      background:#f8fbff;
+      border:1px solid #e0e9f6;
+      border-radius:18px;
+      padding:14px 16px;
+      margin:10px 0;
+    }
+
+    summary{
+      cursor:pointer;
+      font-weight:bold;
+      color:#1f3b66;
+    }
+
+    .quiz{
+      border:1px solid #e4ebf4;
+      border-radius:22px;
+      padding:18px;
+      background:#ffffff;
+      margin:16px 0;
+      box-shadow:0 6px 18px rgba(36,48,68,.07);
+    }
+
+    .quiz h3{
+      margin:0 0 12px;
+    }
+
+    .question{
+      background:#f9fbfe;
+      border:1px solid #e5edf7;
+      border-radius:18px;
+      padding:14px;
+      margin:12px 0;
+    }
+
+    .question p{
+      margin:0 0 10px;
+      font-weight:bold;
+    }
+
+    .answers{
+      display:grid;
+      gap:8px;
+    }
+
+    .answers button, .check-btn, .reset-btn{
+      border:none;
+      border-radius:14px;
+      padding:11px 13px;
+      background:#eef4fb;
+      color:var(--ink);
+      text-align:left;
+      cursor:pointer;
+      font-size:15px;
+      transition:.18s;
+      border:1px solid #dce7f4;
+    }
+
+    .answers button:hover, .check-btn:hover, .reset-btn:hover{
+      background:#e2f0ff;
+      transform:translateY(-1px);
+    }
+
+    .answers button.correct{
+      background:var(--soft-green);
+      border-color:#9addb1;
+      color:#155c2e;
+      font-weight:bold;
+    }
+
+    .answers button.wrong{
+      background:var(--soft-red);
+      border-color:#ffb4b4;
+      color:#8a2222;
+      font-weight:bold;
+    }
+
+    .feedback{
+      min-height:24px;
+      margin-top:9px;
+      font-weight:bold;
+    }
+
+    .feedback.good{color:#1e8743}
+    .feedback.bad{color:#c0392b}
+
+    .trophy{
+      display:inline-grid;
+      place-items:center;
+      width:30px;
+      height:30px;
+      margin-left:8px;
+      border-radius:50%;
+      background:#fff2c2;
+      color:#9a6500;
+      font-size:20px;
+      box-shadow:0 4px 10px rgba(154,101,0,.18);
+      vertical-align:middle;
+      animation:trophyPop .45s ease-out both;
+    }
+
+    @keyframes trophyPop{
+      0%{transform:scale(.2) rotate(-18deg);opacity:0}
+      70%{transform:scale(1.15) rotate(8deg);opacity:1}
+      100%{transform:scale(1) rotate(0deg);opacity:1}
+    }
+
+    .match-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:14px;
+      align-items:start;
+    }
+
+    .match-row{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:7px;
+      background:#f9fbfe;
+      border:1px solid #e5edf7;
+      border-radius:16px;
+      padding:12px;
+      margin-bottom:10px;
+    }
+
+    select, input[type="text"]{
+      width:100%;
+      border:1px solid #cfdceb;
+      border-radius:12px;
+      padding:10px;
+      font-size:15px;
+      background:#ffffff;
+      color:var(--ink);
+    }
+
+    .question p input[type="text"][data-gap]{
+      width:160px;
+      max-width:100%;
+      display:inline-block;
+      margin:0 4px 6px;
+      vertical-align:baseline;
+    }
+
+    .scorebox{
+      background:linear-gradient(135deg,#eaf8ef,#f8fffb);
+      border:1px solid #bfe8cc;
+      border-radius:18px;
+      padding:14px;
+      margin-top:14px;
+      font-weight:bold;
+      color:#155c2e;
+    }
+
+    .word-box{
+      display:flex;
+      flex-wrap:wrap;
+      gap:8px;
+      background:#fffaf4;
+      border:1px solid #f1d7b8;
+      border-radius:16px;
+      padding:12px;
+      margin:10px 0 12px;
+    }
+
+    .word-box span{
+      background:#ffffff;
+      border:1px solid #e5d0b4;
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:14px;
+      color:#5d3b15;
+      box-shadow:0 2px 7px rgba(93,59,21,.06);
+    }
+
+    .drag-area{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:18px;
+    }
+
+    .draggables, .dropzones{
+      min-height:210px;
+      background:#f8fbff;
+      border:1px solid #dde8f5;
+      border-radius:18px;
+      padding:14px;
+    }
+
+    .pill{
+      display:inline-block;
+      background:#ffffff;
+      border:1px solid #ccd9e8;
+      border-radius:999px;
+      padding:9px 12px;
+      margin:6px;
+      cursor:grab;
+      box-shadow:0 3px 8px rgba(36,48,68,.07);
+      user-select:none;
+    }
+
+    .drop{
+      min-height:46px;
+      background:#ffffff;
+      border:2px dashed #b7c8dd;
+      border-radius:14px;
+      padding:10px;
+      margin:9px 0 14px;
+    }
+
+    .drop.over{
+      background:#edf7ff;
+      border-color:var(--accent);
+    }
+
+    .mini-label{
+      font-size:13px;
+      color:var(--muted);
+      font-weight:bold;
+    }
+
+    .task-list{
+      counter-reset:task;
+      display:grid;
+      gap:12px;
+    }
+
+    .task{
+      counter-increment:task;
+      background:#fffdf8;
+      border:1px solid #efe2cb;
+      border-radius:18px;
+      padding:14px;
+      display:grid;
+      grid-template-columns:42px 1fr;
+      gap:12px;
+      align-items:start;
+    }
+
+    .task::before{
+      content:counter(task);
+      width:42px;
+      height:42px;
+      border-radius:14px;
+      background:var(--accent3);
+      color:white;
+      display:grid;
+      place-items:center;
+      font-weight:bold;
+      font-size:18px;
+    }
+
+    .task h3{
+      margin:0 0 5px;
+    }
+
+    .task p{
+      margin:0;
+      color:var(--muted);
+    }
+
+    .print-note{
+      background:#f4f7fb;
+      border:1px solid #e2e9f3;
+      color:#3d4a5f;
+      border-radius:18px;
+      padding:14px;
+      margin-top:20px;
+    }
+
+    @media(max-width:930px){
+      .hero,.grid-2,.process-wrap,.organ-map,.villi-demo,.microscope,.match-grid,.drag-area{
+        grid-template-columns:1fr;
+      }
+      .digestion-flow{
+        grid-template-columns:1fr;
+        justify-items:start;
+      }
+      .grid-3,.learning-goals{
+        grid-template-columns:1fr;
+      }
+      .villi-legend{
+        grid-template-columns:1fr;
+      }
+      .body-diagram{
+        max-width:420px;
+        margin:auto;
+      }
+      .organ-visual{
+        max-width:420px;
+        margin:auto;
+      }
+      .realistic-diagram{
+        height:680px;
+      }
+      .section-title{
+        align-items:flex-start;
+        flex-direction:column;
+      }
+    }
+
+    @media print{
+      header{position:static}
+      nav,.quiz .answers button,.check-btn,.reset-btn{box-shadow:none}
+      body{background:#ffffff}
+      .section,.hero-card,.info-card,.quiz{box-shadow:none}
+      .quiz{break-inside:avoid}
+    }
+  </style>
+</head>
+<body>
+<header>
+  <div class="topbar">
+    <div class="brand">
+      <div class="logo" aria-label="Verdauungssystem-Symbol">
+        <svg viewBox="0 0 64 64" width="32" height="32" role="img" aria-hidden="true">
+          <path d="M21 10 C15 10, 12 15, 12 20 C12 25, 16 28, 21 28 L28 28 C31 28, 33 30, 33 33 C33 36, 31 38, 28 38 L22 38 C16 38, 12 42, 12 48 C12 55, 18 59, 25 59 L43 59 C50 59, 56 54, 56 47 C56 41, 52 37, 47 36 C52 34, 55 30, 55 24 C55 16, 49 10, 41 10 Z"
+                fill="none" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M23 20 L39 20 C43 20, 46 23, 46 27 C46 31, 43 34, 39 34 L25 34 C22 34, 20 36, 20 39 C20 42, 22 44, 25 44 L42 44"
+                fill="none" stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+      <div>
+        <h1>Verdauungssystem</h1>
+        <span>Biologie · 7. Klasse</span>
+      </div>
+    </div>
+    <nav>
+      <a href="#ueberblick">Überblick</a>
+      <a href="#organe">Organe</a>
+      <a href="#vorgaenge">Vorgänge</a>
+      <a href="#duenndarm">Dünndarm</a>
+      <a href="#mikroskopie">Mikroskopie</a>
+      <a href="#quiz">Quiz</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+  <section class="hero" id="ueberblick">
+    <div class="hero-card">
+      <h2>Vom Bissen zum Baustein: Wie unser Körper Nahrung nutzbar macht</h2>
+      <p>
+        Nahrung liefert dem Körper Energie und Baustoffe. Damit diese Stoffe in die Zellen gelangen können,
+        muss die Nahrung mechanisch zerkleinert, chemisch zerlegt und anschließend aufgenommen werden.
+      </p>
+
+      <div class="video-intro">
+        <h3>Einstieg mit Videoclip</h3>
+        <p>Heute lernen wir, wie unser Verdauungssystem funktioniert und wie Nahrung verdaut wird. Dazu schauen wir uns zunächst einen kurzen Videoclip an:</p>
+        <a class="video-link" href="https://www.youtube.com/watch?v=r0mCc-b6Slg" target="_blank" rel="noopener">Videoclip öffnen</a>
+      </div>
+
+      <h3 class="goals-heading">Große Ziele: Was du hier lernst</h3>
+      <div class="learning-goals">
+        <div class="goal"><b>1</b> Du kennst wichtige Verdauungsorgane und ihre Aufgaben.</div>
+        <div class="goal"><b>2</b> Du erklärst Verdauung, Resorption und Ausscheidung.</div>
+        <div class="goal"><b>3</b> Du verstehst den Zusammenhang von Bau und Funktion am Dünndarm.</div>
+        <div class="goal"><b>4</b> Du kannst Dünndarmzotten beim Mikroskopieren beschreiben.</div>
+      </div>
+    </div>
+
+    <div class="animation-card">
+      <h3>Grundidee der Verdauung</h3>
+      <p>
+        Große Nahrungsbestandteile werden in kleine Teilchen zerlegt. Diese Teilchen können durch die
+        Darmwand ins Blut aufgenommen werden. Das Blut transportiert die Nährstoffe anschließend zu verschiedenen
+        Organen und Geweben, wo sie gebraucht werden.
+      </p>
+      <div class="enzyme-demo" aria-label="Schema Verdauung">
+        <div class="digestion-flow">
+          <div class="molecule connected" title="großes Nahrungsteilchen">
+            <span class="scissors cut-one" aria-label="Schnittstelle">✂</span>
+            <span class="scissors cut-two" aria-label="Schnittstelle">✂</span>
+            <span class="bead"></span><span class="bead"></span><span class="bead"></span><span class="bead"></span><span class="bead"></span><span class="bead"></span>
+          </div>
+          <div>
+            <span class="enzyme">Enzym</span>
+            <div class="enzyme-label">spaltet</div>
+          </div>
+          <div class="product-set" title="gleich viele, gleich große Bausteine nach der Zerlegung">
+            <div class="molecule"><span class="bead"></span><span class="bead"></span></div>
+            <div class="molecule"><span class="bead"></span><span class="bead"></span></div>
+            <div class="molecule"><span class="bead"></span><span class="bead"></span></div>
+          </div>
+        </div>
+        <div class="note-box">
+          <span class="note-icon" aria-hidden="true">💡</span>
+          <p><b>Merksatz:</b> Enzyme wirken wie kleine „Zerlege-Helfer“. Sie spalten große Nährstoffe in kleinere Bausteine.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="organe">
+    <div class="section-title">
+      <h2>Bau und Funktion der Verdauungsorgane</h2>
+      <span class="tag">Anklicken und erkunden</span>
+    </div>
+
+    <div class="organ-map">
+      <div class="organ-visual">
+        <p class="diagram-hint">Wechsle zwischen schematischer und realistischer Darstellung.</p>
+        <div class="diagram-controls" aria-label="Ansicht der Verdauungsorgane wählen">
+          <button class="diagram-toggle active" type="button" data-view="realistic" aria-pressed="true">Realistisch</button>
+          <button class="diagram-toggle" type="button" data-view="schema" aria-pressed="false">Schema</button>
+        </div>
+        <div class="body-diagram realistic-mode" id="organDiagram" aria-label="Darstellung der Verdauungsorgane">
+          <img class="realistic-diagram" src="https://www.dropbox.com/scl/fi/dev3wvjqze74ozb97iqdc/Das-Verdauungssystem.png?rlkey=mcxi64cz5djuuz32az8704uh2&amp;st=k9nvylp5&amp;raw=1" alt="Realistische selbst erstellte Abbildung des Verdauungssystems">
+          <div class="body-outline">
+            <svg class="human-svg" viewBox="0 0 292 670" aria-hidden="true">
+              <circle cx="146" cy="48" r="39" fill="#fff3ec" stroke="#f0c9ba" stroke-width="3"/>
+              <path d="M121 88 C127 105,165 105,171 88 L178 121 C220 134,250 170,251 218 L248 326 C247 360,229 386,202 400 L194 622 C193 644,174 656,157 647 L146 470 L135 647 C118 656,99 644,98 622 L90 400 C63 386,45 360,44 326 L41 218 C42 170,72 134,114 121 Z"
+                    fill="#fff7f2" stroke="#f0c9ba" stroke-width="3" stroke-linejoin="round"/>
+              <path d="M98 168 C78 201,77 248,91 284" fill="none" stroke="#f0c9ba" stroke-width="3" stroke-linecap="round"/>
+              <path d="M194 168 C214 201,215 248,201 284" fill="none" stroke="#f0c9ba" stroke-width="3" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="organ mouth" data-organ="mund">Mund</div>
+          <div class="organ oesophagus" data-organ="speiseroehre">Speise-<br>röhre</div>
+          <div class="organ stomach" data-organ="magen">Magen</div>
+          <div class="organ liver" data-organ="leber">Leber</div>
+          <div class="organ gallbladder" data-organ="gallenblase">Gallen-<br>blase</div>
+          <div class="organ pancreas" data-organ="bauchspeicheldruese">Bauch-<br>speicheldrüse</div>
+          <div class="organ large-intestine" data-organ="dickdarm">Dickdarm</div>
+          <div class="organ small-intestine" data-organ="duenndarm">Dünn-<br>darm</div>
+          <div class="organ rectum" data-organ="enddarm">Enddarm</div>
+        </div>
+      </div>
+
+      <div>
+        <div class="organ-info" id="organInfo">
+          <h3>Wähle ein Organ aus</h3>
+          <p>Klicke links auf ein Organ oder nutze die Liste. Dann erscheint hier die wichtigste Funktion.</p>
+        </div>
+
+        <div class="organ-list" style="margin-top:14px">
+          <button class="organ-button" data-organ="mund">Mund</button>
+          <button class="organ-button" data-organ="speiseroehre">Speiseröhre</button>
+          <button class="organ-button" data-organ="magen">Magen</button>
+          <button class="organ-button" data-organ="leber">Leber</button>
+          <button class="organ-button" data-organ="gallenblase">Gallenblase</button>
+          <button class="organ-button" data-organ="bauchspeicheldruese">Bauchspeicheldrüse</button>
+          <button class="organ-button" data-organ="duenndarm">Dünndarm</button>
+          <button class="organ-button" data-organ="dickdarm">Dickdarm</button>
+          <button class="organ-button" data-organ="enddarm">Enddarm</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-3" style="margin-top:20px">
+      <div class="info-card">
+        <h3>Mechanische Verdauung</h3>
+        <p>Nahrung wird körperlich zerkleinert und durchmischt.</p>
+        <ul>
+          <li>Zähne zerkleinern Nahrung.</li>
+          <li>Zunge mischt Nahrung mit Speichel.</li>
+          <li>Magen knetet den Nahrungsbrei.</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Chemische Verdauung</h3>
+        <p>Enzyme zerlegen Nährstoffe in kleinere Bausteine.</p>
+        <ul>
+          <li>Kohlenhydrate → Zuckerbausteine</li>
+          <li>Eiweiße → Aminosäuren</li>
+          <li>Fette → Fettsäuren und Glycerin</li>
+          <li>Bauchspeicheldrüse gibt Verdauungssaft ab; die Gallenblase gibt Galle in den Dünndarm ab.</li>
+        </ul>
+      </div>
+      <div class="info-card">
+        <h3>Transport</h3>
+        <p>Die Nahrung wird durch Muskelbewegungen weitergeschoben.</p>
+        <ul>
+          <li>Speiseröhre transportiert Richtung Magen.</li>
+          <li>Darmbewegungen durchmischen und schieben weiter.</li>
+          <li>Unverdauliche Reste werden ausgeschieden.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="vorgaenge">
+    <div class="section-title">
+      <h2>Verdauungsvorgänge und Resorption</h2>
+      <span class="tag">Schritt für Schritt</span>
+    </div>
+
+    <div class="process-wrap">
+      <div class="flow">
+        <div class="flow-step">
+          <div class="num">1</div>
+          <div>
+            <h3>Aufnahme und Zerkleinerung</h3>
+            <p>Im Mund wird Nahrung gekaut. Speichel macht sie gleitfähig und beginnt die Verdauung von Stärke.</p>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="num">2</div>
+          <div>
+            <h3>Transport</h3>
+            <p>Die Speiseröhre befördert den Nahrungsbrei durch wellenartige Muskelbewegungen in den Magen.</p>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="num">3</div>
+          <div>
+            <h3>Durchmischung im Magen</h3>
+            <p>Der Magen knetet die Nahrung. Magensaft enthält unter anderem Salzsäure und Enzyme; eine Schutzschicht schützt die Magenwand davor.</p>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="num">4</div>
+          <div>
+            <h3>Zerlegung im Dünndarm</h3>
+            <p>Verdauungssaft aus der Bauchspeicheldrüse und Galle aus der Gallenblase helfen, Nährstoffe weiter in kleine Bausteine zu zerlegen.</p>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="num">5</div>
+          <div>
+            <h3>Resorption</h3>
+            <p>Die kleinen Nährstoffbausteine werden durch die Dünndarmwand ins Blut aufgenommen und zu Organen und Geweben transportiert.</p>
+          </div>
+        </div>
+
+        <div class="flow-step">
+          <div class="num">6</div>
+          <div>
+            <h3>Wasserentzug und Ausscheidung</h3>
+            <p>Im Dickdarm wird Wasser entzogen. Unverdauliche Reste werden als Kot ausgeschieden.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="animation-card">
+        <h3>Peristaltik: Transport durch Muskeln</h3>
+        <p>
+          Wellenartige Muskelbewegungen drücken den Nahrungsbrei weiter. Das funktioniert auch, wenn man nicht bewusst daran denkt.
+        </p>
+        <div class="tube" aria-label="Animation der Peristaltik: Muskelringe ziehen sich nacheinander zusammen und drücken den Nahrungsbrei weiter">
+          <div class="muscle-ring ring-one"></div>
+          <div class="muscle-ring ring-two"></div>
+          <div class="muscle-ring ring-three"></div>
+          <div class="muscle-ring ring-four"></div>
+          <div class="food-ball"></div>
+        </div>
+        <div class="squeeze-labels">
+          <span>1. Muskeln ziehen sich hinter dem Nahrungsbrei zusammen.</span>
+          <span>2. Der Nahrungsbrei wird nach vorne gedrückt.</span>
+          <span>3. Die Welle wandert weiter durch den Verdauungskanal.</span>
+        </div>
+        <details>
+          <summary>Was bedeutet Resorption?</summary>
+          <p>
+            Resorption bedeutet: gelöste, kleine Nährstoffbausteine werden aus dem Darminneren durch die Darmwand
+            ins Blut aufgenommen. Über das Blut können sie zu Organen und Geweben gelangen, die Energie oder Baustoffe benötigen.
+          </p>
+        </details>
+        <details>
+          <summary>Warum müssen Nährstoffe klein sein?</summary>
+          <p>
+            Große Nahrungsteilchen passen nicht gut durch die Darmwand. Erst kleine Bausteine können aufgenommen
+            und zu den Körperzellen transportiert werden.
+          </p>
+        </details>
+        <details>
+          <summary>Ist Verdauung dasselbe wie Resorption?</summary>
+          <p>
+            Nein. Verdauung ist die Zerlegung der Nahrung. Resorption ist die Aufnahme der entstandenen Bausteine.
+          </p>
+        </details>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="duenndarm">
+    <div class="section-title">
+      <h2>Zusammenhang von Bau und Funktion: Dünndarm</h2>
+      <span class="tag">Oberflächenvergrößerung</span>
+    </div>
+
+    <div class="villi-demo">
+      <div>
+        <div class="info-card">
+          <h3>Warum ist der Dünndarm so besonders?</h3>
+          <p>
+            Im Dünndarm findet ein großer Teil der chemischen Verdauung und vor allem die Resorption statt.
+            Seine innere Oberfläche ist stark vergrößert.
+          </p>
+          <ul>
+            <li><b>Länge:</b> Der Dünndarm ist sehr lang.</li>
+            <li><b>Falten:</b> Die Darmwand ist innen gefaltet.</li>
+            <li><b>Darmzotten:</b> Kleine fingerförmige Ausstülpungen ragen in den Darmraum.</li>
+            <li><b>Feine Blutgefäße:</b> Aufgenommene Nährstoffe können schnell abtransportiert werden.</li>
+          </ul>
+        </div>
+
+        <div class="info-card" style="margin-top:14px;background:var(--soft-green);border-color:#c8e9d2">
+          <h3>Bau → Funktion</h3>
+          <p>
+            Je größer die innere Oberfläche des Dünndarms ist, desto mehr Kontakt gibt es zwischen Nahrungsbrei
+            und Darmwand. Dadurch können Nährstoffbausteine besonders effektiv aufgenommen werden.
+          </p>
+        </div>
+      </div>
+
+      <div class="villus-box">
+        <svg class="villi-svg" viewBox="0 0 520 380" role="img" aria-label="Darmzotten mit Blutgefäßen und Resorption">
+          <rect x="0" y="0" width="520" height="380" fill="#ffffff"/>
+          <defs>
+            <marker id="arrowhead" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+              <polygon points="0 0, 8 3, 0 6" fill="#27ae60"/>
+            </marker>
+          </defs>
+          <text x="26" y="34" fill="#1f3b66" font-size="20" font-weight="bold">Darmzotten vergrößern die Oberfläche</text>
+
+          <path d="M20 330 C70 304, 110 350, 160 326 C210 303, 252 349, 305 326 C360 302, 410 348, 500 320 L500 370 L20 370 Z" fill="#ffe3c7" stroke="#e5a87e" stroke-width="3"/>
+          <g fill="#ffd1b3" stroke="#df916b" stroke-width="2.4">
+            <path d="M54 328 C43 275, 50 213, 74 172 C96 214, 101 275, 88 328 Z"/>
+            <path d="M104 328 C88 260, 94 184, 125 132 C154 184, 160 260, 144 328 Z"/>
+            <path d="M166 328 C150 256, 158 164, 190 106 C222 164, 230 256, 212 328 Z"/>
+            <path d="M238 328 C222 260, 228 182, 260 126 C291 182, 298 260, 280 328 Z"/>
+            <path d="M310 328 C294 252, 302 166, 334 112 C365 166, 373 252, 354 328 Z"/>
+            <path d="M382 328 C366 262, 372 192, 404 146 C434 192, 441 262, 424 328 Z"/>
+            <path d="M450 328 C438 278, 444 222, 468 182 C490 222, 496 278, 482 328 Z"/>
+          </g>
+          <g stroke-linecap="round" stroke-width="5">
+            <path d="M187 304 C178 258, 181 176, 190 126" stroke="#eb5757"/>
+            <path d="M199 304 C207 255, 206 184, 196 142" stroke="#2f80ed"/>
+            <path d="M331 304 C322 254, 324 182, 334 132" stroke="#eb5757"/>
+            <path d="M344 304 C352 258, 351 196, 341 152" stroke="#2f80ed"/>
+            <path d="M404 304 C397 260, 398 210, 404 166" stroke="#eb5757"/>
+          </g>
+          <g fill="#27ae60">
+            <circle cx="84" cy="104" r="6"/>
+            <circle cx="138" cy="92" r="6"/>
+            <circle cx="238" cy="96" r="6"/>
+            <circle cx="294" cy="92" r="6"/>
+            <circle cx="378" cy="104" r="6"/>
+            <circle cx="452" cy="116" r="6"/>
+          </g>
+          <g stroke="#27ae60" stroke-width="2.3" marker-end="url(#arrowhead)">
+            <line x1="84" y1="108" x2="116" y2="158"/>
+            <line x1="138" y1="96" x2="184" y2="132"/>
+            <line x1="238" y1="100" x2="258" y2="144"/>
+            <line x1="294" y1="96" x2="331" y2="134"/>
+            <line x1="378" y1="108" x2="405" y2="154"/>
+            <line x1="452" y1="120" x2="469" y2="184"/>
+          </g>
+
+          <circle cx="468" cy="94" r="13" fill="#eaf3ff" stroke="#b9d6ff" stroke-width="2"/>
+          <text x="464" y="99" fill="#205eaf" font-size="14" font-weight="bold">1</text>
+          <circle cx="262" cy="170" r="13" fill="#fff2e5" stroke="#f1c08b" stroke-width="2"/>
+          <text x="258" y="175" fill="#9a5b12" font-size="14" font-weight="bold">2</text>
+          <circle cx="366" cy="214" r="13" fill="#ffecec" stroke="#f2a9a9" stroke-width="2"/>
+          <text x="362" y="219" fill="#b83232" font-size="14" font-weight="bold">3</text>
+        </svg>
+        <div class="villi-legend" aria-label="Legende zur Darmzotten-Abbildung">
+          <div class="legend-item"><span class="legend-num one">1</span> Nährstoffbausteine</div>
+          <div class="legend-item"><span class="legend-num two">2</span> Darmzotte</div>
+          <div class="legend-item"><span class="legend-num three">3</span> Blutgefäße</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-3" style="margin-top:18px">
+      <div class="info-card">
+        <h3>Kohlenhydrate</h3>
+        <p>werden zu kleinen Zuckerbausteinen zerlegt und über das Blut weitertransportiert.</p>
+      </div>
+      <div class="info-card">
+        <h3>Eiweiße</h3>
+        <p>werden zu Aminosäuren zerlegt und ebenfalls über das Blut weitertransportiert.</p>
+      </div>
+      <div class="info-card">
+        <h3>Fette</h3>
+        <p>werden in Fettsäuren und Glycerin zerlegt. Auch diese Bausteine können weitertransportiert und im Körper genutzt werden.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="mikroskopie">
+    <div class="section-title">
+      <h2>Differenzierung: Mikroskopieren von Dünndarmzotten</h2>
+      <span class="tag">Beobachten · Zeichnen · Erklären</span>
+    </div>
+
+    <div class="microscope">
+      <div>
+        <figure class="micro-photo-card" style="margin-top:0">
+          <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/be/Normal_Small_Intestine_Mucosa_%285916217283%29.jpg/960px-Normal_Small_Intestine_Mucosa_%285916217283%29.jpg" alt="Mikroskopische Aufnahme der Schleimhaut des Dünndarms mit Darmzotten">
+          <p>
+            Open-Source-Bild: Normal Small Intestine Mucosa, Ed Uthman, Wikimedia Commons,
+            <a href="https://commons.wikimedia.org/wiki/File:Normal_Small_Intestine_Mucosa_(5916217283).jpg" target="_blank" rel="noopener">CC BY 2.0</a>.
+          </p>
+        </figure>
+      </div>
+
+      <div>
+        <div class="info-card">
+          <h3>Was erkennt man im Präparat?</h3>
+          <ul>
+            <li>viele dicht stehende, fingerförmige Ausstülpungen</li>
+            <li>Vergrößerung der inneren Oberfläche</li>
+            <li>Gewebe mit Blutgefäßen zum Abtransport aufgenommener Stoffe</li>
+            <li>Zusammenhang: Form der Zotten passt zur Aufgabe der Resorption</li>
+          </ul>
+        </div>
+
+        <div class="task-list" style="margin-top:14px">
+          <div class="task">
+            <div>
+              <h3>Basis</h3>
+              <p>Beschrifte in einer Zeichnung: Darminneres, Darmwand, Darmzotte.</p>
+            </div>
+          </div>
+          <div class="task">
+            <div>
+              <h3>Fortgeschritten</h3>
+              <p>Erkläre, warum viele Zotten besser sind als eine glatte Darmwand.</p>
+            </div>
+          </div>
+          <div class="task">
+            <div>
+              <h3>Expertenaufgabe</h3>
+              <p>Formuliere den Zusammenhang „Bau → Funktion“ in einem vollständigen Satz.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <details style="margin-top:18px">
+      <summary>Hinweise für eine biologische Zeichnung</summary>
+      <ul>
+        <li>mit Bleistift zeichnen</li>
+        <li>groß genug zeichnen</li>
+        <li>nur das Wesentliche darstellen</li>
+        <li>Beschriftungslinien mit Lineal ziehen</li>
+        <li>Überschrift und Vergrößerung ergänzen, falls bekannt</li>
+      </ul>
+    </details>
+  </section>
+
+  <section class="section" id="quiz">
+    <div class="section-title">
+      <h2>Interaktive Übungen und Quiz</h2>
+      <span class="tag">Direkte Rückmeldung</span>
+    </div>
+
+    <div class="quiz" id="mcQuiz">
+      <h3>Quiz 1: Verdauungsorgane und Vorgänge</h3>
+      <div class="question" data-answer="b">
+        <p>1. Welche Aufgabe hat die Speiseröhre?</p>
+        <div class="answers">
+          <button data-choice="a">Sie bildet Galle.</button>
+          <button data-choice="b">Sie transportiert den Nahrungsbrei zum Magen.</button>
+          <button data-choice="c">Sie entzieht dem Nahrungsbrei Wasser.</button>
+          <button data-choice="d">Sie speichert Kot.</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+
+      <div class="question" data-answer="c">
+        <p>2. Was bedeutet Resorption?</p>
+        <div class="answers">
+          <button data-choice="a">Die Nahrung wird gekaut.</button>
+          <button data-choice="b">Der Magen knetet den Nahrungsbrei.</button>
+          <button data-choice="c">Nährstoffbausteine werden durch die Darmwand aufgenommen.</button>
+          <button data-choice="d">Nahrung wird aus dem Körper ausgeschieden.</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+
+      <div class="question" data-answer="a">
+        <p>3. Warum sind Dünndarmzotten wichtig?</p>
+        <div class="answers">
+          <button data-choice="a">Sie vergrößern die Oberfläche zur Aufnahme von Nährstoffen.</button>
+          <button data-choice="b">Sie produzieren Sauerstoff.</button>
+          <button data-choice="c">Sie zerkleinern Nahrung mit Zähnen.</button>
+          <button data-choice="d">Sie verhindern jede Darmbewegung.</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+
+      <div class="question" data-answer="d">
+        <p>4. Welche Aussage passt am besten zur chemischen Verdauung?</p>
+        <div class="answers">
+          <button data-choice="a">Nahrung wird nur weitergeschoben.</button>
+          <button data-choice="b">Nahrung wird nur mit den Zähnen zerkleinert.</button>
+          <button data-choice="c">Wasser wird aus dem Nahrungsbrei entzogen.</button>
+          <button data-choice="d">Enzyme zerlegen große Nährstoffe in kleinere Bausteine.</button>
+        </div>
+        <div class="feedback"></div>
+      </div>
+      <div class="scorebox" id="mcScore">Punkte: 0 / 4</div>
+    </div>
+
+    <div class="quiz">
+      <h3>Quiz 2: Organe zuordnen</h3>
+      <p>Wähle jeweils das passende Organ aus.</p>
+
+      <div class="match-grid">
+        <div>
+          <div class="match-row">
+            <label><b>Bildet Verdauungssaft mit Enzymen:</b></label>
+            <select data-correct="Bauchspeicheldrüse">
+              <option value="">Bitte auswählen</option>
+              <option>Mund</option>
+              <option>Magen</option>
+              <option>Bauchspeicheldrüse</option>
+              <option>Dickdarm</option>
+            </select>
+          </div>
+
+          <div class="match-row">
+            <label><b>Entzieht dem Nahrungsbrei Wasser:</b></label>
+            <select data-correct="Dickdarm">
+              <option value="">Bitte auswählen</option>
+              <option>Dickdarm</option>
+              <option>Leber</option>
+              <option>Speiseröhre</option>
+              <option>Mund</option>
+            </select>
+          </div>
+
+          <div class="match-row">
+            <label><b>Hier beginnt die mechanische Zerkleinerung:</b></label>
+            <select data-correct="Mund">
+              <option value="">Bitte auswählen</option>
+              <option>Magen</option>
+              <option>Dünndarm</option>
+              <option>Mund</option>
+              <option>Enddarm</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <div class="match-row">
+            <label><b>Hier findet besonders viel Resorption statt:</b></label>
+            <select data-correct="Dünndarm">
+              <option value="">Bitte auswählen</option>
+              <option>Dünndarm</option>
+              <option>Speiseröhre</option>
+              <option>Enddarm</option>
+              <option>Mund</option>
+            </select>
+          </div>
+
+          <div class="match-row">
+            <label><b>Produziert Galle:</b></label>
+            <select data-correct="Leber">
+              <option value="">Bitte auswählen</option>
+              <option>Magen</option>
+              <option>Leber</option>
+              <option>Dickdarm</option>
+              <option>Speiseröhre</option>
+            </select>
+          </div>
+
+          <div class="match-row">
+            <label><b>Knetet und durchmischt den Nahrungsbrei:</b></label>
+            <select data-correct="Magen">
+              <option value="">Bitte auswählen</option>
+              <option>Magen</option>
+              <option>Leber</option>
+              <option>Enddarm</option>
+              <option>Speiseröhre</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <button class="check-btn" onclick="checkSelectQuiz()">Auswertung anzeigen</button>
+      <button class="reset-btn" onclick="resetSelectQuiz()">Zurücksetzen</button>
+      <div class="scorebox" id="selectScore">Noch nicht ausgewertet.</div>
+    </div>
+
+    <div class="quiz">
+      <h3>Quiz 3: Begriffe sortieren</h3>
+      <p>Ziehe die Begriffe in die passende Kategorie.</p>
+
+      <div class="drag-area">
+        <div class="draggables" id="dragPool">
+          <div class="mini-label">Begriffe</div>
+          <span class="pill" draggable="true" data-type="verdauung">Enzyme spalten Nährstoffe</span>
+          <span class="pill" draggable="true" data-type="resorption">Aufnahme durch Darmwand</span>
+          <span class="pill" draggable="true" data-type="bau">Darmzotten</span>
+          <span class="pill" draggable="true" data-type="verdauung">Kauen</span>
+          <span class="pill" draggable="true" data-type="resorption">Transport ins Blut</span>
+          <span class="pill" draggable="true" data-type="bau">große Oberfläche</span>
+        </div>
+
+        <div class="dropzones">
+          <div class="mini-label">Verdauung</div>
+          <div class="drop" data-accept="verdauung"></div>
+          <div class="mini-label">Resorption</div>
+          <div class="drop" data-accept="resorption"></div>
+          <div class="mini-label">Bau des Dünndarms</div>
+          <div class="drop" data-accept="bau"></div>
+        </div>
+      </div>
+
+      <button class="check-btn" onclick="checkDragQuiz()">Sortierung prüfen</button>
+      <button class="reset-btn" onclick="resetDragQuiz()">Zurücksetzen</button>
+      <div class="scorebox" id="dragScore">Noch nicht ausgewertet.</div>
+    </div>
+
+    <div class="quiz">
+      <h3>Quiz 4: Lückentext</h3>
+      <p>Fülle die Lücken mit passenden Begriffen aus der Wortbox. Achtung: Du brauchst nicht alle Wörter.</p>
+      <div class="word-box" aria-label="Wortbox für den Lückentext">
+        <span>Enzyme</span>
+        <span>Dickdarm</span>
+        <span>Blut</span>
+        <span>Darmzotten</span>
+        <span>Magen</span>
+        <span>Resorption</span>
+        <span>Bauchspeicheldrüse</span>
+        <span>Dünndarm</span>
+        <span>Galle</span>
+        <span>Speiseröhre</span>
+      </div>
+
+      <div class="question">
+        <p>
+          Im <input type="text" data-gap="Dünndarm" placeholder="Lücke 1"> werden viele Nährstoffbausteine aufgenommen.
+          Die <input type="text" data-gap="Darmzotten" placeholder="Lücke 2"> vergrößern die innere Oberfläche des Dünndarms.
+          Dadurch kann die <input type="text" data-gap="Resorption" placeholder="Lücke 3"> besonders effektiv ablaufen.
+          Im <input type="text" data-gap="Dickdarm" placeholder="Lücke 4"> wird dem Nahrungsbrei Wasser entzogen.
+        </p>
+      </div>
+
+      <button class="check-btn" onclick="checkGapQuiz()">Lückentext prüfen</button>
+      <button class="reset-btn" onclick="resetGapQuiz()">Zurücksetzen</button>
+      <div class="scorebox" id="gapScore">Noch nicht ausgewertet.</div>
+    </div>
+  </section>
+
+  <section class="section memory-section">
+    <div class="section-title">
+      <h2 class="memory-title"><span class="note-icon" aria-hidden="true">💡</span> Merkkasten</h2>
+    </div>
+    <div class="grid-2">
+      <div class="info-card">
+        <h3>Verdauung</h3>
+        <p>Verdauung ist die mechanische und chemische Zerlegung der Nahrung in kleinere Bausteine.</p>
+      </div>
+      <div class="info-card">
+        <h3>Resorption</h3>
+        <p>Resorption ist die Aufnahme kleiner Nährstoffbausteine durch die Darmwand ins Blut.</p>
+      </div>
+      <div class="info-card">
+        <h3>Dünndarm</h3>
+        <p>Der Dünndarm besitzt Falten und Zotten. Dadurch entsteht eine große Oberfläche für die Aufnahme von Nährstoffen.</p>
+      </div>
+      <div class="info-card">
+        <h3>Bau und Funktion</h3>
+        <p>Die Form eines Organs passt häufig zu seiner Aufgabe. Beim Dünndarm bedeutet das: viel Oberfläche → effektive Resorption.</p>
+      </div>
+    </div>
+  </section>
+  <div class="print-note">
+    Tipp: Die Seite kann auch über den Browser gedruckt oder als PDF gespeichert werden.
+  </div>
+</main>
+
+<script>
+  const organData = {
+    mund:{
+      title:"Mund",
+      text:"Im Mund wird Nahrung mit den Zähnen mechanisch zerkleinert. Speichel macht sie gleitfähig. Außerdem beginnt hier bereits die chemische Verdauung von Stärke.",
+      extra:"Wichtig: mechanische Zerkleinerung + Beginn der Verdauung."
+    },
+    speiseroehre:{
+      title:"Speiseröhre",
+      text:"Die Speiseröhre transportiert den Nahrungsbrei durch wellenartige Muskelbewegungen in Richtung Magen.",
+      extra:"Diese Bewegung nennt man Peristaltik."
+    },
+    magen:{
+      title:"Magen",
+      text:"Der Magen speichert, knetet und durchmischt den Nahrungsbrei. Magensaft besteht unter anderem aus Magensäure und Enzymen; die Magensäure ist Salzsäure und tötet viele Krankheitserreger ab.",
+      extra:"Wichtig: Eine Schutzschicht schützt die Magenwand vor der Salzsäure."
+    },
+    leber:{
+      title:"Leber",
+      text:"Die Leber bildet Galle. Galle hilft bei der Fettverdauung, weil sie Fett in kleinere Tröpfchen verteilt.",
+      extra:"Galle enthält keine Verdauungsenzyme, unterstützt aber die Fettverdauung."
+    },
+    gallenblase:{
+      title:"Gallenblase",
+      text:"Die Gallenblase speichert Galle aus der Leber und gibt sie bei Bedarf in den Dünndarm ab.",
+      extra:"Galle hilft besonders dabei, Fette fein zu verteilen."
+    },
+    bauchspeicheldruese:{
+      title:"Bauchspeicheldrüse",
+      text:"Die Bauchspeicheldrüse bildet Verdauungssaft mit Enzymen. Diese Enzyme helfen bei der Zerlegung von Kohlenhydraten, Eiweißen und Fetten.",
+      extra:"Wichtig: Viele Enzyme für die chemische Verdauung."
+    },
+    duenndarm:{
+      title:"Dünndarm",
+      text:"Im Dünndarm werden Nährstoffe weiter zerlegt und vor allem aufgenommen. Die innere Oberfläche ist durch Falten und Darmzotten stark vergrößert.",
+      extra:"Wichtig: Hauptort der Resorption."
+    },
+    dickdarm:{
+      title:"Dickdarm",
+      text:"Im Dickdarm wird dem Nahrungsbrei Wasser entzogen. Dadurch wird der Darminhalt fester.",
+      extra:"Wichtig: Wasserentzug und Eindickung."
+    },
+    enddarm:{
+      title:"Enddarm",
+      text:"Im Enddarm werden unverdauliche Reste gesammelt, bis sie ausgeschieden werden.",
+      extra:"Wichtig: Speicherung vor der Ausscheidung."
+    }
+  };
+
+  function selectOrgan(key){
+    const info = organData[key];
+    const box = document.getElementById("organInfo");
+    const extra = info.extra.replace(/^Wichtig:\s*/, "");
+    box.innerHTML = `<h3>${info.title}</h3><p>${info.text}</p><p><b>Merke:</b> ${extra}</p>`;
+
+    document.querySelectorAll(".organ, .organ-button").forEach(el=>{
+      el.classList.toggle("active", el.dataset.organ === key);
+    });
+  }
+
+  document.querySelectorAll(".organ, .organ-button").forEach(el=>{
+    el.addEventListener("click",()=>selectOrgan(el.dataset.organ));
+  });
+
+  document.querySelectorAll(".diagram-toggle").forEach(btn=>{
+    btn.addEventListener("click",()=>{
+      const diagram = document.getElementById("organDiagram");
+      const realistic = btn.dataset.view === "realistic";
+      diagram.classList.toggle("realistic-mode", realistic);
+      document.querySelectorAll(".diagram-toggle").forEach(toggle=>{
+        const active = toggle === btn;
+        toggle.classList.toggle("active", active);
+        toggle.setAttribute("aria-pressed", String(active));
+      });
+    });
+  });
+
+  function trophyMarkup(){
+    return '<span class="trophy" aria-label="Pokal">🏆</span>';
+  }
+
+  let mcAnswered = {};
+
+  document.querySelectorAll("#mcQuiz .question").forEach((q, index)=>{
+    q.querySelectorAll("button").forEach(btn=>{
+      btn.addEventListener("click",()=>{
+        const answer = q.dataset.answer;
+        const choice = btn.dataset.choice;
+        const fb = q.querySelector(".feedback");
+
+        if(choice === answer){
+          q.querySelectorAll("button").forEach(b=>{
+            b.disabled = true;
+            if(b.dataset.choice === answer) b.classList.add("correct");
+          });
+          btn.classList.add("correct");
+          fb.innerHTML = `Richtig! ${trophyMarkup()}`;
+          fb.className = "feedback good";
+          mcAnswered[index] = true;
+        } else {
+          btn.classList.add("wrong");
+          btn.disabled = true;
+          fb.textContent = "Versuch es noch einmal 🙂";
+          fb.className = "feedback bad";
+          if(mcAnswered[index] !== true) mcAnswered[index] = false;
+        }
+        updateMcScore();
+      });
+    });
+  });
+
+  function updateMcScore(){
+    const score = Object.values(mcAnswered).filter(Boolean).length;
+    document.getElementById("mcScore").textContent = `Punkte: ${score} / 4`;
+  }
+
+  function checkSelectQuiz(){
+    const selects = document.querySelectorAll("select[data-correct]");
+    let score = 0;
+    selects.forEach(sel=>{
+      const ok = sel.value === sel.dataset.correct;
+      if(ok) score++;
+      sel.style.borderColor = ok ? "#27ae60" : "#eb5757";
+      sel.style.background = ok ? "#eaf8ef" : "#ffecec";
+    });
+    document.getElementById("selectScore").innerHTML = `Punkte: ${score} / ${selects.length}${score === selects.length ? " " + trophyMarkup() : ""}`;
+  }
+
+  function resetSelectQuiz(){
+    document.querySelectorAll("select[data-correct]").forEach(sel=>{
+      sel.value = "";
+      sel.style.borderColor = "#cfdceb";
+      sel.style.background = "#ffffff";
+    });
+    document.getElementById("selectScore").textContent = "Noch nicht ausgewertet.";
+  }
+
+  let dragged = null;
+
+  function initDrag(){
+    document.querySelectorAll(".pill").forEach(p=>{
+      p.addEventListener("dragstart", e=>{
+        dragged = p;
+        e.dataTransfer.setData("text/plain", p.textContent);
+      });
+    });
+
+    document.querySelectorAll(".drop, .draggables").forEach(zone=>{
+      zone.addEventListener("dragover", e=>{
+        e.preventDefault();
+        zone.classList.add("over");
+      });
+      zone.addEventListener("dragleave", ()=>{
+        zone.classList.remove("over");
+      });
+      zone.addEventListener("drop", e=>{
+        e.preventDefault();
+        zone.classList.remove("over");
+        if(dragged){
+          zone.appendChild(dragged);
+          dragged = null;
+        }
+      });
+    });
+  }
+
+  initDrag();
+
+  function checkDragQuiz(){
+    let total = 0;
+    let correct = 0;
+    document.querySelectorAll(".drop").forEach(drop=>{
+      drop.querySelectorAll(".pill").forEach(p=>{
+        total++;
+        const ok = p.dataset.type === drop.dataset.accept;
+        if(ok) correct++;
+        p.style.borderColor = ok ? "#27ae60" : "#eb5757";
+        p.style.background = ok ? "#eaf8ef" : "#ffecec";
+      });
+    });
+    document.getElementById("dragScore").innerHTML = `Richtig sortiert: ${correct} / 6${correct === 6 ? " " + trophyMarkup() : ""}`;
+  }
+
+  function resetDragQuiz(){
+    const pool = document.getElementById("dragPool");
+    document.querySelectorAll(".pill").forEach(p=>{
+      p.style.borderColor = "#ccd9e8";
+      p.style.background = "#ffffff";
+      pool.appendChild(p);
+    });
+    document.getElementById("dragScore").textContent = "Noch nicht ausgewertet.";
+  }
+
+  function normalize(text){
+    return text.trim().toLowerCase()
+      .replaceAll("ä","ae")
+      .replaceAll("ö","oe")
+      .replaceAll("ü","ue")
+      .replaceAll("ß","ss");
+  }
+
+  function checkGapQuiz(){
+    const inputs = document.querySelectorAll("input[data-gap]");
+    let score = 0;
+    inputs.forEach(inp=>{
+      const ok = normalize(inp.value) === normalize(inp.dataset.gap);
+      if(ok) score++;
+      inp.style.borderColor = ok ? "#27ae60" : "#eb5757";
+      inp.style.background = ok ? "#eaf8ef" : "#ffecec";
+    });
+    document.getElementById("gapScore").innerHTML = `Punkte: ${score} / ${inputs.length}${score === inputs.length ? " " + trophyMarkup() : ""}`;
+  }
+
+  function resetGapQuiz(){
+    document.querySelectorAll("input[data-gap]").forEach(inp=>{
+      inp.value = "";
+      inp.style.borderColor = "#cfdceb";
+      inp.style.background = "#ffffff";
+    });
+    document.getElementById("gapScore").textContent = "Noch nicht ausgewertet.";
+  }
+</script>
+</body>
+</html>
