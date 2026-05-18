@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz: Wie schwimmen Fische?</title>
+  <style>
+    :root {
+      --blue: #dff4ff;
+      --blue2: #bfeaff;
+      --deep: #176b87;
+      --green: #d9f7e5;
+      --yellow: #fff3c4;
+      --red: #ffd6d6;
+      --text: #1f2933;
+      --card: #ffffff;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #e7f8ff 0%, #f8fdff 100%);
+      color: var(--text);
+      line-height: 1.5;
+    }
+
+    header {
+      background: linear-gradient(135deg, #8bd3ff, #c8f7dc);
+      padding: 28px 18px;
+      text-align: center;
+      border-bottom: 4px solid #8ad0e8;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2rem;
+      color: #064663;
+    }
+
+    header p {
+      margin: 10px auto 0;
+      max-width: 760px;
+      font-size: 1.05rem;
+    }
+
+    main {
+      max-width: 980px;
+      margin: 24px auto;
+      padding: 0 16px 40px;
+    }
+
+    .box {
+      background: var(--card);
+      border-radius: 18px;
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: 0 8px 24px rgba(23, 107, 135, 0.12);
+      border: 2px solid #d7f0fa;
+    }
+
+    .box h2 {
+      margin-top: 0;
+      color: var(--deep);
+    }
+
+    .info-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+      gap: 14px;
+    }
+
+    .info-card {
+      background: #f4fbff;
+      border: 2px solid #ccefff;
+      border-radius: 15px;
+      padding: 14px;
+    }
+
+    .info-card strong {
+      color: #075985;
+      display: block;
+      margin-bottom: 5px;
+    }
+
+    .fish-wrap {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 150px;
+      background: linear-gradient(90deg, rgba(191,234,255,0.45), rgba(217,247,229,0.45));
+      border-radius: 16px;
+      overflow: hidden;
+      position: relative;
+      margin-top: 10px;
+    }
+
+    .water-lines {
+      position: absolute;
+      inset: 0;
+      background-image:
+        linear-gradient(90deg, transparent 0%, rgba(23,107,135,0.14) 50%, transparent 100%);
+      background-size: 180px 100%;
+      animation: water 4s linear infinite;
+    }
+
+    @keyframes water {
+      from { background-position: 0 0; }
+      to { background-position: 360px 0; }
+    }
+
+    .fish {
+      position: relative;
+      width: 230px;
+      height: 80px;
+      z-index: 2;
+      animation: swim 2.3s ease-in-out infinite;
+    }
+
+    .body {
+      position: absolute;
+      left: 35px;
+      top: 14px;
+      width: 150px;
+      height: 52px;
+      background: linear-gradient(90deg, #f6a85c, #f7d27b);
+      border-radius: 55% 45% 45% 55%;
+      clip-path: polygon(0 50%, 18% 12%, 68% 8%, 100% 50%, 68% 92%, 18% 88%);
+      border: 2px solid #d88732;
+    }
+
+    .tail {
+      position: absolute;
+      right: 14px;
+      top: 22px;
+      width: 46px;
+      height: 36px;
+      background: #f59e0b;
+      clip-path: polygon(0 50%, 100% 0, 75% 50%, 100% 100%);
+      transform-origin: left center;
+      animation: tail 0.55s ease-in-out infinite alternate;
+    }
+
+    .eye {
+      position: absolute;
+      left: 70px;
+      top: 28px;
+      width: 8px;
+      height: 8px;
+      background: #111827;
+      border-radius: 50%;
+      z-index: 3;
+    }
+
+    .fin-top, .fin-bottom {
+      position: absolute;
+      background: #f59e0b;
+      z-index: 1;
+    }
+
+    .fin-top {
+      left: 110px;
+      top: 5px;
+      width: 48px;
+      height: 24px;
+      clip-path: polygon(10% 100%, 45% 0, 100% 100%);
+    }
+
+    .fin-bottom {
+      left: 110px;
+      bottom: 4px;
+      width: 48px;
+      height: 24px;
+      clip-path: polygon(10% 0, 45% 100%, 100% 0);
+    }
+
+    @keyframes tail {
+      from { transform: rotate(-12deg); }
+      to { transform: rotate(12deg); }
+    }
+
+    @keyframes swim {
+      0%, 100% { transform: translateX(-8px); }
+      50% { transform: translateX(8px); }
+    }
+
+    .question {
+      background: #ffffff;
+      border: 2px solid #dbeafe;
+      border-radius: 16px;
+      padding: 16px;
+      margin: 14px 0;
+    }
+
+    .question h3 {
+      margin-top: 0;
+      color: #064663;
+    }
+
+    label {
+      display: block;
+      padding: 9px 10px;
+      margin: 7px 0;
+      background: #f8fbff;
+      border: 1px solid #dbeafe;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    label:hover {
+      background: #edf8ff;
+    }
+
+    input[type="radio"] {
+      margin-right: 8px;
+    }
+
+    button {
+      background: #0f766e;
+      color: white;
+      border: none;
+      padding: 13px 20px;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 12px;
+      box-shadow: 0 5px 12px rgba(15, 118, 110, 0.25);
+    }
+
+    button:hover {
+      background: #115e59;
+    }
+
+    .feedback {
+      margin-top: 10px;
+      padding: 10px;
+      border-radius: 10px;
+      display: none;
+      font-weight: bold;
+    }
+
+    .trophy {
+      display: inline-block;
+      margin-left: 8px;
+      font-size: 1.25rem;
+      animation: pop 0.35s ease-out;
+    }
+
+    @keyframes pop {
+      0% { transform: scale(0.4) rotate(-12deg); opacity: 0; }
+      70% { transform: scale(1.25) rotate(6deg); opacity: 1; }
+      100% { transform: scale(1) rotate(0deg); opacity: 1; }
+    }
+
+    label.answer-correct {
+      background: #dcfce7;
+      border-color: #22c55e;
+      font-weight: bold;
+    }
+
+    label.answer-wrong {
+      background: #fee2e2;
+      border-color: #ef4444;
+    }
+
+    label.locked {
+      cursor: default;
+    }
+
+
+    .correct {
+      background: var(--green);
+      border: 2px solid #74d99f;
+    }
+
+    .wrong {
+      background: var(--red);
+      border: 2px solid #f59a9a;
+    }
+
+    #result {
+      display: none;
+      margin-top: 18px;
+      padding: 18px;
+      border-radius: 16px;
+      background: var(--yellow);
+      border: 2px solid #facc15;
+      font-size: 1.15rem;
+      font-weight: bold;
+    }
+
+    .small-note {
+      font-size: 0.95rem;
+      color: #43515c;
+    }
+
+    .video-link {
+      display: inline-block;
+      margin-top: 12px;
+      background: #ef4444;
+      color: white;
+      text-decoration: none;
+      padding: 11px 16px;
+      border-radius: 999px;
+      font-weight: bold;
+      box-shadow: 0 5px 12px rgba(239, 68, 68, 0.22);
+    }
+
+    .video-link:hover {
+      background: #dc2626;
+    }
+
+
+    .task {
+      background: #f0fdf4;
+      border: 2px dashed #86efac;
+      padding: 14px;
+      border-radius: 14px;
+      margin-top: 10px;
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      button {
+        display: none;
+      }
+
+      .box {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Wie schwimmen Fische?</h1>
+    <p>Ein kleines Bio-Quiz für Klasse 5: Körperform, Flossen, Bewegung und Anpassung an das Leben im Wasser.</p>
+  </header>
+
+  <main>
+    <section class="box">
+      <h2>Merke dir kurz:</h2>
+      <div class="info-grid">
+        <div class="info-card">
+          <strong>Spindelform</strong>
+          Viele Fische sind vorne eher rundlich, in der Mitte breiter und nach hinten schmaler. So gleiten sie besser durchs Wasser.
+        </div>
+        <div class="info-card">
+          <strong>Wasserwiderstand</strong>
+          Beim Schwimmen muss ein Fisch das Wasser „wegdrücken“. Eine günstige Körperform hilft, Kraft zu sparen.
+        </div>
+        <div class="info-card">
+          <strong>Schwanzflosse</strong>
+          Die Schwanzflosse sorgt vor allem für den Antrieb. Durch seitliche Schläge wird der Fisch nach vorne bewegt.
+        </div>
+        <div class="info-card">
+          <strong>Andere Flossen</strong>
+          Brust-, Bauch-, Rücken- und Afterflosse helfen beim Lenken, Bremsen und Stabilisieren.
+        </div>
+      </div>
+
+      <div class="fish-wrap" aria-label="Schwimmender Fisch als Animation">
+        <div class="water-lines"></div>
+        <div class="fish">
+          <div class="tail"></div>
+          <div class="fin-top"></div>
+          <div class="fin-bottom"></div>
+          <div class="body"></div>
+          <div class="eye"></div>
+        </div>
+      </div>
+
+      <div class="task">
+        <strong>Denkfrage:</strong> Warum ist es für einen Fisch praktisch, wenn sein Körper möglichst wenig Wirbel im Wasser erzeugt?
+      </div>
+    </section>
+
+
+    <section class="box">
+      <h2>Passender Kurzfilm</h2>
+      <p>Hier kannst du dir ansehen, wie Fische ihre Körperform und Flossen beim Schwimmen nutzen.</p>
+      <a class="video-link" href="https://www.youtube.com/watch?v=D_Vw1yNOusE" target="_blank" rel="noopener noreferrer">Video öffnen</a>
+    </section>
+
+    <section class="box">
+      <h2>Quiz</h2>
+      <p class="small-note">Wähle eine Antwort aus. Du bekommst sofort eine Rückmeldung.</p>
+
+      <form id="quizForm">
+        <div class="question" data-answer="b">
+          <h3>1. Welche Körperform ist für viele schnell schwimmende Fische besonders günstig?</h3>
+          <label><input type="radio" name="q1" value="a" onchange="checkSingle(this)"> Würfelförmig</label>
+          <label><input type="radio" name="q1" value="b" onchange="checkSingle(this)"> Spindelförmig</label>
+          <label><input type="radio" name="q1" value="c" onchange="checkSingle(this)"> Ganz flach wie ein Blatt</label>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-answer="c">
+          <h3>2. Warum ist die Spindelform beim Schwimmen vorteilhaft?</h3>
+          <label><input type="radio" name="q2" value="a" onchange="checkSingle(this)"> Der Fisch wird dadurch schwerer.</label>
+          <label><input type="radio" name="q2" value="b" onchange="checkSingle(this)"> Der Fisch kann dadurch besser hören.</label>
+          <label><input type="radio" name="q2" value="c" onchange="checkSingle(this)"> Es entstehen weniger Wirbel und weniger Widerstand.</label>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-answer="a">
+          <h3>3. Welche Flosse sorgt vor allem für den Antrieb nach vorne?</h3>
+          <label><input type="radio" name="q3" value="a" onchange="checkSingle(this)"> Schwanzflosse</label>
+          <label><input type="radio" name="q3" value="b" onchange="checkSingle(this)"> Rückenflosse</label>
+          <label><input type="radio" name="q3" value="c" onchange="checkSingle(this)"> Bauchflosse</label>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-answer="b">
+          <h3>4. Was machen Fische häufig, wenn sie schnell schwimmen?</h3>
+          <label><input type="radio" name="q4" value="a" onchange="checkSingle(this)"> Sie spreizen alle Flossen weit ab.</label>
+          <label><input type="radio" name="q4" value="b" onchange="checkSingle(this)"> Sie legen einige Flossen enger an den Körper.</label>
+          <label><input type="radio" name="q4" value="c" onchange="checkSingle(this)"> Sie bewegen sich gar nicht mehr.</label>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-answer="c">
+          <h3>5. Wozu dienen Brust- und Bauchflossen besonders?</h3>
+          <label><input type="radio" name="q5" value="a" onchange="checkSingle(this)"> Nur zum Atmen</label>
+          <label><input type="radio" name="q5" value="b" onchange="checkSingle(this)"> Nur zum Fressen</label>
+          <label><input type="radio" name="q5" value="c" onchange="checkSingle(this)"> Zum Lenken, Stabilisieren und Bremsen</label>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-answer="a">
+          <h3>6. Was passiert, wenn ein Fisch plötzlich Brust- und Bauchflossen abspreizt?</h3>
+          <label><input type="radio" name="q6" value="a" onchange="checkSingle(this)"> Er kann abbremsen.</label>
+          <label><input type="radio" name="q6" value="b" onchange="checkSingle(this)"> Er wird unsichtbar.</label>
+          <label><input type="radio" name="q6" value="c" onchange="checkSingle(this)"> Er verliert seine Schuppen.</label>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-answer="b">
+          <h3>7. Was muss ein Fisch beim Schwimmen im Wasser überwinden?</h3>
+          <label><input type="radio" name="q7" value="a" onchange="checkSingle(this)"> Den Luftdruck</label>
+          <label><input type="radio" name="q7" value="b" onchange="checkSingle(this)"> Den Wasserwiderstand</label>
+          <label><input type="radio" name="q7" value="c" onchange="checkSingle(this)"> Die Sonnenstrahlen</label>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="question" data-answer="c">
+          <h3>8. Welche Aussage ist richtig?</h3>
+          <label><input type="radio" name="q8" value="a" onchange="checkSingle(this)"> Alle Flossen haben immer genau dieselbe Aufgabe.</label>
+          <label><input type="radio" name="q8" value="b" onchange="checkSingle(this)"> Fische bewegen sich nur mit den Augen fort.</label>
+          <label><input type="radio" name="q8" value="c" onchange="checkSingle(this)"> Die Flossen arbeiten zusammen und haben verschiedene Aufgaben.</label>
+          <div class="feedback"></div>
+        </div>
+
+      </form>
+
+      <div id="result"></div>
+    </section>
+  </main>
+
+  <script>
+    function checkSingle(input) {
+      const question = input.closest('.question');
+      const correctAnswer = question.dataset.answer;
+      const feedback = question.querySelector('.feedback');
+      const labels = question.querySelectorAll('label');
+      const inputs = question.querySelectorAll('input[type="radio"]');
+
+      labels.forEach(label => {
+        label.classList.remove('answer-correct', 'answer-wrong');
+      });
+
+      feedback.style.display = 'block';
+      feedback.className = 'feedback';
+
+      const selectedLabel = input.closest('label');
+
+      if (input.value === correctAnswer) {
+        selectedLabel.classList.add('answer-correct');
+        feedback.innerHTML = 'Richtig! Sehr gut erkannt. <span class="trophy">🏆</span>';
+        feedback.classList.add('correct');
+
+        inputs.forEach(radio => {
+          radio.disabled = true;
+          radio.closest('label').classList.add('locked');
+        });
+      } else {
+        selectedLabel.classList.add('answer-wrong');
+        feedback.textContent = 'Noch nicht richtig. Versuche es noch einmal.';
+        feedback.classList.add('wrong');
+        input.checked = false;
+      }
+
+      updateResult();
+    }
+
+    function updateResult() {
+      const questions = document.querySelectorAll('.question');
+      let solved = 0;
+
+      questions.forEach(question => {
+        const correctAnswer = question.dataset.answer;
+        const correctInput = question.querySelector(`input[value="${correctAnswer}"]`);
+        if (correctInput && correctInput.disabled) {
+          solved++;
+        }
+      });
+
+      const result = document.getElementById('result');
+
+      if (solved === 0) {
+        result.style.display = 'none';
+        return;
+      }
+
+      result.style.display = 'block';
+
+      if (solved === questions.length) {
+        result.innerHTML = `Geschafft! Du hast alle ${questions.length} Fragen richtig gelöst. <span class="trophy">🏆</span>`;
+      } else {
+        result.textContent = `Du hast schon ${solved} von ${questions.length} Fragen richtig gelöst. Weiter so!`;
+      }
+    }
+  </script>
+</body>
+</html>
