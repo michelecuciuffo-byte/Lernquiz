@@ -375,21 +375,23 @@ button{
       </section>
 
       <section class="panel" id="aufgaben">
-        <h2>Interaktive Aufgaben</h2>
+        <h2>Übungsaufgaben</h2>
 
         <div class="challenge">
           <h3>Aufgabe 1: Warum wird Cracking durchgeführt?</h3>
-          <button class="option" data-correct="false" onclick="checkOption(this)">Damit Rohöl direkt aus dem Boden trinkbar wird.</button>
+          <button class="option" data-correct="false" onclick="checkOption(this)">Damit langkettige Alkane zu noch längeren, schwerer siedenden Molekülen zusammengesetzt werden.</button>
           <button class="option" data-correct="true" onclick="checkOption(this)">Damit aus langen Kohlenwasserstoffen kürzere und oft besser nutzbare Stoffe entstehen.</button>
-          <button class="option" data-correct="false" onclick="checkOption(this)">Damit aus Erdöl ausschließlich Wasser entsteht.</button>
+          <button class="option" data-correct="false" onclick="checkOption(this)">Damit schwere Erdölbestandteile vollständig zu Kohlenstoffdioxid und Wasser verbrannt werden.</button>
+          <button class="option" data-correct="false" onclick="checkOption(this)">Damit Alkane gezielt in Alkohole mit einer OH-Gruppe umgewandelt werden.</button>
           <div class="feedback"></div>
         </div>
 
         <div class="challenge">
           <h3>Aufgabe 2: Was entsteht beim Cracking häufig?</h3>
           <button class="option" data-correct="true" onclick="checkOption(this)">Ein kürzeres Alkan und ein Alken.</button>
-          <button class="option" data-correct="false" onclick="checkOption(this)">Nur Salze und Metalle.</button>
-          <button class="option" data-correct="false" onclick="checkOption(this)">Nur Sauerstoff und Stickstoff.</button>
+          <button class="option" data-correct="false" onclick="checkOption(this)">Nur kürzere Alkane ohne C=C-Doppelbindung.</button>
+          <button class="option" data-correct="false" onclick="checkOption(this)">Ein längeres Alkan und Wasserstoffgas als Hauptprodukte.</button>
+          <button class="option" data-correct="false" onclick="checkOption(this)">Alkohole und Carbonsäuren, weil Sauerstoff eingebaut wird.</button>
           <div class="feedback"></div>
         </div>
 
@@ -415,11 +417,12 @@ button{
 
         <div class="challenge">
           <h3>Aufgabe 4: Reaktionsgleichung ergänzen</h3>
-          <p>Welche Formel passt in die Lücke?</p>
-          <div class="eq">C<sub>8</sub>H<sub>18</sub> → C<sub>4</sub>H<sub>10</sub> + ______</div>
-          <button class="option formulaChoice" data-correct="true" onclick="checkOption(this)">C<sub>4</sub>H<sub>8</sub></button>
-          <button class="option formulaChoice" data-correct="false" onclick="checkOption(this)">C<sub>4</sub>H<sub>10</sub></button>
-          <button class="option formulaChoice" data-correct="false" onclick="checkOption(this)">CO<sub>2</sub></button>
+          <p>Octadecan mit 18 C-Atomen wird hier in Decan als Alkan und ein Alken gespalten. Welche Formel passt in die Lücke?</p>
+          <div class="eq">C<sub>18</sub>H<sub>38</sub> → C<sub>10</sub>H<sub>22</sub> + ______</div>
+          <button class="option formulaChoice" data-correct="true" onclick="checkOption(this)">C<sub>8</sub>H<sub>16</sub></button>
+          <button class="option formulaChoice" data-correct="false" onclick="checkOption(this)">C<sub>8</sub>H<sub>18</sub></button>
+          <button class="option formulaChoice" data-correct="false" onclick="checkOption(this)">C<sub>10</sub>H<sub>20</sub></button>
+          <button class="option formulaChoice" data-correct="false" onclick="checkOption(this)">C<sub>8</sub>H<sub>14</sub></button>
           <div class="feedback"></div>
         </div>
       </section>
