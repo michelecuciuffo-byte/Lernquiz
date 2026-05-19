@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Chlorella – Einzeller unter dem Mikroskop</title>
+  <style>
+    :root{
+      --green-dark:#1f6f3d;
+      --green:#43a047;
+      --green-soft:#e8f5e9;
+      --green-soft-2:#f1fbf2;
+      --lime:#c8e6c9;
+      --text:#21312a;
+      --muted:#607064;
+      --card:#ffffff;
+      --wrong:#fff3e0;
+      --wrong-border:#ffb74d;
+      --right:#e8f5e9;
+      --right-border:#66bb6a;
+      --shadow:0 14px 38px rgba(31,111,61,.14);
+      --radius:24px;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(129,199,132,.35), transparent 32rem),
+        radial-gradient(circle at top right, rgba(200,230,201,.65), transparent 26rem),
+        linear-gradient(180deg, #ffffff 0%, #f5fbf5 100%);
+      line-height:1.55;
+    }
+
+    header{
+      padding:34px 18px 26px;
+      background:linear-gradient(135deg, #1f6f3d 0%, #43a047 58%, #81c784 100%);
+      color:white;
+      position:relative;
+      overflow:hidden;
+    }
+
+    header::after{
+      content:"";
+      position:absolute;
+      width:320px;
+      height:320px;
+      border-radius:50%;
+      right:-70px;
+      top:-90px;
+      background:rgba(255,255,255,.18);
+    }
+
+    .hero{
+      max-width:1100px;
+      margin:0 auto;
+      position:relative;
+      z-index:1;
+      display:grid;
+      grid-template-columns:1.3fr .7fr;
+      gap:24px;
+      align-items:center;
+    }
+
+    h1{
+      margin:0 0 10px;
+      font-size:clamp(2rem, 4vw, 3.6rem);
+      line-height:1.05;
+      letter-spacing:-.03em;
+    }
+
+    .subtitle{
+      font-size:1.18rem;
+      max-width:740px;
+      margin:0;
+      opacity:.95;
+    }
+
+    .hero-bubble{
+      background:rgba(255,255,255,.18);
+      border:1px solid rgba(255,255,255,.35);
+      border-radius:28px;
+      padding:20px;
+      backdrop-filter: blur(6px);
+      box-shadow:0 18px 38px rgba(0,0,0,.12);
+    }
+
+    .chlorella-art{
+      width:100%;
+      aspect-ratio:1.3/1;
+      border-radius:22px;
+      background:
+        radial-gradient(circle at 24% 38%, #9be36a 0 7%, #2e7d32 7.5% 12%, transparent 12.5%),
+        radial-gradient(circle at 55% 50%, #b6f26d 0 8%, #2e7d32 8.5% 13%, transparent 13.5%),
+        radial-gradient(circle at 76% 32%, #a8ea68 0 6%, #2e7d32 6.5% 10%, transparent 10.5%),
+        radial-gradient(circle at 42% 72%, #bdf67a 0 6.5%, #2e7d32 7% 11%, transparent 11.5%),
+        radial-gradient(circle at 72% 76%, #9be36a 0 5.5%, #2e7d32 6% 9.5%, transparent 10%),
+        linear-gradient(145deg, rgba(255,255,255,.36), rgba(255,255,255,.12));
+      position:relative;
+      overflow:hidden;
+    }
+
+    .chlorella-art::before{
+      content:"";
+      position:absolute;
+      inset:18px;
+      border-radius:50%;
+      border:4px solid rgba(255,255,255,.5);
+      filter:blur(.2px);
+    }
+
+    .chlorella-art::after{
+      content:"Mikroskop-Blick";
+      position:absolute;
+      left:50%;
+      bottom:18px;
+      transform:translateX(-50%);
+      padding:7px 14px;
+      background:rgba(255,255,255,.78);
+      color:#1f6f3d;
+      border-radius:999px;
+      font-weight:700;
+      font-size:.92rem;
+    }
+
+    main{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 18px 60px;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:repeat(2, minmax(0,1fr));
+      gap:20px;
+    }
+
+    .card{
+      background:var(--card);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:24px;
+      border:1px solid rgba(67,160,71,.12);
+    }
+
+    .wide{grid-column:1/-1}
+
+    h2{
+      margin:0 0 14px;
+      color:var(--green-dark);
+      font-size:1.6rem;
+    }
+
+    h3{
+      margin:20px 0 10px;
+      color:#2e7d32;
+      font-size:1.18rem;
+    }
+
+    p{margin:0 0 12px}
+
+    .info-list{
+      margin:12px 0 0;
+      padding:0;
+      list-style:none;
+      display:grid;
+      gap:10px;
+    }
+
+    .info-list li{
+      background:var(--green-soft-2);
+      border-left:6px solid var(--green);
+      padding:12px 14px;
+      border-radius:16px;
+    }
+
+    .pill-row{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:16px;
+    }
+
+    .pill{
+      background:#eef8ef;
+      color:#1f6f3d;
+      border:1px solid #c8e6c9;
+      border-radius:999px;
+      padding:8px 12px;
+      font-weight:700;
+      font-size:.93rem;
+    }
+
+    .video-link{
+      display:flex;
+      gap:14px;
+      align-items:center;
+      padding:16px;
+      border-radius:20px;
+      background:linear-gradient(135deg, #f1fbf2, #ffffff);
+      border:1px solid #c8e6c9;
+      text-decoration:none;
+      color:var(--text);
+      transition:.18s transform, .18s box-shadow;
+    }
+
+    .video-link:hover{
+      transform:translateY(-2px);
+      box-shadow:0 12px 28px rgba(31,111,61,.16);
+    }
+
+    .play{
+      width:54px;
+      height:54px;
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      flex:none;
+      background:#43a047;
+      color:white;
+      font-size:1.6rem;
+      box-shadow:0 8px 18px rgba(67,160,71,.28);
+    }
+
+    .task-area{
+      margin-top:12px;
+      display:grid;
+      gap:16px;
+    }
+
+    .quiz-box{
+      border:1px solid #d9eddc;
+      border-radius:20px;
+      padding:18px;
+      background:#fff;
+    }
+
+    .question{
+      font-weight:800;
+      margin-bottom:12px;
+    }
+
+    .answers{
+      display:grid;
+      gap:10px;
+    }
+
+    button.answer, button.check-btn, button.reset-btn{
+      border:0;
+      border-radius:16px;
+      padding:12px 14px;
+      cursor:pointer;
+      font-size:1rem;
+      font-weight:700;
+      transition:.16s transform, .16s box-shadow, .16s background;
+    }
+
+    button.answer{
+      background:#eef8ef;
+      color:#244c2d;
+      text-align:left;
+      border:1px solid #d3ead6;
+    }
+
+    button.answer:hover, button.check-btn:hover, button.reset-btn:hover{
+      transform:translateY(-1px);
+      box-shadow:0 8px 18px rgba(0,0,0,.08);
+    }
+
+    button.answer.correct{
+      background:var(--right);
+      border-color:var(--right-border);
+    }
+
+    button.answer.wrong{
+      background:var(--wrong);
+      border-color:var(--wrong-border);
+    }
+
+    .feedback{
+      margin-top:12px;
+      min-height:34px;
+      font-weight:800;
+      display:flex;
+      align-items:center;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    .trophy{
+      display:inline-grid;
+      place-items:center;
+      min-width:30px;
+      height:30px;
+      border-radius:999px;
+      background:#fff8e1;
+      border:1px solid #ffd54f;
+      box-shadow:0 5px 12px rgba(255,193,7,.2);
+      animation:pop .28s ease-out both;
+    }
+
+    @keyframes pop{
+      0%{transform:scale(.3); opacity:0}
+      80%{transform:scale(1.12)}
+      100%{transform:scale(1); opacity:1}
+    }
+
+    .drag-zone{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      padding:14px;
+      background:#f7fcf7;
+      border:1px dashed #9ccc9c;
+      border-radius:18px;
+      margin:12px 0 18px;
+    }
+
+    .word{
+      padding:9px 13px;
+      border-radius:999px;
+      background:white;
+      border:2px solid #81c784;
+      color:#1f6f3d;
+      font-weight:800;
+      cursor:grab;
+      user-select:none;
+      box-shadow:0 6px 12px rgba(67,160,71,.12);
+    }
+
+    .word:active{cursor:grabbing}
+
+    .cloze-text{
+      font-size:1.05rem;
+      background:white;
+      border:1px solid #d9eddc;
+      border-radius:18px;
+      padding:16px;
+    }
+
+    .blank{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:120px;
+      min-height:34px;
+      padding:3px 10px;
+      margin:2px 4px;
+      border-radius:12px;
+      border:2px dashed #81c784;
+      background:#f1fbf2;
+      color:#1f6f3d;
+      font-weight:800;
+      vertical-align:middle;
+    }
+
+    .blank.over{
+      background:#dcedc8;
+      transform:scale(1.03);
+    }
+
+    .blank.filled{
+      border-style:solid;
+      background:#ffffff;
+    }
+
+    .blank.good{
+      border-color:#43a047;
+      background:#e8f5e9;
+    }
+
+    .blank.bad{
+      border-color:#ff9800;
+      background:#fff3e0;
+    }
+
+    .check-btn{
+      background:#2e7d32;
+      color:white;
+      margin-top:12px;
+    }
+
+    .reset-btn{
+      background:#eef8ef;
+      color:#1f6f3d;
+      margin-top:12px;
+      margin-left:8px;
+      border:1px solid #c8e6c9;
+    }
+
+    .mini-diagram{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+      margin-top:14px;
+    }
+
+    .diagram-item{
+      background:var(--green-soft-2);
+      border-radius:18px;
+      padding:14px;
+      border:1px solid #d9eddc;
+    }
+
+    .cell{
+      width:86px;
+      height:86px;
+      margin:0 auto 10px;
+      border-radius:50%;
+      background:
+        radial-gradient(circle at 55% 45%, #b9f56d 0 28%, #7ccf43 29% 46%, #2e7d32 47% 51%, transparent 52%),
+        radial-gradient(circle at center, #aeea70, #4caf50);
+      border:4px solid #1b5e20;
+      box-shadow:inset -10px -12px 20px rgba(0,0,0,.12), 0 10px 20px rgba(67,160,71,.18);
+    }
+
+    .score-panel{
+      display:flex;
+      flex-wrap:wrap;
+      align-items:center;
+      gap:12px;
+      padding:16px;
+      border-radius:20px;
+      background:linear-gradient(135deg, #e8f5e9, #ffffff);
+      border:1px solid #c8e6c9;
+      margin-top:18px;
+      font-weight:800;
+    }
+
+    .small-note{
+      color:var(--muted);
+      font-size:.95rem;
+    }
+
+    .section-label{
+      display:inline-block;
+      padding:6px 10px;
+      border-radius:999px;
+      background:#e8f5e9;
+      color:#1f6f3d;
+      font-weight:800;
+      margin-bottom:10px;
+      font-size:.9rem;
+    }
+
+    footer{
+      text-align:center;
+      color:var(--muted);
+      padding:20px 18px 36px;
+      font-size:.92rem;
+    }
+
+    @media (max-width:800px){
+      .hero, .grid, .mini-diagram{
+        grid-template-columns:1fr;
+      }
+    }
+
+    @media print{
+      body{background:white}
+      header{background:#ffffff;color:#1f6f3d;border-bottom:2px solid #c8e6c9}
+      .card{box-shadow:none;break-inside:avoid}
+      button,.drag-zone,.score-panel{display:none}
+      a{color:inherit}
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <div>
+        <h1>Chlorella – ein winziger grüner Einzeller</h1>
+        <p class="subtitle">In dieser Lernseite lernst du, was Chlorella ist, wie sie lebt und warum sie als einzellige Grünalge besonders interessant ist.</p>
+      </div>
+      <div class="hero-bubble">
+        <div class="chlorella-art" aria-label="vereinfachte Darstellung von Chlorella-Zellen"></div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="grid">
+      <article class="card wide">
+        <span class="section-label">Infoteil</span>
+        <h2>Was ist Chlorella?</h2>
+        <p><strong>Chlorella</strong> ist eine winzige, kugelige Grünalge. Sie besteht meistens aus nur <strong>einer einzigen Zelle</strong>. Deshalb zählt sie zu den <strong>Einzellern</strong>.</p>
+        <p>Obwohl Chlorella sehr klein ist, kann sie viele wichtige Lebensvorgänge selbst durchführen: Sie nimmt Stoffe auf, wächst, betreibt Fotosynthese und vermehrt sich.</p>
+        <div class="pill-row">
+          <span class="pill">einzellig</span>
+          <span class="pill">grün</span>
+          <span class="pill">mikroskopisch klein</span>
+          <span class="pill">Fotosynthese</span>
+          <span class="pill">lebt im Wasser</span>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>Woran erkennt man Chlorella?</h2>
+        <ul class="info-list">
+          <li><strong>Form:</strong> meist rund bis kugelig.</li>
+          <li><strong>Farbe:</strong> grün, weil Chlorophyll enthalten ist.</li>
+          <li><strong>Größe:</strong> so klein, dass man sie nur mit dem Mikroskop gut erkennen kann.</li>
+          <li><strong>Aufbau:</strong> eine Zelle mit Zellwand, Zellmembran, Zellplasma, Zellkern und Chloroplasten.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Mikroskopische Aufnahme</h2>
+        <p>Hier kannst du dir eine mikroskopische Aufnahme von Chlorella ansehen:</p>
+        <a class="video-link" href="https://www.youtube.com/watch?v=hIrCG8sRqw0c" target="_blank" rel="noopener">
+          <span class="play">▶</span>
+          <span>
+            <strong>Video öffnen: Chlorella unter dem Mikroskop</strong><br>
+            <span class="small-note">Video in neuem Fenster öffnen</span>
+          </span>
+        </a>
+      </article>
+
+      <article class="card">
+        <h2>Wie ernährt sich Chlorella?</h2>
+        <p>Chlorella enthält <strong>Chlorophyll</strong>. Das ist der grüne Farbstoff, den auch Pflanzen besitzen.</p>
+        <p>Mit Chlorophyll kann Chlorella <strong>Fotosynthese</strong> betreiben:</p>
+        <ul class="info-list">
+          <li>Sie nutzt <strong>Lichtenergie</strong>, zum Beispiel Sonnenlicht.</li>
+          <li>Sie nimmt <strong>Kohlenstoffdioxid</strong> aus der Umgebung auf.</li>
+          <li>Sie bildet daraus <strong>Traubenzucker</strong> als energiereichen Stoff.</li>
+          <li>Dabei entsteht auch <strong>Sauerstoff</strong>.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>Warum ist Chlorella ein Lebewesen?</h2>
+        <p>Auch eine einzelne Zelle kann ein vollständiges Lebewesen sein. Chlorella zeigt typische Kennzeichen des Lebens.</p>
+        <div class="mini-diagram">
+          <div class="diagram-item">
+            <div class="cell"></div>
+            <strong>Stoffwechsel</strong><br>
+            <span class="small-note">nimmt Stoffe auf und wandelt sie um</span>
+          </div>
+          <div class="diagram-item">
+            <div class="cell"></div>
+            <strong>Wachstum</strong><br>
+            <span class="small-note">kann größer werden und neue Zellen bilden</span>
+          </div>
+          <div class="diagram-item">
+            <div class="cell"></div>
+            <strong>Fortpflanzung</strong><br>
+            <span class="small-note">vermehrt sich durch Zellteilung</span>
+          </div>
+          <div class="diagram-item">
+            <div class="cell"></div>
+            <strong>Reaktion</strong><br>
+            <span class="small-note">reagiert auf Umweltbedingungen, zum Beispiel Licht</span>
+          </div>
+        </div>
+      </article>
+
+      <article class="card wide">
+        <h2>Merksatz</h2>
+        <p><strong>Chlorella ist eine einzellige Grünalge, die im Wasser lebt und mithilfe von Chlorophyll Fotosynthese betreibt.</strong></p>
+      </article>
+    </section>
+
+    <section class="card wide" style="margin-top:24px;">
+      <span class="section-label">Interaktive Übung 1</span>
+      <h2>Lückentext: Ziehe die passenden Wörter in die Lücken</h2>
+      <p class="small-note">Ziehe jedes Wort mit der Maus oder mit dem Finger in die passende Lücke. Danach kannst du deine Lösung prüfen.</p>
+
+      <div class="drag-zone" id="wordBank1">
+        <span class="word" draggable="true" data-word="Einzeller">Einzeller</span>
+        <span class="word" draggable="true" data-word="Chlorophyll">Chlorophyll</span>
+        <span class="word" draggable="true" data-word="Fotosynthese">Fotosynthese</span>
+        <span class="word" draggable="true" data-word="Mikroskop">Mikroskop</span>
+        <span class="word" draggable="true" data-word="Wasser">Wasser</span>
+      </div>
+
+      <div class="cloze-text">
+        Chlorella ist ein <span class="blank" data-answer="Einzeller"></span>, weil sie aus nur einer Zelle besteht.
+        Sie lebt häufig im <span class="blank" data-answer="Wasser"></span>.
+        Da Chlorella sehr klein ist, betrachtet man sie mit dem <span class="blank" data-answer="Mikroskop"></span>.
+        Ihre grüne Farbe kommt vom Farbstoff <span class="blank" data-answer="Chlorophyll"></span>.
+        Mit seiner Hilfe kann Chlorella <span class="blank" data-answer="Fotosynthese"></span> betreiben.
+      </div>
+
+      <button class="check-btn" onclick="checkCloze(1)">Lückentext prüfen</button>
+      <button class="reset-btn" onclick="resetCloze(1)">Zurücksetzen</button>
+      <div class="feedback" id="clozeFeedback1"></div>
+    </section>
+
+    <section class="card wide" style="margin-top:24px;">
+      <span class="section-label">Quiz mit Sofortauswertung</span>
+      <h2>Quiz 1: Grundlagen zu Chlorella</h2>
+      <div class="task-area">
+        <div class="quiz-box" data-quiz="1">
+          <div class="question">1. Was ist Chlorella?</div>
+          <div class="answers">
+            <button class="answer" data-correct="false">Ein mehrzelliges Tier</button>
+            <button class="answer" data-correct="true">Eine einzellige Grünalge</button>
+            <button class="answer" data-correct="false">Ein Pilz mit Wurzeln</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="quiz-box" data-quiz="2">
+          <div class="question">2. Warum ist Chlorella grün?</div>
+          <div class="answers">
+            <button class="answer" data-correct="true">Weil sie Chlorophyll enthält</button>
+            <button class="answer" data-correct="false">Weil sie grüne Blüten besitzt</button>
+            <button class="answer" data-correct="false">Weil sie aus grünen Mitochondrien besteht</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="quiz-box" data-quiz="3">
+          <div class="question">3. Womit kann man Chlorella gut betrachten?</div>
+          <div class="answers">
+            <button class="answer" data-correct="false">Mit einer Lupe</button>
+            <button class="answer" data-correct="false">Nur mit den Augen</button>
+            <button class="answer" data-correct="true">Mit einem Mikroskop</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="quiz-box" data-quiz="4">
+          <div class="question">4. Was entsteht bei der Fotosynthese unter anderem?</div>
+          <div class="answers">
+            <button class="answer" data-correct="false">Kohlenstoffdioxid und Wasser</button>
+            <button class="answer" data-correct="true">Traubenzucker und Sauerstoff</button>
+            <button class="answer" data-correct="false">Kohlenstoffdioxid und Sauerstoff</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+
+      <div class="score-panel">
+        <span>Richtige Quizantworten:</span>
+        <span id="score">0</span>
+        <span>von</span>
+        <span id="total">4</span>
+        <span id="scoreComment"></span>
+      </div>
+    </section>
+
+    <section class="card wide" style="margin-top:24px;">
+      <span class="section-label">Interaktive Übung 2</span>
+      <h2>Lückentext: Lebensvorgänge</h2>
+      <p class="small-note">Auch hier werden die Wörter in die passenden Lücken gezogen.</p>
+
+      <div class="drag-zone" id="wordBank2">
+        <span class="word" draggable="true" data-word="Sauerstoff">Sauerstoff</span>
+        <span class="word" draggable="true" data-word="Wasser">Wasser</span>
+        <span class="word" draggable="true" data-word="Zellteilung">Zellteilung</span>
+        <span class="word" draggable="true" data-word="Traubenzucker">Traubenzucker</span>
+        <span class="word" draggable="true" data-word="Licht">Licht</span>
+        <span class="word" draggable="true" data-word="Kohlenstoffdioxid">Kohlenstoffdioxid</span>
+      </div>
+
+      <div class="cloze-text">
+        Für die Fotosynthese benötigt Chlorella <span class="blank" data-answer="Licht"></span>,
+        <span class="blank" data-answer="Wasser"></span>
+        und <span class="blank" data-answer="Kohlenstoffdioxid"></span>.
+        Dabei entstehen <span class="blank" data-answer="Traubenzucker"></span>
+        und <span class="blank" data-answer="Sauerstoff"></span>.
+        Chlorella kann sich vermehren, indem sich die Zelle teilt. Das nennt man <span class="blank" data-answer="Zellteilung"></span>.
+      </div>
+
+      <button class="check-btn" onclick="checkCloze(2)">Lückentext prüfen</button>
+      <button class="reset-btn" onclick="resetCloze(2)">Zurücksetzen</button>
+      <div class="feedback" id="clozeFeedback2"></div>
+    </section>
+
+    <section class="card wide" style="margin-top:24px;">
+      <span class="section-label">Quiz mit Sofortauswertung</span>
+      <h2>Quiz 2: Richtig oder falsch?</h2>
+      <div class="task-area">
+        <div class="quiz-box" data-quiz="5">
+          <div class="question">1. Chlorella besteht normalerweise aus vielen verschiedenen Geweben.</div>
+          <div class="answers">
+            <button class="answer" data-correct="false">Richtig</button>
+            <button class="answer" data-correct="true">Falsch</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="quiz-box" data-quiz="6">
+          <div class="question">2. Chlorella kann durch Fotosynthese energiereiche Stoffe bilden.</div>
+          <div class="answers">
+            <button class="answer" data-correct="true">Richtig</button>
+            <button class="answer" data-correct="false">Falsch</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="quiz-box" data-quiz="7">
+          <div class="question">3. Chlorella ist so groß wie eine Mücke.</div>
+          <div class="answers">
+            <button class="answer" data-correct="false">Richtig</button>
+            <button class="answer" data-correct="true">Falsch</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+
+        <div class="quiz-box" data-quiz="8">
+          <div class="question">4. Chlorella lebt häufig in Gewässern.</div>
+          <div class="answers">
+            <button class="answer" data-correct="true">Richtig</button>
+            <button class="answer" data-correct="false">Falsch</button>
+          </div>
+          <div class="feedback"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card wide" style="margin-top:24px;">
+      <span class="section-label">Sicherung</span>
+      <h2>Das solltest du dir merken</h2>
+      <ul class="info-list">
+        <li>Chlorella ist eine einzellige Grünalge.</li>
+        <li>Sie ist mikroskopisch klein und meist kugelig.</li>
+        <li>Der grüne Farbstoff Chlorophyll ermöglicht Fotosynthese.</li>
+        <li>Bei der Fotosynthese entstehen Traubenzucker und Sauerstoff.</li>
+        <li>Chlorella zeigt wichtige Kennzeichen des Lebens, obwohl sie nur aus einer Zelle besteht.</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer>
+    Lernseite für Biologie, 6. Klasse – Thema: Einzeller am Beispiel Chlorella
+  </footer>
+
+  <script>
+    let score = 0;
+    const answered = new Set();
+    const total = 4;
+
+    document.querySelectorAll("button.answer").forEach(btn => {
+      btn.addEventListener("click", () => {
+        const quizBox = btn.closest(".quiz-box");
+        const feedback = quizBox.querySelector(".feedback");
+        const quizId = quizBox.dataset.quiz;
+        const isCorrect = btn.dataset.correct === "true";
+
+        quizBox.querySelectorAll("button.answer").forEach(b => {
+          b.classList.remove("correct", "wrong");
+        });
+
+        if(isCorrect){
+          btn.classList.add("correct");
+          feedback.innerHTML = '<span class="trophy">🏆</span> Richtig! Sehr gut!';
+          if(!answered.has(quizId) && Number(quizId) <= 4){
+            score++;
+            answered.add(quizId);
+            updateScore();
+          }
+        } else {
+          btn.classList.add("wrong");
+          feedback.innerHTML = '🙂 Versuch es noch einmal.';
+        }
+      });
+    });
+
+    function updateScore(){
+      document.getElementById("score").textContent = score;
+      const comment = document.getElementById("scoreComment");
+      if(score === total){
+        comment.innerHTML = '<span class="trophy">🏆</span> Super, alle Grundlagenfragen richtig!';
+      } else if(score >= 2){
+        comment.textContent = "Das sieht schon gut aus.";
+      } else {
+        comment.textContent = "Bearbeite die Fragen in Ruhe weiter.";
+      }
+    }
+
+    let dragged = null;
+
+    document.querySelectorAll(".word").forEach(word => {
+      word.addEventListener("dragstart", e => {
+        dragged = word;
+        e.dataTransfer.setData("text/plain", word.dataset.word);
+      });
+    });
+
+    document.querySelectorAll(".blank").forEach(blank => {
+      blank.addEventListener("dragover", e => {
+        e.preventDefault();
+        blank.classList.add("over");
+      });
+
+      blank.addEventListener("dragleave", () => {
+        blank.classList.remove("over");
+      });
+
+      blank.addEventListener("drop", e => {
+        e.preventDefault();
+        blank.classList.remove("over");
+
+        if(dragged){
+          if(blank.textContent.trim() !== ""){
+            const old = document.createElement("span");
+            old.className = "word";
+            old.draggable = true;
+            old.dataset.word = blank.textContent.trim();
+            old.textContent = blank.textContent.trim();
+            old.addEventListener("dragstart", ev => {
+              dragged = old;
+              ev.dataTransfer.setData("text/plain", old.dataset.word);
+            });
+            getWordBankForBlank(blank).appendChild(old);
+          }
+
+          blank.textContent = dragged.dataset.word;
+          blank.classList.add("filled");
+          blank.classList.remove("good", "bad");
+          dragged.remove();
+          dragged = null;
+        }
+      });
+
+      blank.addEventListener("click", () => {
+        if(blank.textContent.trim() !== ""){
+          const wordBank = getWordBankForBlank(blank);
+          const old = document.createElement("span");
+          old.className = "word";
+          old.draggable = true;
+          old.dataset.word = blank.textContent.trim();
+          old.textContent = blank.textContent.trim();
+          old.addEventListener("dragstart", ev => {
+            dragged = old;
+            ev.dataTransfer.setData("text/plain", old.dataset.word);
+          });
+          wordBank.appendChild(old);
+          blank.textContent = "";
+          blank.classList.remove("filled", "good", "bad");
+        }
+      });
+    });
+
+    function getWordBankForBlank(blank){
+      const section = blank.closest("section");
+      return section.querySelector(".drag-zone");
+    }
+
+    function checkCloze(number){
+      const feedback = document.getElementById("clozeFeedback" + number);
+      const section = feedback.closest("section");
+      const blanks = Array.from(section.querySelectorAll(".blank"));
+      let correct = 0;
+
+      function mark(blank, isGood){
+        if(isGood){
+          blank.classList.add("good");
+          blank.classList.remove("bad");
+          correct++;
+        } else {
+          blank.classList.add("bad");
+          blank.classList.remove("good");
+        }
+      }
+
+      function sameWords(values, expectedWords){
+        const sortedValues = values.slice().sort();
+        const sortedExpected = expectedWords.slice().sort();
+        return sortedValues.length === sortedExpected.length &&
+          sortedValues.every((word, index) => word === sortedExpected[index]);
+      }
+
+      if(number === 2){
+        const firstSentenceBlanks = blanks.slice(0, 3);
+        const productBlanks = blanks.slice(3, 5);
+        const divisionBlank = blanks[5];
+
+        const firstSentenceValues = firstSentenceBlanks.map(blank => blank.textContent.trim());
+        const productValues = productBlanks.map(blank => blank.textContent.trim());
+
+        const firstSentenceCorrect = sameWords(firstSentenceValues, ["Wasser", "Kohlenstoffdioxid", "Licht"]);
+        const productsCorrect = sameWords(productValues, ["Traubenzucker", "Sauerstoff"]);
+
+        firstSentenceBlanks.forEach(blank => mark(blank, firstSentenceCorrect));
+        productBlanks.forEach(blank => mark(blank, productsCorrect));
+        mark(divisionBlank, divisionBlank.textContent.trim() === "Zellteilung");
+      } else {
+        blanks.forEach(blank => {
+          const value = blank.textContent.trim();
+          mark(blank, value === blank.dataset.answer);
+        });
+      }
+
+      if(correct === blanks.length){
+        feedback.innerHTML = '<span class="trophy">🏆</span> Alles richtig! Sehr gut!';
+      } else {
+        feedback.innerHTML = '🙂 Versuch es noch einmal. Richtige Lücken werden grün markiert.';
+      }
+    }
+
+    function resetCloze(number){
+      const feedback = document.getElementById("clozeFeedback" + number);
+      const section = feedback.closest("section");
+      const wordBank = section.querySelector(".drag-zone");
+      const blanks = section.querySelectorAll(".blank");
+      const words = [];
+
+      blanks.forEach(blank => {
+        if(blank.textContent.trim() !== ""){
+          words.push(blank.textContent.trim());
+        }
+        blank.textContent = "";
+        blank.classList.remove("filled", "good", "bad", "over");
+      });
+
+      wordBank.innerHTML = "";
+      const originalWords = number === 1
+        ? ["Einzeller", "Chlorophyll", "Fotosynthese", "Mikroskop", "Wasser"]
+        : ["Sauerstoff", "Wasser", "Zellteilung", "Traubenzucker", "Licht", "Kohlenstoffdioxid"];
+
+      originalWords.forEach(w => {
+        const span = document.createElement("span");
+        span.className = "word";
+        span.draggable = true;
+        span.dataset.word = w;
+        span.textContent = w;
+        span.addEventListener("dragstart", e => {
+          dragged = span;
+          e.dataTransfer.setData("text/plain", span.dataset.word);
+        });
+        wordBank.appendChild(span);
+      });
+
+      feedback.textContent = "";
+    }
+
+    document.getElementById("total").textContent = total;
+  </script>
+</body>
+</html>
