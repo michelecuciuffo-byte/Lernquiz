@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Verbrennung von Alkanen – Interaktive Lern- und Quizdatei</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root{
+  --bg:#f7f9fc;
+  --card:#ffffff;
+  --ink:#1f2937;
+  --muted:#5b6472;
+  --blue:#2563eb;
+  --blue2:#dbeafe;
+  --orange:#f97316;
+  --orange2:#ffedd5;
+  --red:#dc2626;
+  --green:#16a34a;
+  --green2:#dcfce7;
+  --yellow:#facc15;
+  --purple:#7c3aed;
+  --line:#d9e2ef;
+  --shadow:0 12px 30px rgba(31,41,55,.12);
+  --radius:22px;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:linear-gradient(180deg,#eef5ff 0%,#f7f9fc 45%,#fff 100%);
+  color:var(--ink);
+  line-height:1.55;
+}
+header{
+  padding:34px 20px 26px;
+  text-align:center;
+  background:
+    radial-gradient(circle at 15% 20%,rgba(249,115,22,.25),transparent 28%),
+    radial-gradient(circle at 85% 10%,rgba(37,99,235,.20),transparent 32%),
+    linear-gradient(135deg,#172554,#1e40af);
+  color:white;
+}
+header h1{margin:0;font-size:clamp(1.9rem,4vw,3.1rem)}
+header p{max-width:900px;margin:14px auto 0;font-size:1.08rem;color:#e6efff}
+nav{
+  position:sticky;
+  top:0;
+  z-index:20;
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:center;
+  padding:12px;
+  background:rgba(255,255,255,.92);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+nav a{
+  text-decoration:none;
+  color:#1d4ed8;
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  border-radius:999px;
+  padding:8px 13px;
+  font-weight:700;
+  font-size:.92rem;
+}
+main{max-width:1180px;margin:0 auto;padding:22px}
+section{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  padding:24px;
+  margin:20px 0;
+  box-shadow:var(--shadow);
+}
+h2{margin:0 0 14px;color:#0f172a;font-size:1.65rem}
+h3{margin:18px 0 9px;color:#1e3a8a}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.info{
+  border-radius:18px;
+  padding:16px;
+  background:#f8fafc;
+  border:1px solid var(--line);
+}
+.badge{
+  display:inline-block;
+  border-radius:999px;
+  padding:5px 10px;
+  font-size:.85rem;
+  font-weight:700;
+  margin-bottom:8px;
+}
+.b-orange{background:var(--orange2);color:#9a3412}
+.b-blue{background:var(--blue2);color:#1e40af}
+.b-green{background:var(--green2);color:#166534}
+.eq{
+  font-family:"Courier New",monospace;
+  background:#0f172a;
+  color:#f8fafc;
+  padding:13px 14px;
+  border-radius:14px;
+  overflow:auto;
+  font-weight:bold;
+}
+.notice{
+  background:#fffbeb;
+  border:1px solid #fde68a;
+  border-left:8px solid #f59e0b;
+  border-radius:16px;
+  padding:14px 16px;
+}
+
+/* Bunsen burner */
+.lab{
+  background:linear-gradient(180deg,#f8fbff,#eef4ff);
+  border-radius:22px;
+  border:1px solid #cbd5e1;
+  min-height:480px;
+  position:relative;
+  overflow:hidden;
+  padding:18px;
+}
+.lab-title{font-weight:800;color:#1e3a8a;margin-bottom:8px}
+.flame-equation{
+  position:absolute;
+  left:18px;
+  top:58px;
+  z-index:3;
+  max-width:360px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  align-items:center;
+  padding:12px;
+  background:rgba(255,255,255,.94);
+  border:1px solid #cbd5e1;
+  border-radius:16px;
+  font-weight:800;
+  color:#0f172a;
+}
+.flame-equation span{
+  background:#eff6ff;
+  border:1px solid #bfdbfe;
+  border-radius:999px;
+  padding:5px 8px;
+}
+.flame-equation .reaction-arrow{
+  background:#fff7ed;
+  border-color:#fed7aa;
+  color:#9a3412;
+}
+.burner-particles{
+  position:absolute;
+  inset:0;
+  z-index:2;
+  pointer-events:none;
+  opacity:0;
+  transition:.35s ease;
+}
+.lab.burner-yellow .burner-particles,
+.lab.burner-blue .burner-particles{opacity:1}
+.flame-dot{
+  position:absolute;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:38px;
+  height:38px;
+  border-radius:50%;
+  color:white;
+  font-size:.82rem;
+  font-weight:900;
+  line-height:1;
+  box-shadow:0 6px 14px rgba(15,23,42,.18);
+}
+.flame-dot sub{
+  font-size:.9em;
+  line-height:0;
+  position:relative;
+  bottom:-.16em;
+}
+.fuel-dot{
+  left:calc(50% - 18px);
+  bottom:150px;
+  background:#111827;
+  animation:fuelIntoFlame 2.7s infinite ease-in;
+}
+.oxygen-dot{
+  left:calc(50% - 92px);
+  bottom:155px;
+  background:#dc2626;
+  animation:oxygenIntoFlame 2.5s infinite ease-in;
+}
+.product-dot{
+  left:calc(50% + 22px);
+  bottom:278px;
+  background:#2563eb;
+  animation:productRise 3s infinite ease-out;
+}
+.water-dot{
+  left:calc(50% - 62px);
+  bottom:270px;
+  background:#0ea5e9;
+  animation:productRise 3.2s infinite ease-out .4s;
+}
+.soot-dot{
+  left:calc(50% + 46px);
+  bottom:320px;
+  width:42px;
+  height:42px;
+  background:#111827;
+  box-shadow:0 0 18px rgba(17,24,39,.55),0 6px 14px rgba(15,23,42,.2);
+  animation:sootDrift 2.1s infinite ease-out;
+}
+.smoke-cloud{
+  position:absolute;
+  left:calc(50% - 2px);
+  bottom:286px;
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(31,41,55,.72),rgba(55,65,81,.34) 58%,rgba(75,85,99,.08) 76%,transparent);
+  filter:blur(.6px);
+  opacity:0;
+  animation:smokeRise 2.7s infinite ease-out;
+}
+.smoke-cloud.s2{
+  left:calc(50% - 42px);
+  bottom:296px;
+  width:58px;
+  height:58px;
+  animation-delay:.55s;
+}
+.smoke-cloud.s3{
+  left:calc(50% + 34px);
+  bottom:304px;
+  width:62px;
+  height:62px;
+  animation-delay:1.1s;
+}
+.smoke-cloud.s4{
+  left:calc(50% + 2px);
+  bottom:326px;
+  width:70px;
+  height:70px;
+  animation-delay:1.65s;
+}
+.lab.burner-blue .soot-dot{display:none}
+.lab.burner-blue .smoke-cloud,
+.lab.burner-off .smoke-cloud{display:none}
+.lab.burner-yellow .product-dot{opacity:.65}
+.lab.burner-yellow .water-dot{opacity:.65}
+@keyframes fuelIntoFlame{
+  0%{transform:translateY(0) scale(.75);opacity:0}
+  18%{opacity:1}
+  72%{transform:translateY(-112px) scale(1);opacity:1}
+  100%{transform:translateY(-138px) scale(.35);opacity:0}
+}
+@keyframes oxygenIntoFlame{
+  0%{transform:translate(0,0) scale(.7);opacity:0}
+  18%{opacity:1}
+  75%{transform:translate(68px,-94px) scale(1);opacity:1}
+  100%{transform:translate(82px,-116px) scale(.35);opacity:0}
+}
+@keyframes productRise{
+  0%{transform:translateY(0) scale(.55);opacity:0}
+  18%{opacity:1}
+  78%{transform:translateY(-85px) scale(1);opacity:1}
+  100%{transform:translateY(-112px) scale(.72);opacity:0}
+}
+@keyframes sootDrift{
+  0%{transform:translate(0,0) scale(.45);opacity:0}
+  18%{opacity:1}
+  100%{transform:translate(30px,-92px) scale(1.05);opacity:0}
+}
+@keyframes smokeRise{
+  0%{transform:translate(0,0) scale(.55);opacity:0}
+  16%{opacity:.88}
+  100%{transform:translate(24px,-132px) scale(2.15);opacity:0}
+}
+.bench{
+  position:absolute;left:0;right:0;bottom:0;height:95px;
+  background:linear-gradient(180deg,#d7b98b,#b98754);
+  border-top:5px solid #8b5e34;
+}
+.burner-wrap{
+  position:absolute;
+  left:50%;
+  bottom:54px;
+  transform:translateX(-50%);
+  width:260px;
+  height:360px;
+}
+.base{
+  position:absolute;bottom:0;left:50%;transform:translateX(-50%);
+  width:170px;height:34px;border-radius:50%;
+  background:linear-gradient(180deg,#94a3b8,#475569);
+  box-shadow:0 8px 18px rgba(15,23,42,.28);
+}
+.tube{
+  position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
+  width:58px;height:180px;border-radius:18px 18px 6px 6px;
+  background:linear-gradient(90deg,#64748b,#e2e8f0,#64748b);
+  border:2px solid #475569;
+}
+.airhole{
+  position:absolute;bottom:88px;left:50%;transform:translateX(-50%);
+  width:43px;height:18px;border-radius:999px;
+  background:#111827;
+  box-shadow:inset 0 0 6px #000;
+}
+.gas-knob{
+  position:absolute;bottom:36px;left:72px;
+  width:36px;height:36px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%,#e2e8f0,#64748b);
+  border:2px solid #475569;
+}
+.hose{
+  position:absolute;bottom:28px;right:0;width:95px;height:20px;border-radius:999px;
+  background:#111827;
+  transform:rotate(-10deg);
+}
+.flame{
+  position:absolute;
+  bottom:190px;
+  left:50%;
+  transform:translateX(-50%);
+  width:125px;
+  height:190px;
+  filter:drop-shadow(0 0 18px rgba(249,115,22,.65));
+  transition:.4s ease;
+}
+.flame .outer,.flame .middle,.flame .inner{
+  position:absolute;left:50%;bottom:0;transform:translateX(-50%);
+  border-radius:50% 50% 50% 50% / 65% 65% 35% 35%;
+  transform-origin:bottom center;
+  animation:flicker 1s infinite ease-in-out alternate;
+}
+.flame .outer{
+  width:112px;height:182px;
+  background:linear-gradient(180deg,rgba(255,221,80,.2),#f97316 40%,#dc2626 88%);
+}
+.flame .middle{
+  width:78px;height:140px;
+  background:linear-gradient(180deg,rgba(255,255,255,.35),#facc15 35%,#fb923c 90%);
+  animation-delay:.15s;
+}
+.flame .inner{
+  width:36px;height:90px;
+  background:linear-gradient(180deg,#e0f2fe,#60a5fa 45%,#2563eb 90%);
+  animation-delay:.25s;
+}
+.flame.blue{
+  filter:drop-shadow(0 0 18px rgba(59,130,246,.75));
+}
+.flame.blue .outer{
+  width:82px;height:185px;
+  background:linear-gradient(180deg,rgba(219,234,254,.15),#60a5fa 35%,#1d4ed8 92%);
+}
+.flame.blue .middle{
+  width:55px;height:145px;
+  background:linear-gradient(180deg,#eff6ff,#93c5fd 40%,#2563eb 90%);
+}
+.flame.blue .inner{
+  width:25px;height:85px;
+  background:linear-gradient(180deg,#fff,#dbeafe,#60a5fa);
+}
+.flame.off{opacity:0;transform:translateX(-50%) scale(.2)}
+@keyframes flicker{
+  from{transform:translateX(-50%) scaleX(.96) rotate(-1deg)}
+  to{transform:translateX(-50%) scaleX(1.04) rotate(1.5deg)}
+}
+.controls{
+  display:flex;gap:10px;flex-wrap:wrap;margin-top:12px
+}
+button{
+  border:0;
+  border-radius:14px;
+  padding:10px 14px;
+  font-weight:800;
+  cursor:pointer;
+  background:#1d4ed8;
+  color:white;
+  box-shadow:0 4px 12px rgba(29,78,216,.22);
+}
+button.secondary{background:#475569}
+button.orange{background:#ea580c}
+button.green{background:#16a34a}
+button:active{transform:translateY(1px)}
+.status-box{
+  position:absolute;
+  right:18px;
+  top:58px;
+  z-index:4;
+  width:min(330px,calc(100% - 36px));
+  background:rgba(255,255,255,.92);
+  border:1px solid #cbd5e1;
+  border-radius:18px;
+  padding:14px;
+}
+.status-box strong{color:#1e40af}
+.soot{
+  position:absolute;left:50%;bottom:342px;transform:translateX(-50%);
+  width:88px;height:24px;border-radius:50%;
+  background:radial-gradient(circle,#111827,rgba(17,24,39,.1) 72%,transparent);
+  opacity:0;
+  transition:.4s;
+}
+.soot.show{opacity:.8;animation:sootPulse 1.2s infinite alternate}
+@keyframes sootPulse{from{transform:translateX(-50%) scale(.9)}to{transform:translateX(-50%) scale(1.15)}}
+
+/* Molecule animation */
+.molecule-stage{
+  min-height:430px;
+  border-radius:22px;
+  border:1px dashed #93c5fd;
+  background:linear-gradient(180deg,#f8fbff,#eef6ff);
+  position:relative;
+  padding:16px;
+}
+.model-legend{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin:10px 0 12px;
+}
+.legend-pill{
+  display:inline-flex;
+  gap:6px;
+  align-items:center;
+  border:1px solid #cbd5e1;
+  background:white;
+  border-radius:999px;
+  padding:6px 10px;
+  font-size:.92rem;
+  font-weight:800;
+}
+.legend-dot{
+  width:18px;
+  height:18px;
+  border-radius:50%;
+  display:inline-block;
+}
+.particle-equation{
+  max-width:620px;
+  margin:0 auto 14px;
+  padding:12px;
+  text-align:center;
+  border-radius:14px;
+  background:#0f172a;
+  color:white;
+  font-family:"Courier New",monospace;
+  font-weight:900;
+}
+.model-layout{
+  display:grid;
+  grid-template-columns:minmax(170px,1fr) minmax(320px,1.5fr) minmax(170px,1fr);
+  gap:14px;
+  align-items:stretch;
+}
+.model-side{
+  background:rgba(255,255,255,.84);
+  border:1px solid #dbeafe;
+  border-radius:18px;
+  padding:12px;
+}
+.model-side h4{
+  margin:0 0 10px;
+  color:#1e3a8a;
+  text-align:center;
+}
+.mol-row{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  align-items:center;
+  justify-content:center;
+  margin-top:16px;
+}
+.molecule{
+  display:inline-flex;
+  align-items:center;
+  gap:3px;
+  padding:10px;
+  border-radius:999px;
+  background:white;
+  border:1px solid #dbeafe;
+  box-shadow:0 6px 14px rgba(15,23,42,.08);
+  min-height:52px;
+}
+.molecule-diagram{
+  position:relative;
+  display:inline-block;
+  padding:0;
+  border-radius:18px;
+}
+.molecule-diagram .atom{
+  position:absolute;
+  transform:translate(-50%,-50%);
+}
+.methane-diagram{width:124px;height:104px}
+.oxygen-diagram{width:82px;height:52px}
+.co2-diagram{width:112px;height:54px}
+.water-diagram{width:98px;height:76px}
+.atom-c-center{left:50%;top:50%}
+.atom-h-top{left:50%;top:23%}
+.atom-h-right{left:70%;top:50%}
+.atom-h-bottom{left:50%;top:77%}
+.atom-h-left{left:30%;top:50%}
+.atom-o-left{left:34%;top:50%}
+.atom-o-right{left:66%;top:50%}
+.co2-left{left:25%;top:50%}
+.co2-center{left:50%;top:50%}
+.co2-right{left:75%;top:50%}
+.water-o{left:50%;top:38%}
+.water-h-left{left:35%;top:67%}
+.water-h-right{left:65%;top:67%}
+.atom{
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width:32px;height:32px;border-radius:50%;
+  font-weight:900;
+  font-size:.9rem;
+  color:white;
+  border:2px solid rgba(255,255,255,.65);
+}
+.C{background:#111827}
+.H{background:#94a3b8}
+.O{background:#dc2626}
+.plus,.arrow{
+  font-weight:900;
+  font-size:1.8rem;
+  color:#1e3a8a;
+}
+.arrow{font-size:2.4rem}
+.particle-board{
+  position:relative;
+  min-height:245px;
+  border-radius:18px;
+  overflow:hidden;
+  background:
+    linear-gradient(90deg,rgba(219,234,254,.9),rgba(255,247,237,.88) 50%,rgba(236,253,245,.9)),
+    repeating-linear-gradient(0deg,rgba(148,163,184,.15) 0,rgba(148,163,184,.15) 1px,transparent 1px,transparent 34px);
+  border:1px solid #bfdbfe;
+}
+.board-caption{
+  position:absolute;
+  left:12px;
+  right:12px;
+  top:12px;
+  z-index:2;
+  padding:9px 10px;
+  border-radius:12px;
+  background:rgba(255,255,255,.92);
+  border:1px solid #dbeafe;
+  font-weight:800;
+  text-align:center;
+}
+.reaction-hotspot{
+  position:absolute;
+  left:50%;
+  top:50%;
+  width:94px;
+  height:94px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(249,115,22,.38),rgba(249,115,22,.08) 62%,transparent 70%);
+  border:2px dashed rgba(249,115,22,.55);
+}
+.moving-particle{
+  position:absolute;
+  width:32px;
+  height:32px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:white;
+  font-weight:900;
+  font-size:.85rem;
+  box-shadow:0 5px 12px rgba(15,23,42,.18);
+  transform:translate(-50%,-50%);
+  transition:left 2.7s ease-in-out, top 2.7s ease-in-out, box-shadow .35s ease;
+  z-index:3;
+}
+.no-particle-transition .moving-particle{
+  transition:none;
+}
+.is-moving .moving-particle{
+  box-shadow:0 0 0 6px rgba(250,204,21,.16),0 7px 16px rgba(15,23,42,.22);
+}
+.is-complete .products-side{
+  border-color:#86efac;
+  box-shadow:0 0 0 4px rgba(34,197,94,.16);
+}
+.transform-area{
+  margin-top:14px;
+  text-align:center;
+}
+.pC{background:#111827}
+.pH{background:#94a3b8}
+.pO{background:#dc2626}
+.result-products{
+  display:none;
+  margin-top:15px;
+  padding:14px;
+  background:#ecfdf5;
+  border:1px solid #bbf7d0;
+  border-radius:18px;
+}
+.result-products.show{display:block}
+.summary-remember{
+  display:grid;
+  grid-template-columns:auto 1fr;
+  gap:14px;
+  align-items:start;
+  margin-top:16px;
+  padding:18px;
+  border-radius:20px;
+  border:2px solid #f59e0b;
+  background:linear-gradient(180deg,#fffbeb,#fff7ed);
+  box-shadow:0 10px 24px rgba(245,158,11,.18);
+}
+.bulb{
+  width:48px;
+  height:48px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#fde68a;
+  border:2px solid #f59e0b;
+  font-size:1.65rem;
+}
+.summary-remember h3{
+  margin:0 0 6px;
+  color:#92400e;
+  letter-spacing:.04em;
+}
+.summary-remember p{margin:0}
+
+/* Exercises */
+.exercise{
+  background:#f8fafc;
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:16px;
+  margin:14px 0;
+}
+.option{
+  display:block;
+  margin:8px 0;
+  padding:10px 12px;
+  border:1px solid #cbd5e1;
+  border-radius:12px;
+  background:#fff;
+  cursor:pointer;
+}
+.option:hover{background:#eff6ff}
+.feedback{
+  margin-top:10px;
+  min-height:30px;
+  font-weight:800;
+}
+.correct{color:#15803d}
+.wrong{color:#b91c1c}
+.trophy{
+  font-size:1rem;
+  display:inline-block;
+  animation:pop .5s ease;
+}
+@keyframes pop{0%{transform:scale(.2)}80%{transform:scale(1.25)}100%{transform:scale(1)}}
+.inputline{
+  display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin:8px 0;
+}
+input,select{
+  padding:10px 12px;
+  border:1px solid #cbd5e1;
+  border-radius:12px;
+  font-size:1rem;
+  background:white;
+}
+.small{font-size:.92rem;color:var(--muted)}
+.drag-zone{
+  display:flex;gap:10px;flex-wrap:wrap;margin:12px 0;
+}
+.word{
+  padding:9px 12px;
+  border-radius:999px;
+  background:#e0f2fe;
+  border:1px solid #7dd3fc;
+  font-weight:800;
+  cursor:grab;
+}
+.word.selected{
+  outline:3px solid #2563eb;
+  background:#dbeafe;
+}
+.blank{
+  display:inline-flex;
+  min-width:120px;
+  min-height:34px;
+  align-items:center;
+  justify-content:center;
+  border:2px dashed #60a5fa;
+  border-radius:10px;
+  background:#eff6ff;
+  margin:0 4px;
+  padding:4px 10px;
+  vertical-align:middle;
+  font-weight:800;
+}
+.blank.filled{border-style:solid;background:#dbeafe}
+.table-wrap{overflow:auto}
+table{
+  width:100%;
+  border-collapse:collapse;
+  background:white;
+  border-radius:16px;
+  overflow:hidden;
+}
+th,td{border:1px solid var(--line);padding:10px;text-align:left}
+th{background:#eff6ff;color:#1e3a8a}
+.footer{
+  text-align:center;
+  color:#64748b;
+  padding:30px 12px 45px;
+}
+@media print{
+  nav,.controls,button{display:none!important}
+  body{background:white}
+  section{box-shadow:none;break-inside:avoid}
+}
+@media (max-width:760px){
+  .lab{padding-top:180px}
+  .flame-equation,.status-box{
+    left:18px;
+    right:18px;
+    width:auto;
+  }
+  .status-box{top:118px}
+  .model-layout{grid-template-columns:1fr}
+  .particle-board{min-height:290px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Verbrennung von Alkanen</h1>
+  <p>Eine interaktive Lern- und Quizdatei mit Bunsenbrenner-Animation, Teilchenmodell und Übungen zu Reaktionsgleichungen.</p>
+</header>
+
+<nav>
+  <a href="#grundlagen">Grundlagen</a>
+  <a href="#bunsen">Bunsenbrenner</a>
+  <a href="#teilchen">Teilchenmodell</a>
+  <a href="#gleichungen">Reaktionsgleichungen</a>
+  <a href="#uebungen">Übungen</a>
+</nav>
+
+<main>
+
+<section id="grundlagen">
+  <h2>1. Was sind Alkane?</h2>
+  <div class="grid">
+    <div class="info">
+      <span class="badge b-blue">Stoffklasse</span>
+      <h3>Alkane sind Kohlenwasserstoffe:</h3>
+      <p>Alkane bestehen nur aus <strong>Kohlenstoff-Atomen (C)</strong> und <strong>Wasserstoff-Atomen (H)</strong>.</p>
+      <div class="eq">Allgemeine Formel: C<sub>n</sub>H<sub>2n+2</sub></div>
+    </div>
+    <div class="info">
+      <span class="badge b-orange">Beispiele</span>
+      <h3>Typische Alkane:</h3>
+      <ul>
+        <li><strong>Methan:</strong> CH<sub>4</sub></li>
+        <li><strong>Ethan:</strong> C<sub>2</sub>H<sub>6</sub></li>
+        <li><strong>Propan:</strong> C<sub>3</sub>H<sub>8</sub></li>
+        <li><strong>Butan:</strong> C<sub>4</sub>H<sub>10</sub></li>
+      </ul>
+    </div>
+    <div class="info">
+      <span class="badge b-green">Verbrennung</span>
+      <h3>Alkane können brennen:</h3>
+      <p>Bei der vollständigen Verbrennung reagieren Alkane mit <strong>Sauerstoff</strong>. Es entstehen <strong>Kohlenstoffdioxid</strong> und <strong>Wasser</strong>.</p>
+    </div>
+  </div>
+
+  <div class="notice">
+    <strong>Merksatz:</strong> Bei der vollständigen Verbrennung eines Alkans entstehen immer <strong>Kohlenstoffdioxid (CO<sub>2</sub>)</strong> und <strong>Wasser (H<sub>2</sub>O)</strong>. Dabei wird Energie in Form von Wärme und Licht frei.
+  </div>
+</section>
+
+<section id="bunsen">
+  <h2>2. Bunsenbrenner: leuchtende und nicht leuchtende Flamme</h2>
+  <p>Mit dem Bunsenbrenner kann man gut zeigen, wie die Sauerstoffzufuhr die Verbrennung beeinflusst.</p>
+
+  <div class="lab burner-off" id="burnerLab">
+    <div class="lab-title">Interaktive Bunsenbrenner-Animation</div>
+    <div class="flame-equation" id="flameEquation">
+      <span>Alkan: CH<sub>4</sub></span>
+      <span>+</span>
+      <span>Sauerstoff: O<sub>2</sub></span>
+      <span class="reaction-arrow">→</span>
+      <span>CO<sub>2</sub> + H<sub>2</sub>O</span>
+    </div>
+    <div class="status-box" id="burnerText">
+      <strong>Gas aus:</strong><br>
+      Es findet keine Verbrennung statt. Es reagieren noch keine Teilchen miteinander.
+    </div>
+    <div class="soot" id="soot"></div>
+    <div class="burner-particles" aria-hidden="true">
+      <div class="flame-dot fuel-dot">CH<sub>4</sub></div>
+      <div class="flame-dot oxygen-dot">O<sub>2</sub></div>
+      <div class="flame-dot product-dot" id="burnerProduct">CO<sub>2</sub></div>
+      <div class="flame-dot water-dot">H<sub>2</sub>O</div>
+      <div class="flame-dot soot-dot">C</div>
+      <div class="smoke-cloud"></div>
+      <div class="smoke-cloud s2"></div>
+      <div class="smoke-cloud s3"></div>
+      <div class="smoke-cloud s4"></div>
+    </div>
+    <div class="burner-wrap">
+      <div class="flame off" id="flame">
+        <div class="outer"></div>
+        <div class="middle"></div>
+        <div class="inner"></div>
+      </div>
+      <div class="tube"></div>
+      <div class="airhole"></div>
+      <div class="gas-knob"></div>
+      <div class="hose"></div>
+      <div class="base"></div>
+    </div>
+    <div class="bench"></div>
+  </div>
+
+  <div class="controls">
+    <button class="secondary" onclick="setBurner('off')">Gas aus</button>
+    <button class="orange" onclick="setBurner('yellow')">Luftzufuhr geschlossen</button>
+    <button onclick="setBurner('blue')">Luftzufuhr geöffnet</button>
+  </div>
+
+  <div class="grid" style="margin-top:16px">
+    <div class="info">
+      <span class="badge b-orange">Gelbe Flamme</span>
+      <h3>Luftzufuhr geschlossen:</h3>
+      <ul>
+        <li>weniger Sauerstoff gelangt zur Flamme</li>
+        <li>Verbrennung oft unvollständig</li>
+        <li>Flamme leuchtet gelb</li>
+        <li>es kann Kohlenstoffmonoxid (CO) entstehen</li>
+        <li>es kann Ruß entstehen: Ruß besteht aus Kohlenstoff (C)</li>
+      </ul>
+    </div>
+    <div class="info">
+      <span class="badge b-blue">Blaue Flamme</span>
+      <h3>Luftzufuhr geöffnet:</h3>
+      <ul>
+        <li>mehr Sauerstoff gelangt zur Flamme</li>
+        <li>Verbrennung läuft vollständiger ab</li>
+        <li>Flamme ist blau und sehr heiß</li>
+        <li>kaum Rußbildung</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="teilchen">
+  <h2>3. Teilchenmodell: Aus Alkan + Sauerstoff werden neue Stoffe</h2>
+  <p>Bei einer chemischen Reaktion verschwinden die Atome nicht. Sie werden nur <strong>neu angeordnet</strong>.</p>
+
+  <div class="molecule-stage" id="particleStage">
+    <h3 style="text-align:center;margin-top:0">Beispiel: Methan verbrennt</h3>
+    <div class="model-legend">
+      <span class="legend-pill"><span class="legend-dot pC"></span>C = Kohlenstoff</span>
+      <span class="legend-pill"><span class="legend-dot pH"></span>H = Wasserstoff</span>
+      <span class="legend-pill"><span class="legend-dot pO"></span>O = Sauerstoff</span>
+    </div>
+    <div class="particle-equation">CH<sub>4</sub> + 2 O<sub>2</sub> → CO<sub>2</sub> + 2 H<sub>2</sub>O</div>
+
+    <div class="model-layout">
+      <div class="model-side">
+        <h4>Ausgangsstoffe</h4>
+        <div class="mol-row">
+          <div class="molecule molecule-diagram methane-diagram" title="Methan">
+            <span class="atom H atom-h-top">H</span>
+            <span class="atom H atom-h-right">H</span>
+            <span class="atom C atom-c-center">C</span>
+            <span class="atom H atom-h-bottom">H</span>
+            <span class="atom H atom-h-left">H</span>
+          </div>
+          <span class="plus">+</span>
+          <div class="molecule molecule-diagram oxygen-diagram" title="Sauerstoff-Molekül">
+            <span class="atom O atom-o-left">O</span>
+            <span class="atom O atom-o-right">O</span>
+          </div>
+          <div class="molecule molecule-diagram oxygen-diagram" title="Sauerstoff-Molekül">
+            <span class="atom O atom-o-left">O</span>
+            <span class="atom O atom-o-right">O</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="particle-board" id="particleBoard" aria-label="Animation der Atome">
+        <div class="board-caption" id="particleStep">Start: Methan und Sauerstoff liegen getrennt vor.</div>
+        <div class="reaction-hotspot"></div>
+        <div class="moving-particle pC" data-start-x="18" data-start-y="56" data-end-x="59" data-end-y="42">C</div>
+        <div class="moving-particle pH" data-start-x="18" data-start-y="44" data-end-x="42" data-end-y="72">H</div>
+        <div class="moving-particle pH" data-start-x="23" data-start-y="56" data-end-x="52" data-end-y="72">H</div>
+        <div class="moving-particle pH" data-start-x="18" data-start-y="68" data-end-x="72" data-end-y="72">H</div>
+        <div class="moving-particle pH" data-start-x="13" data-start-y="56" data-end-x="82" data-end-y="72">H</div>
+        <div class="moving-particle pO" data-start-x="47" data-start-y="45" data-end-x="54" data-end-y="42">O</div>
+        <div class="moving-particle pO" data-start-x="53" data-start-y="45" data-end-x="64" data-end-y="42">O</div>
+        <div class="moving-particle pO" data-start-x="47" data-start-y="70" data-end-x="47" data-end-y="72">O</div>
+        <div class="moving-particle pO" data-start-x="53" data-start-y="70" data-end-x="77" data-end-y="72">O</div>
+      </div>
+
+      <div class="model-side products-side">
+        <h4>Neue Stoffe</h4>
+        <div class="mol-row">
+          <div class="molecule molecule-diagram co2-diagram" title="Kohlenstoffdioxid">
+            <span class="atom O co2-left">O</span>
+            <span class="atom C co2-center">C</span>
+            <span class="atom O co2-right">O</span>
+          </div>
+          <span class="plus">+</span>
+          <div class="molecule molecule-diagram water-diagram" title="Wasser">
+            <span class="atom O water-o">O</span>
+            <span class="atom H water-h-left">H</span>
+            <span class="atom H water-h-right">H</span>
+          </div>
+          <div class="molecule molecule-diagram water-diagram" title="Wasser">
+            <span class="atom O water-o">O</span>
+            <span class="atom H water-h-left">H</span>
+            <span class="atom H water-h-right">H</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="transform-area">
+      <button class="green" onclick="startParticles()">Teilchen-Umordnung starten</button>
+      <button class="secondary" onclick="resetParticles()">Zurücksetzen</button>
+      <p class="small">Die Animation zeigt vereinfacht: Alte Bindungen werden gelöst, Atome ordnen sich neu an und bilden neue Bindungen aus.</p>
+    </div>
+
+    <div class="result-products" id="productsBox">
+      <strong>Ergebnis:</strong> Aus 1 CH<sub>4</sub> und 2 O<sub>2</sub> entstehen 1 CO<sub>2</sub> und 2 H<sub>2</sub>O. Alle Atome sind erhalten geblieben, aber sie sind nun anders verbunden.
+    </div>
+  </div>
+</section>
+
+<section id="gleichungen">
+  <h2>4. Verbrennungsreaktionen aufstellen</h2>
+  <p>Bei der vollständigen Verbrennung eines Alkans gilt immer:</p>
+  <div class="eq">Alkan + Sauerstoff → Kohlenstoffdioxid + Wasser</div>
+
+  <h3>Beispiele:</h3>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr><th>Alkan</th><th>Wortgleichung</th><th>Reaktionsgleichung</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Methan</td>
+          <td>Methan + Sauerstoff → Kohlenstoffdioxid + Wasser</td>
+          <td>CH<sub>4</sub> + 2 O<sub>2</sub> → CO<sub>2</sub> + 2 H<sub>2</sub>O</td>
+        </tr>
+        <tr>
+          <td>Ethan</td>
+          <td>Ethan + Sauerstoff → Kohlenstoffdioxid + Wasser</td>
+          <td>2 C<sub>2</sub>H<sub>6</sub> + 7 O<sub>2</sub> → 4 CO<sub>2</sub> + 6 H<sub>2</sub>O</td>
+        </tr>
+        <tr>
+          <td>Propan</td>
+          <td>Propan + Sauerstoff → Kohlenstoffdioxid + Wasser</td>
+          <td>C<sub>3</sub>H<sub>8</sub> + 5 O<sub>2</sub> → 3 CO<sub>2</sub> + 4 H<sub>2</sub>O</td>
+        </tr>
+        <tr>
+          <td>Butan</td>
+          <td>Butan + Sauerstoff → Kohlenstoffdioxid + Wasser</td>
+          <td>2 C<sub>4</sub>H<sub>10</sub> + 13 O<sub>2</sub> → 8 CO<sub>2</sub> + 10 H<sub>2</sub>O</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="notice" style="margin-top:14px">
+    <strong>Tipp zum Ausgleichen:</strong> Zuerst C-Atome ausgleichen, dann H-Atome, zuletzt O-Atome.
+  </div>
+</section>
+
+<section id="uebungen">
+  <h2>5. Interaktive Übungen</h2>
+
+  <div class="exercise">
+    <h3>Übung 1: Was entsteht bei vollständiger Verbrennung?</h3>
+    <p>Wähle die richtige Antwort.</p>
+    <label class="option"><input type="radio" name="q1" value="a"> Kohlenstoff und Kohlenstoffmonoxid</label>
+    <label class="option"><input type="radio" name="q1" value="b"> Kohlenstoffdioxid und Wasser</label>
+    <label class="option"><input type="radio" name="q1" value="c"> Sauerstoff und Methan</label>
+    <button onclick="checkRadio('q1','b','fb1')">Prüfen</button>
+    <div class="feedback" id="fb1"></div>
+  </div>
+
+  <div class="exercise">
+    <h3>Übung 2: Lückentext</h3>
+    <p>
+      Bei der vollständigen Verbrennung eines Alkans reagiert das Alkan mit
+      <span class="blank" data-answer="Sauerstoff"></span>.
+      Dabei entstehen <span class="blank" data-answer="Kohlenstoffdioxid"></span>
+      und <span class="blank" data-answer="Wasser"></span>.
+      Es wird außerdem <span class="blank" data-answer="Energie"></span> frei.
+    </p>
+    <div class="drag-zone" id="wordBox">
+      <span class="word" draggable="true">Energie</span>
+      <span class="word" draggable="true">Wasserstoff</span>
+      <span class="word" draggable="true">Kohlenstoffdioxid</span>
+      <span class="word" draggable="true">Sauerstoff</span>
+      <span class="word" draggable="true">Wasser</span>
+      <span class="word" draggable="true">Stickstoff</span>
+    </div>
+    <button onclick="checkBlanks()">Lückentext prüfen</button>
+    <button class="secondary" onclick="resetBlanks()">Zurücksetzen</button>
+    <div class="feedback" id="fbBlanks"></div>
+  </div>
+
+  <div class="exercise">
+    <h3>Übung 3: Reaktionsgleichung Methan</h3>
+    <p>Ergänze die Koeffizienten:</p>
+    <div class="inputline">
+      <input id="m1" size="2" placeholder="?"> CH<sub>4</sub> +
+      <input id="m2" size="2" placeholder="?"> O<sub>2</sub> →
+      <input id="m3" size="2" placeholder="?"> CO<sub>2</sub> +
+      <input id="m4" size="2" placeholder="?"> H<sub>2</sub>O
+    </div>
+    <button onclick="checkEquation(['m1','m2','m3','m4'],['1','2','1','2'],'fbMethan')">Prüfen</button>
+    <div class="feedback" id="fbMethan"></div>
+  </div>
+
+  <div class="exercise">
+    <h3>Übung 4: Reaktionsgleichung Propan</h3>
+    <p>Ergänze die Koeffizienten:</p>
+    <div class="inputline">
+      <input id="p1" size="2" placeholder="?"> C<sub>3</sub>H<sub>8</sub> +
+      <input id="p2" size="2" placeholder="?"> O<sub>2</sub> →
+      <input id="p3" size="2" placeholder="?"> CO<sub>2</sub> +
+      <input id="p4" size="2" placeholder="?"> H<sub>2</sub>O
+    </div>
+    <button onclick="checkEquation(['p1','p2','p3','p4'],['1','5','3','4'],'fbPropan')">Prüfen</button>
+    <div class="feedback" id="fbPropan"></div>
+  </div>
+
+  <div class="exercise">
+    <h3>Übung 5: Leuchtende oder nicht leuchtende Flamme?</h3>
+    <p>Ordne zu:</p>
+    <div class="inputline">
+      <label>Viel Sauerstoffzufuhr:
+        <select id="fl1">
+          <option value="">Bitte wählen</option>
+          <option>gelbe, leuchtende Flamme</option>
+          <option>blaue, nicht leuchtende Flamme</option>
+        </select>
+      </label>
+    </div>
+    <div class="inputline">
+      <label>Wenig Sauerstoffzufuhr:
+        <select id="fl2">
+          <option value="">Bitte wählen</option>
+          <option>gelbe, leuchtende Flamme</option>
+          <option>blaue, nicht leuchtende Flamme</option>
+        </select>
+      </label>
+    </div>
+    <button onclick="checkFlames()">Prüfen</button>
+    <div class="feedback" id="fbFlames"></div>
+  </div>
+
+  <div class="exercise">
+    <h3>Übung 6: Wortgleichung aufstellen</h3>
+    <p>Welche Wortgleichung passt zur vollständigen Verbrennung von Ethan?</p>
+    <label class="option"><input type="radio" name="q6" value="a"> Ethan + Kohlenstoffdioxid → Sauerstoff + Wasser</label>
+    <label class="option"><input type="radio" name="q6" value="b"> Ethan + Sauerstoff → Kohlenstoffdioxid + Wasser</label>
+    <label class="option"><input type="radio" name="q6" value="c"> Ethan + Wasser → Sauerstoff + Kohlenstoffdioxid</label>
+    <button onclick="checkRadio('q6','b','fb6')">Prüfen</button>
+    <div class="feedback" id="fb6"></div>
+  </div>
+
+</section>
+
+<section>
+  <h2>6. Zusammenfassung</h2>
+  <div class="grid">
+    <div class="info">
+      <span class="badge b-blue">1</span>
+      <p>Alkane bestehen nur aus Kohlenstoff und Wasserstoff.</p>
+    </div>
+    <div class="info">
+      <span class="badge b-orange">2</span>
+      <p>Bei vollständiger Verbrennung entstehen Kohlenstoffdioxid und Wasser.</p>
+    </div>
+    <div class="info">
+      <span class="badge b-green">3</span>
+      <p>Die blaue Bunsenbrennerflamme entsteht bei guter Sauerstoffzufuhr und ist besonders heiß.</p>
+    </div>
+    <div class="info">
+      <span class="badge b-blue">4</span>
+      <p>Bei einer Reaktion werden Atome neu angeordnet. Es entstehen neue Stoffe.</p>
+    </div>
+  </div>
+  <div class="summary-remember">
+    <div class="bulb" aria-hidden="true">💡</div>
+    <div>
+      <h3>MERKE</h3>
+      <p>Bei der vollständigen Verbrennung eines Alkans reagieren <strong>Alkan und Sauerstoff</strong>. Es entstehen immer <strong>Kohlenstoffdioxid</strong> und <strong>Wasser</strong>. Die Atome verschwinden nicht, sondern werden zu neuen Molekülen umgeordnet.</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<div class="footer">Interaktive Lernseite – Verbrennung von Alkanen</div>
+
+<script>
+function setBurner(mode){
+  const lab=document.getElementById('burnerLab');
+  const flame=document.getElementById('flame');
+  const text=document.getElementById('burnerText');
+  const soot=document.getElementById('soot');
+  const equation=document.getElementById('flameEquation');
+  const product=document.getElementById('burnerProduct');
+  lab.classList.remove('burner-off','burner-yellow','burner-blue');
+  flame.classList.remove('off','blue');
+  soot.classList.remove('show');
+  if(mode==='off'){
+    lab.classList.add('burner-off');
+    flame.classList.add('off');
+    product.innerHTML='CO<sub>2</sub>';
+    text.innerHTML='<strong>Gas aus:</strong><br>Es findet keine Verbrennung statt. Es reagieren noch keine Teilchen miteinander.';
+    equation.innerHTML='<span>Alkan: CH<sub>4</sub></span><span>+</span><span>Sauerstoff: O<sub>2</sub></span><span class="reaction-arrow">→</span><span>noch keine Reaktion</span>';
+  }
+  if(mode==='yellow'){
+    lab.classList.add('burner-yellow');
+    product.textContent='CO';
+    text.innerHTML='<strong>Luftzufuhr geschlossen:</strong><br>Es gelangt wenig Sauerstoff zur Flamme. Die Verbrennung ist unvollständig: Es kann Kohlenstoffmonoxid (CO) entstehen. Außerdem bildet sich Ruß; Ruß ist Kohlenstoff (C).';
+    equation.innerHTML='<span>CH<sub>4</sub></span><span>+</span><span>wenig O<sub>2</sub></span><span class="reaction-arrow">→</span><span>CO + H<sub>2</sub>O + C (Ruß)</span>';
+    soot.classList.add('show');
+  }
+  if(mode==='blue'){
+    lab.classList.add('burner-blue');
+    flame.classList.add('blue');
+    product.innerHTML='CO<sub>2</sub>';
+    text.innerHTML='<strong>Luftzufuhr geöffnet:</strong><br>Es gelangt viel Sauerstoff zur Flamme. Die Verbrennung läuft vollständiger ab. Die blaue Flamme ist sehr heiß und rußt kaum.';
+    equation.innerHTML='<span>CH<sub>4</sub></span><span>+</span><span>2 O<sub>2</sub></span><span class="reaction-arrow">→</span><span>CO<sub>2</sub> + 2 H<sub>2</sub>O</span>';
+  }
+}
+
+function positionModelParticles(phase){
+  const stage=document.getElementById('particleStage');
+  stage.querySelectorAll('.moving-particle').forEach(atom=>{
+    atom.style.left=atom.dataset[phase+'X']+'%';
+    atom.style.top=atom.dataset[phase+'Y']+'%';
+  });
+}
+
+function resetParticles(){
+  const stage=document.getElementById('particleStage');
+  const box=document.getElementById('productsBox');
+  const step=document.getElementById('particleStep');
+  stage.classList.add('no-particle-transition');
+  stage.classList.remove('is-moving','is-complete');
+  box.classList.remove('show');
+  step.textContent='Start: Methan und Sauerstoff liegen getrennt vor.';
+  positionModelParticles('start');
+  void stage.offsetWidth;
+  stage.classList.remove('no-particle-transition');
+}
+
+function startParticles(){
+  const stage=document.getElementById('particleStage');
+  const box=document.getElementById('productsBox');
+  const board=document.getElementById('particleBoard');
+  const step=document.getElementById('particleStep');
+  resetParticles();
+  step.textContent='Die alten Bindungen werden gelöst. Die Atome ordnen sich neu an und bilden neue Bindungen aus.';
+  void board.offsetWidth;
+  stage.classList.add('is-moving');
+  requestAnimationFrame(()=>positionModelParticles('end'));
+  setTimeout(()=>{
+    stage.classList.add('is-complete');
+    step.textContent='Fertig: Es sind Kohlenstoffdioxid und Wasser entstanden.';
+    box.classList.add('show');
+  },2900);
+}
+
+function resultText(ok, extra=''){
+  if(ok) return '<span class="correct"><span class="trophy">🏆</span> Richtig! '+extra+'</span>';
+  return '<span class="wrong">🙂 Versuch es noch einmal. '+extra+'</span>';
+}
+
+function checkRadio(name, correct, fbId){
+  const chosen=document.querySelector('input[name="'+name+'"]:checked');
+  const fb=document.getElementById(fbId);
+  if(!chosen){fb.innerHTML='<span class="wrong">Bitte wähle zuerst eine Antwort aus.</span>';return;}
+  fb.innerHTML=resultText(chosen.value===correct);
+}
+
+let dragged=null;
+let selectedWord=null;
+document.querySelectorAll('.word').forEach(w=>{
+  w.addEventListener('dragstart',e=>{dragged=e.target;});
+  w.addEventListener('click',e=>{
+    selectedWord=e.target;
+    document.querySelectorAll('.word').forEach(word=>word.classList.remove('selected'));
+    selectedWord.classList.add('selected');
+  });
+});
+document.querySelectorAll('.blank').forEach(b=>{
+  b.addEventListener('dragover',e=>e.preventDefault());
+  b.addEventListener('drop',e=>{
+    e.preventDefault();
+    if(!dragged)return;
+    b.textContent=dragged.textContent;
+    b.classList.add('filled');
+    dragged.style.display='none';
+    if(allBlanksFilled()) checkBlanks();
+  });
+  b.addEventListener('click',()=>{
+    if(!selectedWord)return;
+    b.textContent=selectedWord.textContent;
+    b.classList.add('filled');
+    selectedWord.style.display='none';
+    selectedWord.classList.remove('selected');
+    selectedWord=null;
+    if(allBlanksFilled()) checkBlanks();
+  });
+});
+
+function allBlanksFilled(){
+  return Array.from(document.querySelectorAll('.blank')).every(b=>b.textContent.trim());
+}
+
+function checkBlanks(){
+  let ok=true;
+  document.querySelectorAll('.blank').forEach(b=>{
+    if(b.textContent.trim()!==b.dataset.answer) ok=false;
+  });
+  document.getElementById('fbBlanks').innerHTML=resultText(ok);
+}
+
+function resetBlanks(){
+  document.querySelectorAll('.blank').forEach(b=>{
+    b.textContent='';
+    b.classList.remove('filled');
+  });
+  document.querySelectorAll('.word').forEach(w=>w.style.display='inline-block');
+  document.getElementById('fbBlanks').innerHTML='';
+  selectedWord=null;
+  document.querySelectorAll('.word').forEach(word=>word.classList.remove('selected'));
+}
+
+function checkEquation(ids, answers, fbId){
+  let ok=true;
+  ids.forEach((id,i)=>{
+    const val=document.getElementById(id).value.trim();
+    if(val!==answers[i]) ok=false;
+  });
+  document.getElementById(fbId).innerHTML=resultText(ok, ok?'Die Gleichung ist ausgeglichen.':'Achte auf die Anzahl der C-, H- und O-Atome.');
+}
+
+function checkFlames(){
+  const a=document.getElementById('fl1').value;
+  const b=document.getElementById('fl2').value;
+  const ok= a==='blaue, nicht leuchtende Flamme' && b==='gelbe, leuchtende Flamme';
+  document.getElementById('fbFlames').innerHTML=resultText(ok);
+}
+
+function setupInstantFeedback(){
+  document.querySelectorAll('input[name="q1"]').forEach(input=>{
+    input.addEventListener('change',()=>checkRadio('q1','b','fb1'));
+  });
+  document.querySelectorAll('input[name="q6"]').forEach(input=>{
+    input.addEventListener('change',()=>checkRadio('q6','b','fb6'));
+  });
+
+  [['m1','m2','m3','m4','fbMethan',['1','2','1','2']],['p1','p2','p3','p4','fbPropan',['1','5','3','4']]].forEach(group=>{
+    const ids=group.slice(0,4);
+    const fbId=group[4];
+    const answers=group[5];
+    ids.forEach(id=>{
+      document.getElementById(id).addEventListener('input',()=>{
+        const filled=ids.every(inputId=>document.getElementById(inputId).value.trim());
+        if(filled) checkEquation(ids,answers,fbId);
+        else document.getElementById(fbId).innerHTML='';
+      });
+    });
+  });
+
+  ['fl1','fl2'].forEach(id=>{
+    document.getElementById(id).addEventListener('change',()=>{
+      if(document.getElementById('fl1').value && document.getElementById('fl2').value) checkFlames();
+      else document.getElementById('fbFlames').innerHTML='';
+    });
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  resetParticles();
+  setupInstantFeedback();
+});
+</script>
+</body>
+</html>
