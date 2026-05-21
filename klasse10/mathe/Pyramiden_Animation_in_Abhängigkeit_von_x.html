@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pyramide ABCDS – Punkt Pₙ auf CS verschieben</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --ink:#1f2937;
+      --muted:#6b7280;
+      --line:#111827;
+      --thin:#9ca3af;
+      --red:#dc2626;
+      --blue:#2563eb;
+      --green:#059669;
+      --orange:#ea580c;
+      --purple:#7c3aed;
+      --card:#f8fafc;
+      --border:#d1d5db;
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      color:var(--ink);
+      background:var(--bg);
+      line-height:1.45;
+    }
+
+    .wrap{
+      max-width:1180px;
+      margin:0 auto;
+      padding:22px;
+    }
+
+    h1{
+      font-size:1.6rem;
+      margin:0 0 6px;
+    }
+
+    .subtitle{
+      margin:0 0 18px;
+      color:var(--muted);
+      font-size:0.98rem;
+    }
+
+    .grid{
+      display:grid;
+      grid-template-columns:minmax(0, 1.35fr) minmax(310px, 0.65fr);
+      gap:18px;
+      align-items:start;
+    }
+
+    body.focus-mode .subtitle,
+    body.focus-mode .formula,
+    body.focus-mode .info,
+    body.focus-mode .legend,
+    body.focus-mode .note,
+    body.focus-mode #playBtn,
+    body.focus-mode #toggleHeightBtn{
+      display:none;
+    }
+
+    body.focus-mode .wrap{
+      max-width:1180px;
+      padding:14px;
+    }
+
+    body.focus-mode h1{
+      font-size:1.15rem;
+      margin-bottom:10px;
+    }
+
+    body.focus-mode .grid{
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+
+    body.focus-mode .panel{
+      padding:10px;
+      box-shadow:none;
+    }
+
+    body.focus-mode aside.panel{
+      order:-1;
+      background:#fff;
+      border:1px solid #e5e7eb;
+    }
+
+    body.focus-mode .controls{
+      display:block;
+    }
+
+    body.focus-mode .control-row{
+      max-width:760px;
+      margin:0 auto;
+    }
+
+    body.focus-mode .buttons{
+      justify-content:center;
+      margin-top:8px;
+    }
+
+    body.focus-mode #resetBtn,
+    body.focus-mode #focusBtn{
+      display:inline-block;
+    }
+
+    body.focus-mode .svgbox{
+      border:0;
+    }
+
+    .panel{
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:18px;
+      padding:16px;
+      box-shadow:0 8px 24px rgba(15,23,42,0.06);
+    }
+
+    .svgbox{
+      width:100%;
+      background:#fff;
+      border-radius:14px;
+      border:1px solid #e5e7eb;
+      overflow:hidden;
+    }
+
+    svg{
+      width:100%;
+      height:auto;
+      display:block;
+      background:#fff;
+      user-select:none;
+    }
+
+    .controls{
+      display:grid;
+      gap:14px;
+    }
+
+    .control-row{
+      display:grid;
+      gap:7px;
+    }
+
+    label{
+      font-weight:700;
+      font-size:0.95rem;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:#2563eb;
+    }
+
+    .value{
+      font-variant-numeric:tabular-nums;
+      font-weight:700;
+      color:var(--blue);
+    }
+
+    .buttons{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+    }
+
+    button{
+      border:0;
+      border-radius:999px;
+      padding:9px 14px;
+      font-weight:700;
+      cursor:pointer;
+      background:#111827;
+      color:#fff;
+      box-shadow:0 4px 12px rgba(17,24,39,0.14);
+    }
+
+    button.secondary{
+      background:#e5e7eb;
+      color:#111827;
+    }
+
+    button.active{
+      background:#2563eb;
+    }
+
+    .formula{
+      background:#fff;
+      border:1px solid #e5e7eb;
+      border-radius:14px;
+      padding:12px;
+      font-size:0.95rem;
+    }
+
+    .formula b{
+      color:#111827;
+    }
+
+    .info{
+      display:grid;
+      gap:8px;
+      margin-top:12px;
+    }
+
+    .info-row{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      border-bottom:1px dashed #d1d5db;
+      padding-bottom:7px;
+      font-size:0.94rem;
+    }
+
+    .info-row:last-child{border-bottom:0}
+
+    .legend{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:8px;
+      margin-top:12px;
+      font-size:0.92rem;
+    }
+
+    .leg{
+      display:flex;
+      align-items:center;
+      gap:8px;
+    }
+
+    .swatch{
+      width:24px;
+      height:4px;
+      border-radius:999px;
+      background:#111827;
+    }
+
+    .note{
+      margin-top:12px;
+      padding:11px 12px;
+      background:#fff7ed;
+      border:1px solid #fed7aa;
+      border-radius:14px;
+      font-size:0.93rem;
+    }
+
+    .small{
+      font-size:0.85rem;
+      color:var(--muted);
+    }
+
+    .line{stroke:var(--line);stroke-width:2.2;fill:none;stroke-linejoin:round;stroke-linecap:round}
+    .hidden-line{stroke:#6b7280;stroke-width:1.7;fill:none;stroke-dasharray:5 5;stroke-linecap:round}
+    .base-fill{fill:rgba(148,163,184,0.10);stroke:none}
+    .new-face{fill:rgba(37,99,235,0.10);stroke:rgba(37,99,235,0.42);stroke-width:1.2}
+    .red{stroke:var(--red);stroke-width:4;stroke-linecap:round}
+    .blue{stroke:var(--blue);stroke-width:4;stroke-linecap:round}
+    .green{stroke:var(--green);stroke-width:4;stroke-linecap:round}
+    .orange{stroke:var(--orange);stroke-width:4;stroke-linecap:round}
+    .purple{stroke:var(--purple);stroke-width:3;stroke-linecap:round}
+    .point{fill:#fff;stroke:#111827;stroke-width:2}
+    .p-point{fill:#2563eb;stroke:#fff;stroke-width:3}
+    .foot-point{fill:#7c3aed;stroke:#fff;stroke-width:3}
+    .label{
+      font-size:22px;
+      font-weight:700;
+      fill:#111827;
+      paint-order:stroke;
+      stroke:#fff;
+      stroke-width:4px;
+      stroke-linejoin:round;
+    }
+    .tinylabel{
+      font-size:17px;
+      font-weight:700;
+      fill:#374151;
+      paint-order:stroke;
+      stroke:#fff;
+      stroke-width:4px;
+      stroke-linejoin:round;
+    }
+    .angle{
+      fill:none;
+      stroke:#ea580c;
+      stroke-width:3;
+      stroke-linecap:round;
+    }
+
+    @media(max-width:850px){
+      .grid{grid-template-columns:1fr}
+      .legend{grid-template-columns:1fr}
+    }
+
+    @media print{
+      .buttons, input[type="range"]{display:none}
+      .wrap{max-width:none;padding:10mm}
+      .panel{box-shadow:none}
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <h1>Punkt Pₙ auf der Kante CS verschieben</h1>
+    <p class="subtitle">Interaktive Veranschaulichung zur Aufgabe B 4.2: Aus dem Punkt Pₙ auf CS entsteht jeweils die Pyramide ABDPₙ mit der Höhe PₙFₙ.</p>
+
+    <section class="grid">
+      <div class="panel">
+        <div class="svgbox">
+          <svg id="scene" viewBox="0 0 900 620" aria-label="Interaktive Schrägbild-Skizze der Pyramide">
+            <defs>
+              <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                <path d="M0,0 L0,6 L9,3 z" fill="#ea580c"></path>
+              </marker>
+            </defs>
+
+            <!-- Originale Grundfläche und große Pyramide -->
+            <polygon id="basePoly" class="base-fill"></polygon>
+            <polygon id="faceABP" class="new-face"></polygon>
+            <polygon id="faceBDP" class="new-face"></polygon>
+            <polygon id="faceADP" class="new-face"></polygon>
+
+            <line id="AC" class="red"></line>
+            <line id="BD" class="blue"></line>
+            <line id="AS" class="green"></line>
+
+            <polyline id="baseOutline" class="line"></polyline>
+            <line id="SA" class="line"></line>
+            <line id="SB" class="line"></line>
+            <line id="SC" class="line"></line>
+            <line id="SD" class="line"></line>
+
+            <!-- neue Pyramide ABDPn -->
+            <line id="PA" class="purple"></line>
+            <line id="PB" class="purple"></line>
+            <line id="PD" class="purple"></line>
+            <line id="heightPF" class="orange"></line>
+            <path id="angleArc" class="angle" marker-end="url(#arrow)"></path>
+
+            <line id="projectionSF" class="hidden-line"></line>
+            <line id="projectionAF" class="hidden-line"></line>
+
+            <!-- Punkte -->
+            <circle id="ptA" class="point" r="6"></circle>
+            <circle id="ptB" class="point" r="6"></circle>
+            <circle id="ptC" class="point" r="6"></circle>
+            <circle id="ptD" class="point" r="6"></circle>
+            <circle id="ptS" class="point" r="6"></circle>
+            <circle id="ptP" class="p-point" r="8"></circle>
+            <circle id="ptF" class="foot-point" r="7"></circle>
+
+            <!-- Beschriftungen -->
+            <text id="labA" class="label">A</text>
+            <text id="labB" class="label">B</text>
+            <text id="labC" class="label">C</text>
+            <text id="labD" class="label">D</text>
+            <text id="labS" class="label">S</text>
+            <text id="labP" class="label">Pₙ</text>
+            <text id="labF" class="tinylabel">Fₙ</text>
+
+            <text id="labAC" class="tinylabel" fill="#dc2626">AC = 11 cm</text>
+            <text id="labBD" class="tinylabel" fill="#2563eb">BD = 6 cm</text>
+            <text id="labAS" class="tinylabel" fill="#059669">AS = 9 cm</text>
+            <text id="labX" class="tinylabel" fill="#2563eb">SPₙ = x</text>
+            <text id="labHeight" class="tinylabel" fill="#ea580c">PₙFₙ</text>
+            <text id="labAngle" class="tinylabel" fill="#ea580c">∠SPₙA</text>
+          </svg>
+        </div>
+      </div>
+
+      <aside class="panel controls">
+        <div class="control-row">
+          <label for="xRange">Position von Pₙ auf CS: <span class="value" id="xValue">3,00 cm</span></label>
+          <input id="xRange" type="range" min="0" max="14.2127" step="0.01" value="3">
+          <div class="small">x = SPₙ. Bei x = 0 liegt Pₙ in S, bei x ≈ 14,21 liegt Pₙ in C.</div>
+        </div>
+
+        <div class="buttons">
+          <button id="playBtn">Animation starten</button>
+          <button id="resetBtn" class="secondary">x = 3 setzen</button>
+          <button id="toggleHeightBtn" class="secondary active">Höhe anzeigen</button>
+          <button id="focusBtn" class="secondary">Konzentrationsmodus</button>
+        </div>
+
+        <div class="formula">
+          <b>Gegeben:</b><br>
+          AC = 11 cm, BD = 6 cm, AS = 9 cm<br><br>
+          In der Raute halbieren sich die Diagonalen:<br>
+          AO = 5,5 cm und BO = 3 cm.<br><br>
+          Dadurch gilt für die Seitenlänge der Raute:<br>
+          AB = AD = √(5,5² + 3²) ≈ 6,26 cm.
+        </div>
+
+        <div class="info">
+          <div class="info-row"><span>SPₙ = x</span><b id="infoX">3,00 cm</b></div>
+          <div class="info-row"><span>CS</span><b>14,21 cm</b></div>
+          <div class="info-row"><span>CPₙ</span><b id="infoCP">11,21 cm</b></div>
+          <div class="info-row"><span>APₙ</span><b id="infoAP">7,47 cm</b></div>
+          <div class="info-row"><span>Winkel SPₙA</span><b id="infoAngle">34,46°</b></div>
+        </div>
+
+        <div class="legend">
+          <div class="leg"><span class="swatch" style="background:#dc2626"></span>AC: Diagonale der Raute</div>
+          <div class="leg"><span class="swatch" style="background:#2563eb"></span>BD: zweite Diagonale</div>
+          <div class="leg"><span class="swatch" style="background:#059669"></span>AS: Höhe der ursprünglichen Pyramide</div>
+          <div class="leg"><span class="swatch" style="background:#7c3aed"></span>ABDPₙ: neue Pyramide</div>
+          <div class="leg"><span class="swatch" style="background:#ea580c"></span>PₙFₙ: Höhe zur Grundfläche ABD</div>
+        </div>
+
+        <div class="note">
+          <b>Didaktischer Hinweis:</b> Pₙ wird auf der Strecke CS verschoben. Für jeden Wert von x entsteht eine neue Pyramide mit der festen Grundfläche ABD und der beweglichen Spitze Pₙ.
+        </div>
+      </aside>
+    </section>
+  </main>
+
+  <script>
+    // 3D-Modell in cm:
+    // A liegt unter S, AS ist die Höhe.
+    // Die Grundfläche ABCD ist eine Raute mit Diagonalen AC = 11 und BD = 6.
+    // O ist der Schnittpunkt der Diagonalen.
+    const A3 = {x:-5.5, y:0, z:0};
+    const C3 = {x: 5.5, y:0, z:0};
+    const B3 = {x: 0,   y:-3, z:0};
+    const D3 = {x: 0,   y: 3, z:0};
+    const S3 = {...A3, z:9};
+
+    const CS = Math.hypot(C3.x-S3.x, C3.y-S3.y, C3.z-S3.z);
+
+    // Schrägbild-Projektion:
+    // x waagrecht, z senkrecht, y als Tiefenrichtung halbiert und schräg gezeichnet.
+    const scale = 43;
+    const origin = {x:260, y:485};
+    const depthFactor = 0.5;
+    const depthAngle = -35 * Math.PI/180;
+
+    function project(p){
+      const depthX = p.y * depthFactor * Math.cos(depthAngle);
+      const depthY = p.y * depthFactor * Math.sin(depthAngle);
+      return {
+        x: origin.x + scale * (p.x + depthX),
+        y: origin.y - scale * (p.z + depthY)
+      };
+    }
+
+    function lerp(a,b,t){
+      return {
+        x:a.x + (b.x-a.x)*t,
+        y:a.y + (b.y-a.y)*t,
+        z:a.z + (b.z-a.z)*t
+      };
+    }
+
+    function dist(a,b){
+      return Math.hypot(a.x-b.x,a.y-b.y,a.z-b.z);
+    }
+
+    function fmt(n, unit="cm"){
+      return n.toLocaleString("de-DE", {minimumFractionDigits:2, maximumFractionDigits:2}) + " " + unit;
+    }
+
+    function setLine(id,p,q){
+      const el=document.getElementById(id);
+      el.setAttribute("x1",p.x);
+      el.setAttribute("y1",p.y);
+      el.setAttribute("x2",q.x);
+      el.setAttribute("y2",q.y);
+    }
+
+    function setCircle(id,p){
+      const el=document.getElementById(id);
+      el.setAttribute("cx",p.x);
+      el.setAttribute("cy",p.y);
+    }
+
+    function setText(id,p,dx=0,dy=0){
+      const el=document.getElementById(id);
+      el.setAttribute("x",p.x+dx);
+      el.setAttribute("y",p.y+dy);
+    }
+
+    function setPoly(id, pts){
+      document.getElementById(id).setAttribute("points", pts.map(p=>`${p.x},${p.y}`).join(" "));
+    }
+
+    function dot(u,v){return u.x*v.x+u.y*v.y+u.z*v.z}
+    function sub(a,b){return {x:a.x-b.x,y:a.y-b.y,z:a.z-b.z}}
+    function add(a,b){return {x:a.x+b.x,y:a.y+b.y,z:a.z+b.z}}
+    function mul(a,k){return {x:a.x*k,y:a.y*k,z:a.z*k}}
+
+    // Fußpunkt F von P auf Ebene ABD.
+    // Da ABD in der Grundebene z=0 liegt, ist F hier die senkrechte Projektion von P auf z=0.
+    function footOnABD(P){
+      return {x:P.x, y:P.y, z:0};
+    }
+
+    function angleSPA(P){
+      const v1 = sub(S3,P);
+      const v2 = sub(A3,P);
+      const cos = dot(v1,v2)/(dist(S3,P)*dist(A3,P));
+      return Math.acos(Math.max(-1,Math.min(1,cos))) * 180/Math.PI;
+    }
+
+    function drawAngle(P2,S2,A2){
+      // kleiner Winkelbogen am Punkt P im projizierten Bild
+      const r=34;
+      const a1=Math.atan2(S2.y-P2.y,S2.x-P2.x);
+      const a2=Math.atan2(A2.y-P2.y,A2.x-P2.x);
+      let start=a1, end=a2;
+      let diff=end-start;
+      while(diff>Math.PI) diff-=2*Math.PI;
+      while(diff<-Math.PI) diff+=2*Math.PI;
+      end=start+diff;
+      const p1={x:P2.x+r*Math.cos(start), y:P2.y+r*Math.sin(start)};
+      const p2={x:P2.x+r*Math.cos(end), y:P2.y+r*Math.sin(end)};
+      const large=Math.abs(diff)>Math.PI ? 1 : 0;
+      const sweep=diff>0 ? 1 : 0;
+      document.getElementById("angleArc").setAttribute("d", `M ${p1.x} ${p1.y} A ${r} ${r} 0 ${large} ${sweep} ${p2.x} ${p2.y}`);
+    }
+
+    let showHeight=true;
+    let playing=false;
+    let raf=null;
+    let direction=1;
+
+    const xRange=document.getElementById("xRange");
+
+    function update(){
+      const x=Number(xRange.value);
+      const t=x/CS;
+      const P3=lerp(S3,C3,t);
+      const F3=footOnABD(P3);
+
+      const A=project(A3), B=project(B3), C=project(C3), D=project(D3), S=project(S3), P=project(P3), F=project(F3);
+
+      setPoly("basePoly",[A,B,C,D]);
+      setPoly("faceABP",[A,B,P]);
+      setPoly("faceBDP",[B,D,P]);
+      setPoly("faceADP",[A,D,P]);
+
+      setLine("AC",A,C);
+      setLine("BD",B,D);
+      setLine("AS",A,S);
+
+      document.getElementById("baseOutline").setAttribute("points", [A,B,C,D,A].map(p=>`${p.x},${p.y}`).join(" "));
+      setLine("SA",S,A);
+      setLine("SB",S,B);
+      setLine("SC",S,C);
+      setLine("SD",S,D);
+
+      setLine("PA",P,A);
+      setLine("PB",P,B);
+      setLine("PD",P,D);
+
+      setLine("heightPF",P,F);
+      setLine("projectionSF",S,F);
+      setLine("projectionAF",A,F);
+
+      ["heightPF","projectionSF","projectionAF","ptF","labF","labHeight"].forEach(id=>{
+        document.getElementById(id).style.display=showHeight ? "" : "none";
+      });
+
+      setCircle("ptA",A); setCircle("ptB",B); setCircle("ptC",C); setCircle("ptD",D); setCircle("ptS",S);
+      setCircle("ptP",P); setCircle("ptF",F);
+
+      setText("labA",A,-22,28);
+      setText("labB",B,-6,31);
+      setText("labC",C,12,9);
+      setText("labD",D,10,-12);
+      setText("labS",S,-10,-12);
+      setText("labP",P,10,-10);
+      setText("labF",F,9,22);
+
+      setText("labAC",{x:(A.x+C.x)/2,y:(A.y+C.y)/2},-30,-12);
+      setText("labBD",{x:(B.x+D.x)/2,y:(B.y+D.y)/2},8,-12);
+      setText("labAS",{x:(A.x+S.x)/2,y:(A.y+S.y)/2},-74,4);
+      setText("labX",{x:(S.x+P.x)/2,y:(S.y+P.y)/2},12,-8);
+      setText("labHeight",{x:(P.x+F.x)/2,y:(P.y+F.y)/2},12,0);
+      setText("labAngle",P,35,28);
+
+      drawAngle(P,S,A);
+
+      const AP=dist(A3,P3);
+      const CP=dist(C3,P3);
+      const ang=angleSPA(P3);
+
+      document.getElementById("xValue").textContent=fmt(x);
+      document.getElementById("infoX").textContent=fmt(x);
+      document.getElementById("infoCP").textContent=fmt(CP);
+      document.getElementById("infoAP").textContent=fmt(AP);
+      document.getElementById("infoAngle").textContent=ang.toLocaleString("de-DE",{minimumFractionDigits:2,maximumFractionDigits:2})+"°";
+    }
+
+    function animate(){
+      if(!playing) return;
+      let x=Number(xRange.value);
+      x += direction*0.045;
+      if(x>=CS){x=CS; direction=-1}
+      if(x<=0){x=0; direction=1}
+      xRange.value=x.toFixed(2);
+      update();
+      raf=requestAnimationFrame(animate);
+    }
+
+    document.getElementById("playBtn").addEventListener("click",()=>{
+      playing=!playing;
+      document.getElementById("playBtn").textContent=playing ? "Animation stoppen" : "Animation starten";
+      document.getElementById("playBtn").classList.toggle("active", playing);
+      if(playing) animate();
+      else cancelAnimationFrame(raf);
+    });
+
+    document.getElementById("resetBtn").addEventListener("click",()=>{
+      xRange.value=3;
+      update();
+    });
+
+    document.getElementById("toggleHeightBtn").addEventListener("click",()=>{
+      showHeight=!showHeight;
+      document.getElementById("toggleHeightBtn").classList.toggle("active", showHeight);
+      document.getElementById("toggleHeightBtn").textContent=showHeight ? "Höhe anzeigen" : "Höhe ausblenden";
+      update();
+    });
+
+    document.getElementById("focusBtn").addEventListener("click",()=>{
+      document.body.classList.toggle("focus-mode");
+      const active=document.body.classList.contains("focus-mode");
+      document.getElementById("focusBtn").classList.toggle("active", active);
+      document.getElementById("focusBtn").textContent=active ? "Normalansicht" : "Konzentrationsmodus";
+    });
+
+    xRange.addEventListener("input", update);
+    update();
+  </script>
+</body>
+</html>
