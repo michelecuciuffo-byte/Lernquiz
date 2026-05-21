@@ -216,6 +216,17 @@
       gap: 10px;
     }
 
+    .search-filters {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+    }
+
+    .search-filter {
+      display: grid;
+      gap: 10px;
+    }
+
     .search-label {
       font-weight: 700;
       color: var(--ink);
@@ -805,9 +816,19 @@
                 autocomplete="off"
               />
             </div>
+            <div class="search-filters">
+              <label class="search-filter">
+                <span class="search-label">Klassenstufe</span>
+                <select class="search-box" id="quizSearchGrade" aria-label="Quiz-Suche nach Klassenstufe filtern"></select>
+              </label>
+              <label class="search-filter">
+                <span class="search-label">Fach</span>
+                <select class="search-box" id="quizSearchSubject" aria-label="Quiz-Suche nach Fach filtern"></select>
+              </label>
+            </div>
             <p class="search-meta" id="quizSearchMeta"></p>
             <div class="grid quiz-grid hidden" id="quizSearchGrid"></div>
-            <p class="search-empty hidden" id="quizSearchEmpty">Kein Quiz-Titel passt zu dieser Suche.</p>
+            <p class="search-empty hidden" id="quizSearchEmpty">Kein Quiz passt zu dieser Suche und den gewählten Filtern.</p>
           </div>
         </section>
 
@@ -1059,6 +1080,8 @@
       selectedSubject: subjects[0].id,
       selectedQuizSlug: null,
       searchTerm: "",
+      searchGrade: "",
+      searchSubject: "",
       manifest: []
     };
 
@@ -1067,6 +1090,8 @@
     const quizGrid = document.getElementById("quizGrid");
     const quizEmptyState = document.getElementById("quizEmptyState");
     const quizSearchInput = document.getElementById("quizSearchInput");
+    const quizSearchGrade = document.getElementById("quizSearchGrade");
+    const quizSearchSubject = document.getElementById("quizSearchSubject");
     const quizSearchGrid = document.getElementById("quizSearchGrid");
     const quizSearchMeta = document.getElementById("quizSearchMeta");
     const quizSearchEmpty = document.getElementById("quizSearchEmpty");
@@ -1245,14 +1270,37 @@
 
     function getSearchMatches() {
       const searchValue = normalizeSearchValue(state.searchTerm);
+      const hasFilters = Boolean(state.searchGrade || state.searchSubject);
 
-      if (!searchValue) {
+      if (!searchValue && !hasFilters) {
         return [];
       }
 
       return state.manifest
-        .filter((quiz) => normalizeSearchValue(quiz.displayTitle).includes(searchValue))
+        .filter((quiz) =>
+          (!searchValue || normalizeSearchValue(quiz.displayTitle).includes(searchValue)) &&
+          (!state.searchGrade || quiz.grade === state.searchGrade) &&
+          (!state.searchSubject || quiz.subject === state.searchSubject)
+        )
         .sort((left, right) => left.displayTitle.localeCompare(right.displayTitle, "de"));
+    }
+
+    function appendSearchFilterOption(select, value, label) {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      select.appendChild(option);
+    }
+
+    function renderSearchFilterOptions() {
+      quizSearchGrade.innerHTML = "";
+      quizSearchSubject.innerHTML = "";
+
+      appendSearchFilterOption(quizSearchGrade, "", "Alle Klassen");
+      grades.forEach((grade) => appendSearchFilterOption(quizSearchGrade, grade, formatGrade(grade)));
+
+      appendSearchFilterOption(quizSearchSubject, "", "Alle Fächer");
+      subjects.forEach((subject) => appendSearchFilterOption(quizSearchSubject, subject.id, subject.label));
     }
 
     function createOptionButton({
@@ -1382,10 +1430,12 @@
 
     function renderSearchResults() {
       const matches = getSearchMatches();
+      const hasSearchTerm = Boolean(state.searchTerm.trim());
+      const hasFilters = Boolean(state.searchGrade || state.searchSubject);
       quizSearchGrid.innerHTML = "";
 
-      if (!state.searchTerm.trim()) {
-        quizSearchMeta.textContent = "Suche über alle Quiz-Titel.";
+      if (!hasSearchTerm && !hasFilters) {
+        quizSearchMeta.textContent = "Suche über alle Quiz-Titel oder filtere nach Klasse und Fach.";
         quizSearchGrid.classList.add("hidden");
         quizSearchEmpty.classList.add("hidden");
         return;
@@ -1651,8 +1701,17 @@
       state.searchTerm = event.target.value;
       renderSearchResults();
     });
+    quizSearchGrade.addEventListener("change", (event) => {
+      state.searchGrade = event.target.value;
+      renderSearchResults();
+    });
+    quizSearchSubject.addEventListener("change", (event) => {
+      state.searchSubject = event.target.value;
+      renderSearchResults();
+    });
     window.addEventListener("hashchange", readHash);
 
+    renderSearchFilterOptions();
     loadManifest();
   </script>
 </body>
