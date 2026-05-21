@@ -206,6 +206,53 @@
       margin-top: 16px;
     }
 
+    .search-panel {
+      display: grid;
+      gap: 16px;
+    }
+
+    .search-row {
+      display: grid;
+      gap: 10px;
+    }
+
+    .search-label {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .search-box {
+      width: 100%;
+      min-height: 54px;
+      padding: 14px 18px;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.9);
+      color: var(--ink);
+      box-shadow: 0 12px 28px rgba(24, 32, 42, 0.06);
+    }
+
+    .search-box:focus {
+      outline: 2px solid rgba(217, 93, 57, 0.28);
+      outline-offset: 2px;
+    }
+
+    .search-meta {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .search-empty {
+      margin: 0;
+      padding: 14px 16px;
+      border: 1px dashed rgba(24, 32, 42, 0.22);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.56);
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
     .option,
     .action,
     .inline-link {
@@ -747,6 +794,24 @@
         </section>
 
         <section class="panel">
+          <div class="search-panel">
+            <div class="search-row">
+              <label class="search-label" for="quizSearchInput">Quiz suchen</label>
+              <input
+                class="search-box"
+                id="quizSearchInput"
+                type="search"
+                placeholder="Titel eingeben"
+                autocomplete="off"
+              />
+            </div>
+            <p class="search-meta" id="quizSearchMeta"></p>
+            <div class="grid quiz-grid hidden" id="quizSearchGrid"></div>
+            <p class="search-empty hidden" id="quizSearchEmpty">Kein Quiz-Titel passt zu dieser Suche.</p>
+          </div>
+        </section>
+
+        <section class="panel">
           <h3>Verfügbare Quizze</h3>
           <p class="muted">Hier erscheinen automatisch alle Quiz-Seiten, die im gewählten Fach liegen.</p>
           <div class="grid quiz-grid" id="quizGrid"></div>
@@ -993,6 +1058,7 @@
       selectedGrade: grades[0],
       selectedSubject: subjects[0].id,
       selectedQuizSlug: null,
+      searchTerm: "",
       manifest: []
     };
 
@@ -1000,6 +1066,10 @@
     const subjectGrid = document.getElementById("subjectGrid");
     const quizGrid = document.getElementById("quizGrid");
     const quizEmptyState = document.getElementById("quizEmptyState");
+    const quizSearchInput = document.getElementById("quizSearchInput");
+    const quizSearchGrid = document.getElementById("quizSearchGrid");
+    const quizSearchMeta = document.getElementById("quizSearchMeta");
+    const quizSearchEmpty = document.getElementById("quizSearchEmpty");
     const selectionTitle = document.getElementById("selectionTitle");
     const selectionSubtitle = document.getElementById("selectionSubtitle");
     const sharePreview = document.getElementById("sharePreview");
@@ -1165,6 +1235,26 @@
         .sort((left, right) => left.displayTitle.localeCompare(right.displayTitle, "de"));
     }
 
+    function normalizeSearchValue(value) {
+      return String(value || "")
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .trim();
+    }
+
+    function getSearchMatches() {
+      const searchValue = normalizeSearchValue(state.searchTerm);
+
+      if (!searchValue) {
+        return [];
+      }
+
+      return state.manifest
+        .filter((quiz) => normalizeSearchValue(quiz.displayTitle).includes(searchValue))
+        .sort((left, right) => left.displayTitle.localeCompare(right.displayTitle, "de"));
+    }
+
     function createOptionButton({
       label,
       detail,
@@ -1290,6 +1380,58 @@
       });
     }
 
+    function renderSearchResults() {
+      const matches = getSearchMatches();
+      quizSearchGrid.innerHTML = "";
+
+      if (!state.searchTerm.trim()) {
+        quizSearchMeta.textContent = "Suche über alle Quiz-Titel.";
+        quizSearchGrid.classList.add("hidden");
+        quizSearchEmpty.classList.add("hidden");
+        return;
+      }
+
+      quizSearchMeta.textContent = matches.length === 1
+        ? "1 Treffer gefunden."
+        : `${matches.length} Treffer gefunden.`;
+
+      if (!matches.length) {
+        quizSearchGrid.classList.add("hidden");
+        quizSearchEmpty.classList.remove("hidden");
+        return;
+      }
+
+      quizSearchEmpty.classList.add("hidden");
+      quizSearchGrid.classList.remove("hidden");
+
+      matches.forEach((quiz) => {
+        const subject = getSubject(quiz.subject);
+        const button = createOptionButton({
+          label: quiz.displayTitle,
+          detail: `${formatGrade(quiz.grade)} · ${subject ? subject.label : quiz.subject}`,
+          icon: iconMarkup.quiz,
+          accent: subject ? subject.accent : "#d95d39",
+          onClick: () => {
+            state.selectedGrade = quiz.grade;
+            state.selectedSubject = quiz.subject;
+            state.selectedQuizSlug = quiz.slug;
+            replaceSubjectHashSilently();
+            render();
+          }
+        });
+
+        if (
+          quiz.grade === state.selectedGrade &&
+          quiz.subject === state.selectedSubject &&
+          quiz.slug === state.selectedQuizSlug
+        ) {
+          button.classList.add("active");
+        }
+
+        quizSearchGrid.appendChild(button);
+      });
+    }
+
     function updateShareUi(link) {
       sharePreview.textContent = link;
       shareLinkBox.value = link;
@@ -1376,6 +1518,7 @@
 
       renderGradeButtons();
       renderSubjectButtons();
+      renderSearchResults();
       renderQuizButtons();
       renderDetails();
     }
@@ -1504,6 +1647,10 @@
     copyLinkButton.addEventListener("click", copyShareLink);
     selectLinkButton.addEventListener("click", selectShareLink);
     shareLinkBox.addEventListener("click", selectShareLink);
+    quizSearchInput.addEventListener("input", (event) => {
+      state.searchTerm = event.target.value;
+      renderSearchResults();
+    });
     window.addEventListener("hashchange", readHash);
 
     loadManifest();
