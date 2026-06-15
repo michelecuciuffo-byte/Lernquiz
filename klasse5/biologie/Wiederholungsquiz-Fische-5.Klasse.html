@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Übungsquiz: Merkmale von Fischen – Klasse 5</title>
+  <style>
+    :root{
+      --bg:#ffffff;
+      --card:#f7fbff;
+      --ink:#1d2939;
+      --muted:#667085;
+      --line:#d0d5dd;
+      --accent:#0b6b9e;
+      --accent2:#e6f4fb;
+      --ok:#0f7b45;
+      --bad:#b42318;
+      --gold:#f5b301;
+      --shadow:0 8px 22px rgba(16,24,40,.10);
+      --radius:18px;
+    }
+
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+      color:var(--ink);
+      background:var(--bg);
+      line-height:1.5;
+    }
+
+    header{
+      background:linear-gradient(135deg,#e6f4fb,#fff8df);
+      border-bottom:1px solid var(--line);
+      padding:28px 18px;
+    }
+
+    .wrap{
+      max-width:1120px;
+      margin:0 auto;
+    }
+
+    h1{
+      margin:0 0 8px;
+      font-size:clamp(1.8rem,4vw,3rem);
+      line-height:1.1;
+    }
+
+    .sub{
+      margin:0;
+      color:#344054;
+      font-size:1.05rem;
+      max-width:900px;
+    }
+
+    .topbar{
+      position:sticky;
+      top:0;
+      z-index:20;
+      background:rgba(255,255,255,.95);
+      backdrop-filter:blur(8px);
+      border-bottom:1px solid var(--line);
+      padding:10px 18px;
+    }
+
+    .scorebar{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      flex-wrap:wrap;
+    }
+
+    .progress{
+      flex:1;
+      min-width:220px;
+      height:14px;
+      background:#eef2f6;
+      border-radius:999px;
+      overflow:hidden;
+      border:1px solid #d0d5dd;
+    }
+
+    .progress > div{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,#0b6b9e,#11a3b8);
+      transition:width .3s ease;
+    }
+
+    .scoretext{
+      font-weight:700;
+      white-space:nowrap;
+    }
+
+    main{
+      padding:24px 18px 44px;
+    }
+
+    .intro-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+      gap:14px;
+      margin:18px 0 26px;
+    }
+
+    .fact{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px 16px;
+      background:#fff;
+      box-shadow:0 2px 8px rgba(16,24,40,.04);
+    }
+
+    .fact strong{
+      display:block;
+      margin-bottom:4px;
+      color:#064a6d;
+    }
+
+    .card{
+      background:var(--card);
+      border:1px solid var(--line);
+      border-radius:var(--radius);
+      box-shadow:var(--shadow);
+      padding:20px;
+      margin:22px 0;
+    }
+
+    .card h2{
+      margin:0 0 8px;
+      font-size:1.45rem;
+    }
+
+    .task-meta{
+      color:var(--muted);
+      margin:0 0 16px;
+    }
+
+    .question{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      margin:12px 0;
+    }
+
+    .q-title{
+      font-weight:700;
+      margin-bottom:10px;
+    }
+
+    button, select, input{
+      font:inherit;
+    }
+
+    .option{
+      display:flex;
+      align-items:flex-start;
+      gap:10px;
+      width:100%;
+      text-align:left;
+      padding:10px 12px;
+      margin:8px 0;
+      border:1px solid var(--line);
+      border-radius:12px;
+      background:#fff;
+      cursor:pointer;
+      transition:.15s ease;
+    }
+
+    .option:hover{
+      border-color:#84c7e6;
+      background:#f8fcff;
+    }
+
+    .option.selected{
+      border-color:var(--accent);
+      background:var(--accent2);
+    }
+
+    .option.correct{
+      border-color:var(--ok);
+      background:#ecfdf3;
+    }
+
+    .option.wrong{
+      border-color:var(--bad);
+      background:#fff1f3;
+    }
+
+    .feedback{
+      min-height:24px;
+      margin-top:8px;
+      font-weight:700;
+    }
+
+    .feedback.ok{color:var(--ok)}
+    .feedback.bad{color:var(--bad)}
+    .feedback.neutral{color:var(--muted)}
+
+    .checklist label{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px 12px;
+      margin:8px 0;
+      cursor:pointer;
+    }
+
+    .checklist label.good{
+      border-color:var(--ok);
+      background:#ecfdf3;
+    }
+
+    .checklist label.bad{
+      border-color:var(--bad);
+      background:#fff1f3;
+    }
+
+    .btnrow{
+      display:flex;
+      flex-wrap:wrap;
+      gap:10px;
+      margin-top:12px;
+    }
+
+    .primary{
+      border:0;
+      background:var(--accent);
+      color:#fff;
+      border-radius:12px;
+      padding:10px 14px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .secondary{
+      border:1px solid var(--line);
+      background:#fff;
+      color:var(--ink);
+      border-radius:12px;
+      padding:10px 14px;
+      font-weight:700;
+      cursor:pointer;
+    }
+
+    .primary:hover,.secondary:hover{
+      transform:translateY(-1px);
+    }
+
+    .match-row{
+      display:grid;
+      grid-template-columns:minmax(130px,.85fr) minmax(200px,1.15fr);
+      gap:10px;
+      align-items:center;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+      margin:10px 0;
+    }
+
+    .match-row.correct{
+      border-color:var(--ok);
+      background:#ecfdf3;
+    }
+
+    .match-row.wrong{
+      border-color:var(--bad);
+      background:#fff1f3;
+    }
+
+    select{
+      width:100%;
+      padding:10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#fff;
+    }
+
+
+    .drag-bank{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin:12px 0;
+      padding:10px;
+      border:1px dashed #84c7e6;
+      border-radius:14px;
+      background:#ffffff;
+      min-height:58px;
+    }
+
+    .drag-word{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:8px 11px;
+      border-radius:999px;
+      border:1px solid #84c7e6;
+      background:#f0f9ff;
+      font-weight:800;
+      color:#064a6d;
+      cursor:grab;
+      user-select:none;
+      box-shadow:0 2px 6px rgba(16,24,40,.08);
+    }
+
+    .drag-word:active{
+      cursor:grabbing;
+    }
+
+    .drag-word.used{
+      opacity:.35;
+      cursor:not-allowed;
+    }
+
+    .drop-blank{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      min-width:145px;
+      min-height:38px;
+      padding:6px 10px;
+      margin:0 4px 8px;
+      border:2px dashed var(--line);
+      border-radius:10px;
+      background:#fff;
+      font-weight:800;
+      color:#344054;
+      vertical-align:middle;
+      cursor:pointer;
+    }
+
+    .drop-blank.dragover{
+      border-color:var(--accent);
+      background:#e6f4fb;
+    }
+
+    .drop-blank.ok{
+      border-color:var(--ok);
+      background:#ecfdf3;
+      border-style:solid;
+    }
+
+    .drop-blank.bad{
+      border-color:var(--bad);
+      background:#fff1f3;
+      border-style:solid;
+    }
+
+    .drop-blank.empty{
+      color:#98a2b3;
+      font-weight:700;
+    }
+
+    .cloze{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      font-size:1.03rem;
+    }
+
+    .blank{
+      min-width:130px;
+      max-width:220px;
+      padding:7px 9px;
+      margin:0 4px 8px;
+      border:2px solid var(--line);
+      border-radius:10px;
+      background:#fff;
+    }
+
+    .blank.ok{
+      border-color:var(--ok);
+      background:#ecfdf3;
+    }
+
+    .blank.bad{
+      border-color:var(--bad);
+      background:#fff1f3;
+    }
+
+    .wordbank{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin:12px 0;
+    }
+
+    .chip{
+      display:inline-block;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid #84c7e6;
+      background:#f0f9ff;
+      font-weight:700;
+      color:#064a6d;
+    }
+
+    .trophy{
+      display:none;
+      align-items:center;
+      gap:12px;
+      border:2px solid #f5b301;
+      background:#fff8df;
+      color:#533a00;
+      border-radius:16px;
+      padding:12px 14px;
+      margin:14px 0 2px;
+      font-weight:800;
+      animation:pop .35s ease;
+    }
+
+    .trophy.show{
+      display:flex;
+    }
+
+    .cup{
+      font-size:2rem;
+      filter:drop-shadow(0 3px 2px rgba(0,0,0,.15));
+    }
+
+    @keyframes pop{
+      0%{transform:scale(.92); opacity:.2}
+      80%{transform:scale(1.03); opacity:1}
+      100%{transform:scale(1)}
+    }
+
+    .diagram-wrap{
+      display:grid;
+      grid-template-columns:1.05fr 1fr;
+      gap:18px;
+      align-items:start;
+      margin:10px 0 16px;
+    }
+
+    .fishbox{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      overflow:auto;
+    }
+
+    svg{
+      max-width:100%;
+      height:auto;
+      display:block;
+    }
+
+    .diagram-note{
+      background:#fff;
+      border:1px dashed #84c7e6;
+      border-radius:14px;
+      padding:12px;
+      color:#344054;
+    }
+
+    .number-list{
+      display:grid;
+      grid-template-columns:1fr;
+      gap:10px;
+    }
+
+    .num-row{
+      display:grid;
+      grid-template-columns:58px 1fr;
+      gap:10px;
+      align-items:center;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px;
+      margin:10px 0;
+    }
+
+    .num-row.correct{
+      border-color:var(--ok);
+      background:#ecfdf3;
+    }
+
+    .num-row.wrong{
+      border-color:var(--bad);
+      background:#fff1f3;
+    }
+
+    .num-badge{
+      width:40px;
+      height:40px;
+      border-radius:50%;
+      background:#0b6b9e;
+      color:#fff;
+      display:grid;
+      place-items:center;
+      font-weight:800;
+      margin:auto;
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:6px;
+      border-radius:999px;
+      padding:4px 10px;
+      background:#eef2f6;
+      color:#344054;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+
+    .result{
+      font-size:1.1rem;
+      font-weight:800;
+      padding:14px 16px;
+      border-radius:16px;
+      border:1px solid var(--line);
+      background:#fff;
+      margin-top:18px;
+    }
+
+    .small{
+      font-size:.94rem;
+      color:var(--muted);
+    }
+
+    .printnote{
+      margin-top:24px;
+      color:var(--muted);
+      font-size:.94rem;
+    }
+
+    @media (max-width:860px){
+      .diagram-wrap{grid-template-columns:1fr}
+    }
+
+    @media (max-width:760px){
+      .match-row{
+        grid-template-columns:1fr;
+      }
+      .card{
+        padding:16px;
+      }
+      .num-row{
+        grid-template-columns:1fr;
+      }
+      .num-badge{margin:0}
+    }
+
+    @media print{
+      .topbar,.btnrow{display:none}
+      .card{box-shadow:none; break-inside:avoid}
+      body{background:#fff}
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Übungsquiz: Merkmale von Fischen</h1>
+      <p class="sub">Interaktive Übungen für Klasse 5: Merkmale, Kiemenatmung, Flossen, innerer Körperbau und Seitenlinienorgan. Du bekommst sofort Rückmeldung. Wenn eine Aufgabe vollständig richtig ist, erscheint ein kleiner Pokal.</p>
+    </div>
+  </header>
+
+  <div class="topbar">
+    <div class="wrap scorebar">
+      <div class="scoretext">Fortschritt: <span id="score">0</span>/<span id="maxscore">0</span> Aufgaben geschafft</div>
+      <div class="progress" aria-label="Fortschritt"><div id="progressFill"></div></div>
+      <button class="secondary" onclick="resetAll()">Alles zurücksetzen</button>
+    </div>
+  </div>
+
+  <main class="wrap">
+    <section class="intro-grid" aria-label="Lernübersicht">
+      <div class="fact"><strong>Lebensraum:</strong> Fische leben im Wasser.</div>
+      <div class="fact"><strong>Wirbeltiere:</strong> Fische besitzen eine Wirbelsäule.</div>
+      <div class="fact"><strong>Atmung:</strong> Fische atmen über Kiemen.</div>
+      <div class="fact"><strong>Schutz:</strong> Schuppen und eine schleimige Hautschicht schützen den Körper.</div>
+      <div class="fact"><strong>Bewegung:</strong> Flossen helfen beim Schwimmen, Lenken und Stabilisieren.</div>
+      <div class="fact"><strong>Temperatur:</strong> Fische sind wechselwarm.</div>
+      <div class="fact"><strong>Fortpflanzung:</strong> Viele Fische pflanzen sich durch Eier fort.</div>
+      <div class="fact"><strong>Sinnesorgan:</strong> Das Seitenlinienorgan erkennt Druckwellen, Strömungen und Vibrationen.</div>
+    </section>
+
+    <section class="card" data-task="task1">
+      <span class="badge">Aufgabe 1 · Ankreuzen</span>
+      <h2>Welche Aussagen über Fische stimmen?</h2>
+      <p class="task-meta">Kreuze alle richtigen Aussagen an. Die falschen Aussagen sind fachlich ähnlich, aber nicht korrekt.</p>
+      <div class="checklist" id="task1-list"></div>
+      <div class="btnrow">
+        <button class="primary" onclick="checkMulti('task1')">Auswerten</button>
+        <button class="secondary" onclick="clearMulti('task1')">Zurücksetzen</button>
+      </div>
+      <div class="feedback neutral" id="task1-feedback"></div>
+      <div class="trophy" id="task1-trophy"><span class="cup">🏆</span><span>Sehr gut! Du hast die typischen Merkmale sicher erkannt.</span></div>
+    </section>
+
+    <section class="card" data-task="task2">
+      <span class="badge">Aufgabe 2 · Zuordnung</span>
+      <h2>Merkmal und Bedeutung richtig zuordnen</h2>
+      <p class="task-meta">Ordne jedem Begriff die passende Erklärung zu.</p>
+      <div id="task2-match"></div>
+      <div class="feedback neutral" id="task2-feedback"></div>
+      <div class="trophy" id="task2-trophy"><span class="cup">🏆</span><span>Stark! Du kannst die Merkmale mit ihrer Funktion verbinden.</span></div>
+    </section>
+
+    <section class="card" data-task="task3">
+      <span class="badge">Aufgabe 3 · Lückentext</span>
+      <h2>So funktioniert die Kiemenatmung</h2>
+      <p class="task-meta">Fülle die Lücken. Achte auf die Fachbegriffe.</p>
+      <div class="drag-bank" id="task3-bank" aria-label="Wortbox zum Ziehen">
+        <span class="drag-word" draggable="true" data-word="Kohlenstoffdioxid">Kohlenstoffdioxid</span>
+        <span class="drag-word" draggable="true" data-word="Kiemen">Kiemen</span>
+        <span class="drag-word" draggable="true" data-word="Blut">Blut</span>
+        <span class="drag-word" draggable="true" data-word="Maul">Maul</span>
+        <span class="drag-word" draggable="true" data-word="Sauerstoff">Sauerstoff</span>
+        <span class="drag-word" draggable="true" data-word="Wasser">Wasser</span>
+      </div>
+      <div class="cloze">
+        Fische nehmen mit dem
+        <span class="drop-blank empty" data-task="task3" data-answer="Maul" data-value="" role="button" tabindex="0">Lücke 1</span>
+        <span class="drop-blank empty" data-task="task3" data-answer="Wasser" data-value="" role="button" tabindex="0">Lücke 2</span>
+        auf. Dieses Wasser fließt an den
+        <span class="drop-blank empty" data-task="task3" data-answer="Kiemen" data-value="" role="button" tabindex="0">Lücke 3</span>
+        vorbei. In den Kiemen wird
+        <span class="drop-blank empty" data-task="task3" data-answer="Sauerstoff" data-value="" role="button" tabindex="0">Lücke 4</span>
+        aus dem Wasser aufgenommen und ins
+        <span class="drop-blank empty" data-task="task3" data-answer="Blut" data-value="" role="button" tabindex="0">Lücke 5</span>
+        abgegeben. Gleichzeitig wird
+        <span class="drop-blank empty" data-task="task3" data-answer="Kohlenstoffdioxid" data-value="" role="button" tabindex="0">Lücke 6</span>
+        aus dem Blut an das Wasser abgegeben.
+      </div>
+      <div class="feedback neutral" id="task3-feedback"></div>
+      <div class="trophy" id="task3-trophy"><span class="cup">🏆</span><span>Perfekt! Du hast den Weg des Wassers und der Gase verstanden.</span></div>
+    </section>
+
+    <section class="card" data-task="task4">
+      <span class="badge">Aufgabe 4 · Zeichnung mit Nummern</span>
+      <h2>Ordne die Flossen zu</h2>
+      <p class="task-meta">In der Zeichnung sind die Flossen nur mit Zahlen markiert. Ordne jeder Zahl den richtigen Namen zu.</p>
+
+      <div class="diagram-wrap">
+        <div class="fishbox">
+          <svg viewBox="0 0 760 420" role="img" aria-label="Tierischer, spindelförmiger Fisch mit nummerierten Flossen">
+            <defs>
+              <linearGradient id="bodyGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#e9f8fd"/>
+                <stop offset="45%" stop-color="#8fd6e8"/>
+                <stop offset="100%" stop-color="#4aa9c6"/>
+              </linearGradient>
+              <linearGradient id="bellyGrad" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity=".75"/>
+                <stop offset="100%" stop-color="#ffffff" stop-opacity=".08"/>
+              </linearGradient>
+              <linearGradient id="finGrad" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#ffd58c"/>
+                <stop offset="100%" stop-color="#f59f3a"/>
+              </linearGradient>
+            </defs>
+
+            <rect x="0" y="0" width="760" height="420" fill="#ffffff"/>
+
+            <!-- spindle-shaped body -->
+            <path d="M92 214
+                     C125 170, 165 138, 235 118
+                     C340 88, 478 97, 592 145
+                     L706 110
+                     L666 210
+                     L706 308
+                     L590 272
+                     C476 320, 339 329, 234 298
+                     C165 278, 125 247, 92 214 Z"
+                  fill="url(#bodyGrad)" stroke="#1f556b" stroke-width="5" stroke-linejoin="round"/>
+
+            <!-- belly highlight -->
+            <path d="M140 218 C221 176, 442 170, 592 226 C486 292, 265 299, 140 218 Z"
+                  fill="url(#bellyGrad)"/>
+
+            <!-- tail -->
+            <path d="M592 145
+                     L706 110
+                     L666 210
+                     L706 308
+                     L590 272
+                     C620 241, 623 177, 592 145 Z"
+                  fill="url(#finGrad)" stroke="#1f556b" stroke-width="4"/>
+
+            <!-- fins -->
+            <path d="M352 122 C377 80, 404 56, 446 52 C466 78, 462 121, 440 144 Z"
+                  fill="url(#finGrad)" stroke="#1f556b" stroke-width="4"/>
+            <path d="M272 241 C238 263, 218 293, 227 336 C266 338, 299 308, 312 255 Z"
+                  fill="url(#finGrad)" stroke="#1f556b" stroke-width="4"/>
+            <path d="M392 254 C383 294, 394 328, 425 350 C451 331, 460 295, 446 260 Z"
+                  fill="url(#finGrad)" stroke="#1f556b" stroke-width="4"/>
+            <path d="M534 248 C528 286, 545 316, 575 332 C602 312, 607 279, 594 244 Z"
+                  fill="url(#finGrad)" stroke="#1f556b" stroke-width="4"/>
+
+            <!-- head details -->
+            <ellipse cx="182" cy="182" rx="23" ry="21" fill="#ffffff" stroke="#1f556b" stroke-width="4"/>
+            <circle cx="188" cy="183" r="10" fill="#17212b"/>
+            <circle cx="191" cy="179" r="3" fill="#ffffff"/>
+            <path d="M114 221 Q145 220 168 238" fill="none" stroke="#1f556b" stroke-width="4" stroke-linecap="round"/>
+            <path d="M162 164 Q145 188 160 214" fill="none" stroke="#1f556b" stroke-width="3.2" opacity=".65"/>
+            <path d="M210 158 C226 170, 230 196, 214 216" fill="none" stroke="#2a6a82" stroke-width="3.5" opacity=".7"/>
+
+            <!-- scales / stripes -->
+            <path d="M238 154 C315 139, 411 137, 510 160" fill="none" stroke="#ffffff" stroke-opacity=".60" stroke-width="4"/>
+            <path d="M244 182 C328 171, 423 172, 522 194" fill="none" stroke="#ffffff" stroke-opacity=".55" stroke-width="3.5"/>
+            <path d="M248 210 C330 207, 423 213, 520 232" fill="none" stroke="#ffffff" stroke-opacity=".45" stroke-width="3"/>
+            <path d="M250 236 C325 241, 408 249, 495 266" fill="none" stroke="#ffffff" stroke-opacity=".35" stroke-width="2.8"/>
+
+            <!-- callout numbers -->
+            <g>
+              <line x1="426" y1="88" x2="575" y2="54" stroke="#0b6b9e" stroke-width="3"/>
+              <circle cx="606" cy="47" r="23" fill="#0b6b9e"/>
+              <text x="606" y="55" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">1</text>
+            </g>
+            <g>
+              <line x1="656" y1="184" x2="719" y2="160" stroke="#0b6b9e" stroke-width="3"/>
+              <circle cx="733" cy="154" r="23" fill="#0b6b9e"/>
+              <text x="733" y="162" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">2</text>
+            </g>
+            <g>
+              <line x1="278" y1="275" x2="92" y2="319" stroke="#0b6b9e" stroke-width="3"/>
+              <circle cx="58" cy="326" r="23" fill="#0b6b9e"/>
+              <text x="58" y="334" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">3</text>
+            </g>
+            <g>
+              <line x1="414" y1="301" x2="298" y2="382" stroke="#0b6b9e" stroke-width="3"/>
+              <circle cx="272" cy="396" r="23" fill="#0b6b9e"/>
+              <text x="272" y="404" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">4</text>
+            </g>
+            <g>
+              <line x1="560" y1="287" x2="621" y2="374" stroke="#0b6b9e" stroke-width="3"/>
+              <circle cx="640" cy="394" r="23" fill="#0b6b9e"/>
+              <text x="640" y="402" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">5</text>
+            </g>
+          </svg>
+        </div>
+
+        <div class="diagram-note">
+          <strong>Arbeitsauftrag:</strong>
+          <p>Trage bei jeder Zahl den passenden Namen der Flosse ein. Nutze die Wortbank.</p>
+          <div class="wordbank">
+            <span class="chip">Afterflosse</span>
+            <span class="chip">Brustflosse</span>
+            <span class="chip">Rückenflosse</span>
+            <span class="chip">Bauchflosse</span>
+            <span class="chip">Schwanzflosse</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="task4-numbered"></div>
+      <div class="feedback neutral" id="task4-feedback"></div>
+      <div class="trophy" id="task4-trophy"><span class="cup">🏆</span><span>Sehr gut! Du hast die nummerierten Flossen richtig zugeordnet.</span></div>
+    </section>
+
+    <section class="card" data-task="task5">
+      <span class="badge">Aufgabe 5 · Ankreuzen</span>
+      <h2>Schwimmen und Körperform</h2>
+      <p class="task-meta">Welche Aussagen erklären sinnvoll, warum Fische im Wasser gut schwimmen können?</p>
+      <div class="checklist" id="task5-list"></div>
+      <div class="btnrow">
+        <button class="primary" onclick="checkMulti('task5')">Auswerten</button>
+        <button class="secondary" onclick="clearMulti('task5')">Zurücksetzen</button>
+      </div>
+      <div class="feedback neutral" id="task5-feedback"></div>
+      <div class="trophy" id="task5-trophy"><span class="cup">🏆</span><span>Prima! Du hast die Anpassungen an das Schwimmen erkannt.</span></div>
+    </section>
+
+    <section class="card" data-task="task6">
+      <span class="badge">Aufgabe 6 · Zeichnung mit Nummern</span>
+      <h2>Innere Organe zuordnen</h2>
+      <p class="task-meta">Auch hier sind nur Zahlen eingetragen. Ordne jeder Zahl das richtige Organ zu.</p>
+
+      <div class="diagram-wrap">
+        <div class="fishbox">
+          <svg viewBox="0 0 860 420" role="img" aria-label="Tierischer, spindelförmiger Fisch mit inneren Organen und nummerierten Markierungen">
+            <defs>
+              <linearGradient id="body2" x1="0" y1="0" x2="1" y2="1">
+                <stop offset="0%" stop-color="#eef9fd"/>
+                <stop offset="100%" stop-color="#c2e6f3"/>
+              </linearGradient>
+              <linearGradient id="orgBodyShade" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#ffffff" stop-opacity=".65"/>
+                <stop offset="100%" stop-color="#ffffff" stop-opacity=".05"/>
+              </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="860" height="420" fill="#ffffff"/>
+
+            <!-- more realistic spindle body -->
+            <path d="M116 211
+                     C151 161, 197 125, 275 104
+                     C398 71, 560 80, 681 141
+                     L793 105
+                     L756 206
+                     L794 305
+                     L677 269
+                     C557 328, 398 339, 274 306
+                     C198 286, 151 250, 116 211 Z"
+                  fill="url(#body2)" stroke="#2b6075" stroke-width="4.5" stroke-linejoin="round"/>
+            <path d="M164 215 C250 174, 471 171, 672 231 C566 299, 307 303, 164 215 Z" fill="url(#orgBodyShade)"/>
+            <path d="M681 141 L793 105 L756 206 L794 305 L677 269
+                     C707 240, 710 174, 681 141 Z"
+                  fill="#d6eef7" stroke="#2b6075" stroke-width="4"/>
+
+            <ellipse cx="203" cy="177" rx="22" ry="20" fill="#ffffff" stroke="#2b6075" stroke-width="4"/>
+            <circle cx="210" cy="177" r="10" fill="#1d2939"/>
+            <circle cx="213" cy="173" r="3" fill="#ffffff"/>
+            <path d="M146 224 Q170 224 188 245" fill="none" stroke="#2b6075" stroke-width="4" stroke-linecap="round"/>
+            <path d="M180 160 Q162 188 177 213" fill="none" stroke="#2b6075" stroke-width="3" opacity=".6"/>
+
+            <!-- spine -->
+            <path d="M250 146 C365 119, 504 119, 638 153" fill="none" stroke="#1d2939" stroke-width="11" stroke-linecap="round"/>
+            <path d="M252 146 C370 151, 514 154, 640 153" fill="none" stroke="#1d2939" stroke-width="4" stroke-linecap="round" opacity=".55"/>
+
+            <!-- gills -->
+            <g stroke="#6f8998" stroke-width="3" fill="none" opacity=".82">
+              <path d="M247 186 Q275 180 292 202"/>
+              <path d="M246 202 Q274 196 293 220"/>
+              <path d="M245 218 Q274 214 293 238"/>
+            </g>
+
+            <!-- organs -->
+            <path d="M224 146 C238 134, 257 130, 273 135 C276 147, 271 162, 257 170 C243 171, 230 161, 224 146 Z" fill="#c9d0d8" stroke="#5a6772" stroke-width="2.5"/>
+            <ellipse cx="318" cy="217" rx="24" ry="19" fill="#c83a3a" stroke="#8f1d1d" stroke-width="3"/>
+            <path d="M353 194 C391 173, 440 171, 483 188 C488 213, 470 239, 435 248 C392 248, 367 231, 353 194 Z" fill="#b57843" stroke="#7b4f25" stroke-width="3"/>
+            <path d="M356 251 C415 225, 521 231, 593 253 C576 299, 421 311, 356 251 Z" fill="#8ed1c0" stroke="#357f70" stroke-width="3"/>
+            <path d="M374 177 C455 138, 565 141, 635 175 C641 203, 621 223, 575 228 C485 231, 417 215, 374 177 Z" fill="#f6e59a" stroke="#b39c3e" stroke-width="3"/>
+            <path d="M506 164 C580 146, 657 147, 703 166 C659 181, 572 185, 506 164 Z" fill="#a67ec4" stroke="#6d4f8f" stroke-width="3"/>
+            <path d="M525 234 C585 220, 653 221, 687 236 C648 262, 580 262, 525 234 Z" fill="#f0b47f" stroke="#b8773a" stroke-width="3"/>
+            <path d="M330 123 C423 102, 558 107, 643 140" fill="none" stroke="#7a3f98" stroke-width="7.5" stroke-linecap="round" opacity=".9"/>
+
+            <!-- numbered callouts -->
+            <g><line x1="249" y1="147" x2="141" y2="62" stroke="#0b6b9e" stroke-width="3"/><circle cx="119" cy="46" r="22" fill="#0b6b9e"/><text x="119" y="54" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">1</text></g>
+            <g><line x1="274" y1="206" x2="115" y2="151" stroke="#0b6b9e" stroke-width="3"/><circle cx="88" cy="142" r="22" fill="#0b6b9e"/><text x="88" y="150" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">2</text></g>
+            <g><line x1="318" y1="217" x2="194" y2="289" stroke="#0b6b9e" stroke-width="3"/><circle cx="170" cy="304" r="22" fill="#0b6b9e"/><text x="170" y="312" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">3</text></g>
+            <g><line x1="448" y1="261" x2="295" y2="356" stroke="#0b6b9e" stroke-width="3"/><circle cx="268" cy="372" r="22" fill="#0b6b9e"/><text x="268" y="380" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">4</text></g>
+            <g><line x1="409" y1="202" x2="366" y2="68" stroke="#0b6b9e" stroke-width="3"/><circle cx="358" cy="42" r="22" fill="#0b6b9e"/><text x="358" y="50" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">5</text></g>
+            <g><line x1="608" y1="236" x2="673" y2="352" stroke="#0b6b9e" stroke-width="3"/><circle cx="688" cy="376" r="22" fill="#0b6b9e"/><text x="688" y="384" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">6</text></g>
+            <g><line x1="575" y1="135" x2="770" y2="57" stroke="#0b6b9e" stroke-width="3"/><circle cx="796" cy="46" r="22" fill="#0b6b9e"/><text x="796" y="54" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">7</text></g>
+            <g><line x1="579" y1="188" x2="766" y2="259" stroke="#0b6b9e" stroke-width="3"/><circle cx="792" cy="269" r="22" fill="#0b6b9e"/><text x="792" y="277" text-anchor="middle" font-size="20" font-weight="800" fill="#fff">8</text></g>
+          </svg>
+        </div>
+
+        <div class="diagram-note">
+          <strong>Arbeitsauftrag:</strong>
+          <p>Suche in der Zeichnung das Organ und ordne dann die richtige Bezeichnung zu.</p>
+          <div class="wordbank">
+            <span class="chip">Schwimmblase</span>
+            <span class="chip">Herz</span>
+            <span class="chip">Niere</span>
+            <span class="chip">Gehirn</span>
+            <span class="chip">Geschlechtsorgane</span>
+            <span class="chip">Kiemen</span>
+            <span class="chip">Leber</span>
+            <span class="chip">Verdauungsorgane</span>
+          </div>
+        </div>
+      </div>
+
+      <div id="task6-numbered"></div>
+      <div class="feedback neutral" id="task6-feedback"></div>
+      <div class="trophy" id="task6-trophy"><span class="cup">🏆</span><span>Top! Du hast die nummerierten Organe richtig zugeordnet.</span></div>
+    </section>
+
+    <section class="card" data-task="task7">
+      <span class="badge">Aufgabe 7 · Lückentext</span>
+      <h2>Innerer Körperbau des Fisches</h2>
+      <p class="task-meta">Ergänze die passenden Organe. Es geht um Lage und Aufgabe.</p>
+      <div class="wordbank">
+        <span class="chip">Leber</span><span class="chip">Schwimmblase</span><span class="chip">Kiemen</span><span class="chip">Niere</span><span class="chip">Herz</span><span class="chip">Geschlechtsorgane</span><span class="chip">Gehirn</span><span class="chip">Verdauungsorgane</span>
+      </div>
+      <div class="cloze">
+        Die
+        <input class="blank" data-task="task7" data-answer="Schwimmblase" aria-label="Lücke 1" />
+        ist mit Gas gefüllt und hilft dem Fisch beim Schweben, Aufsteigen oder Absinken.
+        Die
+        <input class="blank" data-task="task7" data-answer="Niere" aria-label="Lücke 2" />
+        liegt eher langgestreckt unterhalb der Wirbelsäule und reinigt das Blut.
+        Das
+        <input class="blank" data-task="task7" data-answer="Gehirn" aria-label="Lücke 3" />
+        befindet sich direkt im Kopf und steuert den Körper.
+        Das
+        <input class="blank" data-task="task7" data-answer="Herz" aria-label="Lücke 4" />
+        pumpt Blut durch den Körper.
+        Die
+        <input class="blank" data-task="task7" data-answer="Kiemen" aria-label="Lücke 5" />
+        liegen hinter dem Kopf und ermöglichen die Atmung unter Wasser.
+        Die
+        <input class="blank" data-task="task7" data-answer="Leber" aria-label="Lücke 6" />
+        hilft bei der Verdauung, speichert Stoffe und kann schädliche Stoffe abbauen.
+        Die
+        <input class="blank" data-task="task7" data-answer="Geschlechtsorgane" aria-label="Lücke 7" />
+        sind wichtig für die Fortpflanzung.
+        Die
+        <input class="blank" data-task="task7" data-answer="Verdauungsorgane" aria-label="Lücke 8" />
+        zerkleinern und verdauen Nahrung; dabei werden Nährstoffe aufgenommen.
+      </div>
+      <div class="feedback neutral" id="task7-feedback"></div>
+      <div class="trophy" id="task7-trophy"><span class="cup">🏆</span><span>Ausgezeichnet! Du kannst Lage und Aufgabe der Organe verbinden.</span></div>
+    </section>
+
+    <section class="card" data-task="task8">
+      <span class="badge">Aufgabe 8 · Auswahlfragen</span>
+      <h2>Knifflige Wiederholung</h2>
+      <p class="task-meta">Wähle jeweils die beste Antwort. Die falschen Antworten sind nicht albern, sondern typische Verwechslungen.</p>
+      <div id="task8-quiz"></div>
+      <div class="feedback neutral" id="task8-feedback"></div>
+      <div class="trophy" id="task8-trophy"><span class="cup">🏆</span><span>Sehr sicher! Du kannst auch ähnliche Begriffe unterscheiden.</span></div>
+    </section>
+
+    <section class="card">
+      <h2>Gesamtergebnis</h2>
+      <div class="result" id="finalResult">Bearbeite die Aufgaben. Dein Fortschritt wird oben angezeigt.</div>
+      <p class="printnote">Tipp: Diese Datei funktioniert ohne Internetverbindung. Du kannst sie auch über den Browser ausdrucken.</p>
+    </section>
+  </main>
+
+  <script>
+    const completed = new Set();
+    const taskIds = ["task1","task2","task3","task4","task5","task6","task7","task8"];
+
+    const multiTasks = {
+      task1: [
+        {text:"Fische leben im Wasser.", correct:true},
+        {text:"Fische besitzen eine Wirbelsäule und gehören deshalb zu den Wirbeltieren.", correct:true},
+        {text:"Fische sind wechselwarm: Ihre Körpertemperatur passt sich der Umgebung an.", correct:true},
+        {text:"Fische halten ihre Körpertemperatur dauerhaft etwa gleich warm wie Säugetiere.", correct:false},
+        {text:"Kiemen sind die Atmungsorgane der Fische.", correct:true},
+        {text:"Schuppen und eine schleimige Hautschicht schützen den Fischkörper.", correct:true},
+        {text:"Die Schwimmblase nimmt Sauerstoff aus dem Wasser auf.", correct:false},
+        {text:"Viele Fische pflanzen sich durch Eier fort.", correct:true}
+      ],
+      task5: [
+        {text:"Viele Fische haben einen spindelförmigen Körper: vorne und hinten schmaler, in der Mitte etwas dicker.", correct:true},
+        {text:"Die Spindelform hilft, dass Wasser besser am Körper vorbeigeleitet wird.", correct:true},
+        {text:"Durch geringeren Wasserwiderstand kann ein Fisch schneller und kräftesparender schwimmen.", correct:true},
+        {text:"Die Schwanzflosse sorgt hauptsächlich für den Vortrieb nach vorne.", correct:true},
+        {text:"Brust- und Bauchflossen können beim Lenken und Bremsen helfen.", correct:true},
+        {text:"Rücken- und Afterflosse stabilisieren den Fisch und verhindern Kippen oder Schwanken.", correct:true},
+        {text:"Die schleimige Hautschicht ist vor allem zum Antrieb da.", correct:false},
+        {text:"Die Gräten müssen völlig starr sein, damit der Fisch sich gar nicht seitlich biegt.", correct:false}
+      ]
+    };
+
+    const matchTasks = {
+      task2: {
+        container: "task2-match",
+        rows: [
+          {left:"Wirbelsäule", answer:"stützt den Fischkörper und ermöglicht Bewegung"},
+          {left:"Gräten", answer:"feine, elastische Knochen, die Stabilität geben und Bewegung zulassen"},
+          {left:"Kiemen", answer:"nehmen Sauerstoff aus dem Wasser auf"},
+          {left:"Spindelform", answer:"verringert den Wasserwiderstand beim Schwimmen"},
+          {left:"Seitenlinienorgan", answer:"erkennt Druckwellen, Strömungen und Vibrationen im Wasser"}
+        ],
+        options: [
+          "erkennt Druckwellen, Strömungen und Vibrationen im Wasser",
+          "verringert den Wasserwiderstand beim Schwimmen",
+          "stützt den Fischkörper und ermöglicht Bewegung",
+          "nehmen Sauerstoff aus dem Wasser auf",
+          "feine, elastische Knochen, die Stabilität geben und Bewegung zulassen"
+        ]
+      }
+    };
+
+    const numberedTasks = {
+      task4: {
+        container: "task4-numbered",
+        rows: [
+          {num:"1", answer:"Rückenflosse"},
+          {num:"2", answer:"Schwanzflosse"},
+          {num:"3", answer:"Brustflosse"},
+          {num:"4", answer:"Bauchflosse"},
+          {num:"5", answer:"Afterflosse"}
+        ],
+        options: ["Rückenflosse","Schwanzflosse","Brustflosse","Bauchflosse","Afterflosse"]
+      },
+      task6: {
+        container: "task6-numbered",
+        rows: [
+          {num:"5", answer:"Leber"},
+          {num:"2", answer:"Kiemen"},
+          {num:"8", answer:"Schwimmblase"},
+          {num:"1", answer:"Gehirn"},
+          {num:"6", answer:"Geschlechtsorgane"},
+          {num:"3", answer:"Herz"},
+          {num:"7", answer:"Niere"},
+          {num:"4", answer:"Verdauungsorgane"}
+        ],
+        options: ["Schwimmblase","Herz","Niere","Gehirn","Geschlechtsorgane","Kiemen","Leber","Verdauungsorgane"]
+      }
+    };
+
+    const quiz8 = [
+      {
+        q:"Warum sind Gräten bei Fischen meist feiner und elastischer als viele menschliche Knochen?",
+        options:[
+          "Damit die Kiemen mehr Sauerstoff aus dem Wasser aufnehmen können.",
+          "Damit der Fischkörper beim Schwimmen seitlich beweglich bleibt und trotzdem gestützt wird.",
+          "Damit die Schwimmblase mehr Gas speichern kann."
+        ],
+        answer:1,
+        explain:"Genau: Der Fisch biegt sich beim Schwimmen seitlich hin und her. Die Gräten stützen, bleiben aber beweglich."
+      },
+      {
+        q:"Welche Aussage beschreibt die Schwimmblase am besten?",
+        options:[
+          "Sie filtert Sauerstoff direkt aus dem Wasser.",
+          "Sie pumpt Blut durch den Körper.",
+          "Sie ist mit Gas gefüllt und hilft beim Schweben, Aufsteigen oder Absinken."
+        ],
+        answer:2,
+        explain:"Richtig: Die Schwimmblase hilft bei der Lage im Wasser, nicht bei Atmung oder Blutkreislauf."
+      },
+      {
+        q:"Was gibt der Fisch an den Kiemen an das Wasser ab?",
+        options:[
+          "Kohlenstoffdioxid aus dem Blut.",
+          "Nährstoffe aus dem Darm.",
+          "Sauerstoff aus dem Blut."
+        ],
+        answer:0,
+        explain:"Richtig: Sauerstoff wird aufgenommen, Kohlenstoffdioxid wird abgegeben."
+      },
+      {
+        q:"Welche Flossen helfen besonders beim Lenken und Bremsen?",
+        options:[
+          "Rückenflosse und Schwanzflosse.",
+          "Afterflosse und Schwanzflosse.",
+          "Brustflossen und Bauchflossen."
+        ],
+        answer:2,
+        explain:"Richtig: Brust- und Bauchflossen unterstützen Lenken und Bremsen. Die Schwanzflosse treibt vor allem an."
+      },
+      {
+        q:"Was ist die beste Erklärung für das Seitenlinienorgan?",
+        options:[
+          "Ein Organ im Bauchraum, das Nährstoffe speichert.",
+          "Ein spezielles Sinnesorgan, mit dem Fische Druckwellen, Strömungen und Vibrationen im Wasser erkennen.",
+          "Ein Teil der Wirbelsäule, der die einzelnen Gräten zusammenhält."
+        ],
+        answer:1,
+        explain:"Richtig: Das Seitenlinienorgan hilft Fischen, Bewegungen und Strömungen im Wasser wahrzunehmen."
+      }
+    ];
+
+    function norm(s){
+      return (s || "")
+        .toLowerCase()
+        .trim()
+        .replaceAll("ä","ae")
+        .replaceAll("ö","oe")
+        .replaceAll("ü","ue")
+        .replaceAll("ß","ss")
+        .replace(/[\s\-]+/g," ");
+    }
+
+    function isAnswer(inputValue, correct){
+      const v = norm(inputValue);
+      const c = norm(correct);
+      const accepted = {
+        "kohlenstoffdioxid": ["kohlenstoffdioxid","co2","kohlendioxid"],
+        "verdauungsorgane": ["verdauungsorgane","magen und darm","magen/darm"],
+        "geschlechtsorgane": ["geschlechtsorgane","fortpflanzungsorgane"],
+        "schwimmblase": ["schwimmblase"],
+        "sauerstoff": ["sauerstoff","o2"],
+        "wasser": ["wasser"],
+        "kiemen": ["kiemen"],
+        "maul": ["maul"],
+        "blut": ["blut"],
+        "gehirn": ["gehirn"],
+        "herz": ["herz"],
+        "leber": ["leber"],
+        "niere": ["niere"]
+      };
+      return (accepted[c] || [c]).includes(v);
+    }
+
+    function updateScore(){
+      document.getElementById("score").textContent = completed.size;
+      document.getElementById("maxscore").textContent = taskIds.length;
+      const pct = taskIds.length ? (completed.size/taskIds.length)*100 : 0;
+      document.getElementById("progressFill").style.width = pct + "%";
+      const final = document.getElementById("finalResult");
+      if(completed.size === taskIds.length){
+        final.innerHTML = "🏆 Gesamtpokal! Du hast alle Aufgaben vollständig richtig gelöst.";
+        final.style.borderColor = "#f5b301";
+        final.style.background = "#fff8df";
+      } else if(completed.size >= Math.ceil(taskIds.length/2)){
+        final.innerHTML = "Guter Zwischenstand: " + completed.size + " von " + taskIds.length + " Aufgaben sind vollständig richtig.";
+        final.style.borderColor = "#84c7e6";
+        final.style.background = "#f0f9ff";
+      } else {
+        final.innerHTML = "Bearbeite die Aufgaben. Dein Fortschritt wird oben angezeigt.";
+        final.style.borderColor = "#d0d5dd";
+        final.style.background = "#fff";
+      }
+    }
+
+    function setComplete(taskId, ok){
+      const trophy = document.getElementById(taskId + "-trophy");
+      if(ok){
+        completed.add(taskId);
+        if(trophy) trophy.classList.add("show");
+      } else {
+        completed.delete(taskId);
+        if(trophy) trophy.classList.remove("show");
+      }
+      updateScore();
+    }
+
+    function buildMulti(taskId){
+      const box = document.getElementById(taskId + "-list");
+      box.innerHTML = "";
+      multiTasks[taskId].forEach((item, i) => {
+        const id = taskId + "-opt-" + i;
+        const label = document.createElement("label");
+        label.innerHTML = `<input type="checkbox" id="${id}" data-index="${i}"><span>${item.text}</span>`;
+        box.appendChild(label);
+      });
+    }
+
+    function checkMulti(taskId){
+      const box = document.getElementById(taskId + "-list");
+      const labels = [...box.querySelectorAll("label")];
+      let okAll = true;
+      let selectedRight = 0;
+      let selectedWrong = 0;
+      let missed = 0;
+      labels.forEach((label, i) => {
+        const input = label.querySelector("input");
+        const item = multiTasks[taskId][i];
+        label.classList.remove("good","bad");
+        if(input.checked && item.correct){
+          label.classList.add("good");
+          selectedRight++;
+        } else if(input.checked && !item.correct){
+          label.classList.add("bad");
+          selectedWrong++;
+          okAll = false;
+        } else if(!input.checked && item.correct){
+          missed++;
+          okAll = false;
+        }
+      });
+      const fb = document.getElementById(taskId + "-feedback");
+      if(okAll){
+        fb.textContent = "Alles richtig.";
+        fb.className = "feedback ok";
+      } else {
+        fb.textContent = `Noch nicht ganz: richtig angekreuzt: ${selectedRight}; falsche Kreuze: ${selectedWrong}; richtige Aussagen fehlen: ${missed}.`;
+        fb.className = "feedback bad";
+      }
+      setComplete(taskId, okAll);
+    }
+
+    function clearMulti(taskId){
+      const box = document.getElementById(taskId + "-list");
+      [...box.querySelectorAll("input")].forEach(i => i.checked = false);
+      [...box.querySelectorAll("label")].forEach(l => l.classList.remove("good","bad"));
+      const fb = document.getElementById(taskId + "-feedback");
+      fb.textContent = "";
+      fb.className = "feedback neutral";
+      setComplete(taskId, false);
+    }
+
+    function buildMatch(taskId){
+      const data = matchTasks[taskId];
+      const box = document.getElementById(data.container);
+      box.innerHTML = "";
+      data.rows.forEach((row) => {
+        const wrap = document.createElement("div");
+        wrap.className = "match-row";
+        const opts = ['<option value="">Bitte auswählen …</option>']
+          .concat(data.options.map(o => `<option value="${escapeAttr(o)}">${o}</option>`))
+          .join("");
+        wrap.innerHTML = `
+          <div><strong>${row.left}</strong></div>
+          <div>
+            <select aria-label="Erklärung zu ${row.left}" data-task="${taskId}" data-answer="${escapeAttr(row.answer)}">
+              ${opts}
+            </select>
+          </div>`;
+        box.appendChild(wrap);
+      });
+    }
+
+    function buildNumbered(taskId){
+      const data = numberedTasks[taskId];
+      const box = document.getElementById(data.container);
+      box.innerHTML = "";
+      data.rows.forEach((row) => {
+        const wrap = document.createElement("div");
+        wrap.className = "num-row";
+        const opts = ['<option value="">Bitte auswählen …</option>']
+          .concat(data.options.map(o => `<option value="${escapeAttr(o)}">${o}</option>`))
+          .join("");
+        wrap.innerHTML = `
+          <div class="num-badge">${row.num}</div>
+          <div>
+            <select aria-label="Bezeichnung zu Nummer ${row.num}" data-task="${taskId}" data-answer="${escapeAttr(row.answer)}">
+              ${opts}
+            </select>
+          </div>`;
+        box.appendChild(wrap);
+      });
+    }
+
+    function escapeAttr(s){
+      return String(s).replaceAll("&","&amp;").replaceAll('"',"&quot;").replaceAll("<","&lt;").replaceAll(">","&gt;");
+    }
+
+    function checkMatch(taskId){
+      const selects = [...document.querySelectorAll(`select[data-task="${taskId}"]`)];
+      let correct = 0;
+      let filled = 0;
+      selects.forEach(sel => {
+        const row = sel.closest(".match-row") || sel.closest(".num-row");
+        row.classList.remove("correct","wrong");
+        if(sel.value) filled++;
+        if(sel.value === sel.dataset.answer){
+          row.classList.add("correct");
+          correct++;
+        } else if(sel.value){
+          row.classList.add("wrong");
+        }
+      });
+      const fb = document.getElementById(taskId + "-feedback");
+      if(correct === selects.length){
+        fb.textContent = "Alles richtig.";
+        fb.className = "feedback ok";
+        setComplete(taskId, true);
+      } else {
+        fb.textContent = `Richtig: ${correct}/${selects.length}. ${filled < selects.length ? "Es fehlen noch Zuordnungen." : "Prüfe die rot markierten Zuordnungen."}`;
+        fb.className = correct ? "feedback neutral" : "feedback bad";
+        setComplete(taskId, false);
+      }
+    }
+
+
+    let draggedWord = null;
+
+    function initDragTask3(){
+      document.querySelectorAll("#task3-bank .drag-word").forEach(word => {
+        word.addEventListener("dragstart", e => {
+          if(word.classList.contains("used")){
+            e.preventDefault();
+            return;
+          }
+          draggedWord = word.dataset.word;
+          e.dataTransfer.setData("text/plain", word.dataset.word);
+        });
+      });
+
+      document.querySelectorAll('.drop-blank[data-task="task3"]').forEach(blank => {
+        blank.addEventListener("dragover", e => {
+          e.preventDefault();
+          blank.classList.add("dragover");
+        });
+
+        blank.addEventListener("dragleave", () => {
+          blank.classList.remove("dragover");
+        });
+
+        blank.addEventListener("drop", e => {
+          e.preventDefault();
+          blank.classList.remove("dragover");
+          const word = e.dataTransfer.getData("text/plain") || draggedWord;
+          if(word){
+            placeWordTask3(blank, word);
+          }
+        });
+
+        blank.addEventListener("click", () => {
+          clearDropBlankTask3(blank);
+        });
+
+        blank.addEventListener("keydown", e => {
+          if(e.key === "Backspace" || e.key === "Delete"){
+            clearDropBlankTask3(blank);
+          }
+        });
+      });
+    }
+
+    function placeWordTask3(blank, word){
+      const oldWord = blank.dataset.value;
+      if(oldWord){
+        setWordUsedTask3(oldWord, false);
+      }
+
+      const alreadyUsedBlank = [...document.querySelectorAll('.drop-blank[data-task="task3"]')]
+        .find(b => b !== blank && b.dataset.value === word);
+      if(alreadyUsedBlank){
+        clearDropBlankTask3(alreadyUsedBlank);
+      }
+
+      blank.dataset.value = word;
+      blank.textContent = word;
+      blank.classList.remove("empty");
+      setWordUsedTask3(word, true);
+      checkDropClozeTask3();
+    }
+
+    function clearDropBlankTask3(blank){
+      const oldWord = blank.dataset.value;
+      if(!oldWord) return;
+      setWordUsedTask3(oldWord, false);
+      blank.dataset.value = "";
+      const blanks = [...document.querySelectorAll('.drop-blank[data-task="task3"]')];
+      blank.textContent = "Lücke " + (blanks.indexOf(blank) + 1);
+      blank.classList.add("empty");
+      blank.classList.remove("ok","bad");
+      checkDropClozeTask3();
+    }
+
+    function setWordUsedTask3(word, used){
+      const chip = [...document.querySelectorAll("#task3-bank .drag-word")].find(w => w.dataset.word === word);
+      if(chip){
+        chip.classList.toggle("used", used);
+        chip.draggable = !used;
+      }
+    }
+
+    function checkDropClozeTask3(){
+      const blanks = [...document.querySelectorAll('.drop-blank[data-task="task3"]')];
+      let correct = 0;
+      let filled = 0;
+
+      blanks.forEach(blank => {
+        blank.classList.remove("ok","bad");
+        const value = blank.dataset.value || "";
+        if(value) filled++;
+        if(value && isAnswer(value, blank.dataset.answer)){
+          blank.classList.add("ok");
+          correct++;
+        } else if(value){
+          blank.classList.add("bad");
+        }
+      });
+
+      const fb = document.getElementById("task3-feedback");
+      if(correct === blanks.length){
+        fb.textContent = "Alles richtig.";
+        fb.className = "feedback ok";
+        setComplete("task3", true);
+      } else {
+        fb.textContent = `Richtig: ${correct}/${blanks.length}. ${filled < blanks.length ? "Ziehe noch alle Wörter in die Lücken." : "Prüfe die rot markierten Lücken."}`;
+        fb.className = correct ? "feedback neutral" : "feedback bad";
+        setComplete("task3", false);
+      }
+    }
+
+    function checkCloze(taskId){
+      const inputs = [...document.querySelectorAll(`input.blank[data-task="${taskId}"]`)];
+      let correct = 0;
+      let filled = 0;
+      inputs.forEach(input => {
+        input.classList.remove("ok","bad");
+        if(input.value.trim()) filled++;
+        if(isAnswer(input.value, input.dataset.answer)){
+          input.classList.add("ok");
+          correct++;
+        } else if(input.value.trim().length > 0){
+          input.classList.add("bad");
+        }
+      });
+      const fb = document.getElementById(taskId + "-feedback");
+      if(correct === inputs.length){
+        fb.textContent = "Alles richtig.";
+        fb.className = "feedback ok";
+        setComplete(taskId, true);
+      } else {
+        fb.textContent = `Richtig: ${correct}/${inputs.length}. ${filled < inputs.length ? "Fülle noch alle Lücken aus." : "Prüfe die rot markierten Lücken."}`;
+        fb.className = correct ? "feedback neutral" : "feedback bad";
+        setComplete(taskId, false);
+      }
+    }
+
+    function buildQuiz8(){
+      const box = document.getElementById("task8-quiz");
+      box.innerHTML = "";
+      quiz8.forEach((q, qi) => {
+        const div = document.createElement("div");
+        div.className = "question";
+        div.innerHTML = `<div class="q-title">${qi+1}. ${q.q}</div>`;
+        q.options.forEach((opt, oi) => {
+          const btn = document.createElement("button");
+          btn.className = "option";
+          btn.type = "button";
+          btn.dataset.q = qi;
+          btn.dataset.o = oi;
+          btn.innerHTML = `<span>${String.fromCharCode(65+oi)})</span><span>${opt}</span>`;
+          btn.addEventListener("click", () => chooseQuiz8(qi, oi));
+          div.appendChild(btn);
+        });
+        const fb = document.createElement("div");
+        fb.className = "feedback neutral";
+        fb.id = `task8-q-${qi}-fb`;
+        div.appendChild(fb);
+        box.appendChild(div);
+      });
+    }
+
+    function chooseQuiz8(qi, oi){
+      const q = quiz8[qi];
+      const buttons = [...document.querySelectorAll(`.option[data-q="${qi}"]`)];
+      buttons.forEach(b => b.classList.remove("selected","correct","wrong"));
+      buttons.forEach(b => {
+        if(Number(b.dataset.o) === q.answer) b.classList.add("correct");
+      });
+      const clicked = buttons.find(b => Number(b.dataset.o) === oi);
+      clicked.classList.add("selected");
+      if(oi !== q.answer) clicked.classList.add("wrong");
+
+      const fb = document.getElementById(`task8-q-${qi}-fb`);
+      if(oi === q.answer){
+        fb.textContent = q.explain;
+        fb.className = "feedback ok";
+      } else {
+        fb.textContent = "Noch nicht. Lies die markierte richtige Antwort und vergleiche genau.";
+        fb.className = "feedback bad";
+      }
+      checkQuiz8();
+    }
+
+    function checkQuiz8(){
+      let correct = 0;
+      quiz8.forEach((q, qi) => {
+        const selected = document.querySelector(`.option.selected[data-q="${qi}"]`);
+        if(selected && Number(selected.dataset.o) === q.answer) correct++;
+      });
+      const fb = document.getElementById("task8-feedback");
+      if(correct === quiz8.length){
+        fb.textContent = "Alles richtig.";
+        fb.className = "feedback ok";
+        setComplete("task8", true);
+      } else {
+        fb.textContent = `Richtig beantwortet: ${correct}/${quiz8.length}.`;
+        fb.className = correct ? "feedback neutral" : "feedback bad";
+        setComplete("task8", false);
+      }
+    }
+
+    function resetAll(){
+      completed.clear();
+      ["task1","task5"].forEach(clearMulti);
+
+      document.querySelectorAll("select").forEach(s => {
+        s.value = "";
+        const row = s.closest(".match-row") || s.closest(".num-row");
+        if(row) row.classList.remove("correct","wrong");
+      });
+
+      ["task2","task4","task6"].forEach(t => {
+        const fb = document.getElementById(t + "-feedback");
+        if(fb){ fb.textContent = ""; fb.className = "feedback neutral"; }
+        const tr = document.getElementById(t + "-trophy");
+        if(tr) tr.classList.remove("show");
+      });
+
+      document.querySelectorAll("input.blank").forEach(i => {
+        i.value = "";
+        i.classList.remove("ok","bad");
+      });
+
+      document.querySelectorAll('.drop-blank[data-task="task3"]').forEach((blank, index) => {
+        blank.dataset.value = "";
+        blank.textContent = "Lücke " + (index + 1);
+        blank.classList.add("empty");
+        blank.classList.remove("ok","bad","dragover");
+      });
+      document.querySelectorAll("#task3-bank .drag-word").forEach(word => {
+        word.classList.remove("used");
+        word.draggable = true;
+      });
+
+      ["task3","task7"].forEach(t => {
+        const fb = document.getElementById(t + "-feedback");
+        if(fb){ fb.textContent = ""; fb.className = "feedback neutral"; }
+        const tr = document.getElementById(t + "-trophy");
+        if(tr) tr.classList.remove("show");
+      });
+
+      document.querySelectorAll(".option").forEach(b => b.classList.remove("selected","correct","wrong"));
+      quiz8.forEach((q, qi) => {
+        const fb = document.getElementById(`task8-q-${qi}-fb`);
+        if(fb){ fb.textContent = ""; fb.className = "feedback neutral"; }
+      });
+      const fb8 = document.getElementById("task8-feedback");
+      fb8.textContent = "";
+      fb8.className = "feedback neutral";
+      const tr8 = document.getElementById("task8-trophy");
+      tr8.classList.remove("show");
+
+      updateScore();
+    }
+
+    function init(){
+      document.getElementById("maxscore").textContent = taskIds.length;
+      buildMulti("task1");
+      buildMulti("task5");
+      buildMatch("task2");
+      buildNumbered("task4");
+      buildNumbered("task6");
+      buildQuiz8();
+      initDragTask3();
+
+      document.querySelectorAll("select[data-task]").forEach(sel => {
+        sel.addEventListener("change", e => checkMatch(e.target.dataset.task));
+      });
+      document.querySelectorAll("input.blank[data-task]").forEach(inp => {
+        inp.addEventListener("input", e => checkCloze(e.target.dataset.task));
+      });
+      updateScore();
+    }
+
+    init();
+  </script>
+</body>
+</html>
