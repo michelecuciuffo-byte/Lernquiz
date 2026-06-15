@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<title>Atmungssystem – Biologie Klasse 7</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root{
+    --text:#1f2937;
+    --muted:#5b6472;
+    --line:#d8e2ee;
+    --soft:#f6f9fc;
+    --soft2:#edf6ff;
+    --blue:#2b6cb0;
+    --blue2:#0f4c81;
+    --green:#2f855a;
+    --red:#b83232;
+    --orange:#c05621;
+    --purple:#6b46c1;
+    --card:#ffffff;
+    --shadow:0 10px 24px rgba(20,55,90,.10);
+    --radius:22px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color:var(--text);
+    background:#ffffff;
+    line-height:1.55;
+  }
+  header{
+    background:
+      radial-gradient(circle at 15% 20%, rgba(255,255,255,.35), transparent 28%),
+      linear-gradient(135deg,#dff2ff 0%,#f7fbff 45%,#e9fff4 100%);
+    padding:42px 24px 36px;
+    border-bottom:1px solid var(--line);
+  }
+  .hero{
+    max-width:1180px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:1.2fr .8fr;
+    gap:28px;
+    align-items:center;
+  }
+  h1{
+    font-size:clamp(2.2rem,4vw,4rem);
+    margin:0 0 12px;
+    letter-spacing:-.04em;
+    line-height:1.05;
+    color:#14324a;
+  }
+  .subtitle{
+    font-size:1.2rem;
+    color:#38526b;
+    max-width:800px;
+    margin:0 0 20px;
+  }
+  .pillrow{display:flex;flex-wrap:wrap;gap:10px;margin-top:18px}
+  .pill{
+    padding:8px 12px;
+    background:#fff;
+    border:1px solid #cfe0ef;
+    border-radius:999px;
+    color:#244761;
+    font-weight:650;
+    font-size:.95rem;
+    box-shadow:0 2px 7px rgba(0,0,0,.04);
+  }
+  .lung-hero{
+    min-height:330px;
+    border-radius:32px;
+    background:#fff;
+    box-shadow:var(--shadow);
+    padding:18px;
+    border:1px solid var(--line);
+    position:relative;
+    overflow:hidden;
+  }
+  .lung-hero:before{
+    content:"";
+    position:absolute;
+    inset:-60px auto auto -60px;
+    width:180px;height:180px;
+    background:#e1f3ff;
+    border-radius:50%;
+  }
+  main{
+    max-width:1180px;
+    margin:0 auto;
+    padding:24px 20px 60px;
+  }
+  nav.toc{
+    position:sticky;
+    top:0;
+    z-index:10;
+    background:rgba(255,255,255,.96);
+    backdrop-filter:blur(8px);
+    border-bottom:1px solid var(--line);
+    margin:0 -20px 28px;
+    padding:10px 20px;
+  }
+  .toc-inner{
+    max-width:1180px;
+    margin:auto;
+    display:flex;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .toc a{
+    text-decoration:none;
+    color:#1f4e78;
+    border:1px solid #cbdff1;
+    background:#fff;
+    border-radius:999px;
+    padding:7px 11px;
+    font-weight:650;
+    font-size:.92rem;
+  }
+  section{
+    margin:34px 0;
+    padding:28px;
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+  h2{
+    margin:0 0 16px;
+    font-size:clamp(1.65rem,2.4vw,2.35rem);
+    color:#173b59;
+    letter-spacing:-.025em;
+  }
+  h3{
+    color:#1f4e78;
+    margin:18px 0 8px;
+    font-size:1.25rem;
+  }
+  h4{margin:14px 0 6px;color:#234}
+  p{margin:8px 0}
+  .grid-2{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+  }
+  .grid-3{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:16px;
+  }
+  .card{
+    background:#fff;
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:18px;
+    box-shadow:0 5px 14px rgba(15,70,110,.06);
+  }
+  .blue{background:#f0f8ff}
+  .green{background:#f0fff7}
+  .red{background:#fff5f5}
+  .orange{background:#fff8ef}
+  .purple{background:#f7f3ff}
+  .muted{color:var(--muted)}
+  ul,ol{padding-left:22px}
+  li{margin:5px 0}
+  .checklist{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:10px;
+    margin-top:12px;
+  }
+  .check{
+    background:#f8fbff;
+    border:1px solid #d8e7f5;
+    border-radius:16px;
+    padding:12px;
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+  }
+  .check span:first-child{
+    color:var(--green);
+    font-weight:900;
+  }
+  .organ-table{
+    width:100%;
+    border-collapse:separate;
+    border-spacing:0;
+    overflow:hidden;
+    border:1px solid var(--line);
+    border-radius:18px;
+  }
+  .organ-table th,.organ-table td{
+    padding:13px 14px;
+    border-bottom:1px solid var(--line);
+    vertical-align:top;
+  }
+  .organ-table th{
+    background:#eaf5ff;
+    color:#14324a;
+    text-align:left;
+  }
+  .organ-table tr:last-child td{border-bottom:none}
+  .diagram-wrap{
+    background:#ffffff;
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:16px;
+    overflow:hidden;
+  }
+  .label{
+    display:inline-block;
+    font-size:.82rem;
+    padding:3px 8px;
+    border-radius:999px;
+    background:#eaf5ff;
+    color:#16446b;
+    font-weight:700;
+    margin:3px 3px 3px 0;
+  }
+  .task{
+    border-left:6px solid var(--blue);
+    background:#f6fbff;
+    padding:15px 16px;
+    border-radius:14px;
+    margin:14px 0;
+  }
+  .experiment{
+    border-left:6px solid var(--green);
+    background:#f3fff8;
+    padding:16px;
+    border-radius:14px;
+  }
+  .warning{
+    border-left:6px solid var(--red);
+    background:#fff6f6;
+    padding:16px;
+    border-radius:14px;
+  }
+  .teacher{
+    border-left:6px solid var(--purple);
+    background:#f8f5ff;
+    padding:16px;
+    border-radius:14px;
+  }
+  .breath-box{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:18px;
+    align-items:center;
+  }
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    margin:12px 0;
+  }
+  button{
+    border:none;
+    background:#1f6cab;
+    color:white;
+    padding:10px 14px;
+    border-radius:12px;
+    font-weight:700;
+    cursor:pointer;
+    box-shadow:0 4px 10px rgba(31,108,171,.18);
+  }
+  button.secondary{background:#2f855a}
+  button.warn{background:#b83232}
+  button.ghost{
+    background:#ffffff;
+    color:#1f4e78;
+    border:1px solid #c8d9e8;
+  }
+  button:hover{filter:brightness(.97)}
+  .quiz-card{
+    border:1px solid #d9e5f1;
+    border-radius:18px;
+    padding:16px;
+    background:#fbfdff;
+    margin:14px 0;
+  }
+  .answers{
+    display:grid;
+    gap:8px;
+    margin-top:10px;
+  }
+  .answers button{
+    text-align:left;
+    background:#fff;
+    color:#1f2937;
+    border:1px solid #d6e4f0;
+    box-shadow:none;
+  }
+  .answers button.correct{background:#e8fff1;border-color:#66c28a}
+  .answers button.wrong{background:#fff0f0;border-color:#e28b8b}
+  .feedback{font-weight:700;margin-top:9px}
+  .fold{
+    border:1px solid var(--line);
+    border-radius:16px;
+    margin:10px 0;
+    overflow:hidden;
+  }
+  .fold summary{
+    cursor:pointer;
+    background:#f3f8fc;
+    padding:13px 15px;
+    font-weight:800;
+    color:#1f4e78;
+  }
+  .fold .fold-body{padding:14px 16px;background:#fff}
+  .station-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:12px;
+    margin-top:14px;
+  }
+  .station{
+    border:1px solid #d7e4f0;
+    border-radius:16px;
+    padding:14px;
+    background:#fff;
+    min-height:135px;
+  }
+  .station strong{
+    display:block;
+    color:#173b59;
+    margin-bottom:5px;
+  }
+  .mini{
+    font-size:.92rem;
+    color:#4a5568;
+  }
+  .timeline{
+    display:grid;
+    grid-template-columns:repeat(6,1fr);
+    gap:8px;
+    margin-top:14px;
+  }
+  .step{
+    background:#f6fbff;
+    border:1px solid #d6e7f5;
+    border-radius:16px;
+    padding:12px;
+    text-align:center;
+    font-weight:700;
+  }
+  .step small{
+    display:block;
+    font-weight:500;
+    color:#53657a;
+    margin-top:4px;
+  }
+  .print-note{
+    background:#fff;
+    border:2px dashed #b8cadb;
+    border-radius:18px;
+    padding:16px;
+  }
+
+  /* Animations */
+  .chest{
+    width:220px;
+    height:250px;
+    margin:auto;
+    position:relative;
+  }
+  .ribcage{
+    position:absolute;
+    inset:18px 20px 30px;
+    border:6px solid #7aa7c7;
+    border-radius:42% 42% 48% 48%;
+    animation:breatheChest 4s ease-in-out infinite;
+    background:linear-gradient(#ffffff,#f6fbff);
+  }
+  .lung-left,.lung-right{
+    position:absolute;
+    top:54px;
+    width:74px;
+    height:124px;
+    background:rgba(255,144,144,.42);
+    border:4px solid #d45b5b;
+    animation:breatheLungs 4s ease-in-out infinite;
+  }
+  .lung-left{
+    left:36px;
+    border-radius:52% 28% 48% 45%;
+    transform-origin:right bottom;
+  }
+  .lung-right{
+    right:36px;
+    border-radius:28% 52% 45% 48%;
+    transform-origin:left bottom;
+  }
+  .trachea{
+    position:absolute;
+    top:8px;
+    left:102px;
+    width:18px;
+    height:92px;
+    background:#a5d8ff;
+    border:3px solid #4285b4;
+    border-radius:12px;
+  }
+  .bronch-left,.bronch-right{
+    position:absolute;
+    top:91px;
+    width:54px;
+    height:13px;
+    background:#a5d8ff;
+    border:3px solid #4285b4;
+  }
+  .bronch-left{
+    left:61px;
+    transform:rotate(30deg);
+    border-radius:12px;
+  }
+  .bronch-right{
+    right:61px;
+    transform:rotate(-30deg);
+    border-radius:12px;
+  }
+  .diaphragm{
+    position:absolute;
+    left:38px;
+    right:38px;
+    bottom:34px;
+    height:28px;
+    border-bottom:8px solid #8e63c7;
+    border-radius:0 0 80% 80%;
+    animation:diaphragmMove 4s ease-in-out infinite;
+  }
+  @keyframes breatheChest{
+    0%,100%{transform:scale(.96)}
+    50%{transform:scale(1.06)}
+  }
+  @keyframes breatheLungs{
+    0%,100%{transform:scale(.88)}
+    50%{transform:scale(1.12)}
+  }
+  @keyframes diaphragmMove{
+    0%,100%{transform:translateY(-6px)}
+    50%{transform:translateY(14px)}
+  }
+  .particle-stage{
+    height:280px;
+    border:1px solid var(--line);
+    border-radius:20px;
+    background:linear-gradient(90deg,#f9fdff 0 49%,#fff7f7 51% 100%);
+    position:relative;
+    overflow:hidden;
+  }
+  .alveolus{
+    position:absolute;
+    left:32px;
+    top:62px;
+    width:126px;
+    height:126px;
+    background:#ffe5e5;
+    border:4px solid #e77979;
+    border-radius:50%;
+  }
+  .blood{
+    position:absolute;
+    right:30px;
+    top:48px;
+    width:180px;
+    height:158px;
+    background:#ffecec;
+    border:4px solid #cc5555;
+    border-radius:50px;
+  }
+  .membrane{
+    position:absolute;
+    left:48%;
+    top:34px;
+    width:8px;
+    height:205px;
+    background:#8095a8;
+    border-radius:9px;
+  }
+  .particle{
+    position:absolute;
+    width:16px;height:16px;
+    border-radius:50%;
+    font-size:10px;
+    font-weight:900;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    color:#fff;
+  }
+  .o2{background:#2b6cb0;animation:o2move 4.5s linear infinite}
+  .co2{background:#b83232;animation:co2move 4.5s linear infinite}
+  .p1{top:82px;left:80px;animation-delay:0s}
+  .p2{top:130px;left:52px;animation-delay:.8s}
+  .p3{top:172px;left:105px;animation-delay:1.4s}
+  .c1{top:85px;right:76px;animation-delay:.3s}
+  .c2{top:138px;right:112px;animation-delay:1s}
+  .c3{top:178px;right:55px;animation-delay:1.7s}
+  @keyframes o2move{
+    0%{transform:translate(0,0);opacity:.25}
+    20%{opacity:1}
+    70%{transform:translate(270px,20px);opacity:1}
+    100%{transform:translate(335px,25px);opacity:.2}
+  }
+  @keyframes co2move{
+    0%{transform:translate(0,0);opacity:.25}
+    20%{opacity:1}
+    70%{transform:translate(-270px,-18px);opacity:1}
+    100%{transform:translate(-335px,-20px);opacity:.2}
+  }
+  .surface-demo{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  .cube-demo,.fold-demo{
+    height:220px;
+    border:1px solid var(--line);
+    border-radius:18px;
+    background:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .bigcube{
+    width:92px;height:92px;
+    background:#bde0fe;
+    border:4px solid #2b6cb0;
+    box-shadow:12px 12px 0 #d9edff;
+  }
+  .smallcubes{
+    display:grid;
+    grid-template-columns:repeat(4,38px);
+    gap:7px;
+  }
+  .smallcubes span{
+    width:38px;height:38px;
+    background:#bde0fe;
+    border:3px solid #2b6cb0;
+    border-radius:6px;
+    animation:cubePulse 2s ease-in-out infinite alternate;
+  }
+  .smallcubes span:nth-child(odd){animation-delay:.35s}
+  @keyframes cubePulse{
+    from{transform:scale(.96)}
+    to{transform:scale(1.08)}
+  }
+  .folded-line{
+    width:82%;
+    height:120px;
+    background:repeating-linear-gradient(90deg,#d6f5e3 0 22px,#ffffff 22px 34px);
+    border:4px solid #2f855a;
+    border-radius:18px;
+    transform:skewX(-8deg);
+    animation:foldPulse 3s ease-in-out infinite;
+  }
+  @keyframes foldPulse{
+    0%,100%{transform:skewX(-8deg) scale(.96)}
+    50%{transform:skewX(-8deg) scale(1.04)}
+  }
+  .smoke-stage{
+    height:240px;
+    border-radius:20px;
+    border:1px solid var(--line);
+    background:linear-gradient(#f7fbff,#ffffff);
+    position:relative;
+    overflow:hidden;
+  }
+  .cig{
+    position:absolute;
+    left:32px;
+    bottom:42px;
+    width:170px;
+    height:26px;
+    background:linear-gradient(90deg,#fff 0 62%,#d9a15c 63% 100%);
+    border:2px solid #cfcfcf;
+    border-radius:14px;
+  }
+  .ember{
+    position:absolute;
+    left:28px;
+    bottom:45px;
+    width:20px;height:20px;
+    background:#cf3d30;
+    border-radius:50%;
+    box-shadow:0 0 16px #cf3d30;
+    animation:ember 1s infinite alternate;
+  }
+  @keyframes ember{to{box-shadow:0 0 28px #f97316}}
+  .smoke{
+    position:absolute;
+    width:28px;height:28px;
+    border-radius:50%;
+    background:rgba(91,100,114,.24);
+    filter:blur(.4px);
+    animation:smokeRise 6s linear infinite;
+  }
+  .s1{left:46px;bottom:64px;animation-delay:0s}
+  .s2{left:64px;bottom:70px;animation-delay:1s}
+  .s3{left:35px;bottom:70px;animation-delay:2s}
+  .s4{left:82px;bottom:73px;animation-delay:3s}
+  @keyframes smokeRise{
+    0%{transform:translate(0,0) scale(.7);opacity:0}
+    20%{opacity:.8}
+    100%{transform:translate(160px,-190px) scale(2.6);opacity:0}
+  }
+  .damage{
+    position:absolute;
+    right:35px;
+    top:38px;
+    width:220px;
+    background:#fff;
+    border:1px solid #ead0d0;
+    border-radius:16px;
+    padding:12px;
+  }
+  .damage b{color:#b83232}
+  .drag-zone{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  .drag-list,.drop-list{
+    min-height:170px;
+    border:1px dashed #b8cadb;
+    border-radius:18px;
+    padding:12px;
+    background:#fcfdff;
+  }
+  .drag-item{
+    display:inline-block;
+    margin:5px;
+    padding:8px 10px;
+    border-radius:12px;
+    border:1px solid #bfd3e6;
+    background:#fff;
+    cursor:grab;
+    font-weight:700;
+  }
+  .drop-slot{
+    min-height:38px;
+    border:1px solid #d7e4f0;
+    border-radius:12px;
+    margin:8px 0;
+    padding:8px;
+    background:#fff;
+  }
+  .match-ok{background:#e9fff2 !important;border-color:#69bf87 !important}
+  .match-bad{background:#fff1f1 !important;border-color:#df8b8b !important}
+  .footer{
+    text-align:center;
+    color:#637083;
+    padding:30px;
+  }
+  .badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    min-width:34px;height:34px;
+    border-radius:12px;
+    background:#e9f5ff;
+    color:#1f4e78;
+    font-weight:900;
+    margin-right:8px;
+  }
+  .hidden{display:none}
+  .worksheet{
+    background:#ffffff;
+    border:1px solid #cbd8e4;
+    border-radius:18px;
+    padding:18px;
+    margin-top:14px;
+  }
+  .line{
+    border-bottom:1px solid #bfcbd7;
+    height:28px;
+    margin:4px 0;
+  }
+  .two-col-lines{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px;
+  }
+  @media(max-width:900px){
+    .hero,.grid-2,.grid-3,.breath-box,.surface-demo,.drag-zone{grid-template-columns:1fr}
+    .checklist{grid-template-columns:1fr}
+    .station-grid{grid-template-columns:1fr 1fr}
+    .timeline{grid-template-columns:1fr 1fr}
+  }
+  @media(max-width:560px){
+    section{padding:19px}
+    .station-grid,.timeline{grid-template-columns:1fr}
+    .toc a{font-size:.82rem}
+  }
+  @media print{
+    nav.toc,.controls,button{display:none!important}
+    body{background:#fff}
+    header,section{box-shadow:none;break-inside:avoid}
+    section{page-break-inside:avoid;margin:18px 0}
+    .hero{grid-template-columns:1fr}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="hero">
+    <div>
+      <h1>Das Atmungssystem</h1>
+      <p class="subtitle">Aufbau, Funktion, Gasaustausch, Oberflächenvergrößerung, einfache Schülerexperimente und die Schädlichkeit des Rauchens – für Biologie Klasse 7.</p>
+      <div class="pillrow">
+        <span class="pill">Bau und Funktion</span>
+        <span class="pill">Lunge & Lungenbläschen</span>
+        <span class="pill">Gasaustausch</span>
+        <span class="pill">Oberflächenvergrößerung</span>
+        <span class="pill">CO₂- und Wasser-Nachweis</span>
+        <span class="pill">Rauchen</span>
+      </div>
+    </div>
+    <div class="lung-hero">
+      <svg viewBox="0 0 420 320" width="100%" height="100%" aria-label="Schematische Darstellung der Lunge">
+        <defs>
+          <linearGradient id="lungGrad" x1="0" x2="1">
+            <stop offset="0" stop-color="#ffdede"/>
+            <stop offset="1" stop-color="#ffb6b6"/>
+          </linearGradient>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto">
+            <path d="M0,0 L0,6 L7,3 z" fill="#2b6cb0"/>
+          </marker>
+        </defs>
+        <rect x="20" y="20" width="380" height="280" rx="28" fill="#ffffff"/>
+        <path d="M205 38 C205 80 205 102 205 132" stroke="#3d83ad" stroke-width="20" stroke-linecap="round"/>
+        <path d="M205 128 C170 148 146 178 132 222" stroke="#3d83ad" stroke-width="14" stroke-linecap="round" fill="none"/>
+        <path d="M205 128 C240 148 264 178 278 222" stroke="#3d83ad" stroke-width="14" stroke-linecap="round" fill="none"/>
+        <path d="M182 126 C105 102 65 157 68 225 C70 278 123 290 161 252 C187 226 197 171 182 126Z" fill="url(#lungGrad)" stroke="#d35d5d" stroke-width="5"/>
+        <path d="M228 126 C305 102 345 157 342 225 C340 278 287 290 249 252 C223 226 213 171 228 126Z" fill="url(#lungGrad)" stroke="#d35d5d" stroke-width="5"/>
+        <path d="M70 65 C45 75 37 98 43 118" stroke="#2b6cb0" stroke-width="4" marker-end="url(#arrow)" fill="none"/>
+        <text x="35" y="54" font-size="17" fill="#1f4e78" font-weight="700">Einatmen: O₂ hinein</text>
+        <path d="M350 250 C380 245 392 218 386 196" stroke="#b83232" stroke-width="4" marker-end="url(#arrow)" fill="none"/>
+        <text x="246" y="278" font-size="17" fill="#b83232" font-weight="700">Ausatmen: CO₂ hinaus</text>
+      </svg>
+    </div>
+  </div>
+</header>
+
+<main>
+<nav class="toc">
+  <div class="toc-inner">
+    <a href="#lernziele">Lernziele</a>
+    <a href="#bau">Atmungsorgane</a>
+    <a href="#weg">Weg der Atemluft</a>
+    <a href="#lunge">Bau ↔ Funktion</a>
+    <a href="#gasaustausch">Gasaustausch</a>
+    <a href="#oberflaeche">Oberflächenvergrößerung</a>
+    <a href="#experimente">SE</a>
+    <a href="#rauchen">Rauchen</a>
+    <a href="#uebungen">Übungen</a>
+    <a href="#quiz">Quiz</a>
+  </div>
+</nav>
+
+<section id="lernziele">
+  <h2><span class="badge">1</span>Lernziele und Lernplaninhalte</h2>
+  <p>In dieser Einheit wird vorhandenes Wissen über <strong>Bau und Funktion von Organen</strong> auf das Atmungssystem übertragen. Wichtig ist immer die Frage: <strong>Wie passt der Aufbau eines Organs zu seiner Aufgabe?</strong></p>
+  <div class="checklist">
+    <div class="check"><span>✓</span><div><strong>Bau und Funktion der Atmungsorgane:</strong> Du kannst wichtige Organe nennen und ihre Aufgaben erklären.</div></div>
+    <div class="check"><span>✓</span><div><strong>Zusammenhang Bau und Funktion:</strong> Du kannst am Beispiel der Lunge erklären, warum ihr Bau für den Gasaustausch geeignet ist.</div></div>
+    <div class="check"><span>✓</span><div><strong>Gasaustausch:</strong> Du kannst beschreiben, wie Sauerstoff und Kohlenstoffdioxid in den Lungenbläschen ausgetauscht werden.</div></div>
+    <div class="check"><span>✓</span><div><strong>Oberflächenvergrößerung:</strong> Du kannst erklären, warum viele kleine Lungenbläschen günstiger sind als wenige große Hohlräume.</div></div>
+    <div class="check"><span>✓</span><div><strong>Schülerexperiment:</strong> Du kannst die Abgabe von Kohlenstoffdioxid und Wasser in der Ausatemluft nachweisen.</div></div>
+    <div class="check"><span>✓</span><div><strong>Rauchen:</strong> Du kannst begründen, warum Rauchen die Atmungsorgane schädigt.</div></div>
+  </div>
+</section>
+
+<section id="bau">
+  <h2><span class="badge">2</span>Bau und Funktion der Atmungsorgane</h2>
+  <p>Das Atmungssystem besteht aus mehreren Organen. Gemeinsam sorgen sie dafür, dass <strong>Sauerstoff</strong> in den Körper gelangt und <strong>Kohlenstoffdioxid</strong> abgegeben wird.</p>
+
+  <table class="organ-table">
+    <thead>
+      <tr>
+        <th>Atmungsorgan</th>
+        <th>Bau / Merkmale</th>
+        <th>Funktion</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Nase / Nasenhöhle</strong></td>
+        <td>Schleimhaut, Härchen, gut durchblutet</td>
+        <td>Reinigt, erwärmt und befeuchtet die Atemluft.</td>
+      </tr>
+      <tr>
+        <td><strong>Rachen</strong></td>
+        <td>Verbindungsraum zwischen Nase, Mund und Kehlkopf</td>
+        <td>Leitet die Luft weiter.</td>
+      </tr>
+      <tr>
+        <td><strong>Kehlkopf</strong></td>
+        <td>Mit Kehldeckel und Stimmbändern</td>
+        <td>Schützt die Luftröhre beim Schlucken und ermöglicht die Stimme.</td>
+      </tr>
+      <tr>
+        <td><strong>Luftröhre</strong></td>
+        <td>Knorpelspangen halten sie offen; innen Schleimhaut mit Flimmerhärchen</td>
+        <td>Leitet Luft zu den Bronchien und entfernt Schmutzteilchen.</td>
+      </tr>
+      <tr>
+        <td><strong>Bronchien / Bronchiolen</strong></td>
+        <td>Verzweigte Röhren, werden immer feiner</td>
+        <td>Verteilen die Luft in beide Lungenflügel bis zu den Lungenbläschen.</td>
+      </tr>
+      <tr>
+        <td><strong>Lungenbläschen</strong></td>
+        <td>Sehr viele kleine Bläschen mit dünner Wand und feinen Blutgefäßen</td>
+        <td>Ort des Gasaustausches.</td>
+      </tr>
+      <tr>
+        <td><strong>Zwerchfell</strong></td>
+        <td>Kuppelförmiger Muskel unter der Lunge</td>
+        <td>Wichtigster Atemmuskel; bewegt sich beim Ein- und Ausatmen.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="task">
+    <strong>Merksatz:</strong> Die Atemwege leiten, reinigen, erwärmen und befeuchten die Luft. Die Lungenbläschen ermöglichen den eigentlichen Gasaustausch.
+  </div>
+</section>
+
+<section id="weg">
+  <h2><span class="badge">3</span>Der Weg der Atemluft</h2>
+  <p>Beim Einatmen nimmt die Luft einen bestimmten Weg durch den Körper.</p>
+  <div class="timeline">
+    <div class="step">1 Nase / Mund<small>Luft gelangt hinein</small></div>
+    <div class="step">2 Rachen<small>Luft wird weitergeleitet</small></div>
+    <div class="step">3 Kehlkopf<small>Übergang zur Luftröhre</small></div>
+    <div class="step">4 Luftröhre<small>Leitung in den Brustraum</small></div>
+    <div class="step">5 Bronchien<small>Verzweigung in der Lunge</small></div>
+    <div class="step">6 Lungenbläschen<small>Gasaustausch</small></div>
+  </div>
+
+  <details class="fold">
+    <summary>Warum ist Nasenatmung sinnvoll?</summary>
+    <div class="fold-body">
+      <ul>
+        <li><strong>Reinigung:</strong> Härchen und Schleim fangen Staub und Krankheitserreger ab.</li>
+        <li><strong>Erwärmung:</strong> Die Nasenschleimhaut ist gut durchblutet und wärmt kalte Luft an.</li>
+        <li><strong>Befeuchtung:</strong> Die Luft wird angefeuchtet, damit die empfindlichen Atemwege nicht austrocknen.</li>
+      </ul>
+    </div>
+  </details>
+</section>
+
+<section id="atmungsbewegung">
+  <h2><span class="badge">4</span>Einatmen und Ausatmen</h2>
+  <div class="breath-box">
+    <div>
+      <h3>Einatmen:</h3>
+      <ul>
+        <li>Das Zwerchfell zieht sich zusammen und senkt sich.</li>
+        <li>Der Brustraum wird größer.</li>
+        <li>Die Lunge dehnt sich aus.</li>
+        <li>Luft strömt in die Lunge.</li>
+      </ul>
+      <h3>Ausatmen:</h3>
+      <ul>
+        <li>Das Zwerchfell entspannt sich und wölbt sich nach oben.</li>
+        <li>Der Brustraum wird kleiner.</li>
+        <li>Die Lunge wird zusammengedrückt.</li>
+        <li>Luft strömt aus der Lunge heraus.</li>
+      </ul>
+    </div>
+    <div class="diagram-wrap">
+      <div class="chest" aria-label="Animation der Atmungsbewegung">
+        <div class="ribcage"></div>
+        <div class="trachea"></div>
+        <div class="bronch-left"></div>
+        <div class="bronch-right"></div>
+        <div class="lung-left"></div>
+        <div class="lung-right"></div>
+        <div class="diaphragm"></div>
+      </div>
+      <p class="mini" style="text-align:center"><strong>Animation:</strong> Die Lunge vergrößert und verkleinert sich durch die Bewegung des Brustkorbs und des Zwerchfells.</p>
+    </div>
+  </div>
+</section>
+
+<section id="lunge">
+  <h2><span class="badge">5</span>Zusammenhang von Bau und Funktion am Beispiel der Lunge</h2>
+  <p>Die Lunge ist so gebaut, dass Sauerstoff besonders gut ins Blut aufgenommen und Kohlenstoffdioxid gut abgegeben werden kann.</p>
+  <div class="grid-3">
+    <div class="card blue">
+      <h3>Viele Verzweigungen</h3>
+      <p>Die Bronchien teilen sich in immer kleinere Röhren. Dadurch wird die Luft in alle Bereiche der Lunge verteilt.</p>
+    </div>
+    <div class="card green">
+      <h3>Viele Lungenbläschen</h3>
+      <p>Millionen kleine Lungenbläschen vergrößern die Oberfläche stark. So kann viel Gas gleichzeitig ausgetauscht werden.</p>
+    </div>
+    <div class="card orange">
+      <h3>Dünne Wände</h3>
+      <p>Die Wände der Lungenbläschen und Blutgefäße sind sehr dünn. Sauerstoff und Kohlenstoffdioxid müssen nur eine kurze Strecke zurücklegen.</p>
+    </div>
+    <div class="card purple">
+      <h3>Feuchte Oberfläche</h3>
+      <p>Gase können besser durch feuchte Oberflächen hindurchtreten. Deshalb sind die Lungenbläschen innen feucht.</p>
+    </div>
+    <div class="card blue">
+      <h3>Gute Durchblutung</h3>
+      <p>Jedes Lungenbläschen ist von feinen Blutgefäßen umgeben. Das Blut nimmt Sauerstoff auf und gibt Kohlenstoffdioxid ab.</p>
+    </div>
+    <div class="card green">
+      <h3>Elastisches Gewebe</h3>
+      <p>Die Lunge kann sich beim Einatmen ausdehnen und beim Ausatmen wieder zusammenziehen.</p>
+    </div>
+  </div>
+
+  <div class="task">
+    <strong>Aufgabe:</strong> Erkläre an zwei Beispielen, wie der Bau der Lunge zu ihrer Funktion passt. Nutze die Formulierung: „Die Lunge besitzt …, dadurch kann sie …“
+  </div>
+</section>
+
+<section id="gasaustausch">
+  <h2><span class="badge">6</span>Gasaustausch in den Lungenbläschen</h2>
+  <p>In den Lungenbläschen treffen eingeatmete Luft und Blut fast direkt aufeinander. Sie sind nur durch sehr dünne Wände voneinander getrennt.</p>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Was passiert mit Sauerstoff?</h3>
+      <ul>
+        <li>In der eingeatmeten Luft ist viel Sauerstoff.</li>
+        <li>Im sauerstoffarmen Blut ist weniger Sauerstoff.</li>
+        <li>Sauerstoff wandert aus dem Lungenbläschen ins Blut.</li>
+        <li>Das Blut transportiert Sauerstoff zu den Körperzellen.</li>
+      </ul>
+    </div>
+    <div class="card">
+      <h3>Was passiert mit Kohlenstoffdioxid?</h3>
+      <ul>
+        <li>Körperzellen bilden Kohlenstoffdioxid bei der Energiegewinnung.</li>
+        <li>Das Blut bringt Kohlenstoffdioxid zur Lunge.</li>
+        <li>Kohlenstoffdioxid wandert aus dem Blut in das Lungenbläschen.</li>
+        <li>Beim Ausatmen wird es abgegeben.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="diagram-wrap" style="margin-top:16px">
+    <div class="particle-stage" aria-label="Animation des Gasaustausches">
+      <div class="alveolus"></div>
+      <div class="blood"></div>
+      <div class="membrane"></div>
+      <div class="particle o2 p1">O₂</div>
+      <div class="particle o2 p2">O₂</div>
+      <div class="particle o2 p3">O₂</div>
+      <div class="particle co2 c1">CO₂</div>
+      <div class="particle co2 c2">CO₂</div>
+      <div class="particle co2 c3">CO₂</div>
+      <span class="label" style="position:absolute;left:38px;top:22px">Lungenbläschen</span>
+      <span class="label" style="position:absolute;right:52px;top:18px;background:#ffecec;color:#8a1f1f">Blutgefäß</span>
+      <span class="label" style="position:absolute;left:44%;bottom:18px;background:#eef2f7;color:#334155">dünne Wand</span>
+    </div>
+    <p class="mini"><strong>Blau:</strong> Sauerstoff wandert ins Blut. <strong>Rot:</strong> Kohlenstoffdioxid wandert aus dem Blut in die Ausatemluft.</p>
+  </div>
+
+  <div class="task">
+    <strong>Merksatz:</strong> Sauerstoff geht aus der Luft in das Blut. Kohlenstoffdioxid geht aus dem Blut in die Luft der Lungenbläschen.
+  </div>
+</section>
+
+<section id="oberflaeche">
+  <h2><span class="badge">7</span>Prinzip der Oberflächenvergrößerung</h2>
+  <p>Für den Gasaustausch ist nicht nur das Volumen wichtig, sondern vor allem die <strong>Oberfläche</strong>. Je größer die Oberfläche, desto mehr Teilchen können gleichzeitig ausgetauscht werden.</p>
+
+  <div class="surface-demo">
+    <div class="card">
+      <h3>Wenige große Räume</h3>
+      <div class="cube-demo"><div class="bigcube"></div></div>
+      <p class="mini">Eine große Fläche bietet weniger Kontaktstellen als viele kleine Teilflächen.</p>
+    </div>
+    <div class="card">
+      <h3>Viele kleine Einheiten</h3>
+      <div class="cube-demo">
+        <div class="smallcubes">
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+          <span></span><span></span><span></span><span></span>
+        </div>
+      </div>
+      <p class="mini">Viele kleine Lungenbläschen erzeugen zusammen eine sehr große Austauschfläche.</p>
+    </div>
+  </div>
+
+  <div class="grid-2" style="margin-top:16px">
+    <div class="card green">
+      <h3>Vergleich aus dem Alltag</h3>
+      <p>Ein zusammengeknülltes oder gefaltetes Tuch hat auf kleinem Raum sehr viel Oberfläche. Ähnlich nutzt der Körper viele kleine Strukturen, um Oberfläche zu vergrößern.</p>
+      <div class="fold-demo"><div class="folded-line"></div></div>
+    </div>
+    <div class="card blue">
+      <h3>Übertragung auf die Lunge</h3>
+      <ul>
+        <li>Die Lunge besteht nicht aus zwei einfachen Luftsäcken.</li>
+        <li>Sie enthält sehr viele kleine Lungenbläschen.</li>
+        <li>Dadurch entsteht eine große Oberfläche für den Gasaustausch.</li>
+        <li>Der Austausch von O₂ und CO₂ läuft dadurch viel schneller und wirksamer ab.</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="task">
+    <strong>Aufgabe:</strong> Erkläre, warum ein Schwamm Wasser besser aufnehmen kann als ein glatter Stein. Übertrage die Idee anschließend auf die Lungenbläschen.
+  </div>
+</section>
+
+<section id="experimente">
+  <h2><span class="badge">8</span>SE: Nachweis von Kohlenstoffdioxid und Wasser in der Ausatemluft</h2>
+  <p>Mit einfachen Schülerexperimenten kann gezeigt werden, dass ausgeatmete Luft anders zusammengesetzt ist als eingeatmete Luft.</p>
+
+  <div class="grid-2">
+    <div class="experiment">
+      <h3>Experiment A: Kohlenstoffdioxid-Nachweis</h3>
+      <p><strong>Fragestellung:</strong> Enthält Ausatemluft Kohlenstoffdioxid?</p>
+      <p><strong>Material:</strong> Kalkwasser, Reagenzglas oder Becherglas, Trinkhalm, Schutzbrille.</p>
+      <p><strong>Durchführung:</strong></p>
+      <ol>
+        <li>Gib etwas klares Kalkwasser in ein Gefäß.</li>
+        <li>Puste vorsichtig mit einem Trinkhalm in die Flüssigkeit.</li>
+        <li>Beobachte die Veränderung.</li>
+      </ol>
+      <p><strong>Beobachtung:</strong> Das Kalkwasser wird trüb oder milchig.</p>
+      <p><strong>Auswertung:</strong> Die Trübung zeigt, dass in der Ausatemluft Kohlenstoffdioxid enthalten ist.</p>
+    </div>
+
+    <div class="experiment">
+      <h3>Experiment B: Wasser-Nachweis</h3>
+      <p><strong>Fragestellung:</strong> Enthält Ausatemluft Wasser?</p>
+      <p><strong>Material:</strong> Kaltes Glas, Spiegel oder Uhrglas.</p>
+      <p><strong>Durchführung:</strong></p>
+      <ol>
+        <li>Halte ein kaltes Glas oder einen Spiegel vor den Mund.</li>
+        <li>Hauche mehrmals dagegen.</li>
+        <li>Beobachte die Oberfläche.</li>
+      </ol>
+      <p><strong>Beobachtung:</strong> Die Oberfläche beschlägt.</p>
+      <p><strong>Auswertung:</strong> Wasserdampf aus der Ausatemluft kondensiert zu kleinen Wassertröpfchen.</p>
+    </div>
+  </div>
+
+  <div class="warning" style="margin-top:16px">
+    <h3>Sicherheit und Hygiene</h3>
+    <ul>
+      <li>Nicht an Chemikalien riechen oder trinken.</li>
+      <li>Nur mit eigenem Trinkhalm arbeiten.</li>
+      <li>Nicht ansaugen, sondern nur vorsichtig hineinpusten.</li>
+      <li>Schutzbrille tragen, besonders beim Arbeiten mit Kalkwasser.</li>
+      <li>Materialien nach dem Experiment nach Anweisung reinigen oder entsorgen.</li>
+    </ul>
+  </div>
+
+  <details class="fold">
+    <summary>Protokollhilfe für Schülerinnen und Schüler</summary>
+    <div class="fold-body">
+      <p><strong>1. Fragestellung:</strong> Was soll untersucht werden?</p>
+      <p><strong>2. Vermutung:</strong> Was erwartest du?</p>
+      <p><strong>3. Material:</strong> Welche Geräte und Stoffe werden benötigt?</p>
+      <p><strong>4. Durchführung:</strong> Was wird Schritt für Schritt gemacht?</p>
+      <p><strong>5. Beobachtung:</strong> Was sieht man?</p>
+      <p><strong>6. Auswertung:</strong> Was bedeutet die Beobachtung?</p>
+    </div>
+  </details>
+</section>
+
+<section id="rauchen">
+  <h2><span class="badge">9</span>Schädlichkeit des Rauchens</h2>
+  <p>Rauchen schädigt die Atmungsorgane, weil Rauch viele gesundheitsschädliche Stoffe enthält. Besonders problematisch sind Teerstoffe, Kohlenstoffmonoxid, Nikotin und reizende Gase.</p>
+
+  <div class="grid-2">
+    <div class="diagram-wrap">
+      <div class="smoke-stage" aria-label="Animation Rauch">
+        <div class="ember"></div>
+        <div class="cig"></div>
+        <div class="smoke s1"></div>
+        <div class="smoke s2"></div>
+        <div class="smoke s3"></div>
+        <div class="smoke s4"></div>
+        <div class="damage">
+          <p><b>Rauch reizt und schädigt:</b></p>
+          <ul class="mini">
+            <li>Schleimhäute</li>
+            <li>Flimmerhärchen</li>
+            <li>Lungenbläschen</li>
+            <li>Blutgefäße</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="card red">
+        <h3>Was passiert in den Atemwegen?</h3>
+        <ul>
+          <li><strong>Flimmerhärchen werden geschädigt:</strong> Schleim und Schmutz werden schlechter abtransportiert.</li>
+          <li><strong>Schleimhäute werden gereizt:</strong> Husten und Entzündungen können häufiger auftreten.</li>
+          <li><strong>Lungenbläschen können geschädigt werden:</strong> Die Austauschfläche wird kleiner.</li>
+          <li><strong>Gasaustausch wird schlechter:</strong> Der Körper wird weniger gut mit Sauerstoff versorgt.</li>
+        </ul>
+      </div>
+      <div class="card orange" style="margin-top:12px">
+        <h3>Warum ist Kohlenstoffmonoxid gefährlich?</h3>
+        <p>Kohlenstoffmonoxid kann sich an den roten Blutfarbstoff binden. Dadurch kann das Blut weniger Sauerstoff transportieren.</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="task">
+    <strong>Diskussionsfrage:</strong> Warum ist auch Passivrauchen problematisch? Formuliere eine Begründung mit den Begriffen „Rauch“, „Schadstoffe“, „Atemwege“ und „Lunge“.
+  </div>
+</section>
+
+<section id="uebungen">
+  <h2><span class="badge">10</span>Übungen und Arbeitsaufträge</h2>
+
+  <div class="station-grid">
+    <div class="station">
+      <strong>Station 1: Begriffe ordnen</strong>
+      <p class="mini">Ordne die Organe in der richtigen Reihenfolge des Luftwegs.</p>
+      <p><span class="label">Nase</span><span class="label">Rachen</span><span class="label">Luftröhre</span><span class="label">Bronchien</span><span class="label">Lungenbläschen</span></p>
+    </div>
+    <div class="station">
+      <strong>Station 2: Bau und Funktion</strong>
+      <p class="mini">Ergänze: „Die Lungenbläschen haben dünne Wände, damit …“</p>
+    </div>
+    <div class="station">
+      <strong>Station 3: Gasaustausch</strong>
+      <p class="mini">Zeichne Pfeile für O₂ und CO₂ an einem Lungenbläschen.</p>
+    </div>
+    <div class="station">
+      <strong>Station 4: Rauchen</strong>
+      <p class="mini">Notiere drei Folgen des Rauchens für die Atmungsorgane.</p>
+    </div>
+  </div>
+
+  <div class="worksheet">
+    <h3>Arbeitsblatt: Kurzantworten</h3>
+    <p><strong>1.</strong> Nenne drei Aufgaben der Nase beim Atmen.</p>
+    <div class="line"></div><div class="line"></div>
+    <p><strong>2.</strong> Erkläre den Begriff „Gasaustausch“.</p>
+    <div class="line"></div><div class="line"></div>
+    <p><strong>3.</strong> Warum ist eine große Oberfläche in der Lunge wichtig?</p>
+    <div class="line"></div><div class="line"></div>
+    <p><strong>4.</strong> Beschreibe den Nachweis von Kohlenstoffdioxid in der Ausatemluft.</p>
+    <div class="line"></div><div class="line"></div>
+    <p><strong>5.</strong> Erkläre, warum Rauchen die Sauerstoffversorgung verschlechtern kann.</p>
+    <div class="line"></div><div class="line"></div>
+  </div>
+
+  <div class="teacher" style="margin-top:16px">
+    <h3>Differenzierung</h3>
+    <div class="grid-2">
+      <div>
+        <h4>Hilfekarte:</h4>
+        <ul>
+          <li>Beginne mit: „Sauerstoff wandert …“</li>
+          <li>Nutze die Wörter: Lungenbläschen, Blut, Kohlenstoffdioxid, Ausatmen.</li>
+          <li>Denke an die dünne Wand zwischen Luft und Blut.</li>
+        </ul>
+      </div>
+      <div>
+        <h4>Zusatzaufgabe:</h4>
+        <p>Vergleiche die Lunge mit dem Dünndarm: Welche Gemeinsamkeit gibt es beim Prinzip der Oberflächenvergrößerung?</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="interaktiv">
+  <h2><span class="badge">11</span>Interaktive Zuordnung</h2>
+  <p>Ziehe die Begriffe zur passenden Erklärung. Danach kannst du deine Lösung prüfen.</p>
+  <div class="drag-zone">
+    <div class="drag-list" id="dragList">
+      <span class="drag-item" draggable="true" data-key="nase">Nase</span>
+      <span class="drag-item" draggable="true" data-key="luftröhre">Luftröhre</span>
+      <span class="drag-item" draggable="true" data-key="alveolen">Lungenbläschen</span>
+      <span class="drag-item" draggable="true" data-key="zwerchfell">Zwerchfell</span>
+      <span class="drag-item" draggable="true" data-key="bronchien">Bronchien</span>
+    </div>
+    <div class="drop-list">
+      <div class="drop-slot" data-accept="nase">reinigt, erwärmt und befeuchtet die Atemluft</div>
+      <div class="drop-slot" data-accept="luftröhre">leitet die Luft und wird durch Knorpelspangen offen gehalten</div>
+      <div class="drop-slot" data-accept="alveolen">hier findet der Gasaustausch statt</div>
+      <div class="drop-slot" data-accept="zwerchfell">wichtiger Atemmuskel unter der Lunge</div>
+      <div class="drop-slot" data-accept="bronchien">verteilen die Luft in der Lunge</div>
+    </div>
+  </div>
+  <div class="controls">
+    <button onclick="checkMatching()">Zuordnung prüfen</button>
+    <button class="ghost" onclick="resetMatching()">Zurücksetzen</button>
+  </div>
+  <p id="matchFeedback" class="feedback"></p>
+</section>
+
+<section id="quiz">
+  <h2><span class="badge">12</span>Quiz zur Selbstkontrolle</h2>
+  <p>Wähle jeweils die richtige Antwort. Du erhältst direkt eine Rückmeldung.</p>
+
+  <div class="quiz-card" data-answer="b">
+    <strong>1. Wo findet der Gasaustausch hauptsächlich statt?</strong>
+    <div class="answers">
+      <button data-choice="a">in der Luftröhre</button>
+      <button data-choice="b">in den Lungenbläschen</button>
+      <button data-choice="c">im Rachen</button>
+    </div>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz-card" data-answer="c">
+    <strong>2. Was nimmt das Blut in der Lunge auf?</strong>
+    <div class="answers">
+      <button data-choice="a">Kohlenstoffdioxid</button>
+      <button data-choice="b">Stickstoff als Hauptnährstoff</button>
+      <button data-choice="c">Sauerstoff</button>
+    </div>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz-card" data-answer="a">
+    <strong>3. Warum gibt es sehr viele Lungenbläschen?</strong>
+    <div class="answers">
+      <button data-choice="a">Sie vergrößern die Oberfläche für den Gasaustausch.</button>
+      <button data-choice="b">Sie machen die Luft kälter.</button>
+      <button data-choice="c">Sie ersetzen die Bronchien.</button>
+    </div>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz-card" data-answer="b">
+    <strong>4. Was zeigt eine Trübung von Kalkwasser beim Hineinpusten?</strong>
+    <div class="answers">
+      <button data-choice="a">Die Ausatemluft enthält keinen Sauerstoff.</button>
+      <button data-choice="b">Die Ausatemluft enthält Kohlenstoffdioxid.</button>
+      <button data-choice="c">Die Ausatemluft enthält nur Wasser.</button>
+    </div>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="quiz-card" data-answer="c">
+    <strong>5. Welche Aussage zum Rauchen ist richtig?</strong>
+    <div class="answers">
+      <button data-choice="a">Rauchen stärkt die Flimmerhärchen.</button>
+      <button data-choice="b">Rauchen vergrößert die gesunde Austauschfläche der Lunge.</button>
+      <button data-choice="c">Rauchen kann die Atemwege und Lungenbläschen schädigen.</button>
+    </div>
+    <p class="feedback"></p>
+  </div>
+
+  <div class="controls">
+    <button onclick="resetQuiz()">Quiz zurücksetzen</button>
+  </div>
+</section>
+
+<section id="sicherung">
+  <h2><span class="badge">13</span>Sicherung: Das Wichtigste in 8 Sätzen</h2>
+  <ol>
+    <li>Die Atmung versorgt den Körper mit Sauerstoff.</li>
+    <li>Beim Ausatmen gibt der Körper Kohlenstoffdioxid und Wasserdampf ab.</li>
+    <li>Die Atemluft gelangt über Nase oder Mund, Rachen, Kehlkopf, Luftröhre und Bronchien zu den Lungenbläschen.</li>
+    <li>Die Nase reinigt, erwärmt und befeuchtet die Luft.</li>
+    <li>In den Lungenbläschen findet der Gasaustausch statt.</li>
+    <li>Sauerstoff wandert aus den Lungenbläschen ins Blut.</li>
+    <li>Kohlenstoffdioxid wandert aus dem Blut in die Lungenbläschen und wird ausgeatmet.</li>
+    <li>Viele kleine Lungenbläschen vergrößern die Oberfläche und ermöglichen einen wirksamen Gasaustausch.</li>
+  </ol>
+</section>
+
+<section id="stundenverlauf">
+  <h2><span class="badge">14</span>Möglicher Stundenverlauf</h2>
+  <div class="grid-2">
+    <div class="card">
+      <h3>Einzelstunde: Gasaustausch</h3>
+      <ol>
+        <li><strong>Einstieg:</strong> Atemluft und Ausatemluft vergleichen.</li>
+        <li><strong>Erarbeitung:</strong> Bau der Lungenbläschen und Weg der Gase.</li>
+        <li><strong>Animation:</strong> Gasaustausch beobachten und beschreiben.</li>
+        <li><strong>Sicherung:</strong> Merksatz und Pfeildiagramm.</li>
+        <li><strong>Übung:</strong> Quiz oder Kurzantworten.</li>
+      </ol>
+    </div>
+    <div class="card">
+      <h3>Doppelstunde: Experimente</h3>
+      <ol>
+        <li><strong>Fragestellung:</strong> Was enthält Ausatemluft?</li>
+        <li><strong>Planung:</strong> Material, Durchführung, Sicherheit.</li>
+        <li><strong>Durchführung:</strong> CO₂- und Wasser-Nachweis.</li>
+        <li><strong>Auswertung:</strong> Beobachtung erklären.</li>
+        <li><strong>Transfer:</strong> Bezug zur Zellatmung und zum Rauchen.</li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section id="druck">
+  <h2><span class="badge">15</span>Druckhinweis</h2>
+  <div class="print-note">
+    <p>Diese Datei kann direkt im Browser geöffnet, über Beamer gezeigt oder ausgedruckt werden. Beim Drucken werden Navigation und Buttons automatisch ausgeblendet.</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  Atmungssystem – Biologie Klasse 7
+</footer>
+
+<script>
+  // Quiz
+  document.querySelectorAll('.quiz-card').forEach(card => {
+    const correct = card.dataset.answer;
+    const buttons = card.querySelectorAll('.answers button');
+    const feedback = card.querySelector('.feedback');
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => {
+          b.disabled = true;
+          if(b.dataset.choice === correct){ b.classList.add('correct'); }
+        });
+        if(btn.dataset.choice === correct){
+          feedback.textContent = 'Richtig!';
+          feedback.style.color = '#2f855a';
+        } else {
+          btn.classList.add('wrong');
+          feedback.textContent = 'Noch nicht richtig. Schau dir die grün markierte Antwort an.';
+          feedback.style.color = '#b83232';
+        }
+      });
+    });
+  });
+
+  function resetQuiz(){
+    document.querySelectorAll('.quiz-card').forEach(card => {
+      card.querySelectorAll('.answers button').forEach(btn => {
+        btn.disabled = false;
+        btn.classList.remove('correct','wrong');
+      });
+      card.querySelector('.feedback').textContent = '';
+    });
+  }
+
+  // Drag and drop
+  let dragged = null;
+  document.querySelectorAll('.drag-item').forEach(item => {
+    item.addEventListener('dragstart', e => {
+      dragged = item;
+      e.dataTransfer.setData('text/plain', item.dataset.key);
+    });
+  });
+
+  document.querySelectorAll('.drop-slot, #dragList').forEach(zone => {
+    zone.addEventListener('dragover', e => e.preventDefault());
+    zone.addEventListener('drop', e => {
+      e.preventDefault();
+      if(dragged){
+        if(zone.classList.contains('drop-slot')){
+          if(zone.querySelector('.drag-item')){
+            document.getElementById('dragList').appendChild(zone.querySelector('.drag-item'));
+          }
+          zone.appendChild(dragged);
+        } else {
+          zone.appendChild(dragged);
+        }
+        dragged = null;
+      }
+    });
+  });
+
+  function checkMatching(){
+    let ok = 0;
+    let total = document.querySelectorAll('.drop-slot').length;
+    document.querySelectorAll('.drop-slot').forEach(slot => {
+      slot.classList.remove('match-ok','match-bad');
+      const item = slot.querySelector('.drag-item');
+      if(item && item.dataset.key === slot.dataset.accept){
+        slot.classList.add('match-ok');
+        ok++;
+      } else {
+        slot.classList.add('match-bad');
+      }
+    });
+    const f = document.getElementById('matchFeedback');
+    if(ok === total){
+      f.textContent = 'Alles richtig zugeordnet!';
+      f.style.color = '#2f855a';
+    } else {
+      f.textContent = ok + ' von ' + total + ' Zuordnungen sind richtig. Verbessere die rot markierten Felder.';
+      f.style.color = '#b83232';
+    }
+  }
+
+  function resetMatching(){
+    const list = document.getElementById('dragList');
+    document.querySelectorAll('.drag-item').forEach(item => list.appendChild(item));
+    document.querySelectorAll('.drop-slot').forEach(slot => slot.classList.remove('match-ok','match-bad'));
+    document.getElementById('matchFeedback').textContent = '';
+  }
+</script>
+</body>
+</html>
