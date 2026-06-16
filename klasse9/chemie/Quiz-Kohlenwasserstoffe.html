@@ -1,0 +1,939 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Kohlenwasserstoffe – interaktives Quiz</title>
+  <style>
+    :root {
+      --bg: #ffffff;
+      --ink: #1f2937;
+      --muted: #6b7280;
+      --line: #d1d5db;
+      --card: #f9fafb;
+      --soft: #eef2ff;
+      --accent: #2563eb;
+      --good: #15803d;
+      --good-bg: #dcfce7;
+      --bad: #b91c1c;
+      --bad-bg: #fee2e2;
+      --warn-bg: #fff7ed;
+      --warn: #c2410c;
+      --shadow: 0 10px 25px rgba(31, 41, 55, 0.10);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+      line-height: 1.5;
+    }
+
+    header {
+      padding: 34px 20px 22px;
+      background: linear-gradient(135deg, #eff6ff 0%, #ffffff 70%);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .wrap {
+      width: min(1080px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(1.75rem, 3vw, 2.7rem);
+      letter-spacing: -0.03em;
+    }
+
+    .subtitle {
+      margin: 0;
+      max-width: 820px;
+      color: var(--muted);
+      font-size: 1.05rem;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+      margin: 20px 0 0;
+    }
+
+    .scorebox {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+      font-weight: 700;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(31, 41, 55, 0.04);
+    }
+
+    .btn {
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-weight: 700;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.08s ease;
+    }
+
+    .btn:hover { box-shadow: 0 5px 14px rgba(37, 99, 235, 0.20); }
+    .btn:active { transform: translateY(1px); }
+
+    main { padding: 22px 0 40px; }
+
+    .section-title {
+      margin: 26px 0 12px;
+      font-size: 1.35rem;
+      border-left: 6px solid var(--accent);
+      padding-left: 10px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    @media (max-width: 820px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card.done::after {
+      content: "🏆";
+      position: absolute;
+      right: 16px;
+      top: 12px;
+      font-size: 1.4rem;
+    }
+
+    .task-kicker {
+      color: var(--accent);
+      font-size: 0.85rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .question {
+      margin: 0 0 13px;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .options {
+      display: grid;
+      gap: 9px;
+    }
+
+    .option {
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      padding: 11px 12px;
+      background: #fff;
+      color: var(--ink);
+      cursor: pointer;
+      font-size: 0.98rem;
+      transition: background 0.1s ease, border-color 0.1s ease, transform 0.08s ease;
+    }
+
+    .option:hover {
+      background: #f3f4f6;
+      transform: translateY(-1px);
+    }
+
+    .option.correct {
+      border-color: var(--good);
+      background: var(--good-bg);
+      color: #064e3b;
+      font-weight: 700;
+    }
+
+    .option.wrong {
+      border-color: var(--bad);
+      background: var(--bad-bg);
+      color: #7f1d1d;
+      font-weight: 700;
+    }
+
+    .feedback {
+      min-height: 28px;
+      margin-top: 11px;
+      padding: 9px 11px;
+      border-radius: 12px;
+      border: 1px dashed var(--line);
+      color: var(--muted);
+      background: #fff;
+      font-size: 0.95rem;
+    }
+
+    .feedback.good {
+      color: var(--good);
+      background: var(--good-bg);
+      border-color: #86efac;
+      font-weight: 700;
+    }
+
+    .feedback.bad {
+      color: var(--bad);
+      background: var(--bad-bg);
+      border-color: #fecaca;
+      font-weight: 700;
+    }
+
+    .feedback.warn {
+      color: var(--warn);
+      background: var(--warn-bg);
+      border-color: #fed7aa;
+      font-weight: 700;
+    }
+
+    .mini-trophy { font-size: 1.05rem; margin-left: 4px; }
+
+    .match-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    @media (max-width: 720px) {
+      .match-grid { grid-template-columns: 1fr; }
+    }
+
+    .match-row {
+      display: grid;
+      grid-template-columns: 120px 1fr;
+      gap: 10px;
+      align-items: center;
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      padding: 10px;
+    }
+
+    .compound-name { font-weight: 800; }
+
+    select, input[type="text"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 11px;
+      padding: 10px 11px;
+      font-size: 1rem;
+      background: #fff;
+      color: var(--ink);
+    }
+
+    select.correct, input.correct {
+      border-color: var(--good);
+      background: var(--good-bg);
+      font-weight: 700;
+    }
+
+    select.wrong, input.wrong {
+      border-color: var(--bad);
+      background: var(--bad-bg);
+      font-weight: 700;
+    }
+
+    .fill-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .fill-item {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      padding: 12px;
+    }
+
+    .hint {
+      display: block;
+      color: var(--muted);
+      font-size: 0.9rem;
+      margin-top: 6px;
+    }
+
+    .drag-list {
+      display: grid;
+      gap: 10px;
+      margin: 10px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .drag-item {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 13px;
+      padding: 12px 14px;
+      cursor: grab;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+
+    .drag-item:active { cursor: grabbing; }
+    .drag-item.dragging { opacity: 0.45; }
+    .drag-item .handle { color: var(--muted); font-weight: 900; }
+
+    .info-box {
+      margin-top: 18px;
+      padding: 14px 16px;
+      border: 1px solid #bfdbfe;
+      background: #eff6ff;
+      border-radius: 16px;
+      color: #1e3a8a;
+    }
+
+    .final-box {
+      margin-top: 22px;
+      padding: 18px;
+      border-radius: 18px;
+      border: 1px solid var(--line);
+      background: #fff;
+      box-shadow: var(--shadow);
+    }
+
+    .trophy-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+      min-height: 28px;
+    }
+
+    .earned-trophy {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 27px;
+      height: 27px;
+      border-radius: 50%;
+      background: #fef3c7;
+      border: 1px solid #fde68a;
+      font-size: 0.95rem;
+    }
+
+    .small-note {
+      font-size: 0.93rem;
+      color: var(--muted);
+      margin: 8px 0 0;
+    }
+
+    .formula {
+      font-family: "Courier New", monospace;
+      font-weight: 800;
+      letter-spacing: 0.01em;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="wrap">
+      <h1>Kohlenwasserstoffe – interaktives Quiz</h1>
+      <p class="subtitle">Bearbeite die Aufgaben. Du erhältst direkt eine Rückmeldung. Bei einer richtigen Lösung erscheint ein kleiner Pokal.</p>
+      <div class="toolbar">
+        <div class="scorebox">
+          <span class="pill">Punkte: <span id="score">0</span>/<span id="total">0</span></span>
+          <span class="pill">Fortschritt: <span id="progressText">0 %</span></span>
+        </div>
+        <button class="btn" id="resetBtn" type="button">Quiz neu mischen</button>
+      </div>
+      <div class="trophy-row" id="trophyRow" aria-label="Gesammelte Pokale"></div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section>
+      <h2 class="section-title">Teil 1: Verstehen und Anwenden</h2>
+      <div class="grid" id="mcContainer"></div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Teil 2: Namen und Summenformeln zuordnen</h2>
+      <div class="card" id="matchingCard">
+        <div class="task-kicker">Zuordnung</div>
+        <p class="question">Ordne jedem Alkan die passende Summenformel zu.</p>
+        <div class="match-grid" id="matchingContainer"></div>
+        <div class="feedback" id="matchingFeedback">Wähle zu jedem Namen eine Formel aus.</div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Teil 3: Lückentext</h2>
+      <div class="card" id="fillCard">
+        <div class="task-kicker">Kurzantworten</div>
+        <p class="question">Fülle die Lücken. Die Eingaben werden automatisch geprüft.</p>
+        <div class="fill-list" id="fillContainer"></div>
+        <div class="feedback" id="fillFeedback">Achte auf die Schreibweise der Formeln. Leerzeichen sind egal.</div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Teil 4: Reihenfolge der homologen Reihe</h2>
+      <div class="card" id="orderCard">
+        <div class="task-kicker">Sortieren</div>
+        <p class="question">Ziehe die Alkane in die richtige Reihenfolge: vom kleinsten zum größeren Molekül.</p>
+        <ul class="drag-list" id="orderList"></ul>
+        <div class="feedback" id="orderFeedback">Ziehe die Felder mit der Maus oder dem Finger an die richtige Position.</div>
+      </div>
+    </section>
+
+    <section>
+      <h2 class="section-title">Teil 5: Reaktionsablauf ordnen</h2>
+      <div class="card" id="reactionCard">
+        <div class="task-kicker">Sortieren</div>
+        <p class="question">Ordne den Ablauf der Bromierung eines Alkans sinnvoll.</p>
+        <ul class="drag-list" id="reactionList"></ul>
+        <div class="feedback" id="reactionFeedback">Bringe die Schritte in eine fachlich sinnvolle Reihenfolge.</div>
+      </div>
+    </section>
+
+    <div class="final-box" id="finalBox">
+      <strong>Gesamtfeedback:</strong>
+      <p id="finalText" class="small-note">Starte mit einer Aufgabe. Deine Auswertung aktualisiert sich automatisch.</p>
+    </div>
+  </main>
+
+  <script>
+    const mcQuestions = [
+      {
+        id: "mc1",
+        topic: "Organische Stoffe",
+        question: "Wann wird ein Stoff in diesem Zusammenhang als organischer Stoff bezeichnet?",
+        options: [
+          { text: "Wenn seine Moleküle Kohlenstoff enthalten.", correct: true, explain: "Richtig: Kohlenstoff ist das typische Kennzeichen organischer Stoffe." },
+          { text: "Wenn er ausschließlich aus Lebewesen gewonnen werden kann.", correct: false, explain: "Das war früher eine naheliegende Vorstellung, ist heute aber zu eng." },
+          { text: "Wenn er beim Erhitzen immer in Erdöl übergeht.", correct: false, explain: "Organische Stoffe können sehr verschieden reagieren; Erdöl entsteht nicht einfach durch kurzes Erhitzen." },
+          { text: "Wenn er aus Kohlenstoff, Wasserstoff, Sauerstoff und Stickstoff zugleich besteht.", correct: false, explain: "Diese Elemente kommen oft vor, aber nicht jeder organische Stoff enthält alle davon." }
+        ]
+      },
+      {
+        id: "mc2",
+        topic: "Kohlenwasserstoffe",
+        question: "Welche Beschreibung passt am besten zu Kohlenwasserstoffen?",
+        options: [
+          { text: "Sie bestehen nur aus Kohlenstoff- und Wasserstoffatomen.", correct: true, explain: "Genau: Kohlenwasserstoffe enthalten nur C und H." },
+          { text: "Sie sind organische Stoffe, die zusätzlich immer Sauerstoff enthalten.", correct: false, explain: "Dann wären es keine reinen Kohlenwasserstoffe mehr." },
+          { text: "Sie sind alle Bestandteile von Benzin und kommen sonst nicht vor.", correct: false, explain: "Einige kommen in Benzin vor, aber Kohlenwasserstoffe gibt es in vielen Zusammenhängen." },
+          { text: "Sie sind Stoffe, die nur als Gase vorkommen.", correct: false, explain: "Methan ist gasförmig, längere Alkane können aber flüssig oder fest sein." }
+        ]
+      },
+      {
+        id: "mc3",
+        topic: "Methan",
+        question: "Welche Aussage beschreibt Methan fachlich richtig?",
+        options: [
+          { text: "Methan ist der einfachste Kohlenwasserstoff und hat die Summenformel CH4.", correct: true, explain: "Richtig: ein C-Atom ist mit vier H-Atomen verbunden." },
+          { text: "Methan enthält zwei Kohlenstoffatome und sechs Wasserstoffatome.", correct: false, explain: "Das beschreibt Ethan mit C2H6." },
+          { text: "Methan enthält neben Kohlenstoff und Wasserstoff auch Sauerstoff.", correct: false, explain: "Ein Kohlenwasserstoff enthält nur C und H." },
+          { text: "Methan ist das erste flüssige Alkan bei normaler Raumtemperatur.", correct: false, explain: "Methan ist unter normalen Bedingungen gasförmig." }
+        ]
+      },
+      {
+        id: "mc4",
+        topic: "Alkane",
+        question: "Was sind Alkane im hier behandelten Sinn?",
+        options: [
+          { text: "Gesättigte Kohlenwasserstoffe mit offenen Ketten.", correct: true, explain: "Richtig: Alkane sind offene Kohlenwasserstoffketten mit nur Einfachbindungen." },
+          { text: "Kohlenwasserstoffe, deren Moleküle immer ringförmig geschlossen sind.", correct: false, explain: "Ringförmige Kohlenwasserstoffe heißen zyklisch; hier geht es um offene Ketten." },
+          { text: "Organische Verbindungen mit mindestens einem Sauerstoffatom.", correct: false, explain: "Alkane bestehen nur aus Kohlenstoff und Wasserstoff." },
+          { text: "Kohlenwasserstoffe, bei denen regelmäßig Wasserstoff fehlt.", correct: false, explain: "Bei Alkanen besitzen die Kohlenstoffatome nur Einfachbindungen; die übrigen Bindungen gehen zu Wasserstoffatomen." }
+        ]
+      },
+      {
+        id: "mc5",
+        topic: "Homologe Reihe",
+        question: "Was bedeutet die schrittweise Erweiterung in der homologen Reihe der Alkane?",
+        options: [
+          { text: "Von einem Glied zum nächsten kommt jeweils eine CH2-Gruppe hinzu.", correct: true, explain: "Genau: Methan, Ethan, Propan usw. unterscheiden sich jeweils um CH2." },
+          { text: "Von einem Glied zum nächsten kommt jeweils ein einzelnes H-Atom hinzu.", correct: false, explain: "Das würde die Wertigkeit des Kohlenstoffs nicht passend abbilden." },
+          { text: "Von einem Glied zum nächsten wird ein Sauerstoffatom eingebaut.", correct: false, explain: "Dann wäre es kein reiner Kohlenwasserstoff mehr." },
+          { text: "Von einem Glied zum nächsten wird die ganze Summenformel verdoppelt.", correct: false, explain: "Die Reihe wächst regelmäßig, aber nicht durch Verdopplung." }
+        ]
+      },
+      {
+        id: "mc6",
+        topic: "Allgemeine Formel",
+        question: "Welche allgemeine Summenformel gilt für Alkane mit offener Kette?",
+        options: [
+          { text: "CnH2n+2", correct: true, explain: "Richtig: Bei n Kohlenstoffatomen ergeben sich 2n + 2 Wasserstoffatome." },
+          { text: "CnH2n", correct: false, explain: "Diese Formel passt nicht zu den hier behandelten offenen Alkanen." },
+          { text: "CnH2n-2", correct: false, explain: "Dabei wären im Vergleich zu Alkanen zu wenige H-Atome vorhanden." },
+          { text: "CnHn+2", correct: false, explain: "Hier würde die Anzahl der H-Atome für Alkane zu niedrig ausfallen." }
+        ]
+      },
+      {
+        id: "mc7",
+        topic: "Summenformel anwenden",
+        question: "Ein offenkettiges Alkan besitzt sechs Kohlenstoffatome. Welche Summenformel ergibt sich?",
+        options: [
+          { text: "C6H14", correct: true, explain: "Richtig: 2 · 6 + 2 = 14, also C6H14." },
+          { text: "C6H12", correct: false, explain: "Das wären zwei H-Atome weniger als bei einem offenen Alkan." },
+          { text: "C5H12", correct: false, explain: "C5H12 gehört zu Pentan, nicht zu Hexan." },
+          { text: "C6H10", correct: false, explain: "Das enthält für ein offenkettiges Alkan deutlich zu wenig Wasserstoff." }
+        ]
+      },
+      {
+        id: "mc8",
+        topic: "Gesättigt",
+        question: "Was meint „gesättigt“ bei einem Alkan am treffendsten?",
+        options: [
+          { text: "Die Kohlenstoffatome besitzen nur Einfachbindungen; freie Bindungen sind mit Wasserstoffatomen besetzt.", correct: true, explain: "Richtig: In Alkanen gibt es nur Einfachbindungen; jedes C-Atom hat insgesamt vier Bindungen, z. B. zu C- oder H-Atomen." },
+          { text: "Das Molekül ist mit Wasser vollgesogen.", correct: false, explain: "Das Wort klingt ähnlich, meint hier aber: keine Doppel- oder Dreifachbindungen im Kohlenwasserstoff." },
+          { text: "Das Molekül kann grundsätzlich keine Reaktionen eingehen.", correct: false, explain: "Alkane können reagieren, zum Beispiel bei einer Substitution." },
+          { text: "Das Molekül enthält genau gleich viele C- und H-Atome.", correct: false, explain: "Bei Alkanen ist die Anzahl der H-Atome größer als die Anzahl der C-Atome." }
+        ]
+      },
+      {
+        id: "mc9",
+        topic: "Substitution",
+        question: "Was geschieht bei der im Film beschriebenen Substitution mit Brom?",
+        options: [
+          { text: "Ein Wasserstoffatom des Alkans wird durch ein Bromatom ersetzt.", correct: true, explain: "Richtig: Substitution bedeutet Ersetzung beziehungsweise Austausch." },
+          { text: "Ein Kohlenstoffatom des Alkans wird durch ein Bromatom ersetzt.", correct: false, explain: "Beim beschriebenen Vorgang wird ein H-Atom ersetzt, nicht das C-Gerüst." },
+          { text: "Brom lagert sich an, ohne dass ein anderes Atom ersetzt wird.", correct: false, explain: "Das wäre eine andere Reaktionsart; hier wird ausdrücklich ersetzt." },
+          { text: "Das Alkan zerfällt vollständig in Kohlenstoff und Wasserstoff.", correct: false, explain: "Bei der Substitution bleibt das Kohlenstoffgerüst im Grundprinzip erhalten." }
+        ]
+      },
+      {
+        id: "mc10",
+        topic: "Brom und Licht",
+        question: "Welche Beobachtung passt zur Reaktion von Hexan mit Brom nach Belichtung?",
+        options: [
+          { text: "Die Bromfarbe wird schwächer, weil Brom verbraucht wird.", correct: true, explain: "Richtig: Die Flüssigkeit wird heller, da Brom in Reaktionsprodukte übergeht." },
+          { text: "Die Flüssigkeit wird dauerhaft kräftiger braun, weil mehr Brom entsteht.", correct: false, explain: "Im Versuch wird Brom verbraucht, nicht neu gebildet." },
+          { text: "Es entsteht ein blauer Niederschlag als Nachweis für Kohlenstoff.", correct: false, explain: "Blauverfärbung passt hier nicht zur Brom-Substitution." },
+          { text: "Ohne Licht läuft die Reaktion im Versuch sofort deutlich sichtbar ab.", correct: false, explain: "Im beschriebenen Versuch ist Licht die Starthilfe." }
+        ]
+      },
+      {
+        id: "mc11",
+        topic: "Erdöl",
+        question: "Welche Aussage beschreibt die Entstehung von Erdöl am besten?",
+        options: [
+          { text: "Aus Überresten kleiner Lebewesen entstanden unter Sedimentdruck über lange Zeit öl- und gasförmige Stoffe.", correct: true, explain: "Richtig: Organische Reste wurden über sehr lange Zeiträume umgewandelt." },
+          { text: "Erdöl entsteht vor allem, wenn Meerwasser direkt mit Sand chemisch reagiert.", correct: false, explain: "Sand und Sedimente spielen eine Rolle als Überdeckung, aber nicht als alleinige Ausgangsstoffe." },
+          { text: "Erdöl ist im Wesentlichen frisch gepresster Pflanzensaft aus heutigen Pflanzen.", correct: false, explain: "Die Entstehung dauert sehr lange und betrifft alte organische Überreste." },
+          { text: "Erdöl bildet sich aus rein anorganischen Mineralien ohne organische Reste.", correct: false, explain: "Im Film wird der organische Ursprung betont." }
+        ]
+      },
+      {
+        id: "mc12",
+        topic: "Erdölprodukte",
+        question: "Welche Stoffe werden als Beispiele für Bestandteile beziehungsweise Produkte aus Erdöl genannt?",
+        options: [
+          { text: "Schweres Heizöl, Dieselöl, Benzin und Flüssiggas.", correct: true, explain: "Richtig: Diese Beispiele werden als gewinnbare Stoffe genannt." },
+          { text: "Nur Methan und reiner Kohlenstoff.", correct: false, explain: "Erdöl ist ein Gemisch aus vielen unterschiedlichen Stoffen." },
+          { text: "Ausschließlich Wasserstoff und Sauerstoff.", correct: false, explain: "Das passt nicht zu Erdöl und Kohlenwasserstoffen." },
+          { text: "Nur Kunststoffe, aber keine Brennstoffe.", correct: false, explain: "Aus Erdöl erhält man auch wichtige Brennstoffe; Kunststoffe sind eher ein weiterer Nutzungsbereich." }
+        ]
+      }
+    ];
+
+    const matchingItems = [
+      { name: "Methan", formula: "CH4" },
+      { name: "Ethan", formula: "C2H6" },
+      { name: "Propan", formula: "C3H8" },
+      { name: "Butan", formula: "C4H10" },
+      { name: "Pentan", formula: "C5H12" },
+      { name: "Hexan", formula: "C6H14" }
+    ];
+
+    const fillItems = [
+      {
+        id: "fill1",
+        label: "Kohlenwasserstoffe bestehen nur aus Kohlenstoff und ________.",
+        answers: ["wasserstoff", "h"],
+        hint: "Gesucht ist das zweite Element neben Kohlenstoff."
+      },
+      {
+        id: "fill2",
+        label: "Von einem Alkan zum nächsten kommt in der homologen Reihe jeweils die Gruppe ________ hinzu.",
+        answers: ["ch2", "ch₂", "-ch2-", "-ch₂-"],
+        hint: "Schreibe die Gruppe als Formel."
+      },
+      {
+        id: "fill3",
+        label: "Butan besitzt die Summenformel ________.",
+        answers: ["c4h10", "c₄h₁₀"],
+        hint: "Nutze die allgemeine Formel der Alkane."
+      },
+      {
+        id: "fill4",
+        label: "Die Namen der Alkane enden typischerweise auf ________.",
+        answers: ["an", "-an"],
+        hint: "Denke an Methan, Ethan, Propan, Butan."
+      }
+    ];
+
+    const correctOrder = ["Methan", "Ethan", "Propan", "Butan", "Pentan", "Hexan"];
+
+    const correctReactionOrder = [
+      "Brom wird durch Licht aktiviert.",
+      "Es entstehen reaktionsfähige Bromteilchen.",
+      "Ein Wasserstoffatom wird aus dem Alkan herausgelöst.",
+      "An der Stelle des Wasserstoffatoms bindet ein Bromatom.",
+      "Brom wird verbraucht; die Bromfarbe wird schwächer."
+    ];
+
+    const completed = new Set();
+    let totalTasks = mcQuestions.length + 4; // multiple choice + matching + fill + order + reaction
+
+    function shuffle(array) {
+      const copy = [...array];
+      for (let i = copy.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function normalizeFormula(value) {
+      return String(value)
+        .toLowerCase()
+        .replaceAll(" ", "")
+        .replaceAll("₀", "0")
+        .replaceAll("₁", "1")
+        .replaceAll("₂", "2")
+        .replaceAll("₃", "3")
+        .replaceAll("₄", "4")
+        .replaceAll("₅", "5")
+        .replaceAll("₆", "6")
+        .replaceAll("₇", "7")
+        .replaceAll("₈", "8")
+        .replaceAll("₉", "9")
+        .replaceAll("–", "-")
+        .replaceAll("—", "-")
+        .trim();
+    }
+
+    function award(id) {
+      if (!completed.has(id)) {
+        completed.add(id);
+        updateScore();
+      }
+    }
+
+    function updateScore() {
+      const score = completed.size;
+      document.getElementById("score").textContent = score;
+      document.getElementById("total").textContent = totalTasks;
+      document.getElementById("progressText").textContent = Math.round((score / totalTasks) * 100) + " %";
+      const trophyRow = document.getElementById("trophyRow");
+      trophyRow.innerHTML = "";
+      for (let i = 0; i < score; i++) {
+        const trophy = document.createElement("span");
+        trophy.className = "earned-trophy";
+        trophy.textContent = "🏆";
+        trophyRow.appendChild(trophy);
+      }
+      const finalText = document.getElementById("finalText");
+      if (score === 0) {
+        finalText.textContent = "Starte mit einer Aufgabe. Deine Auswertung aktualisiert sich automatisch.";
+      } else if (score < Math.ceil(totalTasks * 0.45)) {
+        finalText.textContent = "Du hast schon erste richtige Lösungen. Arbeite weiter besonders an Formeln, homologer Reihe und Substitution.";
+      } else if (score < totalTasks) {
+        finalText.textContent = "Gut unterwegs. Prüfe die noch offenen Aufgaben genau: Oft entscheidet ein einzelnes Atom in der Summenformel.";
+      } else {
+        finalText.innerHTML = "Sehr stark: Alle Aufgaben richtig gelöst! <span class='mini-trophy'>🏆</span>";
+      }
+    }
+
+    function renderMC() {
+      const container = document.getElementById("mcContainer");
+      container.innerHTML = "";
+      shuffle(mcQuestions).forEach((item, index) => {
+        const card = document.createElement("article");
+        card.className = "card";
+        card.id = item.id + "Card";
+
+        const kicker = document.createElement("div");
+        kicker.className = "task-kicker";
+        kicker.textContent = `Aufgabe ${index + 1} · ${item.topic}`;
+
+        const q = document.createElement("p");
+        q.className = "question";
+        q.textContent = item.question;
+
+        const options = document.createElement("div");
+        options.className = "options";
+
+        const feedback = document.createElement("div");
+        feedback.className = "feedback";
+        feedback.textContent = "Wähle eine Antwort aus.";
+
+        shuffle(item.options).forEach(option => {
+          const btn = document.createElement("button");
+          btn.className = "option";
+          btn.type = "button";
+          btn.textContent = option.text;
+          btn.addEventListener("click", () => {
+            options.querySelectorAll(".option").forEach(b => b.classList.remove("correct", "wrong"));
+            if (option.correct) {
+              btn.classList.add("correct");
+              feedback.className = "feedback good";
+              feedback.innerHTML = `${option.explain} <span class="mini-trophy">🏆</span>`;
+              card.classList.add("done");
+              award(item.id);
+            } else {
+              btn.classList.add("wrong");
+              feedback.className = "feedback bad";
+              feedback.textContent = option.explain;
+            }
+          });
+          options.appendChild(btn);
+        });
+
+        card.append(kicker, q, options, feedback);
+        container.appendChild(card);
+      });
+    }
+
+    function renderMatching() {
+      const container = document.getElementById("matchingContainer");
+      const feedback = document.getElementById("matchingFeedback");
+      const card = document.getElementById("matchingCard");
+      container.innerHTML = "";
+      const formulas = shuffle(matchingItems.map(item => item.formula));
+
+      shuffle(matchingItems).forEach(item => {
+        const row = document.createElement("div");
+        row.className = "match-row";
+        const name = document.createElement("span");
+        name.className = "compound-name";
+        name.textContent = item.name;
+        const select = document.createElement("select");
+        select.dataset.correct = item.formula;
+        const empty = document.createElement("option");
+        empty.value = "";
+        empty.textContent = "Formel wählen";
+        select.appendChild(empty);
+        formulas.forEach(formula => {
+          const opt = document.createElement("option");
+          opt.value = formula;
+          opt.textContent = formula;
+          select.appendChild(opt);
+        });
+        select.addEventListener("change", checkMatching);
+        row.append(name, select);
+        container.appendChild(row);
+      });
+
+      feedback.className = "feedback";
+      feedback.textContent = "Wähle zu jedem Namen eine Formel aus.";
+      card.classList.remove("done");
+    }
+
+    function checkMatching() {
+      const selects = [...document.querySelectorAll("#matchingContainer select")];
+      let correct = 0;
+      let answered = 0;
+      selects.forEach(select => {
+        select.classList.remove("correct", "wrong");
+        if (select.value) {
+          answered++;
+          if (select.value === select.dataset.correct) {
+            select.classList.add("correct");
+            correct++;
+          } else {
+            select.classList.add("wrong");
+          }
+        }
+      });
+      const feedback = document.getElementById("matchingFeedback");
+      if (correct === selects.length) {
+        feedback.className = "feedback good";
+        feedback.innerHTML = "Alle Formeln passen. Sehr gut! <span class='mini-trophy'>🏆</span>";
+        document.getElementById("matchingCard").classList.add("done");
+        award("matching");
+      } else if (answered === 0) {
+        feedback.className = "feedback";
+        feedback.textContent = "Wähle zu jedem Namen eine Formel aus.";
+      } else {
+        feedback.className = "feedback warn";
+        feedback.textContent = `${correct} von ${selects.length} Zuordnungen sind richtig.`;
+      }
+    }
+
+    function renderFill() {
+      const container = document.getElementById("fillContainer");
+      container.innerHTML = "";
+      shuffle(fillItems).forEach(item => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "fill-item";
+        const label = document.createElement("label");
+        label.setAttribute("for", item.id);
+        label.innerHTML = item.label;
+        const input = document.createElement("input");
+        input.type = "text";
+        input.id = item.id;
+        input.autocomplete = "off";
+        input.dataset.answers = item.answers.join("|");
+        input.placeholder = "Antwort eingeben";
+        const hint = document.createElement("span");
+        hint.className = "hint";
+        hint.textContent = item.hint;
+        input.addEventListener("input", checkFill);
+        wrapper.append(label, input, hint);
+        container.appendChild(wrapper);
+      });
+      document.getElementById("fillCard").classList.remove("done");
+      const feedback = document.getElementById("fillFeedback");
+      feedback.className = "feedback";
+      feedback.textContent = "Achte auf die Schreibweise der Formeln. Leerzeichen sind egal.";
+    }
+
+    function checkFill() {
+      const inputs = [...document.querySelectorAll("#fillContainer input")];
+      let correct = 0;
+      let answered = 0;
+      inputs.forEach(input => {
+        input.classList.remove("correct", "wrong");
+        const value = normalizeFormula(input.value);
+        const answers = input.dataset.answers.split("|").map(normalizeFormula);
+        if (value.length > 0) {
+          answered++;
+          if (answers.includes(value)) {
+            input.classList.add("correct");
+            correct++;
+          } else {
+            input.classList.add("wrong");
+          }
+        }
+      });
+      const feedback = document.getElementById("fillFeedback");
+      if (correct === inputs.length) {
+        feedback.className = "feedback good";
+        feedback.innerHTML = "Der Lückentext ist vollständig richtig. <span class='mini-trophy'>🏆</span>";
+        document.getElementById("fillCard").classList.add("done");
+        award("fill");
+      } else if (answered === 0) {
+        feedback.className = "feedback";
+        feedback.textContent = "Achte auf die Schreibweise der Formeln. Leerzeichen sind egal.";
+      } else {
+        feedback.className = "feedback warn";
+        feedback.textContent = `${correct} von ${inputs.length} Lücken sind richtig.`;
+      }
+    }
+
+    function setupDragList(listId, items, correctItems, feedbackId, cardId, awardId) {
+      const list = document.getElementById(listId);
+      list.innerHTML = "";
+      shuffle(items).forEach(text => {
+        const li = document.createElement("li");
+        li.className = "drag-item";
+        li.draggable = true;
+        li.innerHTML = `<span>${text}</span><span class="handle">↕</span>`;
+        list.appendChild(li);
+      });
+
+      let dragged = null;
+
+      list.querySelectorAll(".drag-item").forEach(item => {
+        item.addEventListener("dragstart", () => {
+          dragged = item;
+          item.classList.add("dragging");
+        });
+        item.addEventListener("dragend", () => {
+          item.classList.remove("dragging");
+          dragged = null;
+          checkDragList(listId, correctItems, feedbackId, cardId, awardId);
+        });
+      });
+
+      list.addEventListener("dragover", event => {
+        event.preventDefault();
+        const afterElement = getDragAfterElement(list, event.clientY);
+        if (!dragged) return;
+        if (afterElement == null) {
+          list.appendChild(dragged);
+        } else {
+          list.insertBefore(dragged, afterElement);
+        }
+      });
+
+      const feedback = document.getElementById(feedbackId);
+      feedback.className = "feedback";
+      feedback.textContent = listId === "orderList"
+        ? "Ziehe die Felder mit der Maus oder dem Finger an die richtige Position."
+        : "Bringe die Schritte in eine fachlich sinnvolle Reihenfolge.";
+      document.getElementById(cardId).classList.remove("done");
+    }
+
+    function getDragAfterElement(container, y) {
+      const draggableElements = [...container.querySelectorAll(".drag-item:not(.dragging)")];
+      return draggableElements.reduce((closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+          return { offset: offset, element: child };
+        } else {
+          return closest;
+        }
+      }, { offset: Number.NEGATIVE_INFINITY }).element;
+    }
+
+    function checkDragList(listId, correctItems, feedbackId, cardId, awardId) {
+      const current = [...document.querySelectorAll(`#${listId} .drag-item span:first-child`)].map(span => span.textContent);
+      const isCorrect = current.every((value, index) => value === correctItems[index]);
+      const feedback = document.getElementById(feedbackId);
+      if (isCorrect) {
+        feedback.className = "feedback good";
+        feedback.innerHTML = "Die Reihenfolge stimmt. <span class='mini-trophy'>🏆</span>";
+        document.getElementById(cardId).classList.add("done");
+        award(awardId);
+      } else {
+        feedback.className = "feedback warn";
+        feedback.textContent = "Noch nicht ganz richtig. Vergleiche: kleineres Molekül bzw. früherer Reaktionsschritt zuerst.";
+      }
+    }
+
+    function resetQuiz() {
+      completed.clear();
+      renderMC();
+      renderMatching();
+      renderFill();
+      setupDragList("orderList", correctOrder, correctOrder, "orderFeedback", "orderCard", "order");
+      setupDragList("reactionList", correctReactionOrder, correctReactionOrder, "reactionFeedback", "reactionCard", "reaction");
+      updateScore();
+    }
+
+    document.getElementById("resetBtn").addEventListener("click", resetQuiz);
+    resetQuiz();
+  </script>
+</body>
+</html>
