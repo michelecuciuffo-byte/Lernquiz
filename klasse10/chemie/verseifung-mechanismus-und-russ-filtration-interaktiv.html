@@ -1,0 +1,1082 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Mechanismus der Verseifung – schrittweise</title>
+<style>
+  :root{
+    --bg:#f3f7fb;
+    --card:#ffffff;
+    --ink:#142033;
+    --muted:#5d6b7f;
+    --line:#243247;
+    --accent:#d9485f;
+    --accent2:#2563c7;
+    --soft:#edf4ff;
+    --soft2:#fff8df;
+    --green:#168467;
+    --gold:#f2b632;
+    --shadow:0 18px 48px rgba(29,51,84,.11);
+    --radius:26px;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 7% 4%, rgba(37,99,199,.13), transparent 30rem),
+      radial-gradient(circle at 95% 92%, rgba(217,72,95,.11), transparent 28rem),
+      var(--bg);
+    min-height:100vh;
+  }
+  header{
+    max-width:1180px;
+    margin:0 auto;
+    padding:38px 20px 14px;
+  }
+  h1{
+    margin:0 0 8px;
+    font-size:clamp(1.8rem,3.4vw,2.8rem);
+    line-height:1.1;
+    letter-spacing:-.03em;
+  }
+  .eyebrow{
+    display:inline-flex;
+    align-items:center;
+    gap:7px;
+    margin:0 0 11px;
+    padding:6px 10px;
+    border:1px solid rgba(37,99,199,.16);
+    border-radius:999px;
+    color:#234f91;
+    background:rgba(237,244,255,.86);
+    font-size:.78rem;
+    font-weight:800;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+  .eyebrow::before{content:""; width:7px; height:7px; border-radius:50%; background:var(--accent2);}
+  .subtitle{
+    margin:0;
+    color:var(--muted);
+    font-size:1.06rem;
+    max-width:780px;
+    line-height:1.55;
+  }
+  main{
+    max-width:1180px;
+    margin:0 auto;
+    padding:18px 20px 52px;
+  }
+  .layout{
+    display:grid;
+    grid-template-columns:1fr;
+    gap:22px;
+    align-items:start;
+  }
+  .panel, .side-card{
+    background:rgba(255,255,255,.94);
+    border:1px solid rgba(112,135,168,.20);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+  .panel{padding:20px 20px 14px; overflow:hidden;}
+  .side-card{padding:20px; position:static;}
+  .svg-wrap{
+    width:100%;
+    overflow:hidden;
+    border-radius:18px;
+    background:
+      linear-gradient(rgba(37,99,199,.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(37,99,199,.025) 1px, transparent 1px),
+      linear-gradient(180deg, #fff 0%, #f9fcff 100%);
+    background-size:24px 24px,24px 24px,auto;
+    border:1px solid rgba(86,113,151,.18);
+    box-shadow:inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  svg{width:100%; height:auto; display:block;}
+  .bond{stroke:var(--line); stroke-width:2.35; stroke-linecap:round; fill:none;}
+  .thin{stroke-width:1.8;}
+  .double-offset{stroke:var(--line); stroke-width:2.05; stroke-linecap:round;}
+  .atom{
+    font-weight:800;
+    font-size:31px;
+    dominant-baseline:middle;
+    text-anchor:middle;
+    fill:#101827;
+    filter:url(#atomDepth);
+  }
+  .atom.small{font-size:22px; font-weight:700;}
+  .atom.neg{fill:var(--accent2)}
+  .atom.red{fill:var(--accent)}
+  .stereo-wedge{
+    fill:url(#bondWedge);
+    stroke:#243247;
+    stroke-width:.7;
+    filter:url(#bondDepth);
+  }
+  .stereo-back{
+    stroke:#34445a;
+    stroke-width:8;
+    stroke-linecap:butt;
+    stroke-dasharray:2 8;
+    fill:none;
+    filter:url(#bondDepth);
+  }
+  .label{font-size:18px; fill:#475569; font-weight:650;}
+  .caption{font-size:17px; fill:#334155; font-weight:650;}
+  .note{font-size:15px; fill:#64748b;}
+  .charge{font-size:18px; fill:var(--accent2); font-weight:800;}
+  .plus{font-size:30px; font-weight:500; fill:#334155;}
+  .arrow, .curly{
+    fill:none;
+    stroke:var(--accent);
+    stroke-width:2.15;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    marker-end:url(#arrowHead);
+  }
+  .arrow.blue, .curly.blue{stroke:var(--accent2); marker-end:url(#arrowHeadBlue);}
+  .proton{stroke:var(--green); stroke-width:2.15; marker-end:url(#arrowHeadGreen);}
+  .electron-dot{fill:var(--accent2)}
+  .valence-dot{fill:#1e4f96; opacity:.92; pointer-events:none;}
+  .valence-label{
+    font-size:14px;
+    fill:#516176;
+    font-weight:700;
+    letter-spacing:.02em;
+  }
+  .step-layer{
+    opacity:0;
+    transform:translateY(12px);
+    transition:opacity .42s ease, transform .42s ease;
+    pointer-events:none;
+  }
+  .step-layer.visible{
+    opacity:1;
+    transform:translateY(0);
+  }
+  .mechanism-arrow{
+    stroke-dasharray:440;
+    stroke-dashoffset:440;
+  }
+  .mechanism-arrow.animate{
+    animation:drawArrow .85s ease forwards;
+  }
+  @keyframes drawArrow{to{stroke-dashoffset:0}}
+  .pulse{
+    animation:pulse 1.15s ease-in-out infinite alternate;
+  }
+  @keyframes pulse{from{opacity:.48} to{opacity:1}}
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+    justify-content:space-between;
+    padding:16px 2px 2px;
+  }
+  .btns{display:flex; flex-wrap:wrap; gap:10px;}
+  button{
+    border:none;
+    border-radius:999px;
+    padding:11px 17px;
+    font-weight:750;
+    font-size:.96rem;
+    cursor:pointer;
+    color:#fff;
+    background:#17243a;
+    box-shadow:0 8px 20px rgba(15,23,42,.12);
+    transition:transform .15s ease, opacity .15s ease, background .15s ease;
+  }
+  button:hover{transform:translateY(-1px)}
+  button:focus-visible{outline:3px solid rgba(37,99,199,.28); outline-offset:3px}
+  button:disabled{opacity:.38; cursor:not-allowed; transform:none}
+  button.secondary{background:#475569}
+  button.accent{background:var(--accent)}
+  .progress-area{
+    min-width:190px;
+    flex:1;
+    max-width:380px;
+  }
+  .progress-label{
+    display:flex;
+    justify-content:space-between;
+    font-size:.86rem;
+    color:var(--muted);
+    margin-bottom:6px;
+    font-weight:650;
+  }
+  .bar{height:10px; background:#e2e8f0; border-radius:999px; overflow:hidden;}
+  .bar > div{height:100%; width:0%; background:linear-gradient(90deg, var(--accent2), var(--accent)); border-radius:999px; transition:width .25s ease;}
+  .infobox{
+    position:relative;
+    overflow:hidden;
+    display:grid;
+    grid-template-columns:minmax(210px,.75fr) minmax(0,1.55fr);
+    gap:24px;
+    align-items:center;
+    margin-top:16px;
+    border-radius:20px;
+    padding:22px 24px;
+    background:linear-gradient(105deg, #fff7cf 0%, #fffbed 42%, #ffffff 100%);
+    border:1px solid rgba(218,157,17,.36);
+    min-height:164px;
+    box-shadow:0 10px 28px rgba(175,123,10,.10), inset 0 1px 0 #fff;
+  }
+  .infobox::after{
+    content:"";
+    position:absolute;
+    width:220px; height:220px;
+    right:-82px; top:-105px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(255,205,74,.28), transparent 68%);
+    pointer-events:none;
+  }
+  .info-heading{display:flex; align-items:center; gap:15px; position:relative; z-index:1;}
+  .info-body{position:relative; z-index:1; padding-left:24px; border-left:1px solid rgba(185,132,10,.22);}
+  .bulb{
+    width:66px; height:66px; flex:0 0 66px;
+    display:grid; place-items:center;
+    border-radius:20px;
+    background:linear-gradient(145deg,#ffd965,#f4b729);
+    border:1px solid rgba(188,128,0,.18);
+    box-shadow:0 9px 22px rgba(199,139,10,.24), inset 0 1px 0 rgba(255,255,255,.7);
+    font-size:38px;
+    line-height:1;
+  }
+  .infobox h2{
+    margin:0;
+    font-size:1.3rem;
+    letter-spacing:-.01em;
+    line-height:1.2;
+  }
+  .infobox p{margin:0 0 12px; line-height:1.55; font-size:1rem;}
+  .formula{
+    display:inline-block;
+    background:#fff;
+    border:1px solid rgba(100,116,139,.20);
+    padding:10px 12px;
+    border-radius:12px;
+    font-family:"Cambria Math","Times New Roman",serif;
+    font-size:1.08rem;
+    color:#1f3d67;
+    overflow-wrap:anywhere;
+    margin-bottom:0!important;
+  }
+  .mini-title{
+    margin:18px 0 10px;
+    font-size:1rem;
+    color:#334155;
+  }
+  .side-heading{
+    margin:1px 0 15px;
+    font-size:1.08rem;
+    letter-spacing:-.01em;
+  }
+  .steps{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:8px;
+    margin:0;
+    padding:0;
+    list-style:none;
+  }
+  .steps li{
+    display:grid;
+    grid-template-columns:28px 1fr;
+    gap:9px;
+    align-items:start;
+    padding:11px 10px;
+    border-radius:14px;
+    border:1px solid rgba(100,116,139,.16);
+    background:#fff;
+    color:#475569;
+    font-size:.93rem;
+    line-height:1.28;
+    cursor:pointer;
+    transition:background .18s ease, border-color .18s ease, transform .18s ease;
+  }
+  .steps li:hover{transform:translateX(2px); border-color:rgba(37,99,199,.28); background:#f8fbff;}
+  .steps li.active{
+    border-color:rgba(230,57,70,.42);
+    background:linear-gradient(90deg,#fff3f5,#fffafa);
+    color:#111827;
+  }
+  .num{
+    width:26px; height:26px;
+    display:inline-grid;
+    place-items:center;
+    border-radius:50%;
+    background:#e2e8f0;
+    color:#334155;
+    font-weight:800;
+    font-size:.83rem;
+  }
+  li.active .num{background:var(--accent); color:#fff;}
+  details{
+    margin-top:16px;
+    border-radius:16px;
+    padding:12px 14px;
+    background:#fffaf0;
+    border:1px solid rgba(245,158,11,.25);
+    color:#513b12;
+  }
+  summary{cursor:pointer; font-weight:800;}
+  details p{margin:8px 0 0; line-height:1.45;}
+  .footer-note{
+    margin:12px 4px 0;
+    color:var(--muted);
+    font-size:.92rem;
+    line-height:1.4;
+  }
+  .kbd{
+    border:1px solid #cbd5e1;
+    border-bottom-width:2px;
+    border-radius:6px;
+    padding:1px 6px;
+    background:#fff;
+    color:#334155;
+    font-weight:700;
+    font-size:.83rem;
+  }
+  .filter-experiment{
+    margin-top:24px;
+    padding:24px;
+    background:rgba(255,255,255,.96);
+    border:1px solid rgba(112,135,168,.20);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+  .filter-head{
+    display:flex;
+    justify-content:space-between;
+    gap:20px;
+    align-items:flex-end;
+    margin-bottom:18px;
+  }
+  .filter-kicker{
+    margin:0 0 6px;
+    color:var(--green);
+    font-size:.78rem;
+    font-weight:850;
+    letter-spacing:.07em;
+    text-transform:uppercase;
+  }
+  .filter-head h2{margin:0 0 6px; font-size:clamp(1.35rem,2.4vw,1.85rem); letter-spacing:-.02em;}
+  .filter-head p{margin:0; color:var(--muted); line-height:1.5; max-width:780px;}
+  .filter-start{
+    flex:0 0 auto;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    background:linear-gradient(135deg,#0e8063,#075b4a);
+    white-space:nowrap;
+  }
+  .filter-stage{
+    overflow:hidden;
+    border:1px solid #dce6f2;
+    border-radius:22px;
+    background:linear-gradient(180deg,#f8fcff,#f2f8fc);
+  }
+  .filter-stage svg{width:100%; height:auto; min-height:520px;}
+  .apparatus-line{fill:none; stroke:#26364b; stroke-width:4; stroke-linecap:round; stroke-linejoin:round;}
+  .glass-fill{fill:rgba(93,174,226,.20); stroke:none;}
+  .dirty-fill{fill:rgba(71,76,82,.30);}
+  .filter-paper{fill:#fffdf3; stroke:#b6a878; stroke-width:2.4;}
+  .filter-fold{fill:none; stroke:#d4c99f; stroke-width:1.4;}
+  .water-stream{fill:none; stroke:#55b7e9; stroke-width:6; stroke-linecap:round; opacity:.66;}
+  .soot{fill:#202631; stroke:#0c1118; stroke-width:1;}
+  .micelle-ring{fill:rgba(255,182,55,.16); stroke:#ef9d21; stroke-width:2; stroke-dasharray:3 3;}
+  .micelle-core{fill:#202631;}
+  .micelle-head{fill:#57bde9; stroke:#197faf; stroke-width:1;}
+  .demo-title{font-size:25px; font-weight:850; fill:#17243a; text-anchor:middle;}
+  .demo-subtitle{font-size:16px; font-weight:700; fill:#64748b; text-anchor:middle;}
+  .demo-label{font-size:17px; font-weight:800; fill:#34445a; text-anchor:middle;}
+  .result-good{fill:#eaf9f3; stroke:#8dd6bd; stroke-width:1.5;}
+  .result-dirty{fill:#fff4e4; stroke:#efc477; stroke-width:1.5;}
+  .result-text{font-size:16px; font-weight:800; fill:#26364b; text-anchor:middle;}
+  .moving-water,.moving-soot,.moving-micelle{opacity:0; transform-box:fill-box; transform-origin:center;}
+  .filter-stage.running .moving-water{animation:waterPass 5.2s ease-in-out infinite; animation-delay:var(--delay,0s);}
+  .filter-stage.running .moving-soot{animation:sootStops 5.2s ease-in-out infinite; animation-delay:var(--delay,0s);}
+  .filter-stage.running .moving-micelle{animation:micellePass 5.2s ease-in-out infinite; animation-delay:var(--delay,0s);}
+  .filter-stage.running .pour-pulse{animation:pourPulse 1.05s ease-in-out infinite alternate;}
+  .filter-stage.running .left-catch{animation:catchPulse 5.2s ease-in-out infinite;}
+  .filter-stage.running .right-cloud{animation:cloudPulse 5.2s ease-in-out infinite;}
+  @keyframes waterPass{
+    0%,8%{opacity:0; transform:translateY(-78px)}
+    16%{opacity:1}
+    58%{opacity:1; transform:translateY(72px)}
+    82%{opacity:.9; transform:translateY(200px)}
+    100%{opacity:0; transform:translateY(222px)}
+  }
+  @keyframes sootStops{
+    0%,8%{opacity:0; transform:translateY(-74px)}
+    18%{opacity:1}
+    55%,82%{opacity:1; transform:translateY(54px)}
+    100%{opacity:0; transform:translateY(54px)}
+  }
+  @keyframes micellePass{
+    0%,8%{opacity:0; transform:translateY(-76px) rotate(0deg)}
+    18%{opacity:1}
+    58%{opacity:1; transform:translateY(70px) rotate(135deg)}
+    84%{opacity:.95; transform:translateY(200px) rotate(250deg)}
+    100%{opacity:0; transform:translateY(220px) rotate(300deg)}
+  }
+  @keyframes pourPulse{from{opacity:.35} to{opacity:.86}}
+  @keyframes catchPulse{0%,38%{opacity:.2} 58%,88%{opacity:1} 100%{opacity:.2}}
+  @keyframes cloudPulse{0%,52%{opacity:.15} 75%,92%{opacity:.8} 100%{opacity:.15}}
+  .filter-legend{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:10px;
+    margin-top:14px;
+  }
+  .legend-item{display:flex; align-items:center; gap:9px; padding:10px 12px; border-radius:13px; background:#f8fafc; color:#425168; font-size:.9rem; font-weight:700;}
+  .legend-dot{width:13px; height:13px; border-radius:50%; flex:0 0 13px;}
+  .legend-dot.water{background:#55b7e9}.legend-dot.soot-dot{background:#202631}.legend-dot.tensid{background:#ef9d21; box-shadow:0 0 0 4px rgba(239,157,33,.15)}
+  .experiment{
+    margin-top:24px;
+    padding:24px;
+    background:rgba(255,255,255,.95);
+    border:1px solid rgba(112,135,168,.20);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+  }
+  .experiment-head{display:flex; gap:14px; align-items:flex-start; margin-bottom:18px;}
+  .experiment-icon{
+    width:50px; height:50px; flex:0 0 50px;
+    display:grid; place-items:center;
+    border-radius:15px;
+    color:#fff;
+    background:linear-gradient(145deg,var(--accent2),#173d86);
+    font-size:25px;
+  }
+  .experiment h2{margin:0 0 5px; font-size:clamp(1.3rem,2.3vw,1.75rem); letter-spacing:-.02em;}
+  .experiment p{margin:0; color:var(--muted); line-height:1.5;}
+  .video-frame{
+    position:relative;
+    width:100%;
+    aspect-ratio:16/9;
+    overflow:hidden;
+    border-radius:20px;
+    background:#101827;
+    box-shadow:0 14px 32px rgba(15,23,42,.16);
+  }
+  .video-frame iframe{position:absolute; inset:0; width:100%; height:100%; border:0;}
+  .video-link{margin-top:13px!important; font-size:.93rem;}
+  .video-link a{color:var(--accent2); font-weight:750; text-decoration-thickness:1.5px; text-underline-offset:3px;}
+  @media (max-width:960px){
+    .steps{grid-template-columns:repeat(2,minmax(0,1fr));}
+  }
+  @media (max-width:760px){
+    .infobox{grid-template-columns:1fr; gap:17px; align-items:start;}
+    .info-body{padding-left:0; padding-top:16px; border-left:0; border-top:1px solid rgba(185,132,10,.22);}
+    .filter-head{align-items:stretch; flex-direction:column;}
+    .filter-start{align-self:flex-start;}
+    .filter-stage svg{min-width:820px; min-height:0;}
+    .filter-stage{overflow-x:auto;}
+    .filter-legend{grid-template-columns:1fr;}
+  }
+  @media (max-width:620px){
+    header, main{padding-left:12px; padding-right:12px;}
+    .panel, .side-card{border-radius:18px; padding:13px;}
+    .controls{align-items:stretch;}
+    .progress-area{max-width:none; min-width:100%; order:-1;}
+    button{font-size:.92rem; padding:9px 13px;}
+    .infobox{padding:18px;}
+    .bulb{width:56px; height:56px; flex-basis:56px; font-size:32px; border-radius:17px;}
+    .experiment{padding:14px; border-radius:18px;}
+    .experiment-head{gap:11px;}
+    .experiment-icon{width:44px; height:44px; flex-basis:44px;}
+    .video-frame{border-radius:14px;}
+    .steps{grid-template-columns:1fr;}
+    .filter-experiment{padding:14px; border-radius:18px;}
+  }
+</style>
+</head>
+<body>
+<header>
+  <p class="eyebrow">Organische Chemie · interaktiv erklärt</p>
+  <h1>Mechanismus der Verseifung</h1>
+  <p class="subtitle">Basische Esterhydrolyse Schritt für Schritt: Verfolge die Bindungsänderungen und Elektronenverschiebungen in deinem eigenen Tempo.</p>
+</header>
+
+<main>
+  <div class="layout">
+    <section class="panel" aria-label="Interaktiver Mechanismus">
+      <div class="svg-wrap">
+        <svg viewBox="0 0 980 590" role="img" aria-labelledby="svgTitle svgDesc">
+          <title id="svgTitle">Schrittweiser Mechanismus der Verseifung</title>
+          <desc id="svgDesc">Hydroxid greift ein Ester-Carbonyl an, tetraedrisches Intermediat entsteht, Alkoxid verlässt, anschließend Protonenübertragung zu Carboxylat und Alkohol.</desc>
+          <defs>
+            <marker id="arrowHead" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+              <path d="M 0.7 0.7 L 8.3 4.5 L 0.7 8.3 z" fill="#d9485f"></path>
+            </marker>
+            <marker id="arrowHeadBlue" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+              <path d="M 0.7 0.7 L 8.3 4.5 L 0.7 8.3 z" fill="#2563c7"></path>
+            </marker>
+            <marker id="arrowHeadGreen" markerWidth="9" markerHeight="9" refX="8" refY="4.5" orient="auto" markerUnits="userSpaceOnUse">
+              <path d="M 0.7 0.7 L 8.3 4.5 L 0.7 8.3 z" fill="#168467"></path>
+            </marker>
+            <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="10" stdDeviation="10" flood-color="#0f172a" flood-opacity=".08"/>
+            </filter>
+            <filter id="atomDepth" x="-40%" y="-40%" width="180%" height="190%">
+              <feDropShadow dx="1.5" dy="2.4" stdDeviation="1.7" flood-color="#152238" flood-opacity=".28"/>
+            </filter>
+            <filter id="bondDepth" x="-35%" y="-35%" width="180%" height="190%">
+              <feDropShadow dx="1.4" dy="2.2" stdDeviation="1.2" flood-color="#142033" flood-opacity=".24"/>
+            </filter>
+            <linearGradient id="bondWedge" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0%" stop-color="#5e708a"/>
+              <stop offset="55%" stop-color="#314158"/>
+              <stop offset="100%" stop-color="#172338"/>
+            </linearGradient>
+          </defs>
+
+          <!-- Hintergrund-Tafel -->
+          <rect x="24" y="26" width="932" height="538" rx="28" fill="rgba(255,255,255,.94)" stroke="#dbe3ef" stroke-width="1.4" />
+          <text x="55" y="66" class="label">Allgemein: Ester + Hydroxid-Ion → Carboxylat + Alkohol</text>
+          <text x="55" y="92" class="note">R und R′ stehen für organische Reste. Bei Fetten entstehen die Salze langkettiger Fettsäuren: die eigentlichen Seifen.</text>
+
+          <!-- Schritt 0: Überblick -->
+          <g class="step-layer" data-step="0">
+            <rect x="55" y="112" width="870" height="410" rx="26" fill="#fbfdff" stroke="#dce7f5" stroke-width="1.3" />
+            <line x1="75" y1="153" x2="905" y2="153" stroke="#e3ebf6" stroke-width="1" />
+            <text x="75" y="135" class="caption">0. Gesamtreaktion als Valenzstrichformel</text>
+
+            <!-- Ester: R–C(=O)–O–R′ -->
+            <text x="92" y="285" class="atom">R</text>
+            <line x1="119" y1="279" x2="182" y2="279" class="bond" />
+            <text x="210" y="279" class="atom">C</text>
+            <line x1="203" y1="255" x2="203" y2="203" class="bond" />
+            <line x1="218" y1="255" x2="218" y2="203" class="double-offset" />
+            <text x="210" y="178" class="atom red">O</text>
+            <line x1="237" y1="279" x2="292" y2="279" class="bond" />
+            <text x="320" y="279" class="atom red">O</text>
+            <line x1="347" y1="279" x2="400" y2="279" class="bond" />
+            <text x="432" y="279" class="atom">R′</text>
+            <text x="180" y="338" class="valence-label">Ester</text>
+
+            <!-- Hydroxid-Ion mit drei freien Elektronenpaaren -->
+            <text x="151" y="422" class="atom">H</text>
+            <line x1="174" y1="416" x2="215" y2="416" class="bond" />
+            <text x="242" y="416" class="atom neg">O<tspan baseline-shift="super" font-size="16">−</tspan></text>
+            <text x="326" y="422" class="valence-label">Hydroxid-Ion</text>
+
+            <!-- Reaktionspfeil -->
+            <path class="arrow blue" d="M 470 304 C 510 304, 540 304, 580 304" />
+
+            <!-- Carboxylat: R–C(=O)–O⁻ -->
+            <text x="625" y="267" class="atom">R</text>
+            <line x1="651" y1="261" x2="706" y2="261" class="bond" />
+            <text x="734" y="261" class="atom">C</text>
+            <line x1="727" y1="237" x2="727" y2="195" class="bond" />
+            <line x1="742" y1="237" x2="742" y2="195" class="double-offset" />
+            <text x="734" y="171" class="atom red">O</text>
+            <line x1="761" y1="261" x2="813" y2="261" class="bond" />
+            <text x="843" y="261" class="atom neg">O<tspan baseline-shift="super" font-size="16">−</tspan></text>
+            <text x="731" y="317" class="valence-label">Carboxylat-Ion</text>
+
+            <!-- Alkohol: R′–O–H -->
+            <text x="657" y="418" class="atom">R′</text>
+            <line x1="691" y1="412" x2="747" y2="412" class="bond" />
+            <text x="775" y="412" class="atom red">O</text>
+            <line x1="802" y1="412" x2="844" y2="412" class="bond" />
+            <text x="870" y="412" class="atom">H</text>
+            <text x="748" y="469" class="valence-label">Alkohol</text>
+          </g>
+
+          <!-- Gemeinsamer Ausgangsstoff für Schritt 1 -->
+          <g class="step-layer" data-step="1">
+            <rect x="55" y="112" width="870" height="410" rx="26" fill="#fbfdff" stroke="#dce7f5" stroke-width="1.3" />
+            <line x1="75" y1="153" x2="905" y2="153" stroke="#e3ebf6" stroke-width="1" />
+            <text x="75" y="135" class="caption">1. Nukleophiler Angriff</text>
+            <!-- Ester -->
+            <text x="104" y="276" class="atom">R</text>
+            <line x1="130" y1="270" x2="194" y2="270" class="bond" />
+            <text x="222" y="270" class="atom">C</text>
+            <!-- C=O nach oben -->
+            <line x1="214" y1="249" x2="214" y2="188" class="bond" />
+            <line x1="230" y1="249" x2="230" y2="188" class="double-offset" />
+            <text x="222" y="162" class="atom red">O</text>
+            <!-- C-O-R' -->
+            <line x1="247" y1="270" x2="306" y2="270" class="bond" />
+            <text x="334" y="270" class="atom red">O</text>
+            <line x1="360" y1="270" x2="420" y2="270" class="bond" />
+            <text x="454" y="270" class="atom">R′</text>
+            <!-- Hydroxid als vollständige Valenzstrichformel -->
+            <text x="205" y="420" class="atom">H</text>
+            <line x1="229" y1="414" x2="255" y2="414" class="bond" />
+            <text x="282" y="414" class="atom neg">O<tspan baseline-shift="super" font-size="16">−</tspan></text>
+            <!-- Pfeile -->
+            <path class="curly mechanism-arrow" data-arrow-step="1" d="M 276 397 C 300 348, 290 300, 236 276" />
+            <path class="curly mechanism-arrow" data-arrow-step="1" d="M 229 187 C 274 207, 287 158, 245 150" />
+            <text x="342" y="356" class="label">Angriff am δ<tspan baseline-shift="super" font-size="12">+</tspan>-Carbonyl-C</text>
+            <text x="335" y="382" class="note">Die π-Elektronen der C=O-Bindung gehen zum Sauerstoff.</text>
+          </g>
+
+          <!-- Schritt 2: Tetraedrisches Intermediat -->
+          <g class="step-layer" data-step="2">
+            <rect x="55" y="112" width="870" height="410" rx="26" fill="#fbfdff" stroke="#dce7f5" stroke-width="1.3" />
+            <line x1="75" y1="153" x2="905" y2="153" stroke="#e3ebf6" stroke-width="1" />
+            <text x="75" y="135" class="caption">2. Tetraedrisches Intermediat</text>
+            <text x="118" y="290" class="atom">R</text>
+            <line x1="146" y1="284" x2="238" y2="284" class="bond" />
+            <text x="267" y="284" class="atom">C</text>
+            <!-- O- oben -->
+            <line x1="267" y1="256" x2="267" y2="190" class="bond" />
+            <text x="267" y="160" class="atom neg">O<tspan baseline-shift="super" font-size="16">−</tspan></text>
+            <!-- OH kommt mit einem ausgefüllten Keil aus der Zeichenebene heraus -->
+            <path d="M 260 304 L 218 382 L 237 390 Z" class="stereo-wedge" />
+            <text x="210" y="408" class="atom red" data-pairs="tb">O</text>
+            <line x1="182" y1="402" x2="149" y2="402" class="bond" />
+            <text x="123" y="408" class="atom">H</text>
+            <!-- OR' zeigt als gestrichelter Keil hinter die Zeichenebene -->
+            <line x1="292" y1="283" x2="352" y2="250" class="stereo-back" />
+            <text x="384" y="235" class="atom red">O</text>
+            <line x1="409" y1="235" x2="468" y2="235" class="bond" />
+            <text x="500" y="235" class="atom">R′</text>
+            <text x="480" y="330" class="label">Zwischenstufe</text>
+            <text x="480" y="356" class="note">Am C-Atom liegen kurzzeitig vier Einfachbindungen vor.</text>
+            <text x="480" y="382" class="note">Keil: Bindung zeigt nach vorn · gestrichelt: nach hinten</text>
+            <rect x="92" y="460" width="565" height="46" rx="15" fill="#eef2ff" stroke="#c7d2fe" />
+            <text x="112" y="489" class="note">Wichtig: Das negative O kann später wieder eine C=O-Doppelbindung bilden.</text>
+          </g>
+
+          <!-- Schritt 3: Rückbildung der Carbonylgruppe und Abgang -->
+          <g class="step-layer" data-step="3">
+            <rect x="55" y="112" width="870" height="410" rx="26" fill="#fbfdff" stroke="#dce7f5" stroke-width="1.3" />
+            <line x1="75" y1="153" x2="905" y2="153" stroke="#e3ebf6" stroke-width="1" />
+            <text x="75" y="135" class="caption">3. Rückbildung von C=O und Abgang von R′O<tspan baseline-shift="super" font-size="12">−</tspan></text>
+            <!-- Intermediat leicht links -->
+            <text x="95" y="290" class="atom">R</text>
+            <line x1="123" y1="284" x2="216" y2="284" class="bond" />
+            <text x="245" y="284" class="atom">C</text>
+            <line x1="245" y1="256" x2="245" y2="190" class="bond" />
+            <text x="245" y="160" class="atom neg">O<tspan baseline-shift="super" font-size="16">−</tspan></text>
+            <path d="M 238 304 L 196 382 L 215 390 Z" class="stereo-wedge" />
+            <text x="188" y="408" class="atom red" data-pairs="tb">O</text>
+            <line x1="160" y1="402" x2="127" y2="402" class="bond" />
+            <text x="101" y="408" class="atom">H</text>
+            <line x1="270" y1="283" x2="330" y2="250" class="stereo-back" />
+            <text x="362" y="235" class="atom red">O</text>
+            <line x1="387" y1="235" x2="446" y2="235" class="bond" />
+            <text x="478" y="235" class="atom">R′</text>
+            <!-- Pfeile -->
+            <path class="curly mechanism-arrow" data-arrow-step="3" d="M 248 181 C 298 202, 288 250, 256 270" />
+            <path class="curly mechanism-arrow" data-arrow-step="3" d="M 320 255 C 384 296, 445 282, 500 244" />
+            <!-- Produktvorschau -->
+            <path class="arrow blue" d="M 552 284 C 610 284, 645 284, 697 284" />
+            <text x="742" y="258" class="atom small">R–C(=O)–OH</text>
+            <text x="775" y="308" class="plus">+</text>
+            <text x="858" y="308" class="atom small">R′O<tspan baseline-shift="super" font-size="15">−</tspan></text>
+            <text x="559" y="355" class="note">Die Abgangsgruppe ist ein Alkoxid-Ion.</text>
+          </g>
+
+          <!-- Schritt 4: Protonenübertragung -->
+          <g class="step-layer" data-step="4">
+            <rect x="55" y="112" width="870" height="410" rx="26" fill="#fbfdff" stroke="#dce7f5" stroke-width="1.3" />
+            <line x1="75" y1="153" x2="905" y2="153" stroke="#e3ebf6" stroke-width="1" />
+            <text x="75" y="135" class="caption">4. Protonenübertragung</text>
+            <!-- Carbonsäure -->
+            <text x="100" y="310" class="atom">R</text>
+            <line x1="128" y1="304" x2="212" y2="304" class="bond" />
+            <text x="240" y="304" class="atom">C</text>
+            <line x1="233" y1="282" x2="233" y2="220" class="bond" />
+            <line x1="248" y1="282" x2="248" y2="220" class="double-offset" />
+            <text x="240" y="192" class="atom red">O</text>
+            <line x1="265" y1="304" x2="326" y2="304" class="bond" />
+            <text x="355" y="304" class="atom red">O</text>
+            <line x1="380" y1="304" x2="418" y2="304" class="bond" />
+            <text x="444" y="304" class="atom">H</text>
+            <!-- Alkoxid -->
+            <text x="695" y="304" class="atom red">O<tspan baseline-shift="super" font-size="16" fill="#2563eb">−</tspan></text>
+            <line x1="720" y1="304" x2="785" y2="304" class="bond" />
+            <text x="820" y="304" class="atom">R′</text>
+            <text x="575" y="310" class="plus">+</text>
+            <!-- Pfeile Protontransfer -->
+            <path class="curly proton mechanism-arrow" data-arrow-step="4" d="M 690 286 C 628 238, 515 239, 456 291" />
+            <path class="curly blue mechanism-arrow" data-arrow-step="4" d="M 381 296 C 331 270, 317 292, 344 315" />
+            <text x="150" y="408" class="note">R′O<tspan baseline-shift="super" font-size="11">−</tspan> nimmt das Proton der Carbonsäure auf.</text>
+            <text x="150" y="433" class="note">Dadurch entsteht das stabile Carboxylat-Ion.</text>
+          </g>
+
+          <!-- Schritt 5: Endprodukte -->
+          <g class="step-layer" data-step="5">
+            <rect x="55" y="112" width="870" height="410" rx="26" fill="#fbfdff" stroke="#dce7f5" stroke-width="1.3" />
+            <line x1="75" y1="153" x2="905" y2="153" stroke="#e3ebf6" stroke-width="1" />
+            <text x="75" y="135" class="caption">5. Endzustand der Verseifung</text>
+            <!-- Carboxylat Resonanz -->
+            <text x="120" y="318" class="atom">R</text>
+            <line x1="148" y1="312" x2="238" y2="312" class="bond" />
+            <text x="266" y="312" class="atom">C</text>
+            <line x1="259" y1="290" x2="259" y2="225" class="bond" />
+            <line x1="274" y1="290" x2="274" y2="225" class="double-offset" />
+            <text x="266" y="197" class="atom red">O</text>
+            <line x1="292" y1="312" x2="355" y2="312" class="bond" />
+            <text x="386" y="312" class="atom neg">O<tspan baseline-shift="super" font-size="16">−</tspan></text>
+            <text x="460" y="315" class="plus">+</text>
+            <!-- Alkohol -->
+            <text x="580" y="312" class="atom">R′</text>
+            <line x1="610" y1="312" x2="678" y2="312" class="bond" />
+            <text x="707" y="312" class="atom red">O</text>
+            <line x1="730" y1="312" x2="770" y2="312" class="bond" />
+            <text x="796" y="312" class="atom">H</text>
+            <rect x="100" y="418" width="760" height="64" rx="18" fill="#ecfdf5" stroke="#bbf7d0" />
+            <text x="126" y="448" class="label">Ergebnis:</text>
+            <text x="226" y="448" class="atom small">R–COO<tspan baseline-shift="super" font-size="15">−</tspan></text>
+            <text x="342" y="448" class="note">Carboxylat, bei NaOH/KOH als Salz</text>
+            <text x="590" y="448" class="atom small">R′–OH</text>
+            <text x="682" y="448" class="note">Alkohol</text>
+            <text x="126" y="472" class="note">Die Reaktion läuft unter basischen Bedingungen praktisch vollständig weiter, weil die Säure zum Carboxylat deprotoniert wird.</text>
+          </g>
+
+        </svg>
+      </div>
+
+      <div class="infobox" id="infoBox" aria-live="polite">
+        <div class="info-heading">
+          <span class="bulb" aria-hidden="true">💡</span>
+          <h2 id="infoTitle">Start</h2>
+        </div>
+        <div class="info-body">
+          <p id="infoText"></p>
+          <p id="infoFormula" class="formula"></p>
+        </div>
+      </div>
+
+      <div class="controls">
+        <div class="btns">
+          <button id="prevBtn" class="secondary">← Zurück</button>
+          <button id="nextBtn" class="accent">Weiter →</button>
+          <button id="restartBtn" class="secondary">Neu starten</button>
+          <button id="allBtn">Gesamtreaktion</button>
+        </div>
+        <div class="progress-area" aria-label="Fortschritt">
+          <div class="progress-label"><span id="stepText">Schritt 0 von 5</span><span id="shortHint">Start</span></div>
+          <div class="bar"><div id="barFill"></div></div>
+        </div>
+      </div>
+      <p class="footer-note">Tastatur: Mit <span class="kbd">→</span> weiter und mit <span class="kbd">←</span> zurück. Die roten/grünen Pfeile zeigen Elektronen- bzw. Protonenverschiebungen.</p>
+    </section>
+
+    <aside class="side-card" aria-label="Schrittübersicht">
+      <h3 class="mini-title side-heading">Schrittübersicht</h3>
+      <ol class="steps" id="stepList">
+        <li data-jump="0"><span class="num">0</span><span>Überblick über Edukte und Produkte</span></li>
+        <li data-jump="1"><span class="num">1</span><span>OH⁻ greift das Carbonyl-C an</span></li>
+        <li data-jump="2"><span class="num">2</span><span>Tetraedrisches Intermediat entsteht</span></li>
+        <li data-jump="3"><span class="num">3</span><span>C=O bildet sich zurück, R′O⁻ geht ab</span></li>
+        <li data-jump="4"><span class="num">4</span><span>Proton wird auf R′O⁻ übertragen</span></li>
+        <li data-jump="5"><span class="num">5</span><span>Carboxylat und Alkohol liegen vor</span></li>
+      </ol>
+
+      <details>
+        <summary>Merksatz</summary>
+        <p>Bei der Verseifung wird ein Ester im Basischen gespalten. Das Produkt ist nicht die Carbonsäure, sondern ihr Carboxylat-Salz. Deshalb ist die Reaktion deutlich weiter zur Produktseite verschoben.</p>
+      </details>
+    </aside>
+  </div>
+
+  <section class="filter-experiment" aria-labelledby="filterExperimentTitle">
+    <div class="filter-head">
+      <div>
+        <p class="filter-kicker">Animierter Versuch · Eigenschaften von Seifen</p>
+        <h2 id="filterExperimentTitle">Was passiert beim Filtern von Ruß?</h2>
+        <p>Beobachte den Unterschied: Tenside umhüllen die Rußteilchen und transportieren sie als fein verteilte Teilchen mit dem Wasser durch den Filter.</p>
+      </div>
+      <button class="filter-start" id="filterStartBtn" type="button"><span aria-hidden="true">▶</span> Animation starten</button>
+    </div>
+
+    <div class="filter-stage" id="filterStage">
+      <svg id="filterSvg" viewBox="0 0 1100 650" role="img" aria-labelledby="filterSvgTitle filterSvgDesc">
+        <title id="filterSvgTitle">Filtration eines Ruß-Wasser-Gemischs mit und ohne Tensid</title>
+        <desc id="filterSvgDesc">Links bleiben Rußteilchen im Filterpapier hängen, während klares Wasser hindurchläuft. Rechts werden Rußteilchen von Tensiden umhüllt und mit dem Wasser durch den Filter transportiert.</desc>
+        <defs>
+          <linearGradient id="clearWater" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#bdeaff" stop-opacity=".35"/>
+            <stop offset="100%" stop-color="#57bce9" stop-opacity=".55"/>
+          </linearGradient>
+          <linearGradient id="dirtyWater" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#9aa9b2" stop-opacity=".42"/>
+            <stop offset="100%" stop-color="#5d6870" stop-opacity=".58"/>
+          </linearGradient>
+          <filter id="apparatusShadow" x="-20%" y="-20%" width="140%" height="150%">
+            <feDropShadow dx="0" dy="5" stdDeviation="5" flood-color="#26364b" flood-opacity=".13"/>
+          </filter>
+        </defs>
+
+        <rect x="22" y="20" width="516" height="610" rx="24" fill="#ffffff" stroke="#dfe8f3"/>
+        <rect x="562" y="20" width="516" height="610" rx="24" fill="#ffffff" stroke="#dfe8f3"/>
+        <text x="280" y="58" class="demo-title">Ohne Tensid</text>
+        <text x="280" y="83" class="demo-subtitle">Ruß + Wasser</text>
+        <text x="820" y="58" class="demo-title">Mit Tensid</text>
+        <text x="820" y="83" class="demo-subtitle">Ruß + Wasser + Seife</text>
+
+        <!-- Linke Apparatur: Ruß bleibt im Filter -->
+        <g filter="url(#apparatusShadow)">
+          <path d="M 185 105 L 375 105 L 356 176 Q 350 196 326 198 L 228 198 Q 204 196 198 176 Z" fill="#f8fcff" class="apparatus-line"/>
+          <path d="M 201 150 L 359 150 L 352 178 Q 348 188 330 190 L 225 190 Q 210 188 207 178 Z" fill="url(#dirtyWater)" stroke="none"/>
+          <path d="M 152 236 L 408 236 L 310 343 L 310 392 L 272 392 L 272 343 Z" fill="#f7fbff" class="apparatus-line"/>
+          <path d="M 171 246 L 389 246 L 290 334 L 270 334 Z" class="filter-paper"/>
+          <path d="M 190 253 L 284 329 M 229 249 L 287 326 M 370 253 L 294 329 M 331 249 L 291 326" class="filter-fold"/>
+          <path d="M 178 404 L 390 404 L 374 576 Q 371 594 352 596 L 217 596 Q 197 594 194 576 Z" fill="#fbfdff" class="apparatus-line"/>
+          <path d="M 197 491 L 371 491 L 363 574 Q 362 584 348 586 L 221 586 Q 207 584 206 574 Z" fill="url(#clearWater)" stroke="none"/>
+        </g>
+        <path d="M 278 196 C 278 208 280 221 280 234" class="water-stream pour-pulse"/>
+        <text x="280" y="222" class="demo-label">filtrieren</text>
+
+        <!-- Wasser passiert links den Filter -->
+        <circle cx="255" cy="250" r="7" fill="#55b7e9" class="moving-water" style="--delay:0s"/>
+        <circle cx="280" cy="250" r="6" fill="#79cbed" class="moving-water" style="--delay:.55s"/>
+        <circle cx="304" cy="250" r="7" fill="#55b7e9" class="moving-water" style="--delay:1.1s"/>
+        <circle cx="269" cy="250" r="5" fill="#a6ddf5" class="moving-water" style="--delay:1.65s"/>
+
+        <!-- Ruß bewegt sich bis zum Filter und bleibt dort hängen -->
+        <circle cx="245" cy="250" r="7" class="soot moving-soot" style="--delay:.15s"/>
+        <circle cx="274" cy="250" r="9" class="soot moving-soot" style="--delay:.62s"/>
+        <circle cx="305" cy="250" r="6" class="soot moving-soot" style="--delay:1.05s"/>
+        <circle cx="328" cy="250" r="8" class="soot moving-soot" style="--delay:1.48s"/>
+        <g class="left-catch" opacity=".2">
+          <circle cx="252" cy="306" r="8" class="soot"/><circle cx="270" cy="313" r="7" class="soot"/>
+          <circle cx="288" cy="306" r="9" class="soot"/><circle cx="305" cy="312" r="7" class="soot"/>
+          <circle cx="322" cy="302" r="6" class="soot"/>
+        </g>
+        <rect x="149" y="606" width="270" height="34" rx="12" class="result-good"/>
+        <text x="284" y="629" class="result-text">Klares Filtrat · Ruß bleibt hängen</text>
+
+        <!-- Rechte Apparatur: Tensid-Ruß-Teilchen passieren den Filter -->
+        <g filter="url(#apparatusShadow)">
+          <path d="M 725 105 L 915 105 L 896 176 Q 890 196 866 198 L 768 198 Q 744 196 738 176 Z" fill="#f8fcff" class="apparatus-line"/>
+          <path d="M 741 150 L 899 150 L 892 178 Q 888 188 870 190 L 765 190 Q 750 188 747 178 Z" fill="url(#dirtyWater)" stroke="none"/>
+          <path d="M 692 236 L 948 236 L 850 343 L 850 392 L 812 392 L 812 343 Z" fill="#f7fbff" class="apparatus-line"/>
+          <path d="M 711 246 L 929 246 L 830 334 L 810 334 Z" class="filter-paper"/>
+          <path d="M 730 253 L 824 329 M 769 249 L 827 326 M 910 253 L 834 329 M 871 249 L 831 326" class="filter-fold"/>
+          <path d="M 718 404 L 930 404 L 914 576 Q 911 594 892 596 L 757 596 Q 737 594 734 576 Z" fill="#fbfdff" class="apparatus-line"/>
+          <path d="M 737 491 L 911 491 L 903 574 Q 902 584 888 586 L 761 586 Q 747 584 746 574 Z" fill="url(#dirtyWater)" stroke="none"/>
+        </g>
+        <path d="M 818 196 C 818 208 820 221 820 234" class="water-stream pour-pulse"/>
+        <text x="820" y="222" class="demo-label">filtrieren</text>
+
+        <!-- Wasser rechts -->
+        <circle cx="795" cy="250" r="7" fill="#55b7e9" class="moving-water" style="--delay:.1s"/>
+        <circle cx="820" cy="250" r="6" fill="#79cbed" class="moving-water" style="--delay:.7s"/>
+        <circle cx="846" cy="250" r="7" fill="#55b7e9" class="moving-water" style="--delay:1.25s"/>
+
+        <!-- Tensid-Micellen umhüllen Ruß und passieren den Filter -->
+        <g class="moving-micelle" style="--delay:.25s">
+          <circle cx="780" cy="250" r="15" class="micelle-ring"/><circle cx="780" cy="250" r="7" class="micelle-core"/>
+          <circle cx="780" cy="232" r="3.5" class="micelle-head"/><circle cx="798" cy="250" r="3.5" class="micelle-head"/>
+          <circle cx="780" cy="268" r="3.5" class="micelle-head"/><circle cx="762" cy="250" r="3.5" class="micelle-head"/>
+        </g>
+        <g class="moving-micelle" style="--delay:.9s">
+          <circle cx="822" cy="250" r="15" class="micelle-ring"/><circle cx="822" cy="250" r="7" class="micelle-core"/>
+          <circle cx="822" cy="232" r="3.5" class="micelle-head"/><circle cx="840" cy="250" r="3.5" class="micelle-head"/>
+          <circle cx="822" cy="268" r="3.5" class="micelle-head"/><circle cx="804" cy="250" r="3.5" class="micelle-head"/>
+        </g>
+        <g class="moving-micelle" style="--delay:1.48s">
+          <circle cx="858" cy="250" r="14" class="micelle-ring"/><circle cx="858" cy="250" r="6" class="micelle-core"/>
+          <circle cx="858" cy="233" r="3.5" class="micelle-head"/><circle cx="875" cy="250" r="3.5" class="micelle-head"/>
+          <circle cx="858" cy="267" r="3.5" class="micelle-head"/><circle cx="841" cy="250" r="3.5" class="micelle-head"/>
+        </g>
+        <g class="right-cloud" opacity=".15">
+          <circle cx="785" cy="540" r="7" class="soot"/><circle cx="824" cy="525" r="6" class="soot"/><circle cx="864" cy="552" r="8" class="soot"/>
+          <circle cx="770" cy="517" r="4" class="micelle-head"/><circle cx="844" cy="565" r="4" class="micelle-head"/><circle cx="885" cy="521" r="4" class="micelle-head"/>
+        </g>
+        <rect x="689" y="606" width="270" height="34" rx="12" class="result-dirty"/>
+        <text x="824" y="629" class="result-text">Trübes Filtrat · Ruß wird mitgespült</text>
+      </svg>
+    </div>
+
+    <div class="filter-legend" aria-label="Legende">
+      <div class="legend-item"><span class="legend-dot water"></span>Wasser passiert das Filterpapier</div>
+      <div class="legend-item"><span class="legend-dot soot-dot"></span>Freier Ruß bleibt ohne Tensid hängen</div>
+      <div class="legend-item"><span class="legend-dot tensid"></span>Tenside umhüllen Ruß und halten ihn verteilt</div>
+    </div>
+  </section>
+
+  <section class="experiment" aria-labelledby="experimentTitle">
+    <div class="experiment-head">
+      <span class="experiment-icon" aria-hidden="true">▶</span>
+      <div>
+        <h2 id="experimentTitle">Experiment: Wie wird Seife hergestellt?</h2>
+        <p>Im Video siehst du die Verseifung als praktischen Versuch – von den Ausgangsstoffen bis zur fertigen Seife.</p>
+      </div>
+    </div>
+    <div class="video-frame">
+      <iframe
+        src="https://www.youtube-nocookie.com/embed/KRW64fzKK_I"
+        title="Wie wird Seife hergestellt?"
+        loading="lazy"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen></iframe>
+    </div>
+    <p class="video-link">Falls das Video nicht lädt: <a href="https://www.youtube.com/watch?v=KRW64fzKK_I" target="_blank" rel="noopener noreferrer">„Wie wird Seife hergestellt?“ auf YouTube öffnen</a>.</p>
+  </section>
+</main>
+
+<script>
+const steps = [
+  {
+    title: "Start: Was wird gespalten?",
+    text: "Ein Ester reagiert mit Hydroxid-Ionen. Man nennt das basische Esterhydrolyse oder Verseifung. Bei Fetten entstehen Carboxylat-Salze langkettiger Fettsäuren, also Seifen.",
+    formula: "R–C(=O)–O–R′ + OH⁻ → R–COO⁻ + R′–OH",
+    hint: "Überblick"
+  },
+  {
+    title: "1. Nukleophiler Angriff",
+    text: "Das Hydroxid-Ion ist elektronenreich und greift das positiv polarisierte Carbonyl-C-Atom an. Gleichzeitig werden die π-Elektronen der C=O-Doppelbindung auf den Sauerstoff verschoben.",
+    formula: "OH⁻ → C=O  |  π(C=O) → O",
+    hint: "Angriff"
+  },
+  {
+    title: "2. Tetraedrisches Intermediat",
+    text: "Nach dem Angriff ist die Carbonylgruppe kurzzeitig geöffnet. Am ehemaligen Carbonyl-C liegen nun vier Einfachbindungen vor. Der ehemalige Carbonylsauerstoff trägt die negative Ladung.",
+    formula: "R–C(O⁻)(OH)–OR′",
+    hint: "Zwischenstufe"
+  },
+  {
+    title: "3. Abgang der Alkoxygruppe",
+    text: "Das negativ geladene Sauerstoffatom bildet wieder die C=O-Doppelbindung. Dafür muss die C–OR′-Bindung aufbrechen. Es entsteht zunächst eine Carbonsäure und ein Alkoxid-Ion R′O⁻.",
+    formula: "R–C(O⁻)(OH)–OR′ → R–C(=O)–OH + R′O⁻",
+    hint: "Abgang"
+  },
+  {
+    title: "4. Protonenübertragung",
+    text: "Das Alkoxid-Ion ist basisch und nimmt das Proton der Carbonsäure auf. Dadurch entsteht der Alkohol R′OH und das Carboxylat-Ion RCOO⁻.",
+    formula: "R–COOH + R′O⁻ → R–COO⁻ + R′OH",
+    hint: "Protonentransfer"
+  },
+  {
+    title: "5. Endprodukte",
+    text: "Am Ende liegen ein Carboxylat-Ion und ein Alkohol vor. Mit Na⁺ oder K⁺ erhält man das entsprechende Carboxylat-Salz. Bei langkettigen Resten ist das die klassische Seife.",
+    formula: "R–COO⁻ M⁺ + R′–OH",
+    hint: "Produkte"
+  }
+];
+
+let currentStep = 0;
+const maxStep = steps.length - 1;
+const layers = Array.from(document.querySelectorAll('.step-layer'));
+const arrows = Array.from(document.querySelectorAll('.mechanism-arrow'));
+const infoTitle = document.getElementById('infoTitle');
+const infoText = document.getElementById('infoText');
+const infoFormula = document.getElementById('infoFormula');
+const stepText = document.getElementById('stepText');
+const shortHint = document.getElementById('shortHint');
+const barFill = document.getElementById('barFill');
+const prevBtn = document.getElementById('prevBtn');
+const nextBtn = document.getElementById('nextBtn');
+const restartBtn = document.getElementById('restartBtn');
+const allBtn = document.getElementById('allBtn');
+const stepItems = Array.from(document.querySelectorAll('#stepList li'));
+
+// Freie Elektronenpaare ergänzen: zwei Paare am neutralen O,
+// drei Paare am negativ geladenen O. Damit werden echte Valenzstrichformeln sichtbar.
+document.querySelectorAll('.step-layer text.atom').forEach(atom => {
+  const firstText = atom.childNodes[0]?.nodeValue?.trim();
+  if(firstText !== 'O') return;
+
+  const x = Number(atom.getAttribute('x'));
+  const y = Number(atom.getAttribute('y'));
+  const isNegative = atom.classList.contains('neg') || atom.textContent.includes('−');
+  const previousBond = atom.previousElementSibling;
+  let pairAxis = atom.dataset.pairs || 'lr';
+  if(!atom.dataset.pairs && previousBond?.tagName.toLowerCase() === 'line'){
+    const dx = Math.abs(Number(previousBond.getAttribute('x2')) - Number(previousBond.getAttribute('x1')));
+    const dy = Math.abs(Number(previousBond.getAttribute('y2')) - Number(previousBond.getAttribute('y1')));
+    if(dx > dy) pairAxis = 'tb';
+  }
+
+  const pairPositions = pairAxis === 'tb'
+    ? [
+        [[x - 5, y - 23], [x + 5, y - 23]],
+        [[x - 5, y + 23], [x + 5, y + 23]]
+      ]
+    : [
+        [[x - 23, y - 5], [x - 23, y + 5]],
+        [[x + 23, y - 5], [x + 23, y + 5]]
+      ];
+  if(isNegative){
+    pairPositions.push(pairAxis === 'tb'
+      ? [[x + 25, y - 5], [x + 25, y + 5]]
+      : [[x - 5, y - 24], [x + 5, y - 24]]);
+  }
+
+  pairPositions.flat().forEach(([cx, cy]) => {
+    const dot = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    dot.setAttribute('cx', cx);
+    dot.setAttribute('cy', cy);
+    dot.setAttribute('r', '2.7');
+    dot.setAttribute('class', 'valence-dot');
+    dot.setAttribute('aria-hidden', 'true');
+    atom.parentNode.insertBefore(dot, atom);
+  });
+});
+
+function renderStep(step, showAll=false){
+  currentStep = Math.max(0, Math.min(maxStep, step));
+
+  layers.forEach(layer => {
+    const s = Number(layer.dataset.step);
+    const shouldShow = showAll ? true : s === currentStep;
+    layer.classList.toggle('visible', shouldShow);
+  });
+
+  arrows.forEach(arrow => {
+    arrow.classList.remove('animate');
+    const arrowStep = Number(arrow.dataset.arrowStep);
+    if(showAll || arrowStep === currentStep){
+      void arrow.getBoundingClientRect();
+      arrow.classList.add('animate');
+    }
+  });
+
+  const data = steps[currentStep];
+  infoTitle.textContent = showAll ? "Gesamtmechanismus" : data.title;
+  infoText.textContent = showAll
+    ? "Alle Stationen sind sichtbar. Der Mechanismus besteht aus nukleophilem Angriff, tetraedrischer Zwischenstufe, Abgang der Alkoxygruppe und anschließender Protonenübertragung."
+    : data.text;
+  infoFormula.textContent = showAll ? "Ester + OH⁻ → Carboxylat + Alkohol" : data.formula;
+  stepText.textContent = showAll ? "Alle Schritte" : `Schritt ${currentStep} von ${maxStep}`;
+  shortHint.textContent = showAll ? "Gesamtbild" : data.hint;
+  barFill.style.width = showAll ? "100%" : `${(currentStep / maxStep) * 100}%`;
+
+  prevBtn.disabled = currentStep === 0 && !showAll;
+  nextBtn.disabled = currentStep === maxStep && !showAll;
+  stepItems.forEach(item => item.classList.toggle('active', Number(item.dataset.jump) === currentStep && !showAll));
+}
+
+prevBtn.addEventListener('click', () => renderStep(currentStep - 1));
+nextBtn.addEventListener('click', () => renderStep(currentStep + 1));
+restartBtn.addEventListener('click', () => renderStep(0));
+allBtn.addEventListener('click', () => renderStep(0));
+stepItems.forEach(item => item.addEventListener('click', () => renderStep(Number(item.dataset.jump))));
+
+document.addEventListener('keydown', event => {
+  if(event.key === 'ArrowRight') renderStep(currentStep + 1);
+  if(event.key === 'ArrowLeft') renderStep(currentStep - 1);
+});
+
+const filterStage = document.getElementById('filterStage');
+const filterStartBtn = document.getElementById('filterStartBtn');
+
+function restartFilterAnimation(){
+  filterStage.classList.remove('running');
+  void filterStage.offsetWidth;
+  filterStage.classList.add('running');
+  filterStartBtn.innerHTML = '<span aria-hidden="true">↻</span> Animation neu starten';
+}
+
+filterStartBtn.addEventListener('click', restartFilterAnimation);
+
+renderStep(0);
+requestAnimationFrame(restartFilterAnimation);
+</script>
+</body>
+</html>
