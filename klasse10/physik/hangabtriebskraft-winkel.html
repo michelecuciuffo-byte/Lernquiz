@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Hangabtriebskraft und Normalkraft</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.5;
+      margin: 0;
+      background: #f6f8fb;
+      color: #1f2937;
+    }
+    .wrap {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px 50px;
+    }
+    h1, h2 {
+      color: #0f172a;
+    }
+    .card {
+      background: white;
+      border: 1px solid #d8dee9;
+      border-radius: 14px;
+      padding: 18px;
+      margin-bottom: 18px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 18px;
+    }
+    @media (max-width: 900px) {
+      .grid { grid-template-columns: 1fr; }
+    }
+    .formula {
+      background: #f8fafc;
+      border-left: 4px solid #94a3b8;
+      padding: 12px 14px;
+      margin: 12px 0;
+      border-radius: 10px;
+      font-size: 1.05rem;
+    }
+    .controls {
+      display: grid;
+      gap: 14px;
+    }
+    .control-row {
+      display: grid;
+      grid-template-columns: 140px 1fr 70px;
+      align-items: center;
+      gap: 10px;
+    }
+    input[type="range"] {
+      width: 100%;
+    }
+    .valuebox {
+      background: #f8fafc;
+      border: 1px solid #d8dee9;
+      border-radius: 8px;
+      padding: 4px 8px;
+      text-align: center;
+      font-weight: 600;
+    }
+    .mini-note {
+      font-size: 0.95rem;
+      color: #475569;
+    }
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .result {
+      background: #f8fafc;
+      border: 1px solid #d8dee9;
+      border-radius: 10px;
+      padding: 12px;
+    }
+    .result strong {
+      display: block;
+      margin-bottom: 6px;
+    }
+    .big {
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 10px;
+      font-size: 0.95rem;
+    }
+    .legend span {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .dot {
+      width: 12px;
+      height: 3px;
+      display: inline-block;
+      border-radius: 999px;
+    }
+    .dot.blue { background: #2563eb; }
+    .dot.red { background: #dc2626; }
+    .dot.green { background: #16a34a; }
+    .dot.gray { background: #475569; }
+    ul {
+      padding-left: 20px;
+    }
+    .hint {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .center {
+      text-align: center;
+    }
+    svg {
+      width: 100%;
+      height: auto;
+      background: linear-gradient(180deg, #ffffff, #fbfdff);
+      border: 1px solid #d8dee9;
+      border-radius: 12px;
+    }
+    .footer-note {
+      font-size: 0.93rem;
+      color: #475569;
+      margin-top: 10px;
+    }
+    code {
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Hangabtriebskraft, Normalkraft und Winkel</h1>
+
+    <div class="card">
+      <p>
+        Auf einer schiefen Ebene wirkt die <strong>Gewichtskraft</strong> <code>F<sub>G</sub></code> immer senkrecht nach unten.
+        Diese Gewichtskraft kann man in zwei Teile zerlegen:
+      </p>
+      <ul>
+        <li><strong>Hangabtriebskraft</strong> <code>F<sub>H</sub></code>: parallel zur schiefen Ebene, also den Hang hinunter</li>
+        <li><strong>Normalkraft</strong> <code>F<sub>N</sub></code>: senkrecht zur schiefen Ebene</li>
+      </ul>
+      <div class="formula">
+        <strong>Formeln:</strong><br>
+
+        F<sub>G</sub> = m · g<br>
+        F<sub>H</sub> = F<sub>G</sub> · sin(α)<br>
+        F<sub>N</sub> = F<sub>G</sub> · cos(α)
+      </div>
+      <div class="hint">
+        Wichtig: <strong>F<sub>H</sub> und F<sub>N</sub> ergeben zusammen wieder die Gewichtskraft F<sub>G</sub></strong>.
+        Nicht als normale Plusrechnung der Beträge, sondern als <strong>Vektorzerlegung</strong>.
+      </div>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2>Interaktive Skizze</h2>
+        <svg id="scene" viewBox="0 0 760 500" aria-label="Schiefe Ebene mit Kräften">
+          <defs>
+            <marker id="arrowBlue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb"></path>
+            </marker>
+            <marker id="arrowRed" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626"></path>
+            </marker>
+            <marker id="arrowGreen" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a"></path>
+            </marker>
+            <marker id="arrowGray" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569"></path>
+            </marker>
+          </defs>
+
+          <!-- slope -->
+          <line id="slopeLine" x1="110" y1="390" x2="620" y2="390" stroke="#cbd5e1" stroke-width="1.3"></line>
+          <line id="incline" x1="110" y1="390" x2="540" y2="240" stroke="#334155" stroke-width="2"></line>
+
+          <!-- angle arc -->
+          <path id="angleArc" d="" fill="none" stroke="#475569" stroke-width="1.2"></path>
+          <text id="angleText" x="0" y="0" font-size="18" fill="#334155">α = 30°</text>
+
+          <!-- block -->
+          <g id="blockGroup">
+            <polygon id="block" points="0,0 0,0 0,0 0,0" fill="#e2e8f0" stroke="#334155" stroke-width="1.3"></polygon>
+            <circle id="centerPoint" cx="0" cy="0" r="2.8" fill="#0f172a"></circle>
+          </g>
+
+          <!-- force arrows: thin and fine -->
+          <line id="fgArrow" x1="0" y1="0" x2="0" y2="0" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowBlue)"></line>
+          <line id="fhArrow" x1="0" y1="0" x2="0" y2="0" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowRed)"></line>
+          <line id="fnArrow" x1="0" y1="0" x2="0" y2="0" stroke="#16a34a" stroke-width="2" marker-end="url(#arrowGreen)"></line>
+          <line id="sumGuide" x1="0" y1="0" x2="0" y2="0" stroke="#475569" stroke-width="1.2" stroke-dasharray="5 4" marker-end="url(#arrowGray)"></line>
+
+          <!-- labels -->
+          <text id="fgLabel" x="0" y="0" font-size="17" fill="#2563eb">F_G</text>
+          <text id="fhLabel" x="0" y="0" font-size="17" fill="#dc2626">F_H</text>
+          <text id="fnLabel" x="0" y="0" font-size="17" fill="#16a34a">F_N</text>
+          <text id="sumLabel" x="0" y="0" font-size="15" fill="#475569">Vektorsumme</text>
+        </svg>
+
+        <div class="legend">
+          <span><i class="dot blue"></i> Gewichtskraft F<sub>G</sub></span>
+          <span><i class="dot red"></i> Hangabtriebskraft F<sub>H</sub></span>
+          <span><i class="dot green"></i> Normalkraft F<sub>N</sub></span>
+          <span><i class="dot gray"></i> zeigt die Vektorsumme</span>
+        </div>
+        <div class="footer-note">
+          Die Pfeile sind absichtlich <strong>klein und fein</strong> gezeichnet, damit die Skizze übersichtlich bleibt.
+        </div>
+      </div>
+
+      <div class="card">
+        <h2>Winkel verändern</h2>
+        <div class="controls">
+          <div class="control-row">
+            <label for="angle">Winkel α</label>
+            <input id="angle" type="range" min="0" max="80" step="1" value="30">
+            <div class="valuebox"><span id="angleVal">30</span>°</div>
+          </div>
+
+          <div class="control-row">
+            <label for="mass">Masse m</label>
+            <input id="mass" type="range" min="1" max="20" step="1" value="10">
+            <div class="valuebox"><span id="massVal">10</span> kg</div>
+          </div>
+        </div>
+
+        <p class="mini-note">Es wird mit <code>g = 9,81 m/s²</code> gerechnet.</p>
+
+        <div class="result-grid">
+          <div class="result">
+            <strong>Gewichtskraft</strong>
+            <div class="big" id="fgOut">98,10 N</div>
+            <div>F<sub>G</sub> = m · g</div>
+          </div>
+          <div class="result">
+            <strong>Hangabtriebskraft</strong>
+            <div class="big" id="fhOut">49,05 N</div>
+            <div>F<sub>H</sub> = F<sub>G</sub> · sin(α)</div>
+          </div>
+          <div class="result">
+            <strong>Normalkraft</strong>
+            <div class="big" id="fnOut">84,96 N</div>
+            <div>F<sub>N</sub> = F<sub>G</sub> · cos(α)</div>
+          </div>
+          <div class="result">
+            <strong>Zusammenhang</strong>
+            <div class="big" id="checkOut">F_H² + F_N² = F_G²</div>
+            <div>Pythagoras bei der Vektorzerlegung</div>
+          </div>
+        </div>
+
+        <div class="card" style="margin-top:14px; padding:14px;">
+          <h2 style="margin-top:0; font-size:1.15rem;">Was passiert beim Verändern des Winkels?</h2>
+          <ul>
+            <li>Wenn der Winkel <strong>größer</strong> wird, dann wird die <strong>Hangabtriebskraft F<sub>H</sub></strong> größer.</li>
+            <li>Wenn der Winkel <strong>größer</strong> wird, dann wird die <strong>Normalkraft F<sub>N</sub></strong> kleiner.</li>
+            <li>Die <strong>Gewichtskraft F<sub>G</sub></strong> bleibt gleich, solange die Masse gleich bleibt.</li>
+            <li>F<sub>H</sub> und F<sub>N</sub> sind nur zwei Bestandteile derselben Gewichtskraft.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Warum ergeben F<sub>H</sub> und F<sub>N</sub> zusammen wieder F<sub>G</sub>?</h2>
+      <p>
+        Die Gewichtskraft <code>F<sub>G</sub></code> wird in zwei <strong>senkrecht zueinander stehende Richtungen</strong> zerlegt:
+      </p>
+      <ul>
+        <li>eine Richtung <strong>parallel</strong> zur schiefen Ebene → <code>F<sub>H</sub></code></li>
+        <li>eine Richtung <strong>senkrecht</strong> zur schiefen Ebene → <code>F<sub>N</sub></code></li>
+      </ul>
+      <p>
+        Deshalb gilt nicht einfach <code>F<sub>H</sub> + F<sub>N</sub> = F<sub>G</sub></code> bei den reinen Zahlenwerten,
+        sondern nur als <strong>Vektorsumme</strong>. Bei den Beträgen gilt:
+      </p>
+      <div class="formula">
+        F<sub>G</sub><sup>2</sup> = F<sub>H</sub><sup>2</sup> + F<sub>N</sub><sup>2</sup>
+      </div>
+      <p>
+        Das ist genau der Satz des Pythagoras, weil die beiden Teilkräfte rechtwinklig zueinander sind.
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const angleEl = document.getElementById('angle');
+    const massEl = document.getElementById('mass');
+
+    const angleVal = document.getElementById('angleVal');
+    const massVal = document.getElementById('massVal');
+    const fgOut = document.getElementById('fgOut');
+    const fhOut = document.getElementById('fhOut');
+    const fnOut = document.getElementById('fnOut');
+    const checkOut = document.getElementById('checkOut');
+
+    const incline = document.getElementById('incline');
+    const angleArc = document.getElementById('angleArc');
+    const angleText = document.getElementById('angleText');
+    const block = document.getElementById('block');
+    const centerPoint = document.getElementById('centerPoint');
+
+    const fgArrow = document.getElementById('fgArrow');
+    const fhArrow = document.getElementById('fhArrow');
+    const fnArrow = document.getElementById('fnArrow');
+    const sumGuide = document.getElementById('sumGuide');
+    const fgLabel = document.getElementById('fgLabel');
+    const fhLabel = document.getElementById('fhLabel');
+    const fnLabel = document.getElementById('fnLabel');
+    const sumLabel = document.getElementById('sumLabel');
+
+    function round2(x) {
+      return x.toFixed(2).replace('.', ',');
+    }
+
+    function setLine(el, x1, y1, x2, y2) {
+      el.setAttribute('x1', x1);
+      el.setAttribute('y1', y1);
+      el.setAttribute('x2', x2);
+      el.setAttribute('y2', y2);
+    }
+
+    function update() {
+      const deg = Number(angleEl.value);
+      const mass = Number(massEl.value);
+      const rad = deg * Math.PI / 180;
+      const g = 9.81;
+      const FG = mass * g;
+      const FH = FG * Math.sin(rad);
+      const FN = FG * Math.cos(rad);
+
+      angleVal.textContent = deg;
+      massVal.textContent = mass;
+      fgOut.textContent = round2(FG) + ' N';
+      fhOut.textContent = round2(FH) + ' N';
+      fnOut.textContent = round2(FN) + ' N';
+      checkOut.innerHTML = `${round2(FH)}² + ${round2(FN)}² ≈ ${round2(FG)}²`;
+
+      // Geometry
+      const xBase = 110;
+      const yBase = 390;
+      const slopeLen = 470;
+      const xTop = xBase + slopeLen * Math.cos(rad);
+      const yTop = yBase - slopeLen * Math.sin(rad);
+      incline.setAttribute('x1', xBase);
+      incline.setAttribute('y1', yBase);
+      incline.setAttribute('x2', xTop);
+      incline.setAttribute('y2', yTop);
+
+      // Angle arc
+      const rArc = 58;
+      const arcEndX = xBase + rArc * Math.cos(rad);
+      const arcEndY = yBase - rArc * Math.sin(rad);
+      const d = `M ${xBase + rArc} ${yBase} A ${rArc} ${rArc} 0 0 0 ${arcEndX} ${arcEndY}`;
+      angleArc.setAttribute('d', d);
+      angleText.setAttribute('x', xBase + 42);
+      angleText.setAttribute('y', yBase - 18);
+      angleText.textContent = `α = ${deg}°`;
+
+      // Block center on slope
+      const t = 0.57;
+      const cx = xBase + t * (xTop - xBase);
+      const cy = yBase + t * (yTop - yBase);
+
+      // Orthonormal basis
+      const tx = Math.cos(rad);      // tangent uphill
+      const ty = -Math.sin(rad);
+      const nx = Math.sin(rad);      // outward normal
+      const ny = Math.cos(rad);
+
+      // Block rectangle, small, rotated with slope
+      const halfAlong = 24;
+      const halfNormal = 16;
+      const p1 = [cx - halfAlong * tx - halfNormal * nx, cy - halfAlong * ty - halfNormal * ny];
+      const p2 = [cx + halfAlong * tx - halfNormal * nx, cy + halfAlong * ty - halfNormal * ny];
+      const p3 = [cx + halfAlong * tx + halfNormal * nx, cy + halfAlong * ty + halfNormal * ny];
+      const p4 = [cx - halfAlong * tx + halfNormal * nx, cy - halfAlong * ty + halfNormal * ny];
+      block.setAttribute('points', `${p1[0]},${p1[1]} ${p2[0]},${p2[1]} ${p3[0]},${p3[1]} ${p4[0]},${p4[1]}`);
+      centerPoint.setAttribute('cx', cx);
+      centerPoint.setAttribute('cy', cy);
+
+      // Arrow scaling: small and fine
+      const scale = 1.25;
+      const lenFG = Math.min(115, FG / scale);
+      const lenFH = Math.min(115, FH / scale);
+      const lenFN = Math.min(115, FN / scale);
+
+      // FG straight down
+      const fgEndX = cx;
+      const fgEndY = cy + lenFG;
+      setLine(fgArrow, cx, cy, fgEndX, fgEndY);
+      fgLabel.setAttribute('x', fgEndX + 8);
+      fgLabel.setAttribute('y', fgEndY + 2);
+
+      // FH down the slope
+      const fhEndX = cx - lenFH * tx;
+      const fhEndY = cy - lenFH * ty;
+      setLine(fhArrow, cx, cy, fhEndX, fhEndY);
+      fhLabel.setAttribute('x', fhEndX - 12);
+      fhLabel.setAttribute('y', fhEndY + 18);
+
+      // FN into plane-normal direction
+      const fnEndX = cx + lenFN * nx;
+      const fnEndY = cy + lenFN * ny;
+      setLine(fnArrow, cx, cy, fnEndX, fnEndY);
+      fnLabel.setAttribute('x', fnEndX + 8);
+      fnLabel.setAttribute('y', fnEndY);
+
+      // vector sum guide: FH then FN resulting in FG
+      const sumMidX = fhEndX;
+      const sumMidY = fhEndY;
+      const sumEndX = sumMidX + lenFN * nx;
+      const sumEndY = sumMidY + lenFN * ny;
+      setLine(sumGuide, sumMidX, sumMidY, sumEndX, sumEndY);
+      sumLabel.setAttribute('x', (sumMidX + sumEndX) / 2 + 4);
+      sumLabel.setAttribute('y', (sumMidY + sumEndY) / 2 - 6);
+    }
+
+    angleEl.addEventListener('input', update);
+    massEl.addEventListener('input', update);
+    update();
+  </script>
+</body>
+</html>
