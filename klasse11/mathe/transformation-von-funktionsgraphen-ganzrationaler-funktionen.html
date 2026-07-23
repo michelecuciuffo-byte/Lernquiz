@@ -126,6 +126,8 @@
     .parameter-key{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:17px}
     .parameter-key div{background:#f7f8fc;border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:.88rem;color:var(--muted)}
     .parameter-key strong{color:var(--ink);font-size:1rem}
+    .parameter-key ul,.legend ul,.cheat ul{margin:7px 0 0;padding-left:20px}
+    .parameter-key li+li,.legend li+li,.cheat li+li{margin-top:5px}
     .mini-note{font-size:.84rem;color:var(--muted)}
     .swatch{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px}
     .graph-choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}
@@ -215,8 +217,8 @@
     .cheat small{display:block;margin-top:5px;color:#465069}
     .cheat-a{background:var(--coral-soft);border-color:#f1a59c!important}
     .cheat-b{background:var(--blue-soft);border-color:#aebafa!important}
-    .cheat-d{background:var(--yellow-soft);border-color:#ecd078!important}
-    .cheat-e{background:var(--mint-soft);border-color:#91d8bf!important}
+    .cheat-c{background:var(--yellow-soft);border-color:#ecd078!important}
+    .cheat-d{background:var(--mint-soft);border-color:#91d8bf!important}
     @keyframes bulbGlow{
       0%,100%{transform:rotate(-3deg) scale(1);filter:brightness(1)}
       50%{transform:rotate(3deg) scale(1.06);filter:brightness(1.12);box-shadow:0 0 0 9px rgba(255,220,75,.15),0 0 34px rgba(255,190,25,.78)}
@@ -297,7 +299,7 @@
       </div>
       <div class="hero-card">
         <small>Funktionen der Form:</small>
-        <div class="formula">g(x) = a · f(b · (x − d)) + e</div>
+        <div class="formula">g(x) = a · f(b · (x − c)) + d</div>
       </div>
       <svg class="hero-graph" viewBox="0 0 520 330" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
         <defs>
@@ -404,30 +406,30 @@
       </div>
       <div class="normalform">
         <div class="mini-note" style="text-align:center">Normalform zum Ablesen</div>
-        <div class="formula mainformula">g(x) = a · f(b · (x − d)) + e</div>
+        <div class="formula mainformula">g(x) = a · f(b · (x − c)) + d</div>
         <div class="legend">
-          <div><strong style="color:var(--coral)">a</strong>Streckung/Stauchung in y‑Richtung mit Faktor <span class="formula">|a|</span>: <span class="formula">|a| &gt; 1</span> Streckung, <span class="formula">0 &lt; |a| &lt; 1</span> Stauchung; bei <span class="formula">a &lt; 0</span> zusätzlich Spiegelung an der x‑Achse</div>
-          <div><strong style="color:var(--blue)">b</strong>Streckung/Stauchung in x‑Richtung mit Faktor <span class="formula">1/|b|</span>: <span class="formula">|b| &gt; 1</span> Stauchung, <span class="formula">0 &lt; |b| &lt; 1</span> Streckung; bei <span class="formula">b &lt; 0</span> zusätzlich Spiegelung an der y‑Achse</div>
-          <div><strong style="color:#a66500">d</strong>rechts bei <span class="formula">d &gt; 0</span>, links bei <span class="formula">d &lt; 0</span></div>
-          <div><strong style="color:var(--mint)">e</strong>oben bei <span class="formula">e &gt; 0</span>, unten bei <span class="formula">e &lt; 0</span></div>
+          <div><strong style="color:var(--coral)">a</strong><ul><li><span class="formula">|a| &gt; 1</span>: Streckung in y‑Richtung mit Faktor <span class="formula">|a|</span></li><li><span class="formula">0 &lt; |a| &lt; 1</span>: Stauchung in y‑Richtung mit Faktor <span class="formula">|a|</span></li><li><span class="formula">a &lt; 0</span>: zusätzlich Spiegelung an der x‑Achse</li></ul></div>
+          <div><strong style="color:var(--blue)">b</strong><ul><li><span class="formula">|b| &gt; 1</span>: Stauchung in x‑Richtung mit Faktor <span class="formula">1/|b|</span></li><li><span class="formula">0 &lt; |b| &lt; 1</span>: Streckung in x‑Richtung mit Faktor <span class="formula">1/|b|</span></li><li><span class="formula">b &lt; 0</span>: zusätzlich Spiegelung an der y‑Achse</li></ul></div>
+          <div><strong style="color:#a66500">c</strong><ul><li><span class="formula">c &gt; 0</span>: Verschiebung nach rechts</li><li><span class="formula">c &lt; 0</span>: Verschiebung nach links</li></ul></div>
+          <div><strong style="color:var(--mint)">d</strong><ul><li><span class="formula">d &gt; 0</span>: Verschiebung nach oben</li><li><span class="formula">d &lt; 0</span>: Verschiebung nach unten</li></ul></div>
         </div>
       </div>
       <div class="grid">
         <article class="card wide">
           <h3>Parameter-Lupe</h3>
-          <p class="sub">Lies <span class="formula">a, b, d</span> und <span class="formula">e</span> aus der bereits angeglichenen Form ab.</p>
+          <p class="sub">Lies <span class="formula">a, b, c</span> und <span class="formula">d</span> aus der bereits angeglichenen Form ab.</p>
           <div class="taskbox"><div class="formula big-formula" id="paramEquation"></div></div>
           <div class="inputs" style="justify-content:flex-start;flex-wrap:wrap">
             <label>a = <input id="pa" inputmode="decimal"></label>
             <label>b = <input id="pb" inputmode="decimal"></label>
+            <label>c = <input id="pc" inputmode="decimal"></label>
             <label>d = <input id="pd" inputmode="decimal"></label>
-            <label>e = <input id="pe" inputmode="decimal"></label>
           </div>
           <div class="parameter-key">
-            <div><strong>a</strong> bewirkt eine Streckung/Stauchung in y‑Richtung mit Faktor <span class="formula">|a|</span>: <span class="formula">|a| &gt; 1</span> Streckung, <span class="formula">0 &lt; |a| &lt; 1</span> Stauchung. Bei <span class="formula">a &lt; 0</span> kommt die Spiegelung an der x‑Achse hinzu.</div>
-            <div><strong>b</strong> bewirkt eine Streckung/Stauchung in x‑Richtung mit Faktor <span class="formula">1/|b|</span>: <span class="formula">|b| &gt; 1</span> Stauchung, <span class="formula">0 &lt; |b| &lt; 1</span> Streckung. Bei <span class="formula">b &lt; 0</span> kommt die Spiegelung an der y‑Achse hinzu.</div>
-            <div><strong>d</strong> verschiebt nach rechts bei <span class="formula">d &gt; 0</span> und nach links bei <span class="formula">d &lt; 0</span>.</div>
-            <div><strong>e</strong> verschiebt nach oben bei <span class="formula">e &gt; 0</span> und nach unten bei <span class="formula">e &lt; 0</span>.</div>
+            <div><strong>a</strong><ul><li><span class="formula">|a| &gt; 1</span>: y‑Streckung</li><li><span class="formula">0 &lt; |a| &lt; 1</span>: y‑Stauchung</li><li><span class="formula">a &lt; 0</span>: zusätzlich Spiegelung an der x‑Achse</li></ul></div>
+            <div><strong>b</strong><ul><li><span class="formula">|b| &gt; 1</span>: x‑Stauchung mit Faktor <span class="formula">1/|b|</span></li><li><span class="formula">0 &lt; |b| &lt; 1</span>: x‑Streckung mit Faktor <span class="formula">1/|b|</span></li><li><span class="formula">b &lt; 0</span>: zusätzlich Spiegelung an der y‑Achse</li></ul></div>
+            <div><strong>c</strong><ul><li><span class="formula">c &gt; 0</span>: nach rechts</li><li><span class="formula">c &lt; 0</span>: nach links</li></ul></div>
+            <div><strong>d</strong><ul><li><span class="formula">d &gt; 0</span>: nach oben</li><li><span class="formula">d &lt; 0</span>: nach unten</li></ul></div>
           </div>
           <div class="actions"><button class="btn blue" id="paramCheck">Prüfen</button><button class="btn secondary" id="paramNext">Neue Aufgabe</button></div>
           <div class="feedback" id="paramFeedback"></div>
@@ -487,10 +489,10 @@
     <details class="tip-sheet">
       <summary><span class="bulb" aria-hidden="true">💡</span><span class="summary-text">Merkzettel einblenden<small>Die vier Grundbausteine auf einen Blick</small></span></summary>
       <div class="cheat">
-        <div class="cheat-a" data-label="Y-RICHTUNG"><span class="formula">a · f(x)</span><small>y‑Streckung/-Stauchung mit Faktor <span class="formula">|a|</span>; bei <span class="formula">a&lt;0</span> zusätzlich Spiegelung an der x‑Achse</small></div>
-        <div class="cheat-b" data-label="X-RICHTUNG"><span class="formula">f(bx)</span><small>x‑Streckung/-Stauchung mit Faktor <span class="formula">1/|b|</span>; bei <span class="formula">b&lt;0</span> zusätzlich Spiegelung an der y‑Achse</small></div>
-        <div class="cheat-d" data-label="RECHTS · LINKS"><span class="formula">f(x−d)</span><small>Verschiebung um <span class="formula">d</span> nach rechts; bei Plus im Argument nach links</small></div>
-        <div class="cheat-e" data-label="OBEN · UNTEN"><span class="formula">f(x)+e</span><small>Verschiebung um <span class="formula">e</span> nach oben; bei negativem <span class="formula">e</span> nach unten</small></div>
+        <div class="cheat-a" data-label="Y-RICHTUNG"><span class="formula">a · f(x)</span><ul><li><span class="formula">|a| &gt; 1</span>: y‑Streckung</li><li><span class="formula">0 &lt; |a| &lt; 1</span>: y‑Stauchung</li><li><span class="formula">a &lt; 0</span>: zusätzlich Spiegelung an der x‑Achse</li></ul></div>
+        <div class="cheat-b" data-label="X-RICHTUNG"><span class="formula">f(bx)</span><ul><li><span class="formula">|b| &gt; 1</span>: x‑Stauchung mit Faktor <span class="formula">1/|b|</span></li><li><span class="formula">0 &lt; |b| &lt; 1</span>: x‑Streckung mit Faktor <span class="formula">1/|b|</span></li><li><span class="formula">b &lt; 0</span>: zusätzlich Spiegelung an der y‑Achse</li></ul></div>
+        <div class="cheat-c" data-label="RECHTS · LINKS"><span class="formula">f(x−c)</span><ul><li><span class="formula">c &gt; 0</span>: Verschiebung nach rechts</li><li><span class="formula">c &lt; 0</span>: Verschiebung nach links</li></ul></div>
+        <div class="cheat-d" data-label="OBEN · UNTEN"><span class="formula">f(x)+d</span><ul><li><span class="formula">d &gt; 0</span>: Verschiebung nach oben</li><li><span class="formula">d &lt; 0</span>: Verschiebung nach unten</li></ul></div>
       </div>
     </details>
   </main>
@@ -672,19 +674,19 @@
     let param;
     function newParam(){
       do{param=pick(params)}while(param===last.param);last.param=param;$("#paramEquation").textContent=param.text;
-      ["#pa","#pb","#pd","#pe"].forEach(id=>$(id).value="");resetFeedback("#paramFeedback");
+      ["#pa","#pb","#pc","#pd"].forEach(id=>$(id).value="");resetFeedback("#paramFeedback");
     }
     function checkParam(){
-      const got=["#pa","#pb","#pd","#pe"].map(id=>num($(id).value));
+      const got=["#pa","#pb","#pc","#pd"].map(id=>num($(id).value));
       const ok=got.every((v,i)=>Math.abs(v-param.v[i])<1e-8);
-      showFeedback("#paramFeedback",ok,ok?`a=${de(param.v[0])}, b=${de(param.v[1])}, d=${de(param.v[2])}, e=${de(param.v[3])}.`:"Achte besonders darauf: In (x+2) ist d = −2.");
+      showFeedback("#paramFeedback",ok,ok?`a=${de(param.v[0])}, b=${de(param.v[1])}, c=${de(param.v[2])}, d=${de(param.v[3])}.`:"Achte besonders darauf: In (x+2) ist c = −2.");
       if(ok)markSolved("param");
     }
 
     const combos=[
-      {text:"g(x) = −2 · f(0,5 · (x − 3)) + 4",all:["y‑Streckung mit Faktor 2","Spiegelung an der x‑Achse","x‑Streckung mit Faktor 2","3 nach rechts","4 nach oben"],false:["x‑Stauchung mit Faktor 0,5","3 nach links","Spiegelung an der y‑Achse"],expl:"a=−2, b=0,5, d=3 und e=4."},
-      {text:"g(x) = 0,5 · f(−2 · (x + 1)) − 3",all:["y‑Stauchung mit Faktor 0,5","Spiegelung an der y‑Achse","x‑Stauchung mit Faktor 0,5","1 nach links","3 nach unten"],false:["Spiegelung an der x‑Achse","x‑Streckung mit Faktor 2","1 nach rechts"],expl:"a=0,5, b=−2, d=−1 und e=−3."},
-      {text:"g(x) = −f(0,25 · (x + 4)) + 2",all:["Spiegelung an der x‑Achse","x‑Streckung mit Faktor 4","4 nach links","2 nach oben"],false:["Spiegelung an der y‑Achse","x‑Stauchung mit Faktor 0,25","4 nach rechts","2 nach unten"],expl:"a=−1, b=0,25, d=−4 und e=2."}
+      {text:"g(x) = −2 · f(0,5 · (x − 3)) + 4",all:["y‑Streckung mit Faktor 2","Spiegelung an der x‑Achse","x‑Streckung mit Faktor 2","3 nach rechts","4 nach oben"],false:["x‑Stauchung mit Faktor 0,5","3 nach links","Spiegelung an der y‑Achse"],expl:"a=−2, b=0,5, c=3 und d=4."},
+      {text:"g(x) = 0,5 · f(−2 · (x + 1)) − 3",all:["y‑Stauchung mit Faktor 0,5","Spiegelung an der y‑Achse","x‑Stauchung mit Faktor 0,5","1 nach links","3 nach unten"],false:["Spiegelung an der x‑Achse","x‑Streckung mit Faktor 2","1 nach rechts"],expl:"a=0,5, b=−2, c=−1 und d=−3."},
+      {text:"g(x) = −f(0,25 · (x + 4)) + 2",all:["Spiegelung an der x‑Achse","x‑Streckung mit Faktor 4","4 nach links","2 nach oben"],false:["Spiegelung an der y‑Achse","x‑Stauchung mit Faktor 0,25","4 nach rechts","2 nach unten"],expl:"a=−1, b=0,25, c=−4 und d=2."}
     ];
     let combo;
     function newCombo(){
@@ -736,9 +738,9 @@
       {q:`Welche Transformation beschreibt ${eq("g(x)=−f(x)")}?`,a:"Spiegelung an der x‑Achse",w:["Spiegelung an der y‑Achse","1 nach unten","x‑Stauchung"],e:"Das Minus steht vor der ganzen Funktion."},
       {q:`Welcher x‑Faktor gehört zu ${eq("f(0,25x)")}?`,a:"Streckung mit Faktor 4",w:["Stauchung mit Faktor 0,25","Streckung mit Faktor 0,25","Stauchung mit Faktor 4"],e:"1/0,25 = 4."},
       {q:`Gleiche ${eq("4x−12")} an.`,a:"4(x−3)",w:["4(x−12)","4(x+3)","12(x−4)"],e:"4·(−3)=−12."},
-      {q:`Was folgt aus ${eq("g(x)=−3f(x)+2")}?`,a:"x‑Achsen-Spiegelung, y‑Streckung 3, 2 nach oben",w:["y‑Achsen-Spiegelung, x‑Streckung 3, 2 nach oben","x‑Achsen-Spiegelung, y‑Stauchung ⅓, 2 nach unten","nur y‑Streckung 3"],e:"a=−3 und e=2."},
+      {q:`Was folgt aus ${eq("g(x)=−3f(x)+2")}?`,a:"x‑Achsen-Spiegelung, y‑Streckung 3, 2 nach oben",w:["y‑Achsen-Spiegelung, x‑Streckung 3, 2 nach oben","x‑Achsen-Spiegelung, y‑Stauchung ⅓, 2 nach unten","nur y‑Streckung 3"],e:"a=−3 und d=2."},
       {q:`Welche Gleichung bedeutet: x‑Streckung 2 und 3 nach rechts?`,a:"g(x)=f(0,5(x−3))",w:["g(x)=f(2(x−3))","g(x)=f(0,5(x+3))","g(x)=2f(x−3)"],e:"x‑Streckung 2 → b=0,5; rechts 3 → x−3."},
-      {q:`Lies d aus ${eq("f(2(x+4))")} ab.`,a:"d = −4",w:["d = 4","d = 8","d = −8"],e:"x+4 = x−(−4)."},
+      {q:`Lies c aus ${eq("f(2(x+4))")} ab.`,a:"c = −4",w:["c = 4","c = 8","c = −8"],e:"x+4 = x−(−4)."},
       {q:`Ein Punkt (2 | −3) wird an der y‑Achse gespiegelt. Neuer Punkt?`,a:"(−2 | −3)",w:["(2 | 3)","(−2 | 3)","(2 | −3)"],e:"Nur x wechselt das Vorzeichen."}
     ];
     let qScore=0,qTotal=0,qActive=false,quizMissed=false;
@@ -771,7 +773,7 @@
     let resizeTimer;
     window.addEventListener("resize",()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(redrawGraphChoices,120)});
     ["#pointX","#pointY"].forEach(id=>$(id).addEventListener("keydown",e=>{if(e.key==="Enter")checkPoint()}));
-    ["#pa","#pb","#pd","#pe"].forEach(id=>$(id).addEventListener("keydown",e=>{if(e.key==="Enter")checkParam()}));
+    ["#pa","#pb","#pc","#pd"].forEach(id=>$(id).addEventListener("keydown",e=>{if(e.key==="Enter")checkParam()}));
 
     newScan();newBuild();newPoint();newGraph();newParam();newCombo();newSequence();newError();resetQuiz();
     const magnifier=`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 5 5"></path></svg>`;
