@@ -1,0 +1,815 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Transformationen von Funktionsgraphen – Interaktive Übungen</title>
+  <style>
+    :root{
+      --ink:#17223b; --muted:#5e6881; --paper:#fffdf8; --line:#dfe4ee;
+      --blue:#4b66f2; --blue-soft:#edf0ff; --coral:#ef6a5b; --coral-soft:#fff0ec;
+      --mint:#24a879; --mint-soft:#e9f8f2; --yellow:#f3bd3d; --yellow-soft:#fff7db;
+      --violet:#8c5de7; --violet-soft:#f2edff; --shadow:0 14px 35px rgba(34,47,82,.10);
+      --radius:22px;
+    }
+    *{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    body{
+      margin:0; color:var(--ink); background:
+        radial-gradient(circle at 7% 3%, rgba(75,102,242,.10), transparent 24rem),
+        radial-gradient(circle at 96% 10%, rgba(239,106,91,.10), transparent 25rem),
+        #f7f8fc;
+      font-family:Inter, ui-rounded, "Segoe UI", system-ui, sans-serif;
+      line-height:1.55;
+    }
+    button,input{font:inherit}
+    button{color:inherit}
+    .shell{width:min(1180px,calc(100% - 32px));margin:auto}
+    header{padding:34px 0 22px}
+    .topline{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:22px}
+    .brand{display:flex;align-items:center;gap:11px;font-weight:850;letter-spacing:-.02em}
+    .logo{
+      width:42px;height:42px;border-radius:14px;display:grid;place-items:center;
+      color:#fff;background:linear-gradient(145deg,var(--blue),var(--violet));box-shadow:0 8px 20px rgba(75,102,242,.25)
+    }
+    .progress-wrap{display:flex;align-items:center;gap:10px;color:var(--muted);font-size:.9rem}
+    .progress{width:170px;height:9px;border-radius:99px;background:#e5e8f1;overflow:hidden}
+    .progress>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue),var(--mint));transition:.4s}
+    .hero{
+      position:relative;overflow:hidden;background:var(--paper);border:1px solid rgba(23,34,59,.08);
+      border-radius:30px;padding:clamp(28px,5vw,58px);box-shadow:var(--shadow);
+      display:grid;grid-template-columns:1.2fr .8fr;gap:38px;align-items:center
+    }
+    .hero-graph{
+      position:absolute;right:-18px;top:0;width:51%;height:100%;z-index:0;pointer-events:none;
+      opacity:.46
+    }
+    .hero-graph .gridline{stroke:#cfd6ee;stroke-width:1}
+    .hero-graph .axis{stroke:#9da9cd;stroke-width:1.6}
+    .hero-graph .curve{fill:none;stroke:url(#curveGradient);stroke-width:8;stroke-linecap:round;filter:url(#curveGlow)}
+    .hero-graph .curve-soft{fill:none;stroke:#e8dcff;stroke-width:20;stroke-linecap:round;opacity:.48}
+    .hero-graph .point{fill:#fff;stroke:#7658df;stroke-width:4}
+    .hero>div:not(.hero-graph){position:relative;z-index:1}
+    .eyebrow{font-size:.78rem;font-weight:850;letter-spacing:.13em;text-transform:uppercase;color:var(--blue)}
+    h1{font-size:clamp(2.15rem,5vw,4.2rem);line-height:1.02;letter-spacing:-.055em;margin:.35rem 0 1rem}
+    .lead{font-size:clamp(1rem,1.8vw,1.18rem);color:var(--muted);max-width:690px;margin:0}
+    .hero-card{
+      z-index:1;background:linear-gradient(145deg,#202d52,#10182c);color:#fff;border-radius:24px;
+      padding:25px;transform:rotate(1.5deg);box-shadow:0 20px 35px rgba(16,24,44,.24)
+    }
+    .hero-card .formula{font-size:clamp(1rem,2vw,1.45rem);font-weight:800;margin:14px 0;white-space:nowrap}
+    .hero-card small{color:#cbd3ed}
+    .route{
+      display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:17px
+    }
+    .route a{
+      text-decoration:none;color:var(--ink);background:#fff;border:1px solid var(--line);border-radius:16px;
+      padding:14px;display:flex;gap:10px;align-items:center;font-weight:750;box-shadow:0 5px 14px rgba(30,44,75,.05)
+    }
+    .route .num{width:28px;height:28px;border-radius:9px;display:grid;place-items:center;background:var(--blue-soft);color:var(--blue)}
+    main{padding:18px 0 70px}
+    section{scroll-margin-top:20px;margin-top:54px}
+    .section-head{display:flex;align-items:end;justify-content:space-between;gap:20px;margin-bottom:18px}
+    .section-head h2{font-size:clamp(1.65rem,3vw,2.35rem);letter-spacing:-.04em;margin:.2rem 0}
+    .section-head p{margin:0;color:var(--muted);max-width:650px}
+    .tag{display:inline-flex;align-items:center;gap:8px;border-radius:99px;padding:7px 11px;font-weight:800;font-size:.78rem;background:var(--mint-soft);color:#137252}
+    .grid{display:grid;grid-template-columns:repeat(12,1fr);gap:18px}
+    .card{
+      position:relative;grid-column:span 6;background:rgba(255,255,255,.94);border:1px solid rgba(23,34,59,.09);
+      border-radius:var(--radius);padding:clamp(20px,3vw,28px);box-shadow:0 8px 26px rgba(34,47,82,.065)
+    }
+    .card.wide{grid-column:1/-1}
+    .card.third{grid-column:span 4}
+    .card h3{font-size:1.2rem;margin:0 0 5px;letter-spacing:-.02em;padding-right:42px}
+    .card .sub{color:var(--muted);font-size:.93rem;margin:0 0 18px}
+    .taskbox{background:#f7f8fc;border:1px solid var(--line);border-radius:17px;padding:17px;margin:14px 0}
+    .formula{
+      font-family:"Cambria Math",Cambria,Georgia,serif;font-size:1.16em;letter-spacing:.01em;
+      font-variant-numeric:lining-nums
+    }
+    .big-formula{font-size:clamp(1.15rem,2.2vw,1.45rem);font-weight:700}
+    .choices{display:grid;gap:9px;margin-top:14px}
+    .choice{
+      width:100%;text-align:left;background:#fff;border:1.5px solid var(--line);border-radius:13px;
+      padding:12px 14px;cursor:pointer;transition:.17s
+    }
+    .choice:hover,.choice:focus-visible{border-color:var(--blue);transform:translateY(-1px);outline:none}
+    .choice.correct{background:var(--mint-soft);border-color:var(--mint);color:#0d6548}
+    .choice.wrong{background:var(--coral-soft);border-color:var(--coral);color:#a13d32}
+    .choice:disabled{cursor:default;transform:none}
+    .actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:15px}
+    .btn{
+      border:0;border-radius:12px;padding:10px 14px;font-weight:800;cursor:pointer;
+      background:var(--ink);color:#fff;box-shadow:0 5px 13px rgba(23,34,59,.16)
+    }
+    .btn.secondary{background:#fff;color:var(--ink);border:1px solid var(--line);box-shadow:none}
+    .btn.blue{background:var(--blue)}
+    .feedback{display:none;margin-top:13px;padding:12px 14px;border-radius:13px;font-size:.92rem}
+    .feedback.show{display:block}
+    .feedback.ok{background:var(--mint-soft);color:#11694c}
+    .feedback.no{background:var(--coral-soft);color:#963c32}
+    .feedback.hint{background:var(--yellow-soft);color:#77570e}
+    .feedback-icon{
+      width:25px;height:25px;margin-right:7px;border-radius:8px;display:inline-grid;place-items:center;
+      vertical-align:middle;background:rgba(255,255,255,.72);font-size:.95rem;
+      font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif
+    }
+    .feedback-icon.trophy{animation:trophyFlash .85s ease-out 2}
+    .feedback-lead{font-weight:900;margin-right:3px}
+    .point-row{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:12px;margin:15px 0}
+    .point{background:#fff;border:1px solid var(--line);border-radius:13px;padding:13px;text-align:center}
+    .arrow{font-size:1.5rem;color:var(--blue);font-weight:900}
+    .inputs{display:flex;justify-content:center;align-items:center;gap:7px}
+    .inputs input{
+      width:68px;border:1.5px solid #cfd5e2;border-radius:9px;padding:8px;text-align:center;background:#fff
+    }
+    .parameter-key{display:grid;grid-template-columns:repeat(2,1fr);gap:9px;margin-top:17px}
+    .parameter-key div{background:#f7f8fc;border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:.88rem;color:var(--muted)}
+    .parameter-key strong{color:var(--ink);font-size:1rem}
+    .mini-note{font-size:.84rem;color:var(--muted)}
+    .swatch{width:10px;height:10px;border-radius:50%;display:inline-block;margin-right:5px}
+    .graph-choices{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:15px}
+    .graph-option{padding:8px;border:2px solid var(--line);border-radius:15px;background:#fff;cursor:pointer;position:relative}
+    .graph-option:hover{border-color:var(--blue)}
+    .graph-option.correct{border-color:var(--mint);background:var(--mint-soft)}
+    .graph-option.wrong{border-color:var(--coral);background:var(--coral-soft)}
+    .graph-option span{position:absolute;left:12px;top:10px;width:25px;height:25px;border-radius:8px;background:#fff;display:grid;place-items:center;font-weight:850;z-index:2}
+    canvas{display:block;width:100%;height:180px;border-radius:10px;background:#fff}
+    .rule-strip{
+      background:#141d34;color:#fff;border-radius:24px;padding:24px;margin:20px 0;
+      display:grid;grid-template-columns:auto 1fr;gap:18px;align-items:center
+    }
+    .rule-strip .icon{font-size:2rem;background:#273455;width:60px;height:60px;border-radius:18px;display:grid;place-items:center}
+    .rule-strip p{margin:4px 0;color:#ccd4eb}
+    .normalform{
+      background:linear-gradient(135deg,var(--blue-soft),#fff 58%,var(--coral-soft));border:1px solid #d8def9;
+      border-radius:24px;padding:26px;margin-bottom:18px
+    }
+    .normalform .mainformula{text-align:center;font-size:clamp(1.45rem,3.6vw,2.25rem);font-weight:850;margin:9px 0 20px}
+    .legend{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+    .legend div{background:rgba(255,255,255,.84);border-radius:13px;padding:12px;border:1px solid rgba(23,34,59,.08)}
+    .legend div:nth-child(1){background:var(--coral-soft);border-color:#f1b0a8}
+    .legend div:nth-child(2){background:var(--blue-soft);border-color:#b9c3fb}
+    .legend div:nth-child(3){background:var(--yellow-soft);border-color:#ecd078}
+    .legend div:nth-child(4){background:var(--mint-soft);border-color:#9bd9c2}
+    .legend strong{display:block;font-size:1.15rem}
+    .chips{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}
+    .chip{
+      border:1.5px solid var(--line);background:#fff;border-radius:99px;padding:9px 12px;cursor:pointer;font-weight:720
+    }
+    .chip.selected{background:var(--blue-soft);color:#2f49d0;border-color:var(--blue)}
+    .chip.correct-chip{background:var(--mint-soft);border-color:var(--mint)}
+    .chip.wrong-chip{background:var(--coral-soft);border-color:var(--coral)}
+    .step-list{display:grid;gap:10px;counter-reset:steps}
+    .step{
+      background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px 14px;display:flex;gap:11px;align-items:center
+    }
+    .step:before{counter-increment:steps;content:counter(steps);width:28px;height:28px;display:grid;place-items:center;border-radius:9px;background:var(--violet-soft);color:var(--violet);font-weight:850}
+    .error-note{
+      position:relative;background:#fff8ce;border:1px solid #ebcf58;border-radius:3px 18px 18px 18px;padding:18px 18px 18px 26px;margin-top:14px;
+      box-shadow:4px 6px 0 rgba(235,207,88,.18);font-family:"Segoe Print","Comic Sans MS",cursive
+    }
+    .error-note:before{content:"";position:absolute;left:8px;top:0;bottom:0;border-left:1px solid rgba(239,106,91,.4)}
+    .final-panel{position:relative;background:linear-gradient(145deg,#17223b,#28385f);color:#fff;border-radius:28px;padding:clamp(24px,4vw,40px);box-shadow:var(--shadow)}
+    .final-panel .sub{color:#cbd3e8}
+    .score-line{display:flex;align-items:center;justify-content:space-between;gap:16px}
+    .score{font-size:2.5rem;font-weight:900;color:#fff}
+    .quiz-area{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:20px;margin-top:18px}
+    .quiz-area .choice{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.2)}
+    .quiz-area .choice.correct{background:rgba(36,168,121,.25);border-color:#55d6aa}
+    .quiz-area .choice.wrong{background:rgba(239,106,91,.25);border-color:#ff8e82}
+    details.tip-sheet{
+      position:relative;overflow:hidden;
+      background:linear-gradient(135deg,#fffdf4 0%,#fff 48%,#f7f4ff 100%);
+      border:2px solid #efd574;border-radius:24px;padding:17px 20px;margin-top:22px;
+      box-shadow:0 12px 30px rgba(110,87,21,.11)
+    }
+    details.tip-sheet:before{
+      content:"";position:absolute;right:-55px;top:-80px;width:180px;height:180px;border-radius:50%;
+      background:radial-gradient(circle,rgba(255,218,82,.25),rgba(255,218,82,0) 68%);pointer-events:none
+    }
+    details.tip-sheet[open]{padding-bottom:22px}
+    details.tip-sheet summary{
+      position:relative;z-index:1;cursor:pointer;font-weight:900;font-size:1.05rem;list-style:none;
+      display:flex;align-items:center;gap:13px
+    }
+    details.tip-sheet summary::-webkit-details-marker{display:none}
+    .bulb{
+      width:46px;height:46px;flex:0 0 46px;border-radius:15px;display:grid;place-items:center;
+      font-size:1.7rem;background:#fff7bf;border:1px solid #efd35b;
+      font-family:"Segoe UI Emoji","Apple Color Emoji","Noto Color Emoji",sans-serif;
+      box-shadow:0 0 0 6px rgba(255,220,75,.12),0 0 24px rgba(255,198,40,.58);
+      animation:bulbGlow 2.2s ease-in-out infinite
+    }
+    .summary-text small{display:block;color:var(--muted);font-weight:650;font-size:.8rem;margin-top:1px}
+    .cheat{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px}
+    .cheat div{
+      position:relative;padding:16px 17px;border:1.5px solid;border-radius:16px;
+      box-shadow:0 6px 14px rgba(34,47,82,.07)
+    }
+    .cheat div:before{
+      content:attr(data-label);display:inline-block;margin-bottom:7px;padding:3px 8px;border-radius:99px;
+      background:rgba(255,255,255,.75);font-size:.69rem;font-weight:900;letter-spacing:.08em
+    }
+    .cheat .formula{font-size:1.12rem;font-weight:850}
+    .cheat small{display:block;margin-top:5px;color:#465069}
+    .cheat-a{background:var(--coral-soft);border-color:#f1a59c!important}
+    .cheat-b{background:var(--blue-soft);border-color:#aebafa!important}
+    .cheat-d{background:var(--yellow-soft);border-color:#ecd078!important}
+    .cheat-e{background:var(--mint-soft);border-color:#91d8bf!important}
+    @keyframes bulbGlow{
+      0%,100%{transform:rotate(-3deg) scale(1);filter:brightness(1)}
+      50%{transform:rotate(3deg) scale(1.06);filter:brightness(1.12);box-shadow:0 0 0 9px rgba(255,220,75,.15),0 0 34px rgba(255,190,25,.78)}
+    }
+    @keyframes trophyFlash{
+      0%{transform:scale(.72);filter:brightness(1)}
+      45%{transform:scale(1.22) rotate(5deg);filter:brightness(1.35);box-shadow:0 0 16px rgba(243,189,61,.8)}
+      100%{transform:scale(1);filter:brightness(1)}
+    }
+    footer{text-align:center;color:var(--muted);padding:10px 0 35px;font-size:.88rem}
+    .toast{
+      position:fixed;right:20px;bottom:20px;z-index:10;background:var(--ink);color:#fff;border-radius:14px;
+      padding:12px 16px;box-shadow:var(--shadow);transform:translateY(120px);opacity:0;transition:.3s
+    }
+    .toast.show{transform:none;opacity:1}
+    .focus-toggle{
+      position:absolute;right:15px;top:15px;z-index:3;width:35px;height:35px;padding:0;
+      display:grid;place-items:center;border:1px solid #d8deeb;border-radius:11px;
+      background:#fff;color:var(--blue);cursor:pointer;box-shadow:0 4px 10px rgba(34,47,82,.08);
+      transition:.18s
+    }
+    .focus-toggle:hover,.focus-toggle:focus-visible{outline:none;border-color:var(--blue);background:var(--blue-soft);transform:translateY(-1px)}
+    .focus-toggle svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round}
+    .focus-toggle[aria-pressed="true"]{background:var(--blue);border-color:var(--blue);color:#fff}
+    .final-panel .focus-toggle{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25);color:#fff;box-shadow:none}
+    .final-panel .focus-toggle:hover,.final-panel .focus-toggle:focus-visible{background:rgba(255,255,255,.2);border-color:#fff}
+    .focus-banner{
+      position:fixed;left:50%;top:18px;transform:translateX(-50%);z-index:50;
+      width:min(700px,calc(100% - 24px));display:flex;align-items:center;justify-content:space-between;gap:16px;
+      color:#fff;background:rgba(23,34,59,.96);border:1px solid rgba(255,255,255,.16);
+      border-radius:17px;padding:10px 12px 10px 16px;box-shadow:0 16px 35px rgba(17,26,48,.24)
+    }
+    .focus-banner[hidden]{display:none}
+    .focus-banner strong{display:flex;align-items:center;gap:8px}
+    .focus-banner strong svg{width:18px;height:18px;fill:none;stroke:#b9c4ff;stroke-width:2.2;stroke-linecap:round}
+    .focus-banner button{border:0;border-radius:10px;padding:8px 12px;background:#fff;color:var(--ink);font-weight:850;cursor:pointer}
+    body.focus-mode{min-height:100vh;background:radial-gradient(circle at 50% 0,rgba(75,102,242,.12),transparent 34rem),#f2f4fa}
+    body.focus-mode header,
+    body.focus-mode main>section:not(.focus-section),
+    body.focus-mode main>details,
+    body.focus-mode footer{display:none}
+    body.focus-mode main{padding:96px 0 55px;min-height:100vh}
+    body.focus-mode .focus-section{margin:0}
+    body.focus-mode .focus-section>.section-head,
+    body.focus-mode .focus-section>.rule-strip,
+    body.focus-mode .focus-section>.normalform{display:none}
+    body.focus-mode .focus-section .grid{display:block}
+    body.focus-mode .focus-section .grid>.card:not(.focus-target){display:none}
+    body.focus-mode .focus-target{
+      display:block;width:min(820px,100%);margin:0 auto;border-color:rgba(75,102,242,.38);
+      box-shadow:0 22px 60px rgba(39,55,98,.16)
+    }
+    body.focus-mode .final-panel.focus-target{width:min(900px,100%)}
+    @media(max-width:820px){
+      .hero{grid-template-columns:1fr}.hero-card{transform:none}.route{grid-template-columns:1fr}
+      .card,.card.third{grid-column:1/-1}.legend{grid-template-columns:1fr 1fr}
+      .topline{align-items:flex-start}.progress-wrap{flex-direction:column;align-items:flex-end}
+    }
+    @media(max-width:540px){
+      .shell{width:min(100% - 20px,1180px)}.graph-choices,.cheat{grid-template-columns:1fr}
+      .point-row{grid-template-columns:1fr}.arrow{transform:rotate(90deg);justify-self:center}
+      .legend,.parameter-key{grid-template-columns:1fr}.section-head{display:block}.progress{width:120px}
+    }
+    @media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}.bulb,.feedback-icon.trophy{animation:none}}
+  </style>
+</head>
+<body>
+  <header class="shell">
+    <div class="topline">
+      <div class="brand"><div class="logo">f↗</div><em>„Funktionsgraphen in Bewegung“</em></div>
+      <div class="progress-wrap"><span id="progressText">0 Aufgaben gelöst</span><div class="progress"><span id="progressBar"></span></div></div>
+    </div>
+    <div class="hero">
+      <div>
+        <div class="eyebrow">Ganzrationale Funktionen · Interaktives Training</div>
+        <h1>Transformationen von Funktionsgraphen</h1>
+        <p class="lead">Hier übst du Schritt für Schritt, wie Streckungen, Stauchungen, Spiegelungen und Verschiebungen eine Funktionsgleichung und den zugehörigen Graphen verändern. Zuerst geht es um einzelne Transformationen, später kombinierst du mehrere.</p>
+      </div>
+      <div class="hero-card">
+        <small>Funktionen der Form:</small>
+        <div class="formula">g(x) = a · f(b · (x − d)) + e</div>
+      </div>
+      <svg class="hero-graph" viewBox="0 0 520 330" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="curveGradient" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#4b66f2"/>
+            <stop offset=".56" stop-color="#8c5de7"/>
+            <stop offset="1" stop-color="#ef6a5b"/>
+          </linearGradient>
+          <filter id="curveGlow" x="-30%" y="-30%" width="160%" height="160%">
+            <feGaussianBlur stdDeviation="5" result="blur"/>
+            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+          </filter>
+        </defs>
+        <g opacity=".62">
+          <path class="gridline" d="M40 55H500M40 110H500M40 165H500M40 220H500M40 275H500"/>
+          <path class="gridline" d="M90 25V310M160 25V310M230 25V310M300 25V310M370 25V310M440 25V310"/>
+          <path class="axis" d="M40 165H500M300 25V310"/>
+        </g>
+        <path class="curve-soft" d="M48 252C112 244 120 87 194 96C267 105 254 257 333 242C404 229 414 70 492 58"/>
+        <path class="curve" d="M48 252C112 244 120 87 194 96C267 105 254 257 333 242C404 229 414 70 492 58"/>
+        <circle class="point" cx="194" cy="96" r="8"/>
+        <circle class="point" cx="333" cy="242" r="8"/>
+      </svg>
+    </div>
+    <nav class="route" aria-label="Lernweg">
+      <a href="#ein-schritt"><span class="num">1</span><span>Eine Transformation</span></a>
+      <a href="#angleichen"><span class="num">2</span><span>Formeln angleichen</span></a>
+      <a href="#kombination"><span class="num">3</span><span>Mehrstufig kombinieren</span></a>
+    </nav>
+  </header>
+
+  <main class="shell">
+    <section id="ein-schritt">
+      <div class="section-head">
+        <div><span class="tag">ETAPPE 1 · EIN SCHRITT</span><h2>Eine Transformation</h2></div>
+        <p>Jede Aufgabe enthält zunächst genau eine Transformation. So lassen sich Richtung, Vorzeichen und Faktor getrennt trainieren.</p>
+      </div>
+      <div class="grid">
+        <article class="card" id="scanCard">
+          <h3>Formel-Scanner</h3>
+          <p class="sub">Lies die Funktionsgleichung und bestimme die einzige Transformation.</p>
+          <div class="taskbox">
+            <div class="mini-note">Ausgangsfunktion: <span class="formula">f(x)</span></div>
+            <div class="formula big-formula" id="scanEquation"></div>
+          </div>
+          <div class="choices" id="scanChoices"></div>
+          <div class="feedback" id="scanFeedback"></div>
+          <div class="actions"><button class="btn secondary" id="scanNext">Neue Aufgabe</button></div>
+        </article>
+
+        <article class="card" id="buildCard">
+          <h3>Gleichungs-Architekt</h3>
+          <p class="sub">Wähle die Gleichung, die genau zur beschriebenen Transformation passt.</p>
+          <div class="taskbox">
+            <div class="mini-note">Gegeben ist <span class="formula" id="buildBase"></span></div>
+            <div id="buildPrompt"></div>
+          </div>
+          <div class="choices" id="buildChoices"></div>
+          <div class="feedback" id="buildFeedback"></div>
+          <div class="actions"><button class="btn secondary" id="buildNext">Neue Aufgabe</button></div>
+        </article>
+
+        <article class="card" id="pointCard">
+          <h3>Punkt-Transport</h3>
+          <p class="sub">Übertrage einen Punkt des Graphen. Auch hier wirkt nur eine Transformation.</p>
+          <div class="taskbox">
+            <div id="pointRule" class="formula big-formula"></div>
+            <div class="point-row">
+              <div class="point">Punkt auf <span class="formula">f</span><br><strong id="pointStart"></strong></div>
+              <div class="arrow">→</div>
+              <div class="point">
+                Punkt auf <span class="formula">g</span><br>
+                <div class="inputs">(<input id="pointX" inputmode="decimal" aria-label="neue x-Koordinate"> | <input id="pointY" inputmode="decimal" aria-label="neue y-Koordinate">)</div>
+              </div>
+            </div>
+          </div>
+          <div class="actions"><button class="btn blue" id="pointCheck">Prüfen</button><button class="btn secondary" id="pointNext">Neue Aufgabe</button></div>
+          <div class="feedback" id="pointFeedback"></div>
+        </article>
+
+        <article class="card" id="graphCard">
+          <h3>Graphen-Detektiv</h3>
+          <p class="sub">Orange zeigt <span class="formula">f</span>. Welches Bild zeigt die gesuchte blaue Funktion <span class="formula">g</span>?</p>
+          <div class="taskbox">
+            <div class="mini-note"><span class="swatch" style="background:#ef6a5b"></span><span id="graphBase"></span></div>
+            <div class="formula big-formula" id="graphEquation"></div>
+          </div>
+          <div class="graph-choices" id="graphChoices"></div>
+          <div class="feedback" id="graphFeedback"></div>
+          <div class="actions"><button class="btn secondary" id="graphNext">Neue Aufgabe</button></div>
+        </article>
+      </div>
+
+      <div class="rule-strip">
+        <div class="icon">↔</div>
+        <div><strong>Die wichtigste Stolperfalle</strong><p>Steht ein Faktor direkt bei <span class="formula">x</span>, gilt in x‑Richtung der Kehrwert: <span class="formula">f(2x)</span> staucht um <span class="formula">½</span>, <span class="formula">f(0,5x)</span> streckt um <span class="formula">2</span>.</p></div>
+      </div>
+    </section>
+
+    <section id="angleichen">
+      <div class="section-head">
+        <div><span class="tag" style="background:var(--yellow-soft);color:#76550d">ETAPPE 2 · STRUKTUR SEHEN</span><h2>Gleichungen angleichen</h2></div>
+        <p>Nun wird das Argument so umgeformt, dass Verschiebung und Faktor getrennt ablesbar werden.</p>
+      </div>
+      <div class="normalform">
+        <div class="mini-note" style="text-align:center">Normalform zum Ablesen</div>
+        <div class="formula mainformula">g(x) = a · f(b · (x − d)) + e</div>
+        <div class="legend">
+          <div><strong style="color:var(--coral)">a</strong>Streckung/Stauchung in y‑Richtung mit Faktor <span class="formula">|a|</span>: <span class="formula">|a| &gt; 1</span> Streckung, <span class="formula">0 &lt; |a| &lt; 1</span> Stauchung; bei <span class="formula">a &lt; 0</span> zusätzlich Spiegelung an der x‑Achse</div>
+          <div><strong style="color:var(--blue)">b</strong>Streckung/Stauchung in x‑Richtung mit Faktor <span class="formula">1/|b|</span>: <span class="formula">|b| &gt; 1</span> Stauchung, <span class="formula">0 &lt; |b| &lt; 1</span> Streckung; bei <span class="formula">b &lt; 0</span> zusätzlich Spiegelung an der y‑Achse</div>
+          <div><strong style="color:#a66500">d</strong>rechts bei <span class="formula">d &gt; 0</span>, links bei <span class="formula">d &lt; 0</span></div>
+          <div><strong style="color:var(--mint)">e</strong>oben bei <span class="formula">e &gt; 0</span>, unten bei <span class="formula">e &lt; 0</span></div>
+        </div>
+      </div>
+      <div class="grid">
+        <article class="card wide">
+          <h3>Parameter-Lupe</h3>
+          <p class="sub">Lies <span class="formula">a, b, d</span> und <span class="formula">e</span> aus der bereits angeglichenen Form ab.</p>
+          <div class="taskbox"><div class="formula big-formula" id="paramEquation"></div></div>
+          <div class="inputs" style="justify-content:flex-start;flex-wrap:wrap">
+            <label>a = <input id="pa" inputmode="decimal"></label>
+            <label>b = <input id="pb" inputmode="decimal"></label>
+            <label>d = <input id="pd" inputmode="decimal"></label>
+            <label>e = <input id="pe" inputmode="decimal"></label>
+          </div>
+          <div class="parameter-key">
+            <div><strong>a</strong> bewirkt eine Streckung/Stauchung in y‑Richtung mit Faktor <span class="formula">|a|</span>: <span class="formula">|a| &gt; 1</span> Streckung, <span class="formula">0 &lt; |a| &lt; 1</span> Stauchung. Bei <span class="formula">a &lt; 0</span> kommt die Spiegelung an der x‑Achse hinzu.</div>
+            <div><strong>b</strong> bewirkt eine Streckung/Stauchung in x‑Richtung mit Faktor <span class="formula">1/|b|</span>: <span class="formula">|b| &gt; 1</span> Stauchung, <span class="formula">0 &lt; |b| &lt; 1</span> Streckung. Bei <span class="formula">b &lt; 0</span> kommt die Spiegelung an der y‑Achse hinzu.</div>
+            <div><strong>d</strong> verschiebt nach rechts bei <span class="formula">d &gt; 0</span> und nach links bei <span class="formula">d &lt; 0</span>.</div>
+            <div><strong>e</strong> verschiebt nach oben bei <span class="formula">e &gt; 0</span> und nach unten bei <span class="formula">e &lt; 0</span>.</div>
+          </div>
+          <div class="actions"><button class="btn blue" id="paramCheck">Prüfen</button><button class="btn secondary" id="paramNext">Neue Aufgabe</button></div>
+          <div class="feedback" id="paramFeedback"></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="kombination">
+      <div class="section-head">
+        <div><span class="tag" style="background:var(--violet-soft);color:#6840bc">ETAPPE 3 · MEHRSTUFIG</span><h2>Transformationen kombinieren</h2></div>
+        <p>Jetzt wirken mehrere Veränderungen gleichzeitig. Die Normalform dient dabei als Bauplan.</p>
+      </div>
+      <div class="grid">
+        <article class="card wide" id="comboCard">
+          <h3>Transformations-Code knacken</h3>
+          <p class="sub">Markiere alle Veränderungen, die in der Gleichung stecken. Es sind mehrere Antworten richtig.</p>
+          <div class="taskbox">
+            <div class="mini-note">Gegeben in Normalform:</div>
+            <div class="formula big-formula" id="comboEquation"></div>
+          </div>
+          <div class="chips" id="comboChips"></div>
+          <div class="actions"><button class="btn blue" id="comboCheck">Auswahl prüfen</button><button class="btn secondary" id="comboNext">Neuer Code</button></div>
+          <div class="feedback" id="comboFeedback"></div>
+        </article>
+
+        <article class="card">
+          <h3>Schrittfolge zusammensetzen</h3>
+          <p class="sub">Welche Funktionsgleichung setzt alle angegebenen Transformationen korrekt um?</p>
+          <div class="step-list" id="sequenceSteps"></div>
+          <div class="choices" id="sequenceChoices"></div>
+          <div class="feedback" id="sequenceFeedback"></div>
+          <div class="actions"><button class="btn secondary" id="sequenceNext">Neue Kombination</button></div>
+        </article>
+
+        <article class="card">
+          <h3>Fehlerdetektiv</h3>
+          <p class="sub">Finde den Denkfehler in der Notiz.</p>
+          <div class="error-note" id="errorNote"></div>
+          <div class="choices" id="errorChoices"></div>
+          <div class="feedback" id="errorFeedback"></div>
+          <div class="actions"><button class="btn secondary" id="errorNext">Nächster Fall</button></div>
+        </article>
+      </div>
+    </section>
+
+    <section id="finale">
+      <div class="final-panel">
+        <div class="score-line">
+          <div><span class="tag" style="background:rgba(255,255,255,.12);color:#fff">ABSCHLUSS-CHECK</span><h2 style="margin:.5rem 0 0">Studio-Mix</h2><p class="sub">Ein- und mehrstufige Aufgaben erscheinen gemischt.</p></div>
+          <div class="score"><span id="quizScore">0</span>/<span id="quizTotal">0</span></div>
+        </div>
+        <div class="quiz-area" id="quizArea"></div>
+        <div class="actions"><button class="btn" style="background:#fff;color:var(--ink)" id="quizNext">Aufgabe starten</button><button class="btn secondary" style="background:transparent;color:#fff;border-color:rgba(255,255,255,.25)" id="quizReset">Zurücksetzen</button></div>
+      </div>
+    </section>
+
+    <details class="tip-sheet">
+      <summary><span class="bulb" aria-hidden="true">💡</span><span class="summary-text">Merkzettel einblenden<small>Die vier Grundbausteine auf einen Blick</small></span></summary>
+      <div class="cheat">
+        <div class="cheat-a" data-label="Y-RICHTUNG"><span class="formula">a · f(x)</span><small>y‑Streckung/-Stauchung mit Faktor <span class="formula">|a|</span>; bei <span class="formula">a&lt;0</span> zusätzlich Spiegelung an der x‑Achse</small></div>
+        <div class="cheat-b" data-label="X-RICHTUNG"><span class="formula">f(bx)</span><small>x‑Streckung/-Stauchung mit Faktor <span class="formula">1/|b|</span>; bei <span class="formula">b&lt;0</span> zusätzlich Spiegelung an der y‑Achse</small></div>
+        <div class="cheat-d" data-label="RECHTS · LINKS"><span class="formula">f(x−d)</span><small>Verschiebung um <span class="formula">d</span> nach rechts; bei Plus im Argument nach links</small></div>
+        <div class="cheat-e" data-label="OBEN · UNTEN"><span class="formula">f(x)+e</span><small>Verschiebung um <span class="formula">e</span> nach oben; bei negativem <span class="formula">e</span> nach unten</small></div>
+      </div>
+    </details>
+  </main>
+  <footer class="shell">Die Datei arbeitet vollständig offline. Für eine neue Auswahl einfach „Neue Aufgabe“ wählen.</footer>
+  <div class="focus-banner" id="focusBanner" hidden>
+    <strong><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 5 5"></path></svg>Konzentrationsmodus</strong>
+    <button type="button" id="focusExit">Alle Aufgaben anzeigen</button>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+  (() => {
+    "use strict";
+    const $ = s => document.querySelector(s);
+    const shuffle = arr => [...arr].sort(() => Math.random() - .5);
+    const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+    const eq = s => `<span class="formula">${s}</span>`;
+    const solved = new Set();
+    const totalTracked = 9;
+    let last = {};
+
+    function markSolved(id){
+      solved.add(id);
+      const n = solved.size;
+      $("#progressText").textContent = `${n} von ${totalTracked} Stationen gelöst`;
+      $("#progressBar").style.width = `${Math.min(100,n/totalTracked*100)}%`;
+    }
+    function toast(text){
+      const el=$("#toast"); el.textContent=text; el.classList.add("show");
+      clearTimeout(toast.t); toast.t=setTimeout(()=>el.classList.remove("show"),1700);
+    }
+    function showFeedback(id, ok, html){
+      const el=$(id), icon=ok?"🏆":"🔄", lead=ok?"Richtig!":"Versuch es noch einmal.";
+      el.className=`feedback show ${ok?"ok":"no"}`;
+      el.innerHTML=`<span class="feedback-icon ${ok?"trophy":"retry"}" aria-hidden="true">${icon}</span><span class="feedback-lead">${lead}</span> ${html}`;
+    }
+    function resetFeedback(id){const el=$(id);el.className="feedback";el.innerHTML=""}
+    function choiceTask(box, feedback, task, station){
+      const host=$(box); host.innerHTML="";
+      task.choices.forEach((text,i)=>{
+        const b=document.createElement("button"); b.className="choice"; b.innerHTML=text;
+        b.onclick=()=>{
+          const ok=i===task.answer;
+          b.classList.add(ok?"correct":"wrong");
+          if(ok) [...host.children].forEach(x=>x.disabled=true);
+          else b.disabled=true;
+          showFeedback(feedback,ok,task.explanation);
+          if(ok) markSolved(station);
+        };
+        host.appendChild(b);
+      });
+    }
+
+    const single = [
+      {g:"g(x) = 3 · f(x)", name:"Streckung in y‑Richtung mit Faktor 3", expl:"Der Faktor steht vor der ganzen Funktion; alle y‑Werte werden verdreifacht."},
+      {g:"g(x) = 0,25 · f(x)", name:"Stauchung in y‑Richtung mit Faktor 0,25", expl:"Der Faktor steht außen und verändert daher nur die y‑Werte."},
+      {g:"g(x) = −f(x)", name:"Spiegelung an der x‑Achse", expl:"Das Minus steht vor der ganzen Funktion: (x | y) wird zu (x | −y)."},
+      {g:"g(x) = f(−x)", name:"Spiegelung an der y‑Achse", expl:"Das Minus steht beim x im Argument: (x | y) wird zu (−x | y)."},
+      {g:"g(x) = f(4x)", name:"Stauchung in x‑Richtung mit Faktor 0,25", expl:"Innen gilt der Kehrwert: 1/4 = 0,25."},
+      {g:"g(x) = f(0,5x)", name:"Streckung in x‑Richtung mit Faktor 2", expl:"Innen gilt der Kehrwert: 1/0,5 = 2."},
+      {g:"g(x) = f(x − 3)", name:"Verschiebung um 3 nach rechts", expl:"Im Argument ist das Vorzeichen scheinbar umgekehrt: x−3 bedeutet rechts."},
+      {g:"g(x) = f(x + 2)", name:"Verschiebung um 2 nach links", expl:"x+2 bedeutet eine Verschiebung um 2 nach links."},
+      {g:"g(x) = f(x) + 4", name:"Verschiebung um 4 nach oben", expl:"Die +4 steht außerhalb und wird zu jedem y‑Wert addiert."},
+      {g:"g(x) = f(x) − 1,5", name:"Verschiebung um 1,5 nach unten", expl:"Die −1,5 steht außerhalb und wird von jedem y‑Wert abgezogen."}
+    ];
+    function newScan(){
+      let t; do{t=pick(single)}while(t===last.scan); last.scan=t;
+      $("#scanEquation").textContent=t.g;
+      const distract=shuffle(single.filter(x=>x!==t)).slice(0,3).map(x=>x.name);
+      const opts=shuffle([t.name,...distract]);
+      choiceTask("#scanChoices","#scanFeedback",{choices:opts,answer:opts.indexOf(t.name),explanation:t.expl},"scan");
+      resetFeedback("#scanFeedback");
+    }
+
+    const builds = [
+      {base:"f(x) = x³ − 2x + 1",prompt:"Der Graph wird um 3 nach rechts verschoben.",correct:"g(x) = (x − 3)³ − 2(x − 3) + 1",wrong:["g(x) = (x + 3)³ − 2(x + 3) + 1","g(x) = x³ − 2x + 4","g(x) = 3x³ − 6x + 3"],expl:"Für eine Verschiebung nach rechts wird jedes x durch (x−3) ersetzt."},
+      {base:"f(x) = x⁴ − 3x",prompt:"Der Graph wird an der y‑Achse gespiegelt.",correct:"g(x) = (−x)⁴ − 3(−x)",wrong:["g(x) = −(x⁴ − 3x)","g(x) = x⁴ − 3x − 1","g(x) = (x − 1)⁴ − 3(x − 1)"],expl:"Bei der y‑Achsen-Spiegelung wird jedes x der Ausgangsfunktion durch −x ersetzt."},
+      {base:"f(x) = x³ + x² − 2",prompt:"Der Graph wird in y‑Richtung mit Faktor 2 gestreckt.",correct:"g(x) = 2 · (x³ + x² − 2)",wrong:["g(x) = (2x)³ + (2x)² − 2","g(x) = 0,5 · (x³ + x² − 2)","g(x) = x³ + x²"],expl:"Die gesamte Funktion – einschließlich der Konstante −2 – wird mit 2 multipliziert."},
+      {base:"f(x) = x³ − 4x + 2",prompt:"Der Graph wird in x‑Richtung mit Faktor 2 gestreckt.",correct:"g(x) = (0,5x)³ − 4(0,5x) + 2",wrong:["g(x) = (2x)³ − 4(2x) + 2","g(x) = 2 · (x³ − 4x + 2)","g(x) = (x − 2)³ − 4(x − 2) + 2"],expl:"Für den x‑Streckungsfaktor 2 muss innen der Kehrwert 0,5 stehen."}
+    ];
+    function newBuild(){
+      let t;do{t=pick(builds)}while(t===last.build);last.build=t;
+      $("#buildBase").textContent=t.base;$("#buildPrompt").textContent=t.prompt;
+      const opts=shuffle([t.correct,...t.wrong]);
+      choiceTask("#buildChoices","#buildFeedback",{choices:opts.map(eq),answer:opts.indexOf(t.correct),explanation:t.expl},"build");
+      resetFeedback("#buildFeedback");
+    }
+
+    const points = [
+      {rule:"g(x) = 2 · f(x)",p:[-2,3],q:[-2,6],expl:"x bleibt gleich, y wird mit 2 multipliziert."},
+      {rule:"g(x) = −f(x)",p:[3,-2],q:[3,2],expl:"x bleibt gleich, y wechselt das Vorzeichen."},
+      {rule:"g(x) = f(−x)",p:[2,4],q:[-2,4],expl:"x wechselt das Vorzeichen, y bleibt gleich."},
+      {rule:"g(x) = f(0,5x)",p:[-1,3],q:[-2,3],expl:"x wird wegen des Kehrwerts mit 2 multipliziert."},
+      {rule:"g(x) = f(4x)",p:[2,-1],q:[.5,-1],expl:"x wird durch 4 geteilt, y bleibt gleich."},
+      {rule:"g(x) = f(x − 3)",p:[-1,2],q:[2,2],expl:"Zum x‑Wert werden 3 addiert."},
+      {rule:"g(x) = f(x) − 4",p:[3,1],q:[3,-3],expl:"Vom y‑Wert werden 4 abgezogen."}
+    ];
+    let pointTask;
+    const de=n=>String(n).replace(".",",");
+    const num=v=>Number(String(v).trim().replace(",","."));
+    function newPoint(){
+      do{pointTask=pick(points)}while(pointTask===last.point);last.point=pointTask;
+      $("#pointRule").textContent=pointTask.rule;$("#pointStart").textContent=`(${de(pointTask.p[0])} | ${de(pointTask.p[1])})`;
+      $("#pointX").value="";$("#pointY").value="";resetFeedback("#pointFeedback");
+    }
+    function checkPoint(){
+      const ok=Math.abs(num($("#pointX").value)-pointTask.q[0])<1e-8&&Math.abs(num($("#pointY").value)-pointTask.q[1])<1e-8;
+      showFeedback("#pointFeedback",ok,ok?`Der neue Punkt ist (${de(pointTask.q[0])} | ${de(pointTask.q[1])}). ${pointTask.expl}`:`Prüfe, welche Koordinate verändert wird. Tipp: ${pointTask.expl}`);
+      if(ok)markSolved("point");
+    }
+
+    const graphTasks = [
+      {base:"f(x) = 0,18x³ − x",f:x=>.18*x*x*x-x, label:"g(x) = f(x − 2)",g:(f,x)=>f(x-2),wrong:[(f,x)=>f(x+2),(f,x)=>f(x)+2,(f,x)=>-f(x)],expl:"Der blaue Graph ist gegenüber f unverändert geformt und um 2 nach rechts verschoben."},
+      {base:"f(x) = 0,16x³ − 0,8x + 1",f:x=>.16*x*x*x-.8*x+1,label:"g(x) = −f(x)",g:(f,x)=>-f(x),wrong:[(f,x)=>f(-x),(f,x)=>f(x)-2,(f,x)=>2*f(x)],expl:"Alle y‑Werte wechseln das Vorzeichen; oben und unten werden vertauscht."},
+      {base:"f(x) = 0,04x⁴ − 0,55x² + 1",f:x=>.04*x**4-.55*x*x+1,label:"g(x) = 2 · f(x)",g:(f,x)=>2*f(x),wrong:[(f,x)=>.5*f(x),(f,x)=>f(2*x),(f,x)=>f(x)+2],expl:"Die x‑Koordinaten bleiben gleich, alle y‑Werte werden verdoppelt."},
+      {base:"f(x) = 0,2x³ + 0,45x² − x",f:x=>.2*x**3+.45*x*x-x,label:"g(x) = f(2x)",g:(f,x)=>f(2*x),wrong:[(f,x)=>f(.5*x),(f,x)=>2*f(x),(f,x)=>f(x-2)],expl:"Der Graph wird in x‑Richtung auf die halbe Breite gestaucht."},
+      {base:"f(x) = 0,16x³ + 0,35x² − 0,7x − 1",f:x=>.16*x**3+.35*x*x-.7*x-1,label:"g(x) = f(x + 2)",g:(f,x)=>f(x+2),wrong:[(f,x)=>f(x-2),(f,x)=>f(x)+2,(f,x)=>f(-x)],expl:"Der blaue Graph ist um 2 nach links verschoben; seine Form bleibt unverändert."},
+      {base:"f(x) = 0,03x⁴ − 0,4x² + 0,3x − 1",f:x=>.03*x**4-.4*x*x+.3*x-1,label:"g(x) = f(x) + 2",g:(f,x)=>f(x)+2,wrong:[(f,x)=>f(x)-2,(f,x)=>f(x+2),(f,x)=>2*f(x)],expl:"Alle Punkte wandern um 2 nach oben; die x‑Koordinaten bleiben gleich."},
+      {base:"f(x) = 0,12x³ − 0,5x² − 0,7x + 1",f:x=>.12*x**3-.5*x*x-.7*x+1,label:"g(x) = f(−x)",g:(f,x)=>f(-x),wrong:[(f,x)=>-f(x),(f,x)=>f(x-1),(f,x)=>f(x)+1],expl:"Links und rechts werden vertauscht: Der Graph wird an der y‑Achse gespiegelt."},
+      {base:"f(x) = 0,06x⁴ − 0,5x² + 0,35x + 1",f:x=>.06*x**4-.5*x*x+.35*x+1,label:"g(x) = 0,5 · f(x)",g:(f,x)=>.5*f(x),wrong:[(f,x)=>2*f(x),(f,x)=>f(.5*x),(f,x)=>f(x)-.5],expl:"Alle y‑Werte werden halbiert; der Graph wird in y‑Richtung gestaucht."},
+      {base:"f(x) = 0,18x³ − 0,8x² + 0,2x + 1",f:x=>.18*x**3-.8*x*x+.2*x+1,label:"g(x) = f(0,5x)",g:(f,x)=>f(.5*x),wrong:[(f,x)=>f(2*x),(f,x)=>.5*f(x),(f,x)=>f(x+.5)],expl:"Der Graph wird in x‑Richtung mit Faktor 2 gestreckt und dadurch breiter."},
+      {base:"f(x) = 0,16x³ + 0,5x² − 0,8x + 1",f:x=>.16*x**3+.5*x*x-.8*x+1,label:"g(x) = f(x) − 2",g:(f,x)=>f(x)-2,wrong:[(f,x)=>f(x)+2,(f,x)=>f(x-2),(f,x)=>-f(x)],expl:"Alle Punkte wandern um 2 nach unten; die Form des Graphen bleibt gleich."}
+    ];
+    let graphTask,graphPositions=[],currentGraphFuncs=[];
+    function nextGraphPosition(){
+      if(!graphPositions.length)graphPositions=shuffle([0,1,2,3]);
+      return graphPositions.shift();
+    }
+    function drawGraph(canvas,f,g){
+      const dpr=Math.min(2,window.devicePixelRatio||1), w=canvas.clientWidth||300,h=180;
+      canvas.width=w*dpr;canvas.height=h*dpr;const c=canvas.getContext("2d");c.scale(dpr,dpr);
+      const X=x=>(x+5)/10*w,Y=y=>h-(y+6)/12*h;
+      c.clearRect(0,0,w,h);c.fillStyle="#fff";c.fillRect(0,0,w,h);
+      c.strokeStyle="#edf0f5";c.lineWidth=1;
+      for(let i=-5;i<=5;i++){c.beginPath();c.moveTo(X(i),0);c.lineTo(X(i),h);c.stroke()}
+      for(let i=-6;i<=6;i++){c.beginPath();c.moveTo(0,Y(i));c.lineTo(w,Y(i));c.stroke()}
+      c.strokeStyle="#8e98ad";c.lineWidth=1.2;c.beginPath();c.moveTo(X(0),0);c.lineTo(X(0),h);c.moveTo(0,Y(0));c.lineTo(w,Y(0));c.stroke();
+      function plot(fn,color){
+        c.save();c.beginPath();c.rect(0,0,w,h);c.clip();c.beginPath();let start=true;
+        for(let px=0;px<=w;px++){const x=px/w*10-5,y=fn(x),py=Y(y);if(!Number.isFinite(y)||Math.abs(y)>30){start=true;continue}if(start){c.moveTo(px,py);start=false}else c.lineTo(px,py)}
+        c.strokeStyle=color;c.lineWidth=2.4;c.stroke();c.restore();
+      }
+      plot(f,"#ef6a5b");plot(g,"#4b66f2");
+    }
+    function newGraph(){
+      do{graphTask=pick(graphTasks)}while(graphTask===last.graph);last.graph=graphTask;
+      $("#graphBase").textContent=graphTask.base;$("#graphEquation").textContent=graphTask.label;resetFeedback("#graphFeedback");
+      const funcs=shuffle(graphTask.wrong.map(fn=>({fn,ok:false})));
+      funcs.splice(nextGraphPosition(),0,{fn:graphTask.g,ok:true});
+      currentGraphFuncs=funcs;
+      const host=$("#graphChoices");host.innerHTML="";
+      funcs.forEach((o,i)=>{
+        const b=document.createElement("button");b.className="graph-option";b.innerHTML=`<span>${"ABCD"[i]}</span><canvas aria-label="Graphoption ${i+1}"></canvas>`;
+        b.onclick=()=>{
+          b.classList.add(o.ok?"correct":"wrong");
+          if(o.ok)[...host.children].forEach(x=>x.disabled=true);
+          else b.disabled=true;
+          showFeedback("#graphFeedback",o.ok,graphTask.expl);
+          if(o.ok)markSolved("graph");
+        };
+        host.appendChild(b);
+        requestAnimationFrame(()=>drawGraph(b.querySelector("canvas"),graphTask.f,x=>o.fn(graphTask.f,x)));
+      });
+    }
+    function redrawGraphChoices(){
+      if(!graphTask||!currentGraphFuncs.length)return;
+      [...$("#graphChoices").querySelectorAll("canvas")].forEach((canvas,i)=>{
+        const option=currentGraphFuncs[i];
+        if(option)drawGraph(canvas,graphTask.f,x=>option.fn(graphTask.f,x));
+      });
+    }
+
+    const params=[
+      {text:"g(x) = −2 · f(0,5 · (x − 3)) + 4",v:[-2,.5,3,4]},
+      {text:"g(x) = 0,25 · f(−3 · (x + 2)) − 1",v:[.25,-3,-2,-1]},
+      {text:"g(x) = 3 · f(2 · (x − 1)) − 5",v:[3,2,1,-5]},
+      {text:"g(x) = −f(−0,5 · (x + 4)) + 2",v:[-1,-.5,-4,2]}
+    ];
+    let param;
+    function newParam(){
+      do{param=pick(params)}while(param===last.param);last.param=param;$("#paramEquation").textContent=param.text;
+      ["#pa","#pb","#pd","#pe"].forEach(id=>$(id).value="");resetFeedback("#paramFeedback");
+    }
+    function checkParam(){
+      const got=["#pa","#pb","#pd","#pe"].map(id=>num($(id).value));
+      const ok=got.every((v,i)=>Math.abs(v-param.v[i])<1e-8);
+      showFeedback("#paramFeedback",ok,ok?`a=${de(param.v[0])}, b=${de(param.v[1])}, d=${de(param.v[2])}, e=${de(param.v[3])}.`:"Achte besonders darauf: In (x+2) ist d = −2.");
+      if(ok)markSolved("param");
+    }
+
+    const combos=[
+      {text:"g(x) = −2 · f(0,5 · (x − 3)) + 4",all:["y‑Streckung mit Faktor 2","Spiegelung an der x‑Achse","x‑Streckung mit Faktor 2","3 nach rechts","4 nach oben"],false:["x‑Stauchung mit Faktor 0,5","3 nach links","Spiegelung an der y‑Achse"],expl:"a=−2, b=0,5, d=3 und e=4."},
+      {text:"g(x) = 0,5 · f(−2 · (x + 1)) − 3",all:["y‑Stauchung mit Faktor 0,5","Spiegelung an der y‑Achse","x‑Stauchung mit Faktor 0,5","1 nach links","3 nach unten"],false:["Spiegelung an der x‑Achse","x‑Streckung mit Faktor 2","1 nach rechts"],expl:"a=0,5, b=−2, d=−1 und e=−3."},
+      {text:"g(x) = −f(0,25 · (x + 4)) + 2",all:["Spiegelung an der x‑Achse","x‑Streckung mit Faktor 4","4 nach links","2 nach oben"],false:["Spiegelung an der y‑Achse","x‑Stauchung mit Faktor 0,25","4 nach rechts","2 nach unten"],expl:"a=−1, b=0,25, d=−4 und e=2."}
+    ];
+    let combo;
+    function newCombo(){
+      do{combo=pick(combos)}while(combo===last.combo);last.combo=combo;$("#comboEquation").textContent=combo.text;
+      const opts=shuffle([...combo.all,...shuffle(combo.false).slice(0,3)]),host=$("#comboChips");host.innerHTML="";
+      opts.forEach(text=>{const b=document.createElement("button");b.className="chip";b.textContent=text;b.onclick=()=>{b.classList.toggle("selected");b.classList.remove("wrong-chip")};host.appendChild(b)});
+      resetFeedback("#comboFeedback");
+    }
+    function checkCombo(){
+      const buttons=[...$("#comboChips").children], selected=buttons.filter(b=>b.classList.contains("selected")).map(b=>b.textContent);
+      const ok=selected.length===combo.all.length&&combo.all.every(x=>selected.includes(x));
+      buttons.forEach(b=>{
+        b.classList.remove("correct-chip","wrong-chip");
+        if(ok&&combo.all.includes(b.textContent))b.classList.add("correct-chip");
+        else if(!ok&&b.classList.contains("selected")&&!combo.all.includes(b.textContent))b.classList.add("wrong-chip")
+      });
+      showFeedback("#comboFeedback",ok,ok?combo.expl:`Prüfe die rot markierten Bausteine noch einmal. ${combo.expl}`);
+      if(ok)markSolved("combo");
+    }
+
+    const sequences=[
+      {steps:["in x‑Richtung mit Faktor 2 strecken","um 3 nach rechts verschieben","an der x‑Achse spiegeln","um 1 nach oben verschieben"],correct:"g(x) = −f(0,5 · (x − 3)) + 1",wrong:["g(x) = −f(2 · (x − 3)) + 1","g(x) = f(0,5 · (x + 3)) − 1","g(x) = −f(0,5x − 3) + 1"],expl:"x‑Streckung 2 bedeutet innen 0,5; die Verschiebung steht als (x−3)."},
+      {steps:["in y‑Richtung mit Faktor 3 strecken","an der y‑Achse spiegeln","in x‑Richtung mit Faktor 0,5 stauchen","um 2 nach links verschieben"],correct:"g(x) = 3 · f(−2 · (x + 2))",wrong:["g(x) = −3 · f(0,5 · (x − 2))","g(x) = 3 · f(−0,5 · (x + 2))","g(x) = 3 · f(2 · (x − 2))"],expl:"b=−2 verbindet y‑Achsen-Spiegelung und x‑Stauchung mit Faktor 1/2."},
+      {steps:["in y‑Richtung mit Faktor 0,5 stauchen","um 4 nach rechts verschieben","um 2 nach unten verschieben"],correct:"g(x) = 0,5 · f(x − 4) − 2",wrong:["g(x) = 2 · f(x + 4) − 2","g(x) = 0,5 · f(x + 4) + 2","g(x) = 0,5 · f(x − 2) − 4"],expl:"Außen steht 0,5 und −2; die Rechtsverschiebung steht innen als x−4."}
+    ];
+    function newSequence(){
+      let t;do{t=pick(sequences)}while(t===last.seq);last.seq=t;const host=$("#sequenceSteps");host.innerHTML="";
+      t.steps.forEach(s=>{const d=document.createElement("div");d.className="step";d.textContent=s;host.appendChild(d)});
+      const opts=shuffle([t.correct,...t.wrong]);
+      choiceTask("#sequenceChoices","#sequenceFeedback",{choices:opts.map(eq),answer:opts.indexOf(t.correct),explanation:t.expl},"sequence");
+      resetFeedback("#sequenceFeedback");
+    }
+
+    const errors=[
+      {note:`„Bei ${eq("g(x)=f(3x)")} wird der Graph in x‑Richtung mit Faktor 3 gestreckt.“`,correct:"Der Kehrwert fehlt: Der Graph wird in x‑Richtung mit Faktor ⅓ gestaucht.",wrong:["Die Transformation wirkt in y‑Richtung.","Der Graph wird an der y‑Achse gespiegelt.","Die Gleichung verschiebt den Graphen nach rechts."],expl:"Ein Faktor im Argument wirkt in x‑Richtung reziprok."},
+      {note:`„${eq("f(x+4)")} verschiebt den Graphen um 4 nach rechts.“`,correct:"Das Vorzeichen im Argument wird umgekehrt gelesen: Der Graph wandert 4 nach links.",wrong:["Die Funktion wird um 4 nach oben verschoben.","Der Graph wird in x‑Richtung gestreckt.","Nur die y‑Werte wechseln das Vorzeichen."],expl:"Für 4 nach rechts müsste f(x−4) stehen."},
+      {note:`„Aus ${eq("g(x)=−2f(x)")} folgt nur eine Spiegelung an der x‑Achse.“`,correct:"Zusätzlich zur Spiegelung wird in y‑Richtung mit Faktor 2 gestreckt.",wrong:["Zusätzlich wird an der y‑Achse gespiegelt.","Zusätzlich wird in x‑Richtung mit Faktor 2 gestreckt.","Zusätzlich wird um 2 nach unten verschoben."],expl:"Das negative Vorzeichen spiegelt; der Betrag 2 streckt."},
+      {note:`„${eq("2x−6")} ist bereits ${eq("2(x−6)")} angeglichen.“`,correct:"Richtig ist 2x−6 = 2(x−3).",wrong:["Richtig ist 2x−6 = 2(x+3).","Richtig ist 2x−6 = 6(x−2).","Man darf im Argument nie ausklammern."],expl:"Beim Ausmultiplizieren muss 2·(−3)=−6 entstehen."}
+    ];
+    function newError(){
+      let t;do{t=pick(errors)}while(t===last.error);last.error=t;$("#errorNote").innerHTML=t.note;
+      const opts=shuffle([t.correct,...t.wrong]);
+      choiceTask("#errorChoices","#errorFeedback",{choices:opts,answer:opts.indexOf(t.correct),explanation:t.expl},"error");
+      resetFeedback("#errorFeedback");
+    }
+
+    const quizBank=[
+      {q:`Welche Transformation beschreibt ${eq("g(x)=f(x+5)")}?`,a:"5 nach links",w:["5 nach rechts","5 nach oben","x‑Streckung mit Faktor 5"],e:"Plus im Argument bedeutet links."},
+      {q:`Welche Transformation beschreibt ${eq("g(x)=−f(x)")}?`,a:"Spiegelung an der x‑Achse",w:["Spiegelung an der y‑Achse","1 nach unten","x‑Stauchung"],e:"Das Minus steht vor der ganzen Funktion."},
+      {q:`Welcher x‑Faktor gehört zu ${eq("f(0,25x)")}?`,a:"Streckung mit Faktor 4",w:["Stauchung mit Faktor 0,25","Streckung mit Faktor 0,25","Stauchung mit Faktor 4"],e:"1/0,25 = 4."},
+      {q:`Gleiche ${eq("4x−12")} an.`,a:"4(x−3)",w:["4(x−12)","4(x+3)","12(x−4)"],e:"4·(−3)=−12."},
+      {q:`Was folgt aus ${eq("g(x)=−3f(x)+2")}?`,a:"x‑Achsen-Spiegelung, y‑Streckung 3, 2 nach oben",w:["y‑Achsen-Spiegelung, x‑Streckung 3, 2 nach oben","x‑Achsen-Spiegelung, y‑Stauchung ⅓, 2 nach unten","nur y‑Streckung 3"],e:"a=−3 und e=2."},
+      {q:`Welche Gleichung bedeutet: x‑Streckung 2 und 3 nach rechts?`,a:"g(x)=f(0,5(x−3))",w:["g(x)=f(2(x−3))","g(x)=f(0,5(x+3))","g(x)=2f(x−3)"],e:"x‑Streckung 2 → b=0,5; rechts 3 → x−3."},
+      {q:`Lies d aus ${eq("f(2(x+4))")} ab.`,a:"d = −4",w:["d = 4","d = 8","d = −8"],e:"x+4 = x−(−4)."},
+      {q:`Ein Punkt (2 | −3) wird an der y‑Achse gespiegelt. Neuer Punkt?`,a:"(−2 | −3)",w:["(2 | 3)","(−2 | 3)","(2 | −3)"],e:"Nur x wechselt das Vorzeichen."}
+    ];
+    let qScore=0,qTotal=0,qActive=false,quizMissed=false;
+    function nextQuiz(){
+      const t=pick(quizBank),opts=shuffle([t.a,...t.w]),host=$("#quizArea");host.innerHTML=`<div class="big-formula">${t.q}</div><div class="choices" id="quizChoices"></div><div class="feedback" id="quizFeedback"></div>`;
+      const ch=$("#quizChoices");
+      opts.forEach(text=>{const b=document.createElement("button");b.className="choice";b.innerHTML=text;b.onclick=()=>{
+        if(!qActive)return;const ok=text===t.a;b.classList.add(ok?"correct":"wrong");
+        if(ok){
+          qActive=false;[...ch.children].forEach(x=>x.disabled=true);
+          if(!quizMissed){qScore++;qTotal++}
+          $("#quizNext").textContent="Nächste Aufgabe";markSolved("final");
+        }else{
+          b.disabled=true;
+          if(!quizMissed){qTotal++;quizMissed=true}
+        }
+        showFeedback("#quizFeedback",ok,t.e);$("#quizScore").textContent=qScore;$("#quizTotal").textContent=qTotal;
+      };ch.appendChild(b)});
+      qActive=true;quizMissed=false;$("#quizNext").textContent="Aufgabe überspringen";
+    }
+    function resetQuiz(){qScore=0;qTotal=0;qActive=false;$("#quizScore").textContent="0";$("#quizTotal").textContent="0";$("#quizArea").innerHTML="<p>Starte den Mix, wenn du die drei Etappen bearbeitet hast.</p>";$("#quizNext").textContent="Aufgabe starten"}
+
+    $("#scanNext").onclick=newScan;$("#buildNext").onclick=newBuild;
+    $("#pointCheck").onclick=checkPoint;$("#pointNext").onclick=newPoint;
+    $("#graphNext").onclick=newGraph;
+    $("#paramCheck").onclick=checkParam;$("#paramNext").onclick=newParam;
+    $("#comboCheck").onclick=checkCombo;$("#comboNext").onclick=newCombo;
+    $("#sequenceNext").onclick=newSequence;$("#errorNext").onclick=newError;
+    $("#quizNext").onclick=nextQuiz;$("#quizReset").onclick=resetQuiz;
+    let resizeTimer;
+    window.addEventListener("resize",()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(redrawGraphChoices,120)});
+    ["#pointX","#pointY"].forEach(id=>$(id).addEventListener("keydown",e=>{if(e.key==="Enter")checkPoint()}));
+    ["#pa","#pb","#pd","#pe"].forEach(id=>$(id).addEventListener("keydown",e=>{if(e.key==="Enter")checkParam()}));
+
+    newScan();newBuild();newPoint();newGraph();newParam();newCombo();newSequence();newError();resetQuiz();
+    const magnifier=`<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 5 5"></path></svg>`;
+    let focusScrollY=0;
+    function exitFocus(){
+      if(!document.body.classList.contains("focus-mode"))return;
+      const restoreScrollY=focusScrollY;
+      const target=document.querySelector(".focus-target"),section=document.querySelector(".focus-section");
+      document.body.classList.remove("focus-mode");
+      target?.classList.remove("focus-target");
+      section?.classList.remove("focus-section");
+      document.querySelectorAll(".focus-toggle").forEach(b=>b.setAttribute("aria-pressed","false"));
+      $("#focusBanner").hidden=true;
+      requestAnimationFrame(()=>{window.scrollTo(0,restoreScrollY);redrawGraphChoices()});
+    }
+    document.querySelectorAll(".card, .final-panel").forEach((card,index)=>{
+      const button=document.createElement("button");
+      button.type="button";button.className="focus-toggle";button.innerHTML=magnifier;
+      button.setAttribute("aria-label","Nur diese Aufgabe anzeigen");
+      button.setAttribute("title","Konzentrationsmodus");
+      button.setAttribute("aria-pressed","false");
+      button.onclick=()=>{
+        if(card.classList.contains("focus-target")){exitFocus();return}
+        focusScrollY=window.scrollY;
+        document.body.classList.add("focus-mode");
+        card.closest("section").classList.add("focus-section");
+        card.classList.add("focus-target");
+        button.setAttribute("aria-pressed","true");
+        $("#focusBanner").hidden=false;
+        window.scrollTo(0,0);
+        requestAnimationFrame(redrawGraphChoices);
+      };
+      card.appendChild(button);
+    });
+    $("#focusExit").onclick=exitFocus;
+    document.addEventListener("keydown",e=>{if(e.key==="Escape"&&document.body.classList.contains("focus-mode"))exitFocus()});
+    toast("Übungsstudio bereit");
+  })();
+  </script>
+</body>
+</html>
