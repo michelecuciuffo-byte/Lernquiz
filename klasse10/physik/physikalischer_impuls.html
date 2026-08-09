@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Physikalischer Impuls – interaktive Lernseite</title>
+  <style>
+    :root{
+      --bg:#f5f7fb;
+      --panel:#ffffff;
+      --text:#1f2937;
+      --muted:#64748b;
+      --line:#dbe3ef;
+      --accent:#6d4aff;
+      --accent2:#9b7cff;
+      --green:#16a34a;
+      --orange:#f59e0b;
+      --red:#dc2626;
+      --blue:#2563eb;
+      --shadow:0 10px 28px rgba(31,41,55,.08);
+    }
+
+    *{box-sizing:border-box}
+
+    body{
+      margin:0;
+      background:linear-gradient(180deg,#f8f9ff 0%,var(--bg) 100%);
+      color:var(--text);
+      font-family:Calibri,Arial,sans-serif;
+      line-height:1.55;
+    }
+
+    .wrap{
+      width:min(1180px,calc(100% - 28px));
+      margin:0 auto;
+      padding:28px 0 48px;
+    }
+
+    .hero{
+      border-radius:24px;
+      padding:28px;
+      color:#fff;
+      background:linear-gradient(135deg,#4e35c8,#7658ef);
+      box-shadow:var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+
+    .hero:after{
+      content:"p = m · v";
+      position:absolute;
+      right:28px;
+      bottom:-10px;
+      font-size:78px;
+      font-weight:700;
+      opacity:.10;
+      white-space:nowrap;
+    }
+
+    h1,h2,h3,p{margin-top:0}
+    h1{font-size:clamp(28px,4vw,46px);margin-bottom:8px}
+    h2{font-size:clamp(22px,3vw,30px);margin-bottom:14px}
+    h3{font-size:20px;margin-bottom:10px}
+    .hero p{font-size:18px;max-width:800px;margin-bottom:0}
+
+    .grid2{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:18px;
+      margin-top:18px;
+    }
+
+    .panel{
+      background:var(--panel);
+      border:1px solid var(--line);
+      border-radius:20px;
+      padding:22px;
+      box-shadow:var(--shadow);
+      margin-top:18px;
+    }
+
+    .formula{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      min-height:110px;
+      border-radius:18px;
+      background:#f2efff;
+      color:#3d2a9e;
+      font-size:clamp(30px,5vw,46px);
+      font-weight:700;
+      letter-spacing:.5px;
+      margin:14px 0;
+    }
+
+    .formula.green{
+      background:#eefaf2;
+      color:#137a35;
+    }
+
+    .badge{
+      display:inline-block;
+      padding:5px 10px;
+      border-radius:999px;
+      background:#eeeaff;
+      color:#5439c8;
+      font-weight:700;
+      font-size:14px;
+      margin-bottom:10px;
+    }
+
+    .muted{color:var(--muted)}
+
+    .important{
+      border-left:5px solid var(--accent);
+      padding:12px 14px;
+      background:#f5f2ff;
+      border-radius:12px;
+      margin:14px 0 0;
+    }
+
+    .controls{
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:16px;
+      margin-top:16px;
+    }
+
+    .control{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:14px;
+      background:#fbfcff;
+    }
+
+    .control label{
+      display:flex;
+      justify-content:space-between;
+      gap:12px;
+      font-weight:700;
+      margin-bottom:8px;
+    }
+
+    input[type="range"]{
+      width:100%;
+      accent-color:var(--accent);
+    }
+
+    .metrics{
+      display:grid;
+      grid-template-columns:repeat(3,minmax(0,1fr));
+      gap:12px;
+      margin-top:16px;
+    }
+
+    .metric{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:16px;
+      padding:13px 14px;
+    }
+
+    .metric span{
+      display:block;
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    .metric strong{
+      display:block;
+      margin-top:3px;
+      font-size:22px;
+    }
+
+    .track{
+      position:relative;
+      height:160px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      background:
+        linear-gradient(#dfeaf6 0 49%,#444c59 49% 78%,#d8e7bf 78% 100%);
+      margin-top:18px;
+    }
+
+    .road-line{
+      position:absolute;
+      left:0;right:0;
+      top:63%;
+      border-top:3px dashed rgba(255,255,255,.85);
+    }
+
+    .vehicle{
+      position:absolute;
+      left:18px;
+      top:69px;
+      transform:translateX(0);
+      transition:transform .08s linear;
+      user-select:none;
+      white-space:nowrap;
+    }
+
+    .vehicle .emoji{
+      display:block;
+      font-size:54px;
+      line-height:1;
+      filter:drop-shadow(0 3px 3px rgba(0,0,0,.18));
+    }
+
+    .vehicle .vlabel{
+      display:block;
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:2px 8px;
+      font-size:12px;
+      width:max-content;
+      margin:3px auto 0;
+    }
+
+    .momentum-bar{
+      height:18px;
+      border-radius:999px;
+      background:#e7eaf0;
+      overflow:hidden;
+      margin-top:8px;
+    }
+
+    .momentum-fill{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      transition:width .25s ease;
+    }
+
+    .compare-row{
+      display:grid;
+      grid-template-columns:160px 1fr 170px;
+      gap:14px;
+      align-items:center;
+      padding:14px 0;
+      border-bottom:1px solid var(--line);
+    }
+
+    .compare-row:last-child{border-bottom:0}
+
+    .object-title{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:700;
+    }
+
+    .object-title .icon{font-size:34px}
+
+    .comparison-track{
+      height:26px;
+      border-radius:999px;
+      background:#edf0f5;
+      overflow:hidden;
+      position:relative;
+    }
+
+    .comparison-fill{
+      position:absolute;
+      inset:0 auto 0 0;
+      width:0%;
+      border-radius:999px;
+      transition:width .35s ease;
+    }
+
+    .carFill{background:var(--blue)}
+    .truckFill{background:var(--orange)}
+
+    .winner{
+      margin-top:14px;
+      padding:14px;
+      border-radius:14px;
+      background:#f8f7ff;
+      border:1px solid #dfd8ff;
+      font-weight:700;
+    }
+
+    button{
+      border:0;
+      border-radius:12px;
+      padding:10px 15px;
+      font:inherit;
+      font-weight:700;
+      cursor:pointer;
+      background:var(--accent);
+      color:#fff;
+      margin-right:8px;
+      margin-top:10px;
+    }
+
+    button.secondary{
+      background:#eaeef5;
+      color:#263244;
+    }
+
+    .impulse-visual{
+      height:150px;
+      margin-top:18px;
+      display:flex;
+      align-items:flex-end;
+      justify-content:center;
+      gap:18px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:18px;
+      background:
+        linear-gradient(to top,rgba(109,74,255,.05),transparent),
+        repeating-linear-gradient(to top,#eef1f6 0,#eef1f6 1px,transparent 1px,transparent 30px);
+    }
+
+    .force-rect{
+      width:180px;
+      min-height:12px;
+      background:linear-gradient(180deg,#8b6cff,#6547de);
+      border-radius:12px 12px 4px 4px;
+      transition:height .25s ease,width .25s ease;
+      position:relative;
+    }
+
+    .force-rect span{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform:translate(-50%,-50%);
+      color:white;
+      font-weight:700;
+      text-align:center;
+      white-space:nowrap;
+    }
+
+    .quiz{
+      display:grid;
+      gap:12px;
+    }
+
+    details{
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:13px 15px;
+      background:#fff;
+    }
+
+    summary{
+      cursor:pointer;
+      font-weight:700;
+    }
+
+    .footer-note{
+      color:var(--muted);
+      text-align:center;
+      margin-top:22px;
+      font-size:14px;
+    }
+
+    .unit{
+      font-size:14px;
+      color:var(--muted);
+      font-weight:400;
+    }
+
+    /* Kugelvergleich */
+    .ball-playground{
+      position:relative;
+      height:190px;
+      margin-top:18px;
+      border:1px solid var(--line);
+      border-radius:18px;
+      overflow:hidden;
+      background:
+        linear-gradient(180deg,#eaf2ff 0 62%,#dfe8f6 62% 100%);
+    }
+
+    .floor{
+      position:absolute;
+      left:0;right:0;bottom:28px;
+      height:8px;
+      background:#65758b;
+    }
+
+    .lane-label{
+      position:absolute;
+      left:14px;
+      background:#ffffffdd;
+      border:1px solid var(--line);
+      border-radius:999px;
+      padding:3px 10px;
+      font-size:13px;
+      font-weight:700;
+    }
+
+    .lane1{ top:30px; }
+    .lane2{ top:102px; }
+
+    .ball{
+      position:absolute;
+      width:44px;
+      height:44px;
+      border-radius:50%;
+      box-shadow:inset -8px -8px 16px rgba(0,0,0,.14), 0 4px 10px rgba(0,0,0,.14);
+      left:26px;
+    }
+
+    .ball.small{ top:46px; background:radial-gradient(circle at 28% 28%,#ffffff,#6aa8ff 36%,#2d6cdf 80%); }
+    .ball.big{
+      width:62px;
+      height:62px;
+      top:108px;
+      background:radial-gradient(circle at 28% 28%,#fff9d8,#f7c94c 38%,#e69500 82%);
+    }
+
+    .ballInfo{
+      margin-top:14px;
+      display:grid;
+      grid-template-columns:repeat(2,minmax(0,1fr));
+      gap:12px;
+    }
+
+    .ballCard{
+      border:1px solid var(--line);
+      background:#fff;
+      border-radius:16px;
+      padding:14px;
+    }
+
+    .caption{
+      color:var(--muted);
+      font-size:14px;
+    }
+
+    @media(max-width:800px){
+      .grid2,.controls,.metrics,.ballInfo{grid-template-columns:1fr}
+      .compare-row{grid-template-columns:1fr}
+      .hero:after{font-size:48px;right:12px}
+      .track{height:145px}
+      .vehicle .emoji{font-size:46px}
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>Physikalischer Impuls</h1>
+      <p>
+        Den <strong>Impuls</strong> kann man sich in der Physik als die
+        <strong>Bewegungsmenge eines Körpers</strong> vorstellen.
+        Je größer die Masse und je höher die Geschwindigkeit sind,
+        desto größer ist der Impuls.
+      </p>
+    </section>
+
+    <section class="panel">
+      <span class="badge">Einstieg</span>
+      <h2>Kugel-Vergleich: Bewegung zuerst ganz anschaulich</h2>
+      <p>
+        Am Anfang ist ein Vergleich mit Kugeln oft besonders anschaulich:
+        Eine schwere oder schnelle Kugel besitzt mehr Impuls als eine leichte oder langsame Kugel.
+        Verändere die Werte und beobachte die Bewegung.
+      </p>
+
+      <div class="controls">
+        <div class="control">
+          <h3>🔵 Kugel A</h3>
+          <label for="ball1Mass"><span>Masse</span><span><b id="ball1MassVal">2</b> kg</span></label>
+          <input id="ball1Mass" type="range" min="1" max="10" step="1" value="2">
+          <label for="ball1Speed" style="margin-top:12px"><span>Geschwindigkeit</span><span><b id="ball1SpeedVal">6</b> m/s</span></label>
+          <input id="ball1Speed" type="range" min="0" max="20" step="1" value="6">
+        </div>
+
+        <div class="control">
+          <h3>🟠 Kugel B</h3>
+          <label for="ball2Mass"><span>Masse</span><span><b id="ball2MassVal">5</b> kg</span></label>
+          <input id="ball2Mass" type="range" min="1" max="10" step="1" value="5">
+          <label for="ball2Speed" style="margin-top:12px"><span>Geschwindigkeit</span><span><b id="ball2SpeedVal">4</b> m/s</span></label>
+          <input id="ball2Speed" type="range" min="0" max="20" step="1" value="4">
+        </div>
+      </div>
+
+      <div class="ballInfo">
+        <div class="ballCard">
+          <strong>Kugel A:</strong> <span id="ball1P">12</span> <span class="unit">kg·m/s</span><br>
+          <span class="caption">Impuls: p = m · v</span>
+          <div class="momentum-bar"><div class="momentum-fill" id="ball1Fill"></div></div>
+        </div>
+        <div class="ballCard">
+          <strong>Kugel B:</strong> <span id="ball2P">20</span> <span class="unit">kg·m/s</span><br>
+          <span class="caption">Impuls: p = m · v</span>
+          <div class="momentum-bar"><div class="momentum-fill" id="ball2Fill"></div></div>
+        </div>
+      </div>
+
+      <div class="winner" id="ballWinnerText">
+        Kugel B hat im Moment den größeren Impuls.
+      </div>
+
+      <div class="ball-playground" id="ballArea">
+        <div class="lane-label lane1">Kugel A</div>
+        <div class="lane-label lane2">Kugel B</div>
+        <div class="ball small" id="ball1"></div>
+        <div class="ball big" id="ball2"></div>
+        <div class="floor"></div>
+      </div>
+
+      <button type="button" id="playBalls">▶ Kugeln animieren</button>
+      <button type="button" class="secondary" id="resetBalls">↺ Kugeln zurücksetzen</button>
+    </section>
+
+    <section class="grid2">
+      <article class="panel">
+        <span class="badge">Grundformel</span>
+        <h2>Impuls aus Masse und Geschwindigkeit</h2>
+        <div class="formula">p = m · v</div>
+        <p>
+          <strong>p</strong> = Impuls,
+          <strong>m</strong> = Masse,
+          <strong>v</strong> = Geschwindigkeit
+        </p>
+        <p class="muted">Einheit: kg · m/s</p>
+        <div class="important">
+          Verdoppelt man die Masse oder die Geschwindigkeit, verdoppelt sich auch der Impuls.
+        </div>
+      </article>
+
+      <article class="panel">
+        <span class="badge">Kraftstoß</span>
+        <h2>Impulsänderung durch Kraft</h2>
+        <div class="formula green">Δp = F · t</div>
+        <p>
+          Eine Kraft, die eine bestimmte Zeit lang wirkt, verändert den Impuls.
+          Das Produkt aus <strong>Kraft F</strong> und <strong>Zeit t</strong>
+          nennt man auch <strong>Kraftstoß</strong>.
+        </p>
+        <p class="muted">Einheit: N · s = kg · m/s</p>
+        <div class="important" style="border-left-color:var(--green);background:#f0faf3">
+          Große Kraft oder lange Einwirkzeit → große Impulsänderung.
+        </div>
+      </article>
+    </section>
+
+    <section class="panel">
+      <span class="badge">Experiment 1</span>
+      <h2>Wie verändern Masse und Geschwindigkeit den Impuls?</h2>
+      <p>
+        Verändere die Regler und beobachte die Bewegung. Der Balken zeigt dir,
+        wie groß der Betrag des Impulses ist.
+      </p>
+
+      <div class="controls">
+        <div class="control">
+          <label for="mass">
+            <span>Masse m</span>
+            <span><b id="massVal">1000</b> kg</span>
+          </label>
+          <input id="mass" type="range" min="200" max="10000" step="100" value="1000">
+        </div>
+
+        <div class="control">
+          <label for="speed">
+            <span>Geschwindigkeit v</span>
+            <span><b id="speedVal">15</b> m/s</span>
+          </label>
+          <input id="speed" type="range" min="0" max="40" step="1" value="15">
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <span>Masse</span>
+          <strong><span id="massMetric">1000</span> <span class="unit">kg</span></strong>
+        </div>
+        <div class="metric">
+          <span>Geschwindigkeit</span>
+          <strong><span id="speedMetric">15</span> <span class="unit">m/s</span></strong>
+        </div>
+        <div class="metric">
+          <span>Impuls p = m · v</span>
+          <strong><span id="momentumMetric">15 000</span> <span class="unit">kg·m/s</span></strong>
+        </div>
+      </div>
+
+      <div class="track" id="track1" aria-label="Animation eines fahrenden Körpers">
+        <div class="road-line"></div>
+        <div class="vehicle" id="vehicle1">
+          <span class="emoji">🚗</span>
+          <span class="vlabel" id="vLabel1">15 m/s</span>
+        </div>
+      </div>
+
+      <div style="margin-top:14px">
+        <strong>Impuls-Anzeige</strong>
+        <div class="momentum-bar">
+          <div class="momentum-fill" id="momentumFill"></div>
+        </div>
+      </div>
+
+      <button type="button" id="play1">▶ Animation starten</button>
+      <button type="button" class="secondary" id="reset1">↺ Zurücksetzen</button>
+    </section>
+
+    <section class="panel">
+      <span class="badge">Experiment 2</span>
+      <h2>Auto oder LKW – wer hat den größeren Impuls?</h2>
+      <p>
+        Ein leichteres Fahrzeug kann durch hohe Geschwindigkeit einen großen Impuls haben.
+        Ein schweres Fahrzeug besitzt aber schon bei geringerer Geschwindigkeit oft einen sehr großen Impuls.
+      </p>
+
+      <div class="controls">
+        <div class="control">
+          <h3>🚗 Auto</h3>
+          <label for="carMass"><span>Masse</span><span><b id="carMassVal">1500</b> kg</span></label>
+          <input id="carMass" type="range" min="800" max="2500" step="50" value="1500">
+          <label for="carSpeed" style="margin-top:12px"><span>Geschwindigkeit</span><span><b id="carSpeedVal">30</b> m/s</span></label>
+          <input id="carSpeed" type="range" min="0" max="45" step="1" value="30">
+        </div>
+
+        <div class="control">
+          <h3>🚚 LKW</h3>
+          <label for="truckMass"><span>Masse</span><span><b id="truckMassVal">12000</b> kg</span></label>
+          <input id="truckMass" type="range" min="4000" max="40000" step="500" value="12000">
+          <label for="truckSpeed" style="margin-top:12px"><span>Geschwindigkeit</span><span><b id="truckSpeedVal">20</b> m/s</span></label>
+          <input id="truckSpeed" type="range" min="0" max="35" step="1" value="20">
+        </div>
+      </div>
+
+      <div style="margin-top:18px">
+        <div class="compare-row">
+          <div class="object-title"><span class="icon">🚗</span><span>Auto</span></div>
+          <div class="comparison-track"><div class="comparison-fill carFill" id="carFill"></div></div>
+          <strong id="carP">45 000 kg·m/s</strong>
+        </div>
+        <div class="compare-row">
+          <div class="object-title"><span class="icon">🚚</span><span>LKW</span></div>
+          <div class="comparison-track"><div class="comparison-fill truckFill" id="truckFill"></div></div>
+          <strong id="truckP">240 000 kg·m/s</strong>
+        </div>
+      </div>
+
+      <div class="winner" id="winnerText">
+        Der LKW hat den größeren Impuls.
+      </div>
+
+      <div class="track" id="track2" aria-label="Animation von Auto und LKW im Vergleich">
+        <div class="road-line"></div>
+        <div class="vehicle" id="carVehicle" style="top:54px">
+          <span class="emoji">🚗</span>
+        </div>
+        <div class="vehicle" id="truckVehicle" style="top:99px">
+          <span class="emoji">🚚</span>
+        </div>
+      </div>
+
+      <button type="button" id="play2">▶ Vergleich animieren</button>
+      <button type="button" class="secondary" id="presetSameSpeed">Gleiche Geschwindigkeit</button>
+      <button type="button" class="secondary" id="presetFastCar">Schnelles Auto</button>
+    </section>
+
+    <section class="panel">
+      <span class="badge">Experiment 3</span>
+      <h2>Kraftstoß: Wie verändert eine Kraft den Impuls?</h2>
+      <p>
+        Stelle Kraft und Einwirkzeit ein. Die Fläche des Rechtecks entspricht anschaulich
+        dem Produkt <strong>F · t</strong> und damit der Impulsänderung.
+      </p>
+
+      <div class="controls">
+        <div class="control">
+          <label for="force">
+            <span>Kraft F</span>
+            <span><b id="forceVal">500</b> N</span>
+          </label>
+          <input id="force" type="range" min="0" max="3000" step="50" value="500">
+        </div>
+        <div class="control">
+          <label for="time">
+            <span>Einwirkzeit t</span>
+            <span><b id="timeVal">2.0</b> s</span>
+          </label>
+          <input id="time" type="range" min="0.1" max="5" step="0.1" value="2">
+        </div>
+      </div>
+
+      <div class="metrics">
+        <div class="metric">
+          <span>Kraft</span>
+          <strong><span id="forceMetric">500</span> <span class="unit">N</span></strong>
+        </div>
+        <div class="metric">
+          <span>Zeit</span>
+          <strong><span id="timeMetric">2.0</span> <span class="unit">s</span></strong>
+        </div>
+        <div class="metric">
+          <span>Impulsänderung Δp</span>
+          <strong><span id="deltaPMetric">1000</span> <span class="unit">N·s</span></strong>
+        </div>
+      </div>
+
+      <div class="impulse-visual">
+        <div class="force-rect" id="forceRect">
+          <span id="forceRectLabel">F · t</span>
+        </div>
+      </div>
+
+      <div class="important">
+        Beispiel aus dem Alltag: Beim Fangen eines Balls bewegt man die Hände etwas nach hinten.
+        Dadurch wird die Abbremszeit größer und die nötige Kraft kleiner.
+      </div>
+    </section>
+
+    <section class="panel">
+      <span class="badge">Merke</span>
+      <h2>Die wichtigsten Zusammenhänge</h2>
+      <div class="grid2" style="margin-top:0">
+        <div>
+          <h3>p = m · v</h3>
+          <ul>
+            <li>größere Masse → größerer Impuls</li>
+            <li>größere Geschwindigkeit → größerer Impuls</li>
+            <li>bei v = 0 ist auch p = 0</li>
+          </ul>
+        </div>
+        <div>
+          <h3>Δp = F · t</h3>
+          <ul>
+            <li>größere Kraft → größere Impulsänderung</li>
+            <li>längere Einwirkzeit → größere Impulsänderung</li>
+            <li>Kraftstoß und Impulsänderung haben dieselbe Einheit</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel">
+      <span class="badge">Mini-Check</span>
+      <h2>Teste dein Verständnis</h2>
+      <div class="quiz">
+        <details>
+          <summary>1. Was passiert mit p, wenn m verdoppelt wird und v gleich bleibt?</summary>
+          <p style="margin:10px 0 0"><strong>Lösung:</strong> Der Impuls verdoppelt sich.</p>
+        </details>
+        <details>
+          <summary>2. Was passiert mit p, wenn v verdreifacht wird?</summary>
+          <p style="margin:10px 0 0"><strong>Lösung:</strong> Der Impuls verdreifacht sich.</p>
+        </details>
+        <details>
+          <summary>3. Eine Kraft von 800 N wirkt 0,5 s. Wie groß ist Δp?</summary>
+          <p style="margin:10px 0 0"><strong>Lösung:</strong> Δp = 800 N · 0,5 s = 400 N·s.</p>
+        </details>
+        <details>
+          <summary>4. Kann ein stehender LKW einen Bewegungsimpuls besitzen?</summary>
+          <p style="margin:10px 0 0"><strong>Lösung:</strong> Nein. Bei v = 0 gilt p = m · 0 = 0.</p>
+        </details>
+      </div>
+    </section>
+
+    <p class="footer-note">
+      Interaktive Lernseite: Physikalischer Impuls • geeignet für Unterricht, Nachhilfe und selbstständiges Üben
+    </p>
+  </main>
+
+  <script>
+    const fmt = n => Math.round(n).toLocaleString('de-DE');
+
+    // -------- Kugeln ----------
+    const ball1Mass = document.getElementById('ball1Mass');
+    const ball1Speed = document.getElementById('ball1Speed');
+    const ball2Mass = document.getElementById('ball2Mass');
+    const ball2Speed = document.getElementById('ball2Speed');
+    const ball1 = document.getElementById('ball1');
+    const ball2 = document.getElementById('ball2');
+    const ballArea = document.getElementById('ballArea');
+
+    function updateBalls(){
+      const m1 = +ball1Mass.value, v1 = +ball1Speed.value;
+      const m2 = +ball2Mass.value, v2 = +ball2Speed.value;
+      const p1 = m1 * v1, p2 = m2 * v2;
+
+      document.getElementById('ball1MassVal').textContent = m1;
+      document.getElementById('ball1SpeedVal').textContent = v1;
+      document.getElementById('ball2MassVal').textContent = m2;
+      document.getElementById('ball2SpeedVal').textContent = v2;
+      document.getElementById('ball1P').textContent = fmt(p1);
+      document.getElementById('ball2P').textContent = fmt(p2);
+
+      const max = Math.max(p1,p2,1);
+      document.getElementById('ball1Fill').style.width = (p1/max*100) + '%';
+      document.getElementById('ball2Fill').style.width = (p2/max*100) + '%';
+
+      ball1.style.transform = `scale(${0.8 + m1*0.04})`;
+      ball2.style.transform = `scale(${0.75 + m2*0.03})`;
+
+      const winner = document.getElementById('ballWinnerText');
+      if(p1 > p2){
+        winner.textContent = 'Kugel A hat im Moment den größeren Impuls.';
+      }else if(p2 > p1){
+        winner.textContent = 'Kugel B hat im Moment den größeren Impuls.';
+      }else{
+        winner.textContent = 'Beide Kugeln haben im Moment den gleichen Impuls.';
+      }
+    }
+
+    [ball1Mass, ball1Speed, ball2Mass, ball2Speed].forEach(el => el.addEventListener('input', updateBalls));
+
+    let ballAnim;
+    document.getElementById('playBalls').addEventListener('click', ()=>{
+      cancelAnimationFrame(ballAnim);
+      let x1 = 0, x2 = 0;
+      const maxX = Math.max(0, ballArea.clientWidth - 130);
+      function step(){
+        x1 += (+ball1Speed.value) * 0.06;
+        x2 += (+ball2Speed.value) * 0.06;
+        if(x1 > maxX) x1 = 0;
+        if(x2 > maxX) x2 = 0;
+        ball1.style.left = (26 + x1) + 'px';
+        ball2.style.left = (26 + x2) + 'px';
+        ballAnim = requestAnimationFrame(step);
+      }
+      step();
+    });
+
+    document.getElementById('resetBalls').addEventListener('click', ()=>{
+      cancelAnimationFrame(ballAnim);
+      ball1.style.left = '26px';
+      ball2.style.left = '26px';
+      ball1Mass.value = 2;
+      ball1Speed.value = 6;
+      ball2Mass.value = 5;
+      ball2Speed.value = 4;
+      updateBalls();
+    });
+
+    // -------- Einzel-Fahrzeug ----------
+    const mass = document.getElementById('mass');
+    const speed = document.getElementById('speed');
+    const massVal = document.getElementById('massVal');
+    const speedVal = document.getElementById('speedVal');
+    const massMetric = document.getElementById('massMetric');
+    const speedMetric = document.getElementById('speedMetric');
+    const momentumMetric = document.getElementById('momentumMetric');
+    const momentumFill = document.getElementById('momentumFill');
+    const vLabel1 = document.getElementById('vLabel1');
+    const vehicle1 = document.getElementById('vehicle1');
+    const track1 = document.getElementById('track1');
+
+    function updateSingle(){
+      const m = +mass.value;
+      const v = +speed.value;
+      const p = m * v;
+      massVal.textContent = fmt(m);
+      speedVal.textContent = v;
+      massMetric.textContent = fmt(m);
+      speedMetric.textContent = v;
+      momentumMetric.textContent = fmt(p);
+      vLabel1.textContent = v + ' m/s';
+
+      const maxP = 10000 * 40;
+      momentumFill.style.width = Math.min(100,(p/maxP)*100) + '%';
+
+      const scale = 0.82 + (m-200)/(10000-200)*0.38;
+      vehicle1.querySelector('.emoji').style.transform = `scale(${scale})`;
+    }
+
+    mass.addEventListener('input', updateSingle);
+    speed.addEventListener('input', updateSingle);
+
+    let anim1;
+    document.getElementById('play1').addEventListener('click',()=>{
+      cancelAnimationFrame(anim1);
+      let x = 0;
+      const v = +speed.value;
+      const maxX = Math.max(0, track1.clientWidth - 110);
+      function step(){
+        x += v * 0.045;
+        if(x > maxX) x = 0;
+        vehicle1.style.transform = `translateX(${x}px)`;
+        anim1 = requestAnimationFrame(step);
+      }
+      step();
+    });
+
+    document.getElementById('reset1').addEventListener('click',()=>{
+      cancelAnimationFrame(anim1);
+      vehicle1.style.transform='translateX(0)';
+      mass.value=1000;
+      speed.value=15;
+      updateSingle();
+    });
+
+    // -------- Auto/LKW ----------
+    const carMass = document.getElementById('carMass');
+    const carSpeed = document.getElementById('carSpeed');
+    const truckMass = document.getElementById('truckMass');
+    const truckSpeed = document.getElementById('truckSpeed');
+
+    function updateCompare(){
+      const cm = +carMass.value, cv = +carSpeed.value;
+      const tm = +truckMass.value, tv = +truckSpeed.value;
+      const cp = cm*cv, tp = tm*tv;
+
+      document.getElementById('carMassVal').textContent=fmt(cm);
+      document.getElementById('carSpeedVal').textContent=cv;
+      document.getElementById('truckMassVal').textContent=fmt(tm);
+      document.getElementById('truckSpeedVal').textContent=tv;
+      document.getElementById('carP').textContent=fmt(cp)+' kg·m/s';
+      document.getElementById('truckP').textContent=fmt(tp)+' kg·m/s';
+
+      const max = Math.max(cp,tp,1);
+      document.getElementById('carFill').style.width=(cp/max*100)+'%';
+      document.getElementById('truckFill').style.width=(tp/max*100)+'%';
+
+      const winner=document.getElementById('winnerText');
+      if(cp>tp){
+        winner.textContent='Das Auto hat in dieser Einstellung den größeren Impuls.';
+      }else if(tp>cp){
+        winner.textContent='Der LKW hat in dieser Einstellung den größeren Impuls.';
+      }else{
+        winner.textContent='Beide Fahrzeuge haben genau den gleichen Impuls.';
+      }
+    }
+
+    [carMass,carSpeed,truckMass,truckSpeed].forEach(el=>el.addEventListener('input',updateCompare));
+
+    document.getElementById('presetSameSpeed').addEventListener('click',()=>{
+      carSpeed.value=20;
+      truckSpeed.value=20;
+      updateCompare();
+    });
+
+    document.getElementById('presetFastCar').addEventListener('click',()=>{
+      carMass.value=1500;
+      carSpeed.value=40;
+      truckMass.value=4000;
+      truckSpeed.value=12;
+      updateCompare();
+    });
+
+    let anim2;
+    const carVehicle=document.getElementById('carVehicle');
+    const truckVehicle=document.getElementById('truckVehicle');
+    const track2=document.getElementById('track2');
+
+    document.getElementById('play2').addEventListener('click',()=>{
+      cancelAnimationFrame(anim2);
+      const maxX = Math.max(0, track2.clientWidth - 110);
+      let xc = maxX;
+      let xt = maxX;
+      function step(){
+        xc -= (+carSpeed.value) * 0.04;
+        xt -= (+truckSpeed.value) * 0.04;
+        if(xc < 0) xc = maxX;
+        if(xt < 0) xt = maxX;
+        carVehicle.style.transform=`translateX(${xc}px)`;
+        truckVehicle.style.transform=`translateX(${xt}px)`;
+        anim2=requestAnimationFrame(step);
+      }
+      step();
+    });
+
+    // -------- Kraftstoß ----------
+    const force=document.getElementById('force');
+    const time=document.getElementById('time');
+
+    function updateForce(){
+      const F=+force.value;
+      const t=+time.value;
+      const dp=F*t;
+
+      document.getElementById('forceVal').textContent=fmt(F);
+      document.getElementById('timeVal').textContent=t.toFixed(1);
+      document.getElementById('forceMetric').textContent=fmt(F);
+      document.getElementById('timeMetric').textContent=t.toFixed(1);
+      document.getElementById('deltaPMetric').textContent=fmt(dp);
+
+      const rect=document.getElementById('forceRect');
+      rect.style.height=(20 + (F/3000)*105)+'px';
+      rect.style.width=(55 + (t/5)*250)+'px';
+      document.getElementById('forceRectLabel').textContent='Δp = '+fmt(dp)+' N·s';
+    }
+
+    force.addEventListener('input',updateForce);
+    time.addEventListener('input',updateForce);
+
+    updateBalls();
+    updateSingle();
+    updateCompare();
+    updateForce();
+  </script>
+</body>
+</html>
