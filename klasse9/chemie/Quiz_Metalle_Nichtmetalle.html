@@ -102,6 +102,7 @@
   .feedback.show{display:block}
   .feedback.ok{background:var(--ok-bg);color:#0d5e39;border:1px solid #b9e1ca}
   .feedback.bad{background:var(--bad-bg);color:#8f1d14;border:1px solid #f2c0bc}
+  .feedback.instant{font-weight:800;display:inline-flex;align-items:center;gap:7px;padding:8px 11px}
 
   .actions{position:sticky;bottom:12px;z-index:10;margin-top:22px;background:rgba(255,255,255,.94);backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:18px;padding:12px;display:flex;gap:10px;align-items:center;box-shadow:var(--shadow)}
   button.action{border:0;border-radius:12px;padding:12px 16px;font:inherit;font-weight:800;cursor:pointer}
@@ -133,13 +134,7 @@
   <section class="hero">
     <div class="eyebrow">Chemie · Selbstkontrolle</div>
     <h1>Metalle & Nichtmetalle</h1>
-    <p class="lead">Ein Überprüfungsquiz zu Lage im Periodensystem und typischen Stoffeigenschaften. Achte besonders auf Wörter wie <strong>meist</strong> und <strong>viele</strong> – nicht jede Eigenschaft gilt ohne Ausnahme.</p>
-    <div class="meta">
-      <span class="pill">10 Aufgaben</span>
-      <span class="pill">Ankreuzen</span>
-      <span class="pill">Zuordnen</span>
-      <span class="pill">Bildaufgabe</span>
-    </div>
+    <p class="lead">Ein kleines Quiz zur Selbstüberprüfung; Themen: Metalle &amp; Nichtmetalle - deren Lage im PSE sowie typische Stoffeigenschaften.</p>
     <div class="progress-wrap">
       <div class="track"><div class="bar" id="bar"></div></div>
       <div id="progressText">0 / 10 bearbeitet</div>
@@ -163,7 +158,7 @@
     <section class="question" id="q2" data-kind="single">
       <div class="qhead"><div class="qnum">2</div><div><div class="qtitle">Welche Beschreibung der Lage im Periodensystem trifft am besten zu?</div></div></div>
       <div class="options">
-        <label class="option"><input type="radio" name="q2" value="A"><span>Metalle liegen überwiegend links von der Grenzlinie, Nichtmetalle überwiegend rechts davon.</span></label>
+        <label class="option" data-correct="true"><input type="radio" name="q2" value="A"><span>Metalle liegen überwiegend links von der Grenzlinie, Nichtmetalle überwiegend rechts davon.</span></label>
         <label class="option"><input type="radio" name="q2" value="B"><span>Metalle liegen überwiegend rechts von der Grenzlinie, Nichtmetalle überwiegend links davon.</span></label>
         <label class="option"><input type="radio" name="q2" value="C"><span>Metalle und Nichtmetalle wechseln sich innerhalb jeder Hauptgruppe regelmäßig ab.</span></label>
         <label class="option"><input type="radio" name="q2" value="D"><span>Die Einteilung hängt hauptsächlich davon ab, ob ein Element in einer geraden oder ungeraden Periode steht.</span></label>
@@ -174,7 +169,7 @@
     <section class="question" id="q3" data-kind="single">
       <div class="qhead"><div class="qnum">3</div><div><div class="qtitle">Welches Element ist in der dargestellten Einteilung eine wichtige Ausnahme von der einfachen Links-rechts-Regel?</div></div></div>
       <div class="options">
-        <label class="option"><input type="radio" name="q3" value="A"><span>Wasserstoff</span></label>
+        <label class="option" data-correct="true"><input type="radio" name="q3" value="A"><span>Wasserstoff</span></label>
         <label class="option"><input type="radio" name="q3" value="B"><span>Magnesium</span></label>
         <label class="option"><input type="radio" name="q3" value="C"><span>Aluminium</span></label>
         <label class="option"><input type="radio" name="q3" value="D"><span>Calcium</span></label>
@@ -205,7 +200,7 @@
     <section class="question" id="q5" data-kind="single">
       <div class="qhead"><div class="qnum">5</div><div><div class="qtitle">Welche Aussage zu Schmelz- und Siedepunkten ist am präzisesten formuliert?</div></div></div>
       <div class="options">
-        <label class="option"><input type="radio" name="q5" value="A"><span>Viele Nichtmetalle haben niedrigere Schmelz- und Siedepunkte als Metalle.</span></label>
+        <label class="option" data-correct="true"><input type="radio" name="q5" value="A"><span>Viele Nichtmetalle haben niedrigere Schmelz- und Siedepunkte als Metalle.</span></label>
         <label class="option"><input type="radio" name="q5" value="B"><span>Jedes Nichtmetall hat einen niedrigeren Schmelz- und Siedepunkt als jedes Metall.</span></label>
         <label class="option"><input type="radio" name="q5" value="C"><span>Metalle und Nichtmetalle unterscheiden sich grundsätzlich nicht in ihren Schmelz- und Siedepunkten.</span></label>
         <label class="option"><input type="radio" name="q5" value="D"><span>Nichtmetalle besitzen typischerweise besonders hohe Schmelz- und Siedepunkte, Metalle eher niedrige.</span></label>
@@ -216,7 +211,7 @@
     <section class="question" id="q6" data-kind="single">
       <div class="qhead"><div class="qnum">6</div><div><div class="qtitle">Welche Gegenüberstellung ist insgesamt korrekt?</div></div></div>
       <div class="options">
-        <label class="option"><input type="radio" name="q6" value="A"><span>Metalle leiten elektrischen Strom meist gut und sind meist gut verformbar; Nichtmetalle leiten schlecht und sind meist nicht gut verformbar.</span></label>
+        <label class="option" data-correct="true"><input type="radio" name="q6" value="A"><span>Metalle leiten elektrischen Strom meist gut und sind meist gut verformbar; Nichtmetalle leiten schlecht und sind meist nicht gut verformbar.</span></label>
         <label class="option"><input type="radio" name="q6" value="B"><span>Metalle leiten elektrischen Strom meist gut, sind aber typischerweise schlechter verformbar als Nichtmetalle.</span></label>
         <label class="option"><input type="radio" name="q6" value="C"><span>Nichtmetalle leiten elektrischen Strom meist gut, während Metalle darin eher schlechte Leiter sind.</span></label>
         <label class="option"><input type="radio" name="q6" value="D"><span>Metalle und Nichtmetalle unterscheiden sich vor allem im Glanz; Leitfähigkeit und Verformbarkeit sind weitgehend ähnlich.</span></label>
@@ -227,7 +222,7 @@
     <section class="question" id="q7" data-kind="single">
       <div class="qhead"><div class="qnum">7</div><div><div class="qtitle">Ein unbekannter Feststoff lässt sich biegen, leitet elektrischen Strom gut und besitzt deutlichen Glanz. Welche Schlussfolgerung ist am sinnvollsten?</div></div></div>
       <div class="options">
-        <label class="option"><input type="radio" name="q7" value="A"><span>Die beobachtete Kombination spricht deutlich für ein Metall.</span></label>
+        <label class="option" data-correct="true"><input type="radio" name="q7" value="A"><span>Die beobachtete Kombination spricht deutlich für ein Metall.</span></label>
         <label class="option"><input type="radio" name="q7" value="B"><span>Die beobachtete Kombination spricht deutlich für ein Nichtmetall.</span></label>
         <label class="option"><input type="radio" name="q7" value="C"><span>Nur die Verformbarkeit spricht für ein Metall; Leitfähigkeit und Glanz sprechen eher dagegen.</span></label>
         <label class="option"><input type="radio" name="q7" value="D"><span>Aus diesen drei Eigenschaften lässt sich überhaupt keine sinnvolle Einordnung ableiten.</span></label>
@@ -238,7 +233,7 @@
     <section class="question" id="q8" data-kind="single">
       <div class="qhead"><div class="qnum">8</div><div><div class="qtitle">Welche Gruppe besteht nur aus Nichtmetallen?</div><div class="hint">Nutze die Einteilung im Periodensystem; Halbmetalle zählen hier nicht als Nichtmetalle.</div></div></div>
       <div class="options">
-        <label class="option"><input type="radio" name="q8" value="A"><span>Kohlenstoff – Stickstoff – Chlor</span></label>
+        <label class="option" data-correct="true"><input type="radio" name="q8" value="A"><span>Kohlenstoff – Stickstoff – Chlor</span></label>
         <label class="option"><input type="radio" name="q8" value="B"><span>Bor – Kohlenstoff – Stickstoff</span></label>
         <label class="option"><input type="radio" name="q8" value="C"><span>Aluminium – Silicium – Phosphor</span></label>
         <label class="option"><input type="radio" name="q8" value="D"><span>Natrium – Magnesium – Schwefel</span></label>
@@ -249,7 +244,7 @@
     <section class="question" id="q9" data-kind="single">
       <div class="qhead"><div class="qnum">9</div><div><div class="qtitle">Welche Gruppe besteht nur aus Metallen?</div></div></div>
       <div class="options">
-        <label class="option"><input type="radio" name="q9" value="A"><span>Natrium – Magnesium – Eisen</span></label>
+        <label class="option" data-correct="true"><input type="radio" name="q9" value="A"><span>Natrium – Magnesium – Eisen</span></label>
         <label class="option"><input type="radio" name="q9" value="B"><span>Aluminium – Silicium – Phosphor</span></label>
         <label class="option"><input type="radio" name="q9" value="C"><span>Kalium – Calcium – Chlor</span></label>
         <label class="option"><input type="radio" name="q9" value="D"><span>Kupfer – Zink – Iod</span></label>
@@ -260,7 +255,7 @@
     <section class="question" id="q10" data-kind="single">
       <div class="qhead"><div class="qnum">10</div><div><div class="qtitle">Die Iodprobe auf dem Foto wirkt teilweise glänzend. Was zeigt dieses Beispiel besonders gut?</div></div></div>
       <div class="options">
-        <label class="option"><input type="radio" name="q10" value="A"><span>„Nichtmetalle sind meist nicht glänzend“ ist eine typische Tendenz und keine ausnahmslose Regel.</span></label>
+        <label class="option" data-correct="true"><input type="radio" name="q10" value="A"><span>„Nichtmetalle sind meist nicht glänzend“ ist eine typische Tendenz und keine ausnahmslose Regel.</span></label>
         <label class="option"><input type="radio" name="q10" value="B"><span>Jeder glänzende Stoff muss als Metall eingeordnet werden.</span></label>
         <label class="option"><input type="radio" name="q10" value="C"><span>Iod gehört deshalb zu den Metallen, obwohl es rechts von der Grenzlinie steht.</span></label>
         <label class="option"><input type="radio" name="q10" value="D"><span>Der Glanz beweist, dass die Position im Periodensystem für die Einteilung keine Rolle spielt.</span></label>
@@ -271,6 +266,7 @@
 
   <div class="actions">
     <button type="button" class="action primary" id="checkBtn">Antworten prüfen</button>
+    <button type="button" class="action secondary" id="shuffleBtn">Neu mixen</button>
     <button type="button" class="action secondary" id="resetBtn">Zurücksetzen</button>
     <div class="result" id="result">Noch nicht ausgewertet<small>Bearbeite die Aufgaben und prüfe anschließend.</small></div>
   </div>
@@ -293,24 +289,57 @@
 <script>
 (() => {
   const answers = {
-    q1: {type:'multi', correct:['S','I','P'], ok:'Richtig: Schwefel, Iod und Phosphor sind Nichtmetalle.', bad:'Prüfe die Einordnung noch einmal. Gesucht sind genau drei Nichtmetalle; das Aussehen allein reicht nicht immer.'},
-    q2: {type:'single', correct:'A', ok:'Genau: Metalle liegen überwiegend links, Nichtmetalle überwiegend rechts von der Grenzlinie.', bad:'Achte auf die Grenzlinie im Periodensystem: links liegen überwiegend Metalle, rechts überwiegend Nichtmetalle.'},
-    q3: {type:'single', correct:'A', ok:'Richtig: Wasserstoff steht links oben, wird hier aber als Nichtmetall eingeordnet.', bad:'Die gesuchte Ausnahme steht ganz links oben im Periodensystem und gehört trotzdem zu den Nichtmetallen.'},
-    q4: {type:'sort', ok:'Alle acht Eigenschaften sind passend zugeordnet.', bad:'Noch nicht ganz: {n}/8 Eigenschaften sind richtig zugeordnet.'},
-    q5: {type:'single', correct:'A', ok:'Richtig. „Viele“ ist hier entscheidend: Die Aussage beschreibt eine Tendenz und keine ausnahmslose Regel.', bad:'Achte auf die vorsichtige Formulierung in den Notizen: Bei Nichtmetallen gilt hier „viele“, nicht „alle“.'},
-    q6: {type:'single', correct:'A', ok:'Richtig: Gute elektrische Leitfähigkeit und gute Verformbarkeit sind typische Metalleigenschaften; bei Nichtmetallen ist beides in den Notizen gegenteilig beschrieben.', bad:'Vergleiche elektrische Leitfähigkeit und Verformbarkeit: Beide Eigenschaften werden bei Metallen und Nichtmetallen gegensätzlich beschrieben.'},
-    q7: {type:'single', correct:'A', ok:'Richtig. Gute Leitfähigkeit, Verformbarkeit und Glanz ergeben gemeinsam ein sehr typisches Metall-Profil.', bad:'Bewerte die Kombination der drei Eigenschaften gemeinsam, nicht nur ein einzelnes Merkmal.'},
-    q8: {type:'single', correct:'A', ok:'Richtig: Kohlenstoff, Stickstoff und Chlor liegen im Nichtmetallbereich.', bad:'In den anderen Gruppen steckt jeweils mindestens ein Metall oder Halbmetall.'},
-    q9: {type:'single', correct:'A', ok:'Richtig: Natrium, Magnesium und Eisen sind Metalle.', bad:'In den anderen Gruppen ist jeweils mindestens ein Nichtmetall oder Halbmetall enthalten.'},
-    q10:{type:'single', correct:'A', ok:'Genau. Das Wort „meist“ lässt Ausnahmen zu; Iod ist ein gutes Beispiel dafür, dass Glanz allein nicht entscheidet.', bad:'Der entscheidende Punkt ist die Formulierung „meist nicht glänzend“ – sie ist keine absolute Aussage.'}
+    q1: {type:'multi', correct:['S','I','P'], ok:'Schwefel, Iod und Phosphor sind Nichtmetalle.', bad:'Prüfe die Einordnung noch einmal.'},
+    q2: {type:'single', correct:null, ok:'Metalle liegen überwiegend links, Nichtmetalle überwiegend rechts von der Grenzlinie.', bad:'Achte auf die Grenzlinie im Periodensystem.'},
+    q3: {type:'single', correct:null, ok:'Wasserstoff steht links oben, wird hier aber als Nichtmetall eingeordnet.', bad:'Gesucht ist die wichtige Ausnahme links oben im PSE.'},
+    q4: {type:'sort', ok:'Alle acht Eigenschaften sind passend zugeordnet.', bad:'Prüfe die Zuordnung der Eigenschaften noch einmal.'},
+    q5: {type:'single', correct:null, ok:'„Viele“ beschreibt hier eine Tendenz und keine ausnahmslose Regel.', bad:'Achte auf die vorsichtige Formulierung „viele“ statt „alle“.'},
+    q6: {type:'single', correct:null, ok:'Gute elektrische Leitfähigkeit und gute Verformbarkeit sind typische Metalleigenschaften.', bad:'Vergleiche Leitfähigkeit und Verformbarkeit von Metallen und Nichtmetallen.'},
+    q7: {type:'single', correct:null, ok:'Leitfähigkeit, Verformbarkeit und Glanz ergeben gemeinsam ein typisches Metall-Profil.', bad:'Bewerte die drei beobachteten Eigenschaften gemeinsam.'},
+    q8: {type:'single', correct:null, ok:'Kohlenstoff, Stickstoff und Chlor sind Nichtmetalle.', bad:'In den anderen Gruppen steckt mindestens ein Metall oder Halbmetall.'},
+    q9: {type:'single', correct:null, ok:'Natrium, Magnesium und Eisen sind Metalle.', bad:'In den anderen Gruppen ist mindestens ein Nichtmetall oder Halbmetall enthalten.'},
+    q10:{type:'single', correct:null, ok:'„Meist nicht glänzend“ ist eine Tendenz; Iod zeigt, dass es Ausnahmen gibt.', bad:'Glanz allein entscheidet nicht über Metall oder Nichtmetall.'}
   };
 
+  const singleIds = ['q2','q3','q5','q6','q7','q8','q9','q10'];
   const form = document.getElementById('quiz');
   const bar = document.getElementById('bar');
   const progressText = document.getElementById('progressText');
   const result = document.getElementById('result');
+  const poolbox = document.getElementById('poolbox');
   let selectedChip = null;
   let draggedChip = null;
+
+  function shuffleArray(arr){
+    for(let i=arr.length-1;i>0;i--){
+      const j=Math.floor(Math.random()*(i+1));
+      [arr[i],arr[j]]=[arr[j],arr[i]];
+    }
+    return arr;
+  }
+
+  function shuffleChildren(container, selector=':scope > *'){
+    const items=[...container.querySelectorAll(selector)];
+    shuffleArray(items).forEach(item=>container.appendChild(item));
+  }
+
+  function shuffleSingleQuestion(id){
+    const q=document.getElementById(id);
+    const box=q.querySelector('.options');
+    const options=[...box.querySelectorAll('.option')];
+    shuffleArray(options).forEach((label,i)=>{
+      const input=label.querySelector('input');
+      input.value=String.fromCharCode(65+i); // A–D werden bei jedem Mix neu vergeben
+      if(label.dataset.correct==='true') answers[id].correct=input.value;
+      box.appendChild(label);
+    });
+  }
+
+  function randomizeOrder(){
+    singleIds.forEach(shuffleSingleQuestion);
+    shuffleChildren(document.querySelector('#q1 .image-grid'), ':scope > .image-card');
+    shuffleChildren(poolbox, ':scope > .chip');
+  }
 
   function sameSet(a,b){
     if(a.length !== b.length) return false;
@@ -334,8 +363,9 @@
     progressText.textContent = `${done} / ${total} bearbeitet`;
   }
 
-  function clearFeedback(){
-    document.querySelectorAll('.question').forEach(q=>{
+  function clearFeedback(question=null){
+    const targets=question?[question]:[...document.querySelectorAll('.question')];
+    targets.forEach(q=>{
       q.classList.remove('is-correct','is-wrong');
       const fb=q.querySelector('.feedback');
       fb.className='feedback';
@@ -343,57 +373,67 @@
     });
   }
 
-  function evaluateQuestion(id, cfg){
+  function gradeQuestion(id, cfg){
     const q=document.getElementById(id);
-    let correct=false, text='';
+    let correct=false;
     if(cfg.type==='single'){
       const val=q.querySelector('input[type="radio"]:checked')?.value;
       correct=val===cfg.correct;
-      text=correct?cfg.ok:cfg.bad;
     } else if(cfg.type==='multi'){
       const vals=[...q.querySelectorAll('input[type="checkbox"]:checked')].map(x=>x.value);
       correct=sameSet(vals,cfg.correct);
-      text=correct?cfg.ok:cfg.bad;
     } else if(cfg.type==='sort'){
       const placed=[...q.querySelectorAll('.zone[data-zone="metal"] .chip, .zone[data-zone="nonmetal"] .chip')];
-      let n=0;
-      placed.forEach(chip=>{ if(chip.dataset.answer===chip.closest('.zone').dataset.zone) n++; });
-      correct=(placed.length===8 && n===8);
-      text=correct?cfg.ok:cfg.bad.replace('{n}',n);
+      correct=placed.length===8 && placed.every(chip=>chip.dataset.answer===chip.closest('.zone').dataset.zone);
     }
+    return correct;
+  }
+
+  function showFeedback(id, cfg, detailed=false){
+    const q=document.getElementById(id);
+    const correct=gradeQuestion(id,cfg);
     const fb=q.querySelector('.feedback');
-    fb.textContent=text;
-    fb.classList.add('show', correct?'ok':'bad');
+    clearFeedback(q);
     q.classList.add(correct?'is-correct':'is-wrong');
+    fb.classList.add('show', correct?'ok':'bad', 'instant');
+    fb.textContent=correct
+      ? `🏆 Richtig!${detailed ? ' ' + cfg.ok : ''}`
+      : `🔄 Versuch es noch einmal!${detailed ? ' ' + cfg.bad : ''}`;
     return correct;
   }
 
   function checkAll(){
-    clearFeedback();
     let score=0;
-    Object.entries(answers).forEach(([id,cfg])=>{ if(evaluateQuestion(id,cfg)) score++; });
+    Object.entries(answers).forEach(([id,cfg])=>{ if(showFeedback(id,cfg,true)) score++; });
     const total=Object.keys(answers).length;
     const pct=Math.round(score/total*100);
     let msg='';
-    if(score===total) msg='Sehr sicher';
-    else if(score>=8) msg='Stark';
-    else if(score>=6) msg='Gute Basis';
-    else msg='Noch einmal wiederholen';
+    if(score===total) msg='🏆 Sehr sicher';
+    else if(score>=8) msg='🏆 Stark';
+    else if(score>=6) msg='👍 Gute Basis';
+    else msg='🔄 Noch einmal wiederholen';
     result.innerHTML=`${score} / ${total} Punkte · ${pct}%<small>${msg}</small>`;
-    const firstWrong=document.querySelector('.question.is-wrong');
-    if(firstWrong) firstWrong.scrollIntoView({behavior:'smooth',block:'center'});
   }
 
-  function resetQuiz(){
+  function resetQuiz(scrollTop=true){
     form.reset();
     clearFeedback();
     document.querySelectorAll('.chip').forEach(chip=>{
       chip.classList.remove('selected');
-      document.getElementById('poolbox').appendChild(chip);
+      poolbox.appendChild(chip);
     });
     selectedChip=null;
-    result.innerHTML='Noch nicht ausgewertet<small>Bearbeite die Aufgaben und prüfe anschließend.</small>';
+    draggedChip=null;
+    result.innerHTML='Noch nicht ausgewertet<small>Bearbeite die Aufgaben – die Rückmeldung erscheint direkt.</small>';
     updateProgress();
+    if(scrollTop) window.scrollTo({top:0,behavior:'smooth'});
+  }
+
+  function remixQuiz(){
+    resetQuiz(false);
+    randomizeOrder();
+    updateProgress();
+    result.innerHTML='Neu gemischt<small>Antworten, Bilder und Kärtchen wurden neu angeordnet.</small>';
     window.scrollTo({top:0,behavior:'smooth'});
   }
 
@@ -403,6 +443,8 @@
     chip.classList.remove('selected');
     selectedChip=null;
     updateProgress();
+    if(questionAnswered('q4')) showFeedback('q4',answers.q4,false);
+    else clearFeedback(document.getElementById('q4'));
   }
 
   document.querySelectorAll('.chip').forEach(chip=>{
@@ -429,12 +471,26 @@
     });
   });
 
-  form.addEventListener('change',updateProgress);
+  form.addEventListener('change',e=>{
+    updateProgress();
+    const q=e.target.closest('.question');
+    if(!q) return;
+    const id=q.id, cfg=answers[id];
+    if(cfg.type==='single') showFeedback(id,cfg,false);
+    if(cfg.type==='multi'){
+      const count=q.querySelectorAll('input[type="checkbox"]:checked').length;
+      if(count===3) showFeedback(id,cfg,false);
+      else clearFeedback(q);
+    }
+  });
+
   document.getElementById('checkBtn').addEventListener('click',checkAll);
-  document.getElementById('resetBtn').addEventListener('click',resetQuiz);
+  document.getElementById('shuffleBtn').addEventListener('click',remixQuiz);
+  document.getElementById('resetBtn').addEventListener('click',()=>resetQuiz(true));
+
+  randomizeOrder();
   updateProgress();
 })();
 </script>
 </body>
 </html>
-
