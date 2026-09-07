@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quiz: Aggregatzustände</title>
+<style>
+  :root{
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --text:#1f2937;
+    --muted:#6b7280;
+    --border:#d1d5db;
+    --good-bg:#ecfdf5;
+    --good-bd:#86efac;
+    --good-tx:#166534;
+    --bad-bg:#fef2f2;
+    --bad-bd:#fca5a5;
+    --bad-tx:#991b1b;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Calibri, Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+  }
+  .wrap{
+    max-width:950px;
+    margin:0 auto;
+    padding:28px 16px 48px;
+  }
+  h1{
+    margin:0 0 8px;
+    font-size:2rem;
+  }
+  .intro{
+    color:var(--muted);
+    line-height:1.5;
+    margin:0 0 18px;
+  }
+  .topbar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:12px;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+  }
+  .panel{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:12px 14px;
+  }
+  .scoreline{
+    font-weight:700;
+    margin-bottom:6px;
+  }
+  .trophybar{
+    min-height:28px;
+    font-size:1.2rem;
+    letter-spacing:2px;
+  }
+  .btn{
+    font:inherit;
+    font-weight:700;
+    padding:10px 14px;
+    border-radius:10px;
+    border:1px solid var(--border);
+    background:#fff;
+    cursor:pointer;
+  }
+  .btn:hover{background:#f9fafb}
+  .question{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:18px;
+    margin-bottom:16px;
+  }
+  .qhead{
+    display:flex;
+    align-items:flex-start;
+    gap:12px;
+    margin-bottom:14px;
+  }
+  .qnum{
+    width:34px;
+    height:34px;
+    border-radius:50%;
+    display:grid;
+    place-items:center;
+    background:#eef2ff;
+    font-weight:700;
+    flex:0 0 auto;
+  }
+  .qtext{
+    font-size:1.08rem;
+    line-height:1.45;
+    font-weight:700;
+    padding-top:4px;
+    flex:1;
+  }
+  .qstatus{
+    font-size:1.25rem;
+    min-width:26px;
+    text-align:right;
+  }
+  .options{
+    display:grid;
+    gap:9px;
+  }
+  .option{
+    width:100%;
+    text-align:left;
+    border:1px solid var(--border);
+    background:#fff;
+    border-radius:10px;
+    padding:11px 13px;
+    line-height:1.4;
+    cursor:pointer;
+    font:inherit;
+  }
+  .option:hover{background:#f9fafb}
+  .option:disabled{
+    cursor:default;
+    opacity:1;
+  }
+  .option.correct{
+    background:var(--good-bg);
+    border-color:var(--good-bd);
+    color:var(--good-tx);
+    font-weight:700;
+  }
+  .option.wrong{
+    background:var(--bad-bg);
+    border-color:var(--bad-bd);
+    color:var(--bad-tx);
+    font-weight:700;
+  }
+  .feedback{
+    display:none;
+    margin-top:12px;
+    padding:10px 12px;
+    border-radius:10px;
+    line-height:1.45;
+  }
+  .feedback.show{
+    display:block;
+  }
+  .feedback.good{
+    background:var(--good-bg);
+    color:var(--good-tx);
+    border:1px solid var(--good-bd);
+  }
+  .feedback.bad{
+    background:var(--bad-bg);
+    color:var(--bad-tx);
+    border:1px solid var(--bad-bd);
+  }
+  .result{
+    display:none;
+    margin-top:22px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    padding:22px;
+    text-align:center;
+  }
+  .result.show{display:block}
+  .result h2{margin:0 0 10px}
+  .muted{color:var(--muted)}
+  @media (max-width:600px){
+    h1{font-size:1.65rem}
+    .question{padding:14px}
+    .qtext{font-size:1rem}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Quiz: Aggregatzustände</h1>
+  <p class="intro">
+    Ein kleines Quiz zur Selbstüberprüfung. Themen: fest, flüssig, gasförmig, Teilchenmodell
+    und Übergänge zwischen Aggregatzuständen. Die Fragen und Antwortmöglichkeiten werden
+    bei jedem Neustart neu gemischt. Nach jeder Antwort erfolgt sofort eine Auswertung.
+  </p>
+
+  <div class="topbar">
+    <div class="panel">
+      <div class="scoreline" id="scoreText">0 von 12 richtig</div>
+      <div class="trophybar" id="trophyBar" aria-label="Pokale für richtige Antworten"></div>
+    </div>
+    <button class="btn" id="restartBtn" type="button">Neu mischen</button>
+  </div>
+
+  <div id="quiz"></div>
+
+  <div class="result" id="resultBox" aria-live="polite">
+    <h2 id="resultTitle"></h2>
+    <p id="resultText"></p>
+    <p class="muted">Mit „Neu mischen“ kannst du das Quiz sofort noch einmal bearbeiten.</p>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "Welche Aussage beschreibt einen festen Stoff im Teilchenmodell am besten?",
+    options: [
+      "Die Teilchen liegen dicht beieinander und schwingen um feste Plätze.",
+      "Die Teilchen liegen dicht beieinander und können sich frei gegeneinander verschieben.",
+      "Die Teilchen besitzen große Abstände und bewegen sich frei durch den verfügbaren Raum.",
+      "Die Teilchen befinden sich völlig bewegungslos an festen Plätzen."
+    ],
+    answer: 0,
+    explanation: "Bei einem festen Stoff liegen die Teilchen dicht beieinander. Sie haben feste Plätze, schwingen dort aber."
+  },
+  {
+    q: "Ein Stoff hat ein bestimmtes Volumen, nimmt aber die Form seines Gefäßes an. Welcher Aggregatzustand passt dazu?",
+    options: [
+      "fest",
+      "flüssig",
+      "gasförmig",
+      "Das reicht zur Unterscheidung zwischen flüssig und gasförmig nicht aus."
+    ],
+    answer: 1,
+    explanation: "Flüssigkeiten haben ein bestimmtes Volumen, aber keine feste Form."
+  },
+  {
+    q: "Was geschieht beim Schmelzen auf Teilchenebene?",
+    options: [
+      "Die Teilchen werden selbst größer und benötigen dadurch mehr Platz.",
+      "Die Teilchen verlieren ihre festen Plätze und können sich stärker gegeneinander bewegen.",
+      "Die Teilchen zerfallen in kleinere Teilchen.",
+      "Die Teilchen hören auf zu schwingen und beginnen erst danach, sich zu bewegen."
+    ],
+    answer: 1,
+    explanation: "Beim Schmelzen bleiben die Teilchen erhalten, werden aber beweglicher und verlassen ihre festen Plätze."
+  },
+  {
+    q: "Welcher Übergang ist mit „Resublimieren“ gemeint?",
+    options: [
+      "flüssig → fest",
+      "fest → gasförmig",
+      "gasförmig → fest",
+      "gasförmig → flüssig"
+    ],
+    answer: 2,
+    explanation: "Resublimieren bedeutet: vom gasförmigen direkt in den festen Zustand."
+  },
+  {
+    q: "Warum lässt sich ein Gas im Allgemeinen deutlich stärker zusammendrücken als eine Flüssigkeit?",
+    options: [
+      "Zwischen den Gasteilchen befinden sich im Mittel wesentlich größere Abstände.",
+      "Gasteilchen sind weicher als Flüssigkeitsteilchen.",
+      "Flüssigkeitsteilchen besitzen keine Zwischenräume, Gasteilchen dagegen schon.",
+      "Gasteilchen werden beim Drücken kleiner, Flüssigkeitsteilchen nicht."
+    ],
+    answer: 0,
+    explanation: "Bei Gasen sind die Abstände zwischen den Teilchen viel größer. Darum lassen sie sich stärker zusammendrücken."
+  },
+  {
+    q: "Wasser befindet sich in einem offenen Becherglas deutlich unterhalb seiner Siedetemperatur. Welche Aussage ist trotzdem richtig?",
+    options: [
+      "Es kann verdunsten, weil einzelne Teilchen genügend Energie besitzen, die Flüssigkeit zu verlassen.",
+      "Es kann erst verdunsten, wenn die gesamte Flüssigkeit die Siedetemperatur erreicht hat.",
+      "Es kann nur am Boden des Gefäßes verdunsten.",
+      "Es bleibt vollständig flüssig, solange keine sichtbaren Gasblasen entstehen."
+    ],
+    answer: 0,
+    explanation: "Verdunstung findet auch unterhalb der Siedetemperatur statt, und zwar an der Oberfläche."
+  },
+  {
+    q: "Ein Gas wird abgekühlt, bis es flüssig wird. Wie heißt dieser Vorgang?",
+    options: [
+      "Erstarren",
+      "Kondensieren",
+      "Sublimieren",
+      "Schmelzen"
+    ],
+    answer: 1,
+    explanation: "Der Übergang von gasförmig zu flüssig heißt Kondensieren."
+  },
+  {
+    q: "Welche Beobachtung spricht am stärksten dafür, dass ein Stoff gasförmig ist?",
+    options: [
+      "Er besitzt keine feste Form, aber ein nahezu konstantes Volumen.",
+      "Er nimmt Form und verfügbares Volumen des Gefäßes ein.",
+      "Er besitzt eine feste Form, kann aber verformt werden.",
+      "Er fließt, behält aber seine Oberfläche ungefähr bei."
+    ],
+    answer: 1,
+    explanation: "Ein Gas verteilt sich im ganzen verfügbaren Raum und nimmt deshalb Form und Volumen des Gefäßes an."
+  },
+  {
+    q: "Welche Aussage zu den Teilchen eines Stoffes bei einem Aggregatzustandswechsel ist richtig?",
+    options: [
+      "Die Art der Teilchen bleibt gleich; vor allem Anordnung und Bewegung ändern sich.",
+      "Die Teilchen wandeln sich beim Schmelzen in andere Teilchen um.",
+      "Beim Verdampfen verschwinden die Teilchen und entstehen beim Kondensieren neu.",
+      "Die Teilchenzahl muss sich bei jedem Aggregatzustandswechsel ändern."
+    ],
+    answer: 0,
+    explanation: "Bei einem Aggregatzustandswechsel entsteht kein neuer Stoff. Vor allem Bewegung und Anordnung der Teilchen ändern sich."
+  },
+  {
+    q: "Trockeneis geht bei normalen Bedingungen direkt vom festen in den gasförmigen Zustand über. Wie heißt dieser Vorgang?",
+    options: [
+      "Verdampfen",
+      "Sublimieren",
+      "Kondensieren",
+      "Resublimieren"
+    ],
+    answer: 1,
+    explanation: "Der direkte Übergang von fest zu gasförmig heißt Sublimieren."
+  },
+  {
+    q: "Welche Aussage unterscheidet Sieden am besten von Verdunsten?",
+    options: [
+      "Beim Sieden findet der Übergang im gesamten Flüssigkeitsvolumen statt; Verdunsten erfolgt an der Oberfläche.",
+      "Beim Verdunsten entstehen immer sichtbare Gasblasen, beim Sieden nicht.",
+      "Sieden kann bei jeder Temperatur stattfinden, Verdunsten nur bei der Siedetemperatur.",
+      "Verdunsten ist ein Übergang von gasförmig zu flüssig, Sieden von flüssig zu gasförmig."
+    ],
+    answer: 0,
+    explanation: "Beim Sieden bilden sich Dampfblasen in der ganzen Flüssigkeit. Verdunsten geschieht nur an der Oberfläche."
+  },
+  {
+    q: "Eine Flüssigkeit wird in einen deutlich größeren geschlossenen Behälter umgefüllt. Was gilt zunächst für ihr eigenes Volumen?",
+    options: [
+      "Es vergrößert sich sofort auf das gesamte Behältervolumen.",
+      "Es bleibt ungefähr gleich, obwohl sich die Form ändern kann.",
+      "Es wird automatisch kleiner, weil mehr Raum vorhanden ist.",
+      "Es hängt ausschließlich von der Form des neuen Behälters ab."
+    ],
+    answer: 1,
+    explanation: "Flüssigkeiten passen ihre Form an, behalten aber im Wesentlichen ihr Volumen."
+  }
+];
+
+let answered = 0;
+let correct = 0;
+
+function shuffle(array){
+  const arr = array.slice();
+  for(let i = arr.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function updateScore(){
+  document.getElementById("scoreText").textContent = `${correct} von ${questions.length} richtig`;
+  document.getElementById("trophyBar").textContent = "🏆".repeat(correct);
+}
+
+function showFinalResult(){
+  const resultBox = document.getElementById("resultBox");
+  const resultTitle = document.getElementById("resultTitle");
+  const resultText = document.getElementById("resultText");
+  const percent = Math.round((correct / questions.length) * 100);
+
+  if(percent >= 90){
+    resultTitle.textContent = "🏆 Sehr stark!";
+  } else if(percent >= 70){
+    resultTitle.textContent = "👍 Gut gemacht!";
+  } else if(percent >= 50){
+    resultTitle.textContent = "🙂 Gute Grundlage!";
+  } else {
+    resultTitle.textContent = "🔄 Noch einmal üben";
+  }
+
+  resultText.textContent = `Du hast ${correct} von ${questions.length} Aufgaben richtig beantwortet (${percent} %).`;
+  resultBox.classList.add("show");
+}
+
+function renderQuiz(){
+  answered = 0;
+  correct = 0;
+  updateScore();
+  document.getElementById("resultBox").classList.remove("show");
+
+  const quiz = document.getElementById("quiz");
+  quiz.innerHTML = "";
+
+  const mixedQuestions = shuffle(questions);
+
+  mixedQuestions.forEach((question, index) => {
+    const questionBox = document.createElement("section");
+    questionBox.className = "question";
+
+    const head = document.createElement("div");
+    head.className = "qhead";
+
+    const num = document.createElement("div");
+    num.className = "qnum";
+    num.textContent = index + 1;
+
+    const qtext = document.createElement("div");
+    qtext.className = "qtext";
+    qtext.textContent = question.q;
+
+    const qstatus = document.createElement("div");
+    qstatus.className = "qstatus";
+    qstatus.textContent = "";
+
+    head.appendChild(num);
+    head.appendChild(qtext);
+    head.appendChild(qstatus);
+
+    const optionsWrap = document.createElement("div");
+    optionsWrap.className = "options";
+
+    const feedback = document.createElement("div");
+    feedback.className = "feedback";
+
+    const mixedOptions = shuffle(
+      question.options.map((optionText, optIndex) => ({
+        text: optionText,
+        isCorrect: optIndex === question.answer
+      }))
+    );
+
+    const buttons = [];
+
+    mixedOptions.forEach((opt) => {
+      const btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "option";
+      btn.textContent = opt.text;
+
+      btn.addEventListener("click", () => {
+        if(questionBox.dataset.done === "1") return;
+        questionBox.dataset.done = "1";
+        answered++;
+
+        buttons.forEach(b => b.disabled = true);
+
+        if(opt.isCorrect){
+          correct++;
+          btn.classList.add("correct");
+          qstatus.textContent = "🏆";
+          feedback.className = "feedback show good";
+          feedback.textContent = "🏆 Richtig! " + question.explanation;
+        } else {
+          btn.classList.add("wrong");
+          qstatus.textContent = "❌";
+          buttons.forEach((button, i) => {
+            if(mixedOptions[i].isCorrect){
+              button.classList.add("correct");
+            }
+          });
+          feedback.className = "feedback show bad";
+          feedback.textContent = "❌ Nicht ganz richtig. " + question.explanation;
+        }
+
+        updateScore();
+
+        if(answered === questions.length){
+          showFinalResult();
+        }
+      });
+
+      buttons.push(btn);
+      optionsWrap.appendChild(btn);
+    });
+
+    questionBox.appendChild(head);
+    questionBox.appendChild(optionsWrap);
+    questionBox.appendChild(feedback);
+    quiz.appendChild(questionBox);
+  });
+}
+
+document.getElementById("restartBtn").addEventListener("click", renderQuiz);
+renderQuiz();
+</script>
+</body>
+</html>
