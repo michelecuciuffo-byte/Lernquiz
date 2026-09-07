@@ -1,0 +1,702 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mitose – Abitur-Quiz & Klausurtraining</title>
+<style>
+:root{
+  --bg:#f4f7fb;
+  --card:#ffffff;
+  --text:#1d2733;
+  --muted:#667085;
+  --line:#d9e0ea;
+  --good:#0f7b48;
+  --bad:#b42318;
+  --accent:#2557a7;
+  --soft:#eef4ff;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;
+  font-family:Arial, Helvetica, sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.5;
+}
+.container{max-width:1080px;margin:0 auto;padding:28px 18px 60px}
+header{
+  background:linear-gradient(135deg,#173b6d,#285da8);
+  color:#fff;
+  padding:30px;
+  border-radius:20px;
+  margin-bottom:24px;
+  box-shadow:0 8px 25px rgba(0,0,0,.08);
+}
+header h1{margin:0 0 8px;font-size:2rem}
+header p{margin:4px 0;max-width:850px}
+.toolbar{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin:18px 0 26px;
+}
+button{
+  border:none;
+  border-radius:10px;
+  padding:10px 16px;
+  font-weight:700;
+  cursor:pointer;
+  background:var(--accent);
+  color:#fff;
+}
+button.secondary{background:#e9eef6;color:#20324a}
+button:hover{filter:brightness(.97)}
+.section-title{
+  margin:34px 0 14px;
+  font-size:1.45rem;
+}
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:16px;
+  padding:20px;
+  margin:14px 0;
+  box-shadow:0 4px 14px rgba(16,24,40,.04);
+}
+.qhead{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:14px;
+}
+.qnum{
+  font-weight:800;
+  color:#173b6d;
+}
+.badge{
+  white-space:nowrap;
+  font-size:.8rem;
+  padding:4px 9px;
+  border-radius:999px;
+  background:#eef2f6;
+  color:#475467;
+}
+.option{
+  display:block;
+  border:1px solid var(--line);
+  border-radius:11px;
+  padding:10px 12px;
+  margin:9px 0;
+  cursor:pointer;
+  background:#fff;
+}
+.option:hover{background:#f8fafc}
+.option input{margin-right:9px}
+.feedback{
+  min-height:26px;
+  font-weight:700;
+  margin-top:10px;
+}
+.feedback.good{color:var(--good)}
+.feedback.bad{color:var(--bad)}
+.explanation{
+  display:none;
+  margin-top:10px;
+  padding:11px 13px;
+  border-radius:10px;
+  background:#f7f9fc;
+  color:#334155;
+  border-left:4px solid #8ca5c7;
+}
+.chartwrap{
+  width:100%;
+  overflow-x:auto;
+  padding-top:4px;
+}
+textarea{
+  width:100%;
+  min-height:115px;
+  border:1px solid #cdd5df;
+  border-radius:10px;
+  padding:10px;
+  font:inherit;
+  resize:vertical;
+}
+.solution{
+  display:none;
+  margin-top:12px;
+  background:#f6f8fb;
+  border-left:4px solid #6d88ad;
+  border-radius:8px;
+  padding:12px;
+}
+.image-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+  gap:16px;
+  margin-top:14px;
+}
+.phase-image{
+  border:1px solid var(--line);
+  border-radius:14px;
+  background:#fbfcfe;
+  padding:12px;
+  text-align:center;
+}
+.phase-image svg{width:78%;max-width:260px;height:auto;display:block;margin:0 auto}
+.phase-caption{
+  text-align:center;
+  font-weight:700;
+  color:#475467;
+  margin-top:6px;
+}
+.scorebox{
+  display:none;
+  background:#eef7f1;
+  border:1px solid #b7d6c3;
+  border-radius:14px;
+  padding:16px;
+  margin:18px 0;
+  font-weight:700;
+}
+.small{font-size:.92rem;color:var(--muted)}
+hr.sep{border:0;border-top:1px solid var(--line);margin:22px 0}
+footer{margin-top:36px;color:#667085;font-size:.9rem}
+@media(max-width:650px){
+  header{padding:22px}
+  .qhead{display:block}
+  .badge{display:inline-block;margin-top:6px}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <h1>Mitose – Multiple Choice, Diagramm & Klausurtraining</h1>
+  <p><strong>Niveau:</strong> Biologie Oberstufe / Abiturvorbereitung</p>
+  <p>Die Multiple-Choice-Antworten werden beim Laden und beim Neu-Mischen zufällig angeordnet. Nach jeder Auswahl erfolgt eine Sofortauswertung.</p>
+</header>
+
+<div class="toolbar">
+  <button onclick="shuffleAll()">🔀 Antworten neu mischen</button>
+  <button class="secondary" onclick="resetQuiz()">Zurücksetzen</button>
+  <button class="secondary" onclick="showScore()">Punktestand anzeigen</button>
+</div>
+<div id="scorebox" class="scorebox"></div>
+
+<h2 class="section-title">Teil A – Multiple Choice</h2>
+<div id="mcArea"></div>
+
+<h2 class="section-title">Teil B – Diagramm auswerten</h2>
+
+<div class="card">
+  <div class="qhead">
+    <div><span class="qnum">Diagrammaufgabe 1</span><br>
+    In einer Zellkultur wurde der relative DNA-Gehalt einzelner Zellkerne bestimmt. Die Häufigkeitsverteilung ist schematisch dargestellt.</div>
+    <span class="badge">Auswertung</span>
+  </div>
+
+  <div class="chartwrap">
+    <svg viewBox="0 0 760 360" role="img" aria-label="Histogramm des relativen DNA-Gehalts">
+      <rect x="0" y="0" width="760" height="360" fill="#fff"/>
+      <line x1="90" y1="290" x2="700" y2="290" stroke="#2d3748" stroke-width="2"/>
+      <line x1="90" y1="290" x2="90" y2="50" stroke="#2d3748" stroke-width="2"/>
+      <text x="370" y="340" font-size="18" text-anchor="middle">relativer DNA-Gehalt pro Zellkern</text>
+      <text x="28" y="175" font-size="18" text-anchor="middle" transform="rotate(-90 28 175)">relative Zellzahl</text>
+
+      <rect x="175" y="115" width="90" height="175" rx="8" fill="#94a3b8"/>
+      <rect x="305" y="230" width="90" height="60" rx="8" fill="#cbd5e1"/>
+      <rect x="455" y="160" width="90" height="130" rx="8" fill="#94a3b8"/>
+
+      <text x="220" y="310" font-size="18" text-anchor="middle">2C</text>
+      <text x="350" y="310" font-size="18" text-anchor="middle">2C–4C</text>
+      <text x="500" y="310" font-size="18" text-anchor="middle">4C</text>
+
+      <text x="220" y="102" font-size="16" text-anchor="middle">A</text>
+      <text x="350" y="218" font-size="16" text-anchor="middle">B</text>
+      <text x="500" y="147" font-size="16" text-anchor="middle">C</text>
+    </svg>
+  </div>
+
+  <p><strong>a)</strong> Ordne die Zellgruppen A, B und C passenden Abschnitten des Zellzyklus zu.</p>
+  <textarea placeholder="Deine Antwort ..."></textarea>
+  <p><strong>b)</strong> Erkläre, warum Zellen der Gruppe C trotz verdoppeltem DNA-Gehalt nicht zwingend bereits zwei Zellkerne besitzen.</p>
+  <textarea placeholder="Deine Begründung ..."></textarea>
+  <p><strong>c)</strong> Ein Wirkstoff blockiert den Aufbau des Spindelapparats. Welche Veränderung der Häufigkeitsverteilung wäre nach einiger Zeit plausibel? Begründe.</p>
+  <textarea placeholder="Deine Begründung ..."></textarea>
+  <button class="secondary" onclick="toggleSolution(this)">Musterlösung ein-/ausblenden</button>
+  <div class="solution">
+    <strong>Musterlösung:</strong><br>
+    a) A: G1-Phase bzw. Zellen mit einfachem DNA-Gehalt (2C); B: S-Phase mit laufender DNA-Replikation; C: G2-Phase und frühe Mitose mit 4C-DNA-Gehalt.<br><br>
+    b) Nach der S-Phase besteht jedes Chromosom aus zwei Schwesterchromatiden. Der DNA-Gehalt ist damit verdoppelt, aber die Kern- bzw. Zellteilung ist noch nicht abgeschlossen. Erst nach Trennung der Schwesterchromatiden und Kernneubildung entstehen zwei genetisch weitgehend identische Tochterkerne.<br><br>
+    c) Bei blockiertem Spindelapparat können Chromosomen nicht regelgerecht getrennt werden. Viele Zellen bleiben im Bereich der Mitose mit 4C-DNA-Gehalt stehen. Daher würde der Anteil der Gruppe C zunehmen.
+  </div>
+</div>
+
+<div class="card">
+  <div class="qhead">
+    <div><span class="qnum">Diagrammaufgabe 2</span><br>
+    Die folgende Kurve zeigt schematisch die Menge an DNA pro Zelle im Verlauf eines Zellzyklus.</div>
+    <span class="badge">Transfer</span>
+  </div>
+  <div class="chartwrap">
+    <svg viewBox="0 0 760 360" role="img" aria-label="DNA-Gehalt im Zellzyklus">
+      <rect x="0" y="0" width="760" height="360" fill="#fff"/>
+      <line x1="85" y1="290" x2="700" y2="290" stroke="#2d3748" stroke-width="2"/>
+      <line x1="85" y1="290" x2="85" y2="55" stroke="#2d3748" stroke-width="2"/>
+      <polyline points="105,245 245,245 390,130 535,130 605,130 640,245 690,245"
+        fill="none" stroke="#526d82" stroke-width="5" stroke-linejoin="round" stroke-linecap="round"/>
+      <line x1="245" y1="290" x2="245" y2="245" stroke="#aab4c2" stroke-dasharray="5 5"/>
+      <line x1="390" y1="290" x2="390" y2="130" stroke="#aab4c2" stroke-dasharray="5 5"/>
+      <line x1="535" y1="290" x2="535" y2="130" stroke="#aab4c2" stroke-dasharray="5 5"/>
+      <line x1="640" y1="290" x2="640" y2="245" stroke="#aab4c2" stroke-dasharray="5 5"/>
+      <text x="170" y="320" font-size="17" text-anchor="middle">I</text>
+      <text x="315" y="320" font-size="17" text-anchor="middle">II</text>
+      <text x="465" y="320" font-size="17" text-anchor="middle">III</text>
+      <text x="590" y="320" font-size="17" text-anchor="middle">IV</text>
+      <text x="675" y="320" font-size="17" text-anchor="middle">V</text>
+      <text x="55" y="250" font-size="16" text-anchor="middle">2C</text>
+      <text x="55" y="135" font-size="16" text-anchor="middle">4C</text>
+      <text x="385" y="350" font-size="18" text-anchor="middle">Zeit</text>
+      <text x="26" y="175" font-size="18" text-anchor="middle" transform="rotate(-90 26 175)">DNA-Menge pro Zelle</text>
+    </svg>
+  </div>
+  <p><strong>a)</strong> Ordne die Abschnitte I–V den passenden Phasen oder Vorgängen zu.</p>
+  <textarea placeholder="Deine Zuordnung ..."></textarea>
+  <p><strong>b)</strong> Begründe, weshalb sich die Chromosomenzahl während Abschnitt II nicht verdoppelt, obwohl die DNA-Menge zunimmt.</p>
+  <textarea placeholder="Deine Begründung ..."></textarea>
+  <button class="secondary" onclick="toggleSolution(this)">Musterlösung ein-/ausblenden</button>
+  <div class="solution">
+    <strong>Musterlösung:</strong><br>
+    I: G1-Phase; II: S-Phase / DNA-Replikation; III: G2-Phase; IV: Mitose bis zur Trennung der Schwesterchromatiden und anschließender Cytokinese; V: neue G1-Phase der Tochterzellen.<br><br>
+    Die Chromosomenzahl richtet sich nach der Zahl der Centromere. Während der Replikation entstehen aus Ein-Chromatid-Chromosomen Zwei-Chromatid-Chromosomen. Die DNA-Menge verdoppelt sich, die Chromosomenzahl bleibt zunächst gleich.
+  </div>
+</div>
+
+<h2 class="section-title">Teil C – Bildaufgabe: Mitosephase erkennen</h2>
+
+<div class="card">
+  <div class="qhead">
+    <div><span class="qnum">Bildaufgabe 1</span><br>
+    Betrachte die schematische Zelle. Bestimme die dargestellte Phase der Mitose und begründe deine Entscheidung mit mindestens zwei sichtbaren Merkmalen.</div>
+    <span class="badge">Klausurtypisch</span>
+  </div>
+
+  <div class="image-grid">
+    <div class="phase-image">
+      <svg viewBox="0 0 420 300" role="img" aria-label="Schematische Zelle mit Chromosomen in der Äquatorialebene">
+        <ellipse cx="210" cy="150" rx="175" ry="115" fill="#f7fbff" stroke="#5f6b7a" stroke-width="4"/>
+        <circle cx="65" cy="150" r="10" fill="#64748b"/>
+        <circle cx="355" cy="150" r="10" fill="#64748b"/>
+
+        <line x1="75" y1="150" x2="190" y2="85" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="75" y1="150" x2="190" y2="120" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="75" y1="150" x2="190" y2="155" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="75" y1="150" x2="190" y2="190" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="75" y1="150" x2="190" y2="225" stroke="#94a3b8" stroke-width="2"/>
+
+        <line x1="345" y1="150" x2="230" y2="85" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="345" y1="150" x2="230" y2="120" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="345" y1="150" x2="230" y2="155" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="345" y1="150" x2="230" y2="190" stroke="#94a3b8" stroke-width="2"/>
+        <line x1="345" y1="150" x2="230" y2="225" stroke="#94a3b8" stroke-width="2"/>
+
+        <g stroke="#334155" stroke-width="7" stroke-linecap="round">
+          <line x1="195" y1="75" x2="225" y2="95"/><line x1="225" y1="75" x2="195" y2="95"/>
+          <line x1="195" y1="110" x2="225" y2="130"/><line x1="225" y1="110" x2="195" y2="130"/>
+          <line x1="195" y1="145" x2="225" y2="165"/><line x1="225" y1="145" x2="195" y2="165"/>
+          <line x1="195" y1="180" x2="225" y2="200"/><line x1="225" y1="180" x2="195" y2="200"/>
+          <line x1="195" y1="215" x2="225" y2="235"/><line x1="225" y1="215" x2="195" y2="235"/>
+        </g>
+        <line x1="210" y1="50" x2="210" y2="250" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="7 6"/>
+      </svg>
+      <div class="phase-caption">Abbildung A</div>
+    </div>
+  </div>
+
+  <p><strong>a)</strong> Welche Mitosephase ist dargestellt?</p>
+  <select id="phaseSelect" style="padding:9px;border-radius:8px;border:1px solid #cdd5df;font:inherit;">
+    <option value="">Bitte auswählen</option>
+    <option>Prophase</option>
+    <option>Metaphase</option>
+    <option>Anaphase</option>
+    <option>Telophase</option>
+  </select>
+  <button onclick="checkPhase()">Auswahl prüfen</button>
+  <div id="phaseFeedback" class="feedback"></div>
+
+  <p><strong>b)</strong> Begründe deine Entscheidung mit mindestens zwei sichtbaren Merkmalen.</p>
+  <textarea placeholder="Begründung ..."></textarea>
+
+  <p><strong>c)</strong> Erkläre, welche unmittelbare Veränderung im nächsten Schritt der Mitose zu erwarten ist.</p>
+  <textarea placeholder="Nächster Schritt ..."></textarea>
+
+  <button class="secondary" onclick="toggleSolution(this)">Musterlösung ein-/ausblenden</button>
+  <div class="solution">
+    <strong>Musterlösung:</strong><br>
+    a) Metaphase.<br><br>
+    b) Die kondensierten Zwei-Chromatid-Chromosomen liegen in der Äquatorialebene der Zelle. Spindelfasern verlaufen von beiden Zellpolen zu den Centromer-/Kinetochorregionen der Chromosomen. Die Schwesterchromatiden sind noch miteinander verbunden.<br><br>
+    c) In der Anaphase werden die Schwesterchromatiden am Centromer getrennt und als Tochterchromosomen zu entgegengesetzten Zellpolen bewegt.
+  </div>
+</div>
+
+<div class="card">
+  <div class="qhead">
+    <div><span class="qnum">Bildaufgabe 2</span><br>
+    Bestimme auch bei dieser Darstellung die Mitosephase und begründe anhand der Chromosomenlage.</div>
+    <span class="badge">Vertiefung</span>
+  </div>
+  <div class="image-grid">
+    <div class="phase-image">
+      <svg viewBox="0 0 420 300" role="img" aria-label="Schematische Zelle mit getrennten Chromatiden auf dem Weg zu den Polen">
+        <ellipse cx="210" cy="150" rx="175" ry="115" fill="#f7fbff" stroke="#5f6b7a" stroke-width="4"/>
+        <circle cx="65" cy="150" r="10" fill="#64748b"/>
+        <circle cx="355" cy="150" r="10" fill="#64748b"/>
+        <g stroke="#94a3b8" stroke-width="2">
+          <line x1="75" y1="150" x2="140" y2="95"/>
+          <line x1="75" y1="150" x2="150" y2="130"/>
+          <line x1="75" y1="150" x2="150" y2="170"/>
+          <line x1="75" y1="150" x2="140" y2="205"/>
+          <line x1="345" y1="150" x2="280" y2="95"/>
+          <line x1="345" y1="150" x2="270" y2="130"/>
+          <line x1="345" y1="150" x2="270" y2="170"/>
+          <line x1="345" y1="150" x2="280" y2="205"/>
+        </g>
+        <g stroke="#334155" stroke-width="7" stroke-linecap="round">
+          <line x1="145" y1="85" x2="130" y2="100"/><line x1="145" y1="85" x2="158" y2="100"/>
+          <line x1="155" y1="120" x2="140" y2="135"/><line x1="155" y1="120" x2="168" y2="135"/>
+          <line x1="155" y1="165" x2="140" y2="180"/><line x1="155" y1="165" x2="168" y2="180"/>
+          <line x1="145" y1="200" x2="130" y2="215"/><line x1="145" y1="200" x2="158" y2="215"/>
+
+          <line x1="275" y1="85" x2="262" y2="100"/><line x1="275" y1="85" x2="290" y2="100"/>
+          <line x1="265" y1="120" x2="252" y2="135"/><line x1="265" y1="120" x2="280" y2="135"/>
+          <line x1="265" y1="165" x2="252" y2="180"/><line x1="265" y1="165" x2="280" y2="180"/>
+          <line x1="275" y1="200" x2="262" y2="215"/><line x1="275" y1="200" x2="290" y2="215"/>
+        </g>
+      </svg>
+      <div class="phase-caption">Abbildung B</div>
+    </div>
+  </div>
+  <textarea placeholder="Phase + Begründung ..."></textarea>
+  <button class="secondary" onclick="toggleSolution(this)">Musterlösung ein-/ausblenden</button>
+  <div class="solution">
+    <strong>Musterlösung:</strong> Anaphase. Die Schwesterchromatiden sind bereits voneinander getrennt. Die nun als Tochterchromosomen bezeichneten Chromatiden bewegen sich in zwei Gruppen zu den entgegengesetzten Zellpolen. Eine Anordnung in der Äquatorialebene besteht nicht mehr.
+  </div>
+</div>
+
+<h2 class="section-title">Teil D – Klausuraufgaben</h2>
+
+<div class="card">
+  <div class="qhead">
+    <div><span class="qnum">Klausuraufgabe 1</span><br>
+    Ein Zellgift verhindert die Polymerisation von Mikrotubuli.</div>
+    <span class="badge">Analyse</span>
+  </div>
+  <p><strong>a)</strong> Erkläre die Bedeutung der Mikrotubuli für die Mitose.</p>
+  <textarea></textarea>
+  <p><strong>b)</strong> Leite ab, in welcher Phase sich besonders viele behandelte Zellen anreichern könnten.</p>
+  <textarea></textarea>
+  <p><strong>c)</strong> Begründe, warum eine fehlerhafte Chromosomenverteilung schwerwiegende Folgen für Tochterzellen haben kann.</p>
+  <textarea></textarea>
+  <button class="secondary" onclick="toggleSolution(this)">Musterlösung ein-/ausblenden</button>
+  <div class="solution">
+    <strong>Musterlösung:</strong> Mikrotubuli bilden den Spindelapparat und vermitteln über Kinetochore die Ausrichtung und Trennung der Chromosomen. Bei fehlender Mikrotubuli-Polymerisation können Chromosomen nicht korrekt an der Metaphasenplatte ausgerichtet bzw. getrennt werden; häufig kommt es zu einem Arrest vor der Anaphase. Eine Fehlverteilung führt zu Aneuploidien, verändert also die Chromosomenzahl und damit die Gen-Dosis in den Tochterzellen.
+  </div>
+</div>
+
+<div class="card">
+  <div class="qhead">
+    <div><span class="qnum">Klausuraufgabe 2</span><br>
+    Vergleiche Mitose und Meiose I hinsichtlich Verhalten homologer Chromosomen und genetischem Ergebnis.</div>
+    <span class="badge">Vergleich</span>
+  </div>
+  <textarea></textarea>
+  <button class="secondary" onclick="toggleSolution(this)">Musterlösung ein-/ausblenden</button>
+  <div class="solution">
+    <strong>Musterlösung:</strong> Bei der Mitose paaren sich homologe Chromosomen nicht. In der Anaphase werden Schwesterchromatiden getrennt. Es entstehen in der Regel genetisch weitgehend identische Tochterzellen mit gleichem Chromosomensatz wie die Ausgangszelle. In der Meiose I paaren sich homologe Chromosomen als Bivalente; homologe Chromosomen werden voneinander getrennt, während Schwesterchromatiden zunächst zusammenbleiben. Dadurch wird der Chromosomensatz reduziert. Crossing-over und unabhängige Verteilung homologer Chromosomen erhöhen die genetische Vielfalt.
+  </div>
+</div>
+
+<div class="card">
+  <div class="qhead">
+    <div><span class="qnum">Klausuraufgabe 3</span><br>
+    Bei einer Körperzelle mit 2n = 6 wird die Mitose untersucht.</div>
+    <span class="badge">Anwendung</span>
+  </div>
+  <p><strong>a)</strong> Gib die Zahl der Chromosomen und Chromatiden in der Metaphase an.</p>
+  <textarea></textarea>
+  <p><strong>b)</strong> Gib die Zahl der Chromosomen an, die sich während der Anaphase vorübergehend in der gesamten noch ungeteilten Zelle befinden.</p>
+  <textarea></textarea>
+  <p><strong>c)</strong> Erkläre den scheinbaren Widerspruch zwischen a) und b).</p>
+  <textarea></textarea>
+  <button class="secondary" onclick="toggleSolution(this)">Musterlösung ein-/ausblenden</button>
+  <div class="solution">
+    <strong>Musterlösung:</strong> a) Metaphase: 6 Chromosomen, jeweils aus zwei Chromatiden, also insgesamt 12 Chromatiden. b) Nach Trennung der Schwesterchromatiden gelten diese als eigenständige Tochterchromosomen; in der noch nicht vollständig geteilten Zelle befinden sich vorübergehend 12 Chromosomen, je 6 an jedem Pol. c) Die Definition der Chromosomenzahl orientiert sich an den Centromeren. Durch die Trennung entstehen aus sechs Zwei-Chromatid-Chromosomen zwölf Ein-Chromatid-Chromosomen, bevor die Cytokinese zwei Zellen bildet.
+  </div>
+</div>
+
+<footer>
+  Hinweis: Die Darstellungen sind schematisch und dienen dem biologischen Verständnis auf Schul- und Abiturniveau.
+</footer>
+</div>
+
+<script>
+const questions = [
+{
+ q:"Welche Aussage beschreibt die Metaphase der Mitose am treffendsten?",
+ a:[
+  ["Die kondensierten Zwei-Chromatid-Chromosomen sind in der Äquatorialebene angeordnet und mit Spindelfasern beider Pole verbunden.",true],
+  ["Die homologen Chromosomen liegen paarweise als Bivalente in der Äquatorialebene.",false],
+  ["Die Kernhülle ist vollständig neu gebildet, während die Chromosomen noch maximal kondensiert sind.",false],
+  ["Die Schwesterchromatiden haben bereits die Zellpole erreicht und dekondensieren.",false]
+ ],
+ exp:"In der Metaphase liegen die Zwei-Chromatid-Chromosomen an der Metaphasenplatte. Bivalente sind typisch für die Meiose I, nicht für die Mitose."
+},
+{
+ q:"Welche Veränderung markiert den Beginn der Anaphase?",
+ a:[
+  ["Die Trennung der Schwesterchromatiden nach Lösung ihrer Verbindung im Centromerbereich.",true],
+  ["Die Replikation der DNA an den Replikationsursprüngen.",false],
+  ["Die Paarung homologer Chromosomen.",false],
+  ["Die Neubildung der Kernhülle um jeden Tochterchromosomensatz.",false]
+ ],
+ exp:"Die Anaphase beginnt mit der Trennung der Schwesterchromatiden. Diese werden anschließend zu entgegengesetzten Polen bewegt."
+},
+{
+ q:"Eine menschliche Körperzelle besitzt in der G1-Phase 46 Chromosomen. Welche Aussage zur Metaphase derselben Zelle ist richtig?",
+ a:[
+  ["Sie besitzt 46 Chromosomen und 92 Chromatiden.",true],
+  ["Sie besitzt 92 Chromosomen und 92 Chromatiden.",false],
+  ["Sie besitzt 23 Chromosomen und 46 Chromatiden.",false],
+  ["Sie besitzt 46 Chromosomen und 46 Chromatiden.",false]
+ ],
+ exp:"Nach der S-Phase besteht jedes der 46 Chromosomen aus zwei Schwesterchromatiden. Die Chromosomenzahl bleibt bis zur Trennung der Schwesterchromatiden 46."
+},
+{
+ q:"Welche Aussage zur Prophase ist korrekt?",
+ a:[
+  ["Das Chromatin kondensiert zunehmend zu mikroskopisch erkennbaren Chromosomen.",true],
+  ["Die DNA-Replikation verdoppelt in dieser Phase den DNA-Gehalt.",false],
+  ["Die Schwesterchromatiden werden zu entgegengesetzten Zellpolen transportiert.",false],
+  ["Es entstehen bereits zwei vollständig voneinander getrennte Tochterzellen.",false]
+ ],
+ exp:"Die DNA-Replikation erfolgt in der S-Phase der Interphase. In der Prophase kondensiert das bereits replizierte Chromatin."
+},
+{
+ q:"Warum ist die korrekte Anheftung der Spindelfasern an die Kinetochore biologisch bedeutsam?",
+ a:[
+  ["Sie ermöglicht die kontrollierte Verteilung der Schwesterchromatiden auf beide Tochterzellen.",true],
+  ["Sie sorgt dafür, dass homologe Chromosomen vor jeder Mitose Crossing-over durchführen.",false],
+  ["Sie löst unmittelbar die DNA-Replikation aus.",false],
+  ["Sie halbiert den Chromosomensatz der Tochterzellen.",false]
+ ],
+ exp:"Die Spindel sorgt für eine möglichst gleichmäßige Verteilung der Schwesterchromatiden. Crossing-over und Reduktion des Chromosomensatzes gehören zur Meiose."
+},
+{
+ q:"Welche Aussage beschreibt die Telophase am besten?",
+ a:[
+  ["Um die Chromosomensätze bilden sich neue Kernhüllen, und die Chromosomen beginnen zu dekondensieren.",true],
+  ["Die Chromosomen ordnen sich erstmalig in der Äquatorialebene an.",false],
+  ["Die Schwesterchromatiden sind noch am Centromer miteinander verbunden.",false],
+  ["Die DNA wird von 2C auf 4C repliziert.",false]
+ ],
+ exp:"Die Telophase ist durch Kernneubildung und beginnende Dekondensation der Chromosomen gekennzeichnet."
+},
+{
+ q:"Welche Aussage zur Cytokinese ist richtig?",
+ a:[
+  ["Sie teilt das Cytoplasma und führt zur räumlichen Trennung der beiden Tochterzellen.",true],
+  ["Sie ist ein anderer Begriff für die Trennung der Schwesterchromatiden.",false],
+  ["Sie findet ausschließlich vor der Telophase statt.",false],
+  ["Sie bewirkt die Verdopplung der Chromosomenzahl.",false]
+ ],
+ exp:"Mitose bezeichnet die Kernteilung; die Cytokinese teilt anschließend bzw. überlappend das Cytoplasma."
+},
+{
+ q:"Welche Beobachtung spricht am ehesten dafür, dass eine Zelle die S-Phase abgeschlossen hat, aber noch nicht die Mitose beendet hat?",
+ a:[
+  ["Der DNA-Gehalt beträgt 4C, die Zelle besitzt aber noch einen gemeinsamen Zellkörper.",true],
+  ["Der DNA-Gehalt beträgt 2C und alle Chromosomen bestehen sicher aus zwei Chromatiden.",false],
+  ["Homologe Chromosomen liegen als Tetraden vor.",false],
+  ["Der Chromosomensatz ist bereits haploid geworden.",false]
+ ],
+ exp:"Nach der S-Phase ist die DNA-Menge verdoppelt. Der Chromosomensatz bleibt bei einer Mitose jedoch unverändert."
+},
+{
+ q:"Ein Kontrollpunkt verhindert den Übergang in die Anaphase, solange nicht alle Chromosomen korrekt an den Spindelapparat gebunden sind. Welcher Vorteil ergibt sich daraus?",
+ a:[
+  ["Das Risiko einer ungleichen Chromosomenverteilung auf die Tochterzellen wird reduziert.",true],
+  ["Die Wahrscheinlichkeit für Crossing-over wird erhöht.",false],
+  ["Die Zellteilung wird gezielt haploid.",false],
+  ["Die Replikation in der S-Phase wird dadurch beschleunigt.",false]
+ ],
+ exp:"Der Spindelkontrollpunkt dient der Chromosomenstabilität. Fehler können zu Aneuploidien führen."
+},
+{
+ q:"Welche Aussage zum DNA-Gehalt während des Zellzyklus ist richtig?",
+ a:[
+  ["Während der S-Phase steigt der DNA-Gehalt von 2C auf 4C.",true],
+  ["Während der Metaphase steigt der DNA-Gehalt kontinuierlich von 2C auf 4C.",false],
+  ["Während der Anaphase wird die DNA erneut repliziert.",false],
+  ["Nach der S-Phase sinkt der DNA-Gehalt sofort wieder auf 2C.",false]
+ ],
+ exp:"Die DNA-Replikation findet in der S-Phase statt. Der verdoppelte DNA-Gehalt bleibt bis zur Zellteilung erhalten."
+},
+{
+ q:"Welche Aussage unterscheidet Mitose und Meiose I korrekt?",
+ a:[
+  ["Bei der Mitose werden Schwesterchromatiden getrennt; in der Meiose I werden homologe Chromosomen getrennt.",true],
+  ["Bei der Mitose findet immer Crossing-over statt, in der Meiose I nicht.",false],
+  ["Die Mitose halbiert den Chromosomensatz, die Meiose I erhält ihn.",false],
+  ["In der Mitose paaren sich homologe Chromosomen zu Bivalenten.",false]
+ ],
+ exp:"Mitose und Meiose I unterscheiden sich grundlegend darin, welche Chromosomenstrukturen getrennt werden."
+},
+{
+ q:"Welche Folge ist bei einer Nichttrennung einzelner Schwesterchromatiden während der Mitose am plausibelsten?",
+ a:[
+  ["Es können Tochterzellen mit unterschiedlicher Chromosomenzahl entstehen.",true],
+  ["Beide Tochterzellen besitzen zwangsläufig einen haploiden Chromosomensatz.",false],
+  ["Die DNA-Replikation der folgenden S-Phase wird vollständig verhindert.",false],
+  ["Alle Gene werden in beiden Tochterzellen automatisch identisch stark exprimiert.",false]
+ ],
+ exp:"Eine Fehltrennung kann Aneuploidien verursachen. Die übrigen Aussagen folgen daraus nicht zwangsläufig."
+},
+{
+ q:"Warum werden Chromosomen vor und während der Mitose stark kondensiert?",
+ a:[
+  ["Die kompakte Struktur erleichtert die geordnete Bewegung und vermindert Verwicklungen bzw. Brüche der DNA.",true],
+  ["Nur kondensierte DNA kann überhaupt repliziert werden.",false],
+  ["Die Kondensation bewirkt die Paarung homologer Chromosomen.",false],
+  ["Durch Kondensation verdoppelt sich die Menge an DNA.",false]
+ ],
+ exp:"Kondensation erleichtert die mechanische Verteilung des Erbguts, verändert aber weder DNA-Menge noch Chromosomenzahl."
+},
+{
+ q:"Welche Aussage zur genetischen Übereinstimmung der Tochterzellen nach einer normalen Mitose trifft am besten zu?",
+ a:[
+  ["Sie sind hinsichtlich ihres Chromosomensatzes grundsätzlich genetisch weitgehend identisch, sofern keine Mutation oder Verteilungsstörung auftritt.",true],
+  ["Sie unterscheiden sich grundsätzlich durch Crossing-over während jeder Mitose.",false],
+  ["Eine Tochterzelle erhält nur mütterliche, die andere nur väterliche Chromosomen.",false],
+  ["Jede Tochterzelle erhält zufällig nur die Hälfte aller Chromosomen.",false]
+ ],
+ exp:"Die Mitose dient dem weitgehend identischen Erhalt des Chromosomensatzes. Neue Unterschiede entstehen z. B. durch Mutationen, nicht regelhaft durch Crossing-over."
+},
+{
+ q:"Eine Zelle befindet sich unmittelbar nach der Trennung der Schwesterchromatiden, aber noch vor Abschluss der Cytokinese. Welche Aussage ist korrekt?",
+ a:[
+  ["Innerhalb der noch gemeinsamen Zelle werden die getrennten Chromatiden nun als eigenständige Chromosomen gezählt.",true],
+  ["Die DNA-Menge steigt in diesem Moment erneut an.",false],
+  ["Die Chromosomen liegen weiterhin als Zwei-Chromatid-Chromosomen vor.",false],
+  ["Der Chromosomensatz jeder entstehenden Tochterzelle ist dadurch automatisch haploid.",false]
+ ],
+ exp:"Nach der Centromertrennung gelten die einzelnen Chromatiden als Tochterchromosomen. Erst die Cytokinese verteilt sie auf zwei getrennte Zellen."
+}
+];
+
+let rendered = [];
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+  return arr;
+}
+
+function renderQuestions(){
+  const area=document.getElementById("mcArea");
+  area.innerHTML="";
+  rendered=questions.map((q,qi)=>{
+    const opts=shuffle(q.a.map((x,idx)=>({text:x[0],correct:x[1],id:idx})));
+    const card=document.createElement("div");
+    card.className="card";
+    card.dataset.answered="0";
+    card.innerHTML=`
+      <div class="qhead">
+        <div><span class="qnum">Frage ${qi+1}</span><br>${q.q}</div>
+        <span class="badge">Multiple Choice</span>
+      </div>
+      <div class="opts"></div>
+      <div class="feedback"></div>
+      <div class="explanation">${q.exp}</div>
+    `;
+    const optBox=card.querySelector(".opts");
+    opts.forEach((opt,oi)=>{
+      const label=document.createElement("label");
+      label.className="option";
+      label.innerHTML=`<input type="radio" name="q${qi}" value="${oi}"> ${opt.text}`;
+      label.querySelector("input").addEventListener("change",()=>{
+        checkMC(card,opt,q);
+      });
+      optBox.appendChild(label);
+    });
+    area.appendChild(card);
+    return {card,q};
+  });
+}
+function checkMC(card,opt,q){
+  const fb=card.querySelector(".feedback");
+  const ex=card.querySelector(".explanation");
+  card.dataset.answered="1";
+  if(opt.correct){
+    fb.className="feedback good";
+    fb.textContent="🏆 Richtig!";
+    card.dataset.correct="1";
+    ex.style.display="block";
+  }else{
+    fb.className="feedback bad";
+    fb.textContent="Probier’s noch einmal.";
+    card.dataset.correct="0";
+    ex.style.display="none";
+  }
+}
+function shuffleAll(){
+  renderQuestions();
+  document.getElementById("scorebox").style.display="none";
+  window.scrollTo({top:0,behavior:"smooth"});
+}
+function resetQuiz(){
+  renderQuestions();
+  document.querySelectorAll("textarea").forEach(t=>t.value="");
+  document.querySelectorAll(".solution").forEach(s=>s.style.display="none");
+  document.getElementById("phaseSelect").value="";
+  document.getElementById("phaseFeedback").textContent="";
+  document.getElementById("scorebox").style.display="none";
+}
+function showScore(){
+  let correct=0;
+  rendered.forEach(x=>{
+    if(x.card.dataset.correct==="1") correct++;
+  });
+  const box=document.getElementById("scorebox");
+  const total=rendered.length;
+  let msg="";
+  if(correct===total) msg="🏆 Stark – alle Multiple-Choice-Fragen richtig!";
+  else if(correct>=Math.ceil(total*.8)) msg="Sehr gutes Ergebnis.";
+  else if(correct>=Math.ceil(total*.6)) msg="Solide – einige Detailfragen solltest du noch wiederholen.";
+  else msg="Nutze die Erklärungen und versuche anschließend eine neue Mischung.";
+  box.innerHTML=`Multiple Choice: <strong>${correct} von ${total}</strong> aktuell richtig. ${msg}`;
+  box.style.display="block";
+}
+function toggleSolution(btn){
+  const sol=btn.nextElementSibling;
+  sol.style.display = sol.style.display==="block" ? "none" : "block";
+}
+function checkPhase(){
+  const val=document.getElementById("phaseSelect").value;
+  const fb=document.getElementById("phaseFeedback");
+  if(!val){
+    fb.className="feedback bad"; fb.textContent="Bitte zuerst eine Phase auswählen."; return;
+  }
+  if(val==="Metaphase"){
+    fb.className="feedback good"; fb.textContent="🏆 Richtig! Jetzt noch biologisch begründen.";
+  }else{
+    fb.className="feedback bad"; fb.textContent="Probier’s noch einmal und achte besonders auf die Lage der Chromosomen.";
+  }
+}
+renderQuestions();
+</script>
+</body>
+</html>
