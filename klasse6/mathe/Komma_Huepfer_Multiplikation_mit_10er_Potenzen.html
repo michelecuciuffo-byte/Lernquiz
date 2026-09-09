@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Komma-Hüpfer_–_Multiplikation_mit_10,_100,_1000</title>
+<style>
+:root{
+  --bg:#f5f7fb;--card:#fff;--ink:#172033;--muted:#667085;--line:#dce3ee;
+  --blue:#2563eb;--violet:#7c3aed;--comma:#ef4444;--good:#15803d;--bad:#b42318;
+  --soft:#eff5ff;--shadow:0 14px 36px rgba(29,45,78,.12)
+}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;font-family:Arial,Helvetica,sans-serif;color:var(--ink);
+background:radial-gradient(circle at 10% 0%,#e9f0ff 0,transparent 28%),
+radial-gradient(circle at 92% 7%,#f3eaff 0,transparent 23%),var(--bg)}
+button,input,select{font:inherit} button{cursor:pointer}
+.wrap{width:min(1180px,94vw);margin:0 auto;padding:26px 0 42px}
+.hero,.card{background:rgba(255,255,255,.97);border:1px solid #e4e9f2;border-radius:24px;box-shadow:var(--shadow)}
+.hero{padding:28px;margin-bottom:20px}.card{padding:24px;margin-top:20px}
+h1{margin:0;font-size:clamp(34px,5vw,54px);letter-spacing:-1.2px}h2{margin:0 0 8px;font-size:27px}
+p{line-height:1.5}.sub{margin:9px 0 0;color:var(--muted);font-size:18px}
+.rulegrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.rule{border:1px solid var(--line);border-radius:16px;padding:16px 18px;background:#fff;line-height:1.5}
+.rule strong{font-size:19px}.rule.mul{border-left:6px solid var(--blue)}.rule.div{border-left:6px solid var(--violet)}
+.hint{color:var(--muted);margin:0 0 18px}
+.controls{display:flex;flex-wrap:wrap;gap:10px;align-items:end}
+.field{display:flex;flex-direction:column;gap:5px;font-weight:700;font-size:14px;color:#44506a}
+select,input{border:2px solid #d7dfeb;border-radius:12px;padding:11px 13px;background:#fff;color:var(--ink);outline:none;min-height:46px}
+select:focus,input:focus{border-color:var(--blue);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.btn{border:0;border-radius:12px;padding:12px 16px;font-weight:800;transition:.16s transform,.16s opacity,.16s box-shadow}
+.btn:hover{transform:translateY(-1px)}.btn:active{transform:none}
+.primary{background:var(--blue);color:#fff;box-shadow:0 7px 17px rgba(37,99,235,.22)}
+.secondary{background:#eef2f7;color:#27344c}.purple{background:var(--violet);color:#fff}
+.ghost{background:#fff;color:#2a3853;border:1px solid #d8e0ec}.helpbtn{background:#fff7ed;color:#9a3412;border:1px solid #fed7aa}
+.equation{min-height:85px;display:flex;justify-content:center;align-items:center;gap:12px;flex-wrap:wrap;
+font-size:clamp(32px,5vw,58px);font-weight:800;margin:24px 0 4px}
+.eqbox{padding:7px 13px;border:1px solid #e1e6ef;border-radius:16px;background:#f8fafc}.eqanswer{background:#ecfdf3;border-color:#a7f3d0}
+.visual{margin:20px auto 0;max-width:980px;background:linear-gradient(180deg,#fbfcff,#f5f8fc);border:1px solid #dfe6f0;border-radius:20px;padding:28px 18px 24px;overflow-x:auto}
+.digitStage{position:relative;width:max-content;min-width:720px;margin:0 auto;padding:40px 25px 56px}
+.digitStrip{display:flex;gap:5px;align-items:flex-end;justify-content:center}
+.digit{width:66px;height:80px;display:flex;align-items:center;justify-content:center;font-size:50px;font-weight:800;border-bottom:4px solid #c9d3e1;position:relative}
+.digit.pad{color:#9aa7ba;background:#f7f9fc;border-radius:8px 8px 0 0}
+#movingComma{position:absolute;left:0;bottom:49px;z-index:10;font-size:70px;line-height:1;font-weight:900;color:var(--comma);
+text-shadow:0 5px 14px rgba(239,68,68,.28);transform:translateX(-50%);transition:left .85s cubic-bezier(.22,.8,.25,1);pointer-events:none}
+#movingComma::after{content:"";position:absolute;width:24px;height:5px;border-radius:999px;background:var(--comma);left:50%;transform:translateX(-50%);bottom:-4px;box-shadow:0 3px 9px rgba(239,68,68,.25)}
+.commaLabel{position:absolute;left:50%;transform:translateX(-50%);top:-22px;font-size:12px;font-weight:800;color:#fff;background:var(--comma);padding:3px 7px;border-radius:999px;white-space:nowrap}
+.jumpInfo{text-align:center;margin-top:7px;font-size:19px;font-weight:800;color:#334155;min-height:30px}
+.stepchips{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin-top:10px;min-height:35px}
+.chip{padding:6px 10px;border-radius:999px;background:#eef2f7;color:#526079;font-weight:700;font-size:14px}
+.chip.on{background:#dbeafe;color:#1d4ed8}
+.explain{margin:18px auto 0;max-width:900px;border:1px solid #cfe0ff;background:var(--soft);border-radius:16px;padding:16px 18px;font-size:17px;line-height:1.55}
+.examples{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.example{text-align:left;background:#fff;border:1px solid #dfe5ee;border-radius:15px;padding:15px;color:var(--ink);box-shadow:0 4px 12px rgba(35,50,80,.05)}
+.example strong{font-size:20px}.example span{display:block;color:var(--muted);margin-top:4px;font-size:13px}
+.focusLaunch{display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap;background:linear-gradient(135deg,#eef4ff,#f7f2ff);border:1px solid #dbe3f1;border-radius:18px;padding:18px}
+.focusLaunch p{margin:5px 0 0;color:#5c6880}
+.focusPanel{display:none;position:fixed;inset:0;background:#f7f8fb;z-index:9999;overflow:auto;padding:20px}
+.focusPanel.open{display:block}.focusInner{width:min(1040px,96vw);margin:0 auto}
+.focusTop{display:flex;justify-content:space-between;align-items:center;gap:12px;position:sticky;top:0;z-index:2;padding:12px 0;background:rgba(247,248,251,.94);backdrop-filter:blur(8px)}
+.focusTitle{font-size:25px;font-weight:900}
+.focusCard{background:white;border:1px solid #e0e6ef;border-radius:22px;box-shadow:var(--shadow);padding:24px;margin-top:12px}
+.practiceControls{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px}
+.taskmeta{color:var(--muted);font-size:14px;font-weight:700}
+.task{font-size:clamp(34px,6vw,58px);font-weight:900;margin:12px 0 20px;min-height:72px;display:flex;align-items:center;flex-wrap:wrap;gap:10px}
+.answerRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.answerRow input{min-width:230px;font-size:20px}
+.directionBtns{display:none;gap:10px;flex-wrap:wrap}.directionBtns.show{display:flex}
+.feedback{min-height:56px;margin-top:16px;font-size:18px;font-weight:800;line-height:1.45}.goodmsg{color:var(--good)}.badmsg{color:var(--bad)}
+.score{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}.pill{background:#eef2f7;border-radius:999px;padding:7px 11px;font-weight:800}
+.helpBox{display:none;margin-top:16px;background:#fff7ed;border:1px solid #fed7aa;border-radius:16px;padding:16px 18px;line-height:1.55}
+.helpBox.show{display:block}.helpBox h3{margin:0 0 8px;color:#9a3412}.helpSteps{margin:8px 0 0;padding-left:22px}.helpSteps li{margin:7px 0}
+.small{font-size:13px;color:var(--muted)}kbd{background:#eef2f7;border:1px solid #d7dfeb;border-bottom-width:2px;border-radius:6px;padding:2px 6px}
+@media(max-width:850px){.rulegrid{grid-template-columns:1fr}.examples{grid-template-columns:1fr 1fr}}
+@media(max-width:590px){.examples{grid-template-columns:1fr}.hero,.card,.focusCard{padding:18px}.digit{width:56px;font-size:44px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<section class="hero">
+  <h1>Komma verschieben</h1>
+  <p class="sub">Mal und Geteilt mit 10, 100 und 1000 – anschaulich für die 7. Klasse.</p>
+  <div class="rulegrid">
+    <div class="rule mul"><strong>Mal ·</strong><br>· 10, · 100, · 1000 → Komma nach <b>rechts</b><br>· 0,1, · 0,01, · 0,001 → Komma nach <b>links</b></div>
+    <div class="rule div"><strong>Geteilt :</strong><br>: 10, : 100, : 1000 → Komma nach <b>links</b><br>: 0,1, : 0,01, : 0,001 → Komma nach <b>rechts</b></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>1. Das Komma springt</h2>
+  <p class="hint">Das <b style="color:#ef4444">rote Komma</b> sitzt direkt unten in der Zahl. Beim Start springt es schrittweise von Stelle zu Stelle an seine neue Position.</p>
+  <div class="controls">
+    <label class="field">Zahl<select id="numberSelect"><option value="3.7">3,7</option><option value="12.45">12,45</option><option value="0.84">0,84</option><option value="125.6">125,6</option><option value="0.036">0,036</option><option value="48">48</option><option value="735">735</option></select></label>
+    <label class="field">Rechenart<select id="operationSelect"><option value="mul">Mal ·</option><option value="div">Geteilt :</option></select></label>
+    <label class="field">Faktor / Divisor<select id="factorSelect"><option value="10">10</option><option value="100">100</option><option value="1000">1000</option><option value="0.1">0,1</option><option value="0.01">0,01</option><option value="0.001">0,001</option></select></label>
+    <button class="btn primary" id="startBtn">▶ Komma verschieben</button>
+    <button class="btn secondary" id="resetBtn">↺ Zurücksetzen</button>
+  </div>
+
+  <div class="equation" id="equation"></div>
+
+  <div class="visual">
+    <div class="digitStage" id="digitStage">
+      <div class="digitStrip" id="digitStrip"></div>
+      <div id="movingComma"><span class="commaLabel">Komma</span>,</div>
+    </div>
+    <div class="jumpInfo" id="jumpInfo"></div>
+    <div class="stepchips" id="stepchips"></div>
+  </div>
+  <div class="explain" id="explain"></div>
+</section>
+
+<section class="card">
+  <h2>2. Beispiele</h2>
+  <p class="hint">Klicke ein Beispiel an und starte anschließend die Animation.</p>
+  <div class="examples">
+    <button class="example" data-num="4.8" data-op="mul" data-factor="10"><strong>4,8 · 10</strong><span>1 Stelle nach rechts</span></button>
+    <button class="example" data-num="2.35" data-op="mul" data-factor="100"><strong>2,35 · 100</strong><span>2 Stellen nach rechts</span></button>
+    <button class="example" data-num="0.625" data-op="mul" data-factor="1000"><strong>0,625 · 1000</strong><span>3 Stellen nach rechts</span></button>
+    <button class="example" data-num="48" data-op="div" data-factor="10"><strong>48 : 10</strong><span>1 Stelle nach links</span></button>
+    <button class="example" data-num="735" data-op="div" data-factor="100"><strong>735 : 100</strong><span>2 Stellen nach links</span></button>
+    <button class="example" data-num="42" data-op="div" data-factor="1000"><strong>42 : 1000</strong><span>3 Stellen nach links</span></button>
+  </div>
+</section>
+
+<section class="card">
+  <h2>3. Übungsmodus</h2>
+  <div class="focusLaunch">
+    <div><strong style="font-size:20px">Konzentrationsmodus</strong><p>Die Übungen werden erst eingeblendet, wenn du sie brauchst. Dann verschwindet der restliche Unterrichtsbereich aus dem Blick.</p></div>
+    <button class="btn purple" id="openFocus">🎯 Übungsmodus öffnen</button>
+  </div>
+</section>
+</div>
+
+<div class="focusPanel" id="focusPanel" aria-hidden="true">
+<div class="focusInner">
+  <div class="focusTop"><div class="focusTitle">🎯 Konzentrationsmodus</div><button class="btn secondary" id="closeFocus">← Zur Erklärung</button></div>
+  <section class="focusCard">
+    <div class="practiceControls">
+      <label class="field">Aufgabenart<select id="taskType"><option value="mixed">Gemischt</option><option value="calc">Ergebnis berechnen</option><option value="direction">Komma-Richtung erkennen</option><option value="missing">Fehlende Zahl bestimmen</option></select></label>
+      <label class="field">Schwierigkeit<select id="difficulty"><option value="basic">Grundlagen</option><option value="extended">Erweitert</option></select></label>
+      <button class="btn secondary" id="newTaskBtn">Neue Aufgabe</button>
+    </div>
+
+    <div class="taskmeta" id="taskMeta"></div>
+    <div class="task" id="taskText"></div>
+
+    <div class="answerRow" id="numericAnswer">
+      <input id="answerInput" type="text" inputmode="decimal" placeholder="Deine Antwort">
+      <button class="btn primary" id="checkBtn">Prüfen</button>
+    </div>
+
+    <div class="directionBtns" id="directionAnswer">
+      <button class="btn ghost dirBtn" data-dir="links">← nach links</button>
+      <button class="btn ghost dirBtn" data-dir="rechts">nach rechts →</button>
+    </div>
+
+    <div class="feedback" id="feedback"></div>
+    <div class="answerRow" style="margin-top:8px"><button class="btn helpbtn" id="helpBtn">💡 Ich brauche Hilfe</button></div>
+    <div class="helpBox" id="helpBox"></div>
+
+    <div class="score">
+      <div class="pill">🏆 Richtig: <span id="correctCount">0</span></div>
+      <div class="pill">Versuche: <span id="tryCount">0</span></div>
+      <div class="pill">Serie: <span id="streakCount">0</span></div>
+    </div>
+    <p class="small">Tipp: Bei Eingabeaufgaben kannst du auch <kbd>Enter</kbd> drücken.</p>
+  </section>
+</div>
+</div>
+
+<script>
+const $=id=>document.getElementById(id);
+const numberSelect=$('numberSelect'),operationSelect=$('operationSelect'),factorSelect=$('factorSelect');
+const equation=$('equation'),digitStrip=$('digitStrip'),digitStage=$('digitStage'),movingComma=$('movingComma');
+const jumpInfo=$('jumpInfo'),stepchips=$('stepchips'),explain=$('explain');
+let animating=false;
+
+function fmt(n){
+  if(Math.abs(n)<1e-12)return'0';
+  let s=Number(Number(n).toFixed(10)).toString();
+  if(s.includes('e'))s=Number(n).toFixed(10).replace(/0+$/,'').replace(/\.$/,'');
+  return s.replace('.',',');
+}
+function opSymbol(op){return op==='mul'?'·':':'}
+function calc(n,op,f){return op==='mul'?n*f:n/f}
+function shiftInfo(op,f){
+  const steps=Math.round(Math.abs(Math.log10(f)));
+  let dir;
+  if(op==='mul')dir=f>=1?'rechts':'links';
+  else dir=f>=1?'links':'rechts';
+  return{steps,dir,delta:dir==='rechts'?steps:-steps};
+}
+function numberParts(n){
+  let s=Number(n).toFixed(10).replace(/0+$/,'').replace(/\.$/,'');
+  if(!s.includes('.'))return{digits:s,index:s.length};
+  const[a,b]=s.split('.');return{digits:a+b,index:a.length};
+}
+function buildStrip(n,delta){
+  let{digits,index}=numberParts(n),startIndex=index,targetIndex=index+delta,leftPad=0,rightPad=0;
+  if(targetIndex<1)leftPad=1-targetIndex;
+  digits='0'.repeat(leftPad)+digits;startIndex+=leftPad;targetIndex+=leftPad;
+  if(targetIndex>digits.length)rightPad=targetIndex-digits.length;
+  digits+='0'.repeat(rightPad);
+  digitStrip.innerHTML='';
+  [...digits].forEach((d,i)=>{
+    const el=document.createElement('div');el.className='digit';
+    if((i<leftPad||i>=digits.length-rightPad)&&d==='0')el.classList.add('pad');
+    el.textContent=d;digitStrip.appendChild(el);
+  });
+  return{startIndex,targetIndex};
+}
+function commaX(index){
+  const kids=[...digitStrip.children];if(!kids.length)return 0;
+  const stageRect=digitStage.getBoundingClientRect();
+  if(index<=0){const r=kids[0].getBoundingClientRect();return r.left-stageRect.left-2}
+  if(index>=kids.length){const r=kids[kids.length-1].getBoundingClientRect();return r.right-stageRect.left+2}
+  const a=kids[index-1].getBoundingClientRect(),b=kids[index].getBoundingClientRect();
+  return((a.right+b.left)/2)-stageRect.left;
+}
+function setComma(index,instant=false){
+  if(instant)movingComma.style.transition='none';
+  movingComma.style.left=commaX(index)+'px';
+  if(instant){void movingComma.offsetWidth;movingComma.style.transition='left .52s cubic-bezier(.22,.8,.25,1)'}
+}
+function updateEquation(show=false){
+  const n=parseFloat(numberSelect.value),f=parseFloat(factorSelect.value),op=operationSelect.value;
+  equation.innerHTML=`<span class="eqbox">${fmt(n)}</span><span>${opSymbol(op)}</span><span class="eqbox">${fmt(f)}</span><span>=</span>`+
+  (show?`<span class="eqbox eqanswer">${fmt(calc(n,op,f))}</span>`:`<span class="eqbox">?</span>`);
+}
+function makeChips(info){
+  stepchips.innerHTML='';
+  for(let i=1;i<=info.steps;i++){const c=document.createElement('div');c.className='chip';c.textContent=`${i}. Stelle`;stepchips.appendChild(c)}
+}
+function resetVisual(){
+  if(animating)return;
+  const n=parseFloat(numberSelect.value),f=parseFloat(factorSelect.value),op=operationSelect.value,info=shiftInfo(op,f),strip=buildStrip(n,info.delta);
+  requestAnimationFrame(()=>setComma(strip.startIndex,true));
+  updateEquation(false);makeChips(info);
+  jumpInfo.textContent=`Das Komma wandert ${info.steps} ${info.steps===1?'Stelle':'Stellen'} nach ${info.dir}.`;
+  explain.innerHTML=`Bei <b>${fmt(n)} ${opSymbol(op)} ${fmt(f)}</b> verschiebt sich das Komma <b>${info.steps} ${info.steps===1?'Stelle':'Stellen'} nach ${info.dir}</b>.`;
+}
+function sleep(ms){return new Promise(r=>setTimeout(r,ms))}
+async function animateComma(){
+  if(animating)return;
+  animating=true;$('startBtn').disabled=true;
+  const n=parseFloat(numberSelect.value),f=parseFloat(factorSelect.value),op=operationSelect.value,info=shiftInfo(op,f),strip=buildStrip(n,info.delta);
+  updateEquation(false);makeChips(info);setComma(strip.startIndex,true);
+  jumpInfo.textContent=`Komma: ${info.steps} ${info.steps===1?'Stelle':'Stellen'} nach ${info.dir}`;
+  const chips=[...stepchips.children];
+  await sleep(220);
+
+  let currentIndex = strip.startIndex;
+  const directionStep = info.dir === 'rechts' ? 1 : -1;
+
+  for(let i=0;i<info.steps;i++){
+    currentIndex += directionStep;
+    setComma(currentIndex,false);
+    await sleep(760);
+    if(chips[i]) chips[i].classList.add('on');
+    await sleep(180);
+  }
+
+  await sleep(150);
+  updateEquation(true);
+  explain.innerHTML=`<b>${fmt(n)} ${opSymbol(op)} ${fmt(f)} = ${fmt(calc(n,op,f))}</b><br>Das rote Komma ist <b>schrittweise</b> <b>${info.steps} ${info.steps===1?'Stelle':'Stellen'} nach ${info.dir}</b> gesprungen.`;
+  animating=false;$('startBtn').disabled=false;
+}
+[numberSelect,operationSelect,factorSelect].forEach(el=>el.addEventListener('change',resetVisual));
+$('startBtn').addEventListener('click',animateComma);$('resetBtn').addEventListener('click',resetVisual);
+
+document.querySelectorAll('.example').forEach(btn=>btn.addEventListener('click',()=>{
+  const num=btn.dataset.num;
+  if(![...numberSelect.options].some(o=>o.value===num)){const o=document.createElement('option');o.value=num;o.textContent=fmt(parseFloat(num));numberSelect.appendChild(o)}
+  numberSelect.value=num;operationSelect.value=btn.dataset.op;factorSelect.value=btn.dataset.factor;resetVisual();
+  window.scrollTo({top:document.querySelector('.card').offsetTop-12,behavior:'smooth'});
+}));
+
+const focusPanel=$('focusPanel'),taskType=$('taskType'),difficulty=$('difficulty'),taskText=$('taskText'),taskMeta=$('taskMeta');
+const answerInput=$('answerInput'),numericAnswer=$('numericAnswer'),directionAnswer=$('directionAnswer'),feedback=$('feedback'),helpBox=$('helpBox');
+let current=null,correct=0,tries=0,streak=0;
+
+function factorsForLevel(){return difficulty.value==='basic'?[10,100,1000]:[10,100,1000,0.1,0.01,0.001]}
+function randomChoice(a){return a[Math.floor(Math.random()*a.length)]}
+function randomNumber(){
+  const a=[1.4,2.7,3.25,4.08,5.6,7.35,8.04,12.5,24.06,63.8,125,480,735,0.72];
+  const b=[0.036,0.045,0.308,0.625,2.035,15.007,48,735,125.6,0.084];
+  return randomChoice(difficulty.value==='basic'?a:a.concat(b));
+}
+function randomOp(){return Math.random()<.5?'mul':'div'}
+function sequenceExplanation(n,op,f){
+  const info=shiftInfo(op,f),lines=[];let value=n,stepFactor=info.dir==='rechts'?10:0.1;
+  for(let i=1;i<=info.steps;i++){value=Number((value*stepFactor).toFixed(10));lines.push(`${i}. Sprung: Komma eine Stelle nach ${info.dir} → ${fmt(value)}`)}
+  return{info,lines,final:value};
+}
+function newTask(){
+  feedback.textContent='';feedback.className='feedback';helpBox.className='helpBox';helpBox.innerHTML='';answerInput.value='';
+  let type=taskType.value==='mixed'?randomChoice(['calc','direction','missing']):taskType.value;
+  const n=randomNumber(),op=randomOp(),f=randomChoice(factorsForLevel()),result=Number(calc(n,op,f).toFixed(10));
+  current={type,n,op,f,result};
+  numericAnswer.style.display=type==='direction'?'none':'flex';directionAnswer.classList.toggle('show',type==='direction');
+  if(type==='calc'){
+    taskMeta.textContent='Aufgabe: Ergebnis berechnen';taskText.innerHTML=`${fmt(n)} <span>${opSymbol(op)}</span> ${fmt(f)} = ?`;answerInput.placeholder='Dein Ergebnis';
+  }else if(type==='direction'){
+    const info=shiftInfo(op,f);current.direction=info.dir;taskMeta.textContent='Aufgabe: Komma-Richtung erkennen';
+    taskText.innerHTML=`Bei <b>${fmt(n)} ${opSymbol(op)} ${fmt(f)}</b>: Wohin wandert das Komma?`;
+  }else{
+    current.missing=n;taskMeta.textContent='Aufgabe: fehlende Zahl bestimmen';
+    taskText.innerHTML=`□ <span>${opSymbol(op)}</span> ${fmt(f)} = ${fmt(result)}`;answerInput.placeholder='Welche Zahl fehlt?';
+  }
+  setTimeout(()=>{if(type!=='direction')answerInput.focus()},50);
+}
+function parseDE(s){return Number(s.trim().replace(',','.'))}
+function markCorrect(){
+  correct++;tries++;streak++;$('correctCount').textContent=correct;$('tryCount').textContent=tries;$('streakCount').textContent=streak;
+  feedback.textContent='🏆 Richtig! Sehr gut – das Komma sitzt an der richtigen Stelle.';feedback.className='feedback goodmsg';
+}
+function markWrong(){
+  tries++;streak=0;$('tryCount').textContent=tries;$('streakCount').textContent=streak;
+  feedback.textContent='Versuch es noch einmal. Du kannst auch „Ich brauche Hilfe“ anklicken.';feedback.className='feedback badmsg';
+}
+function checkNumeric(){
+  if(!current||current.type==='direction')return;
+  const val=parseDE(answerInput.value);
+  if(Number.isNaN(val)){feedback.textContent='Bitte gib zuerst eine Zahl ein.';feedback.className='feedback badmsg';return}
+  const expected=current.type==='missing'?current.missing:current.result;
+  Math.abs(val-expected)<1e-9?markCorrect():markWrong();
+}
+function checkDirection(dir){if(current&&current.type==='direction')(dir===current.direction?markCorrect():markWrong())}
+function showHelp(){
+  if(!current)return;
+  const{n,op,f}=current,seq=sequenceExplanation(n,op,f);
+  const relation=op==='mul'?(f>=1?`Du multiplizierst mit ${fmt(f)}. Dadurch wird die Zahl größer.`:`Du multiplizierst mit ${fmt(f)}. Dadurch wird die Zahl kleiner.`)
+  :(f>=1?`Du teilst durch ${fmt(f)}. Dadurch wird die Zahl kleiner.`:`Du teilst durch ${fmt(f)}. Dadurch wird die Zahl größer.`);
+  let intro,finish,body;
+  if(current.type==='direction'){
+    intro='Überlege zuerst, ob das Ergebnis größer oder kleiner wird.';
+    body=`<p><b>3.</b> Deshalb wandert das Komma nach <b>${seq.info.dir}</b>.</p>`;
+    finish=`Richtung: <b>${seq.info.dir}</b>.`;
+  }else if(current.type==='missing'){
+    intro=`Die gesuchte Zahl steht vor dem Rechenzeichen. Wir denken die Rechnung rückwärts.`;
+    body=`<p><b>3.</b> Gesucht ist die Zahl, die bei <b>${opSymbol(op)} ${fmt(f)}</b> zu <b>${fmt(current.result)}</b> wird.</p>
+    <p><b>4.</b> Rückwärts kommst du zu <b>${fmt(current.missing)}</b>.</p>`;
+    finish=`Die fehlende Zahl ist <b>${fmt(current.missing)}</b>.`;
+  }else{
+    intro='Wir verschieben das Komma Schritt für Schritt.';
+    body=`<p><b>3.</b> So sieht jeder Komma-Sprung aus:</p><ul class="helpSteps">${seq.lines.map(x=>`<li>${x}</li>`).join('')}</ul>`;
+    finish=`Das Ergebnis ist <b>${fmt(current.result)}</b>.`;
+  }
+  helpBox.innerHTML=`<h3>Schritt-für-Schritt-Hilfe</h3><p>${intro}</p><p><b>1.</b> ${relation}</p>
+  <p><b>2.</b> Das bedeutet: <b>${seq.info.steps} ${seq.info.steps===1?'Stelle':'Stellen'} nach ${seq.info.dir}</b>.</p>${body}<p><b>Ergebnis:</b> ${finish}</p>`;
+  helpBox.className='helpBox show';
+}
+$('openFocus').addEventListener('click',()=>{focusPanel.classList.add('open');focusPanel.setAttribute('aria-hidden','false');document.body.style.overflow='hidden';newTask()});
+$('closeFocus').addEventListener('click',()=>{focusPanel.classList.remove('open');focusPanel.setAttribute('aria-hidden','true');document.body.style.overflow=''});
+$('newTaskBtn').addEventListener('click',newTask);taskType.addEventListener('change',newTask);difficulty.addEventListener('change',newTask);
+$('checkBtn').addEventListener('click',checkNumeric);answerInput.addEventListener('keydown',e=>{if(e.key==='Enter')checkNumeric()});
+document.querySelectorAll('.dirBtn').forEach(b=>b.addEventListener('click',()=>checkDirection(b.dataset.dir)));$('helpBtn').addEventListener('click',showHelp);
+
+resetVisual();
+</script>
+</body>
+</html>
