@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Komma-Hüpfer_–_Multiplikation_mit_10,_100,_1000</title>
+<style>
+  :root{
+    --bg:#f5f8fc;
+    --card:#ffffff;
+    --ink:#162033;
+    --muted:#667085;
+    --line:#d7dfeb;
+    --accent:#2f6fed;
+    --accent2:#7c3aed;
+    --good:#17803d;
+    --bad:#b42318;
+    --soft:#edf3ff;
+    --soft2:#f3ecff;
+    --shadow:0 12px 32px rgba(32,52,89,.12);
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0;
+    font-family:Arial, Helvetica, sans-serif;
+    color:var(--ink);
+    background:
+      radial-gradient(circle at 12% 10%, #e6efff 0, transparent 28%),
+      radial-gradient(circle at 88% 14%, #f1e7ff 0, transparent 24%),
+      var(--bg);
+    min-height:100vh;
+  }
+  .wrap{
+    width:min(1180px, 94vw);
+    margin:0 auto;
+    padding:28px 0 40px;
+  }
+  .hero{
+    background:linear-gradient(135deg,#ffffff 0%,#f8fbff 100%);
+    border:1px solid #e4e9f2;
+    border-radius:24px;
+    padding:28px;
+    box-shadow:var(--shadow);
+    margin-bottom:20px;
+  }
+  h1{
+    margin:0 0 8px;
+    font-size:clamp(30px,4vw,52px);
+    letter-spacing:-1px;
+  }
+  .sub{
+    margin:0;
+    color:var(--muted);
+    font-size:18px;
+    line-height:1.5;
+  }
+  .rule{
+    margin-top:18px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+  .rulebox{
+    border-radius:16px;
+    padding:16px 18px;
+    font-size:17px;
+    line-height:1.45;
+    border:1px solid var(--line);
+    background:white;
+  }
+  .rulebox b{font-size:19px}
+  .right{border-left:6px solid var(--accent)}
+  .left{border-left:6px solid var(--accent2)}
+
+  .card{
+    background:var(--card);
+    border:1px solid #e4e9f2;
+    border-radius:22px;
+    box-shadow:var(--shadow);
+    padding:24px;
+    margin-top:20px;
+  }
+  .card h2{
+    margin:0 0 8px;
+    font-size:26px;
+  }
+  .hint{
+    color:var(--muted);
+    margin:0 0 18px;
+    line-height:1.5;
+  }
+
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+    margin-bottom:20px;
+  }
+  select,input,button{
+    font:inherit;
+  }
+  select,input[type="text"]{
+    border:2px solid #d7dfeb;
+    border-radius:12px;
+    padding:11px 13px;
+    background:#fff;
+    outline:none;
+    min-height:46px;
+  }
+  select:focus,input[type="text"]:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(47,111,237,.12);
+  }
+  button{
+    border:0;
+    border-radius:12px;
+    padding:12px 16px;
+    cursor:pointer;
+    font-weight:700;
+    transition:.18s transform,.18s box-shadow,.18s opacity;
+  }
+  button:hover{transform:translateY(-1px)}
+  button:active{transform:translateY(0)}
+  .primary{
+    background:var(--accent);
+    color:#fff;
+    box-shadow:0 6px 16px rgba(47,111,237,.25);
+  }
+  .secondary{
+    background:#edf1f7;
+    color:#26344d;
+  }
+  .purple{
+    background:var(--accent2);
+    color:white;
+  }
+
+  .equation{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+    font-size:clamp(30px,5vw,58px);
+    font-weight:800;
+    margin:24px 0 14px;
+    min-height:76px;
+  }
+  .eqpiece{
+    background:#f7f9fc;
+    border:1px solid #e3e8f0;
+    border-radius:16px;
+    padding:8px 14px;
+  }
+  .resultPiece{
+    background:#ecfdf3;
+    border-color:#abefc6;
+  }
+
+  .stage{
+    position:relative;
+    overflow-x:auto;
+    padding:25px 10px 45px;
+  }
+  .numberline{
+    position:relative;
+    min-width:760px;
+    margin:0 auto;
+    width:max-content;
+    padding:22px 22px 32px;
+    background:linear-gradient(180deg,#fbfcfe,#f6f8fc);
+    border:1px solid #e1e7ef;
+    border-radius:18px;
+  }
+  .digits{
+    display:flex;
+    align-items:flex-end;
+    justify-content:center;
+    gap:2px;
+    height:92px;
+    position:relative;
+  }
+  .slot{
+    width:58px;
+    height:72px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:46px;
+    font-weight:800;
+    border-bottom:4px solid #c5cfdd;
+    position:relative;
+  }
+  .commaSlot{
+    width:24px;
+    border-bottom:none;
+  }
+  .commaGhost{
+    opacity:.22;
+    font-size:50px;
+  }
+  #jumper{
+    position:absolute;
+    width:20px;
+    height:20px;
+    border-radius:50%;
+    background:var(--accent);
+    box-shadow:0 6px 16px rgba(47,111,237,.35);
+    left:0;
+    top:8px;
+    z-index:5;
+    opacity:0;
+    pointer-events:none;
+  }
+  #jumper:after{
+    content:"Komma";
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    top:-28px;
+    background:#17243c;
+    color:white;
+    font-size:12px;
+    font-weight:700;
+    padding:4px 7px;
+    border-radius:8px;
+    white-space:nowrap;
+  }
+  .arrowText{
+    text-align:center;
+    color:var(--accent);
+    font-size:18px;
+    font-weight:700;
+    margin-top:10px;
+    min-height:25px;
+  }
+  .jumpDots{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    min-height:20px;
+    margin-top:8px;
+  }
+  .dot{
+    width:10px;height:10px;border-radius:50%;background:#d1d8e5;
+    transition:.2s;
+  }
+  .dot.on{background:var(--accent); transform:scale(1.35)}
+
+  .placeTable{
+    display:grid;
+    grid-template-columns:repeat(8, minmax(80px,1fr));
+    border:1px solid #dfe5ee;
+    border-radius:14px;
+    overflow:hidden;
+    margin-top:18px;
+    min-width:760px;
+  }
+  .placeTable div{
+    padding:10px 6px;
+    text-align:center;
+    border-right:1px solid #e4e8ef;
+    border-bottom:1px solid #e4e8ef;
+  }
+  .placeTable div:nth-child(8n){border-right:none}
+  .head{
+    font-size:13px;
+    font-weight:700;
+    background:#f2f5fa;
+    color:#41506b;
+  }
+  .val{
+    font-size:24px;
+    font-weight:800;
+    background:#fff;
+  }
+  .sep{
+    box-shadow:inset 3px 0 0 #7c3aed;
+  }
+
+  .explain{
+    margin:18px auto 0;
+    max-width:850px;
+    background:var(--soft);
+    border:1px solid #cfe0ff;
+    border-radius:15px;
+    padding:15px 18px;
+    line-height:1.55;
+    font-size:17px;
+  }
+
+  .practice{
+    display:grid;
+    grid-template-columns:1.1fr .9fr;
+    gap:20px;
+  }
+  .taskbox{
+    background:#f8fafc;
+    border:1px solid #e1e7ef;
+    border-radius:16px;
+    padding:20px;
+  }
+  .task{
+    font-size:36px;
+    font-weight:800;
+    margin:8px 0 18px;
+  }
+  .answerrow{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+  }
+  .feedback{
+    min-height:42px;
+    margin-top:14px;
+    font-weight:700;
+    font-size:17px;
+    line-height:1.4;
+  }
+  .feedback.good{color:var(--good)}
+  .feedback.bad{color:var(--bad)}
+  .score{
+    display:flex;
+    gap:12px;
+    flex-wrap:wrap;
+    margin-top:14px;
+  }
+  .pill{
+    border-radius:999px;
+    padding:7px 11px;
+    background:#eef2f7;
+    font-weight:700;
+  }
+  .mini{
+    color:var(--muted);
+    font-size:14px;
+    line-height:1.45;
+  }
+
+  .examples{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+  }
+  .exampleBtn{
+    background:#fff;
+    border:1px solid #dfe5ee;
+    padding:15px 12px;
+    border-radius:14px;
+    text-align:left;
+    color:var(--ink);
+    box-shadow:0 4px 12px rgba(35,50,80,.06);
+  }
+  .exampleBtn strong{font-size:19px}
+  .exampleBtn span{display:block;color:var(--muted);font-size:13px;margin-top:4px}
+
+  footer{
+    text-align:center;
+    color:#7c8799;
+    padding:24px 0 4px;
+    font-size:13px;
+  }
+  @media (max-width:850px){
+    .rule,.practice{grid-template-columns:1fr}
+    .examples{grid-template-columns:1fr 1fr}
+  }
+  @media (max-width:560px){
+    .examples{grid-template-columns:1fr}
+    .hero,.card{padding:18px}
+  }
+  @media print{
+    body{background:white}
+    .controls,.practice,.examples,footer{display:none !important}
+    .hero,.card{box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <h1>Der Komma-Hüpfer</h1>
+    <p class="sub">Multiplikation mit 10, 100 und 1000 – und mit 0,1, 0,01 und 0,001. Beobachte, wie das Komma von Stelle zu Stelle hüpft.</p>
+    <div class="rule">
+      <div class="rulebox right"><b>· 10, · 100, · 1000</b><br>Das Komma wandert nach <b>rechts</b>: 1, 2 oder 3 Stellen.</div>
+      <div class="rulebox left"><b>· 0,1, · 0,01, · 0,001</b><br>Das Komma wandert nach <b>links</b>: 1, 2 oder 3 Stellen.</div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>1. Komma springen lassen</h2>
+    <p class="hint">Wähle eine Zahl und einen Faktor. Klicke dann auf <b>Animation starten</b>.</p>
+
+    <div class="controls">
+      <label>Zahl:
+        <select id="numberSelect">
+          <option value="3.7">3,7</option>
+          <option value="12.45">12,45</option>
+          <option value="0.84">0,84</option>
+          <option value="125.6">125,6</option>
+          <option value="0.036">0,036</option>
+        </select>
+      </label>
+      <label>mal:
+        <select id="factorSelect">
+          <option value="10">10</option>
+          <option value="100">100</option>
+          <option value="1000">1000</option>
+          <option value="0.1">0,1</option>
+          <option value="0.01">0,01</option>
+          <option value="0.001">0,001</option>
+        </select>
+      </label>
+      <button class="primary" id="startBtn">▶ Animation starten</button>
+      <button class="secondary" id="resetBtn">↺ Zurücksetzen</button>
+    </div>
+
+    <div class="equation" id="equation"></div>
+
+    <div class="stage">
+      <div class="numberline" id="numberline">
+        <div id="jumper"></div>
+        <div class="digits" id="digits"></div>
+        <div class="arrowText" id="arrowText"></div>
+        <div class="jumpDots" id="jumpDots"></div>
+      </div>
+
+      <div class="placeTable" id="placeTable">
+        <div class="head">Tausender</div><div class="head">Hunderter</div><div class="head">Zehner</div><div class="head">Einer</div>
+        <div class="head sep">Zehntel</div><div class="head">Hundertstel</div><div class="head">Tausendstel</div><div class="head">Zehntausendstel</div>
+        <div class="val" id="p0"></div><div class="val" id="p1"></div><div class="val" id="p2"></div><div class="val" id="p3"></div>
+        <div class="val sep" id="p4"></div><div class="val" id="p5"></div><div class="val" id="p6"></div><div class="val" id="p7"></div>
+      </div>
+    </div>
+
+    <div class="explain" id="explain"></div>
+  </section>
+
+  <section class="card">
+    <h2>2. Beispiele anklicken</h2>
+    <p class="hint">Mit einem Klick wird das Beispiel oben eingestellt. Danach kannst du die Animation starten.</p>
+    <div class="examples">
+      <button class="exampleBtn" data-num="4.8" data-factor="10"><strong>4,8 · 10</strong><span>1 Sprung nach rechts</span></button>
+      <button class="exampleBtn" data-num="2.35" data-factor="100"><strong>2,35 · 100</strong><span>2 Sprünge nach rechts</span></button>
+      <button class="exampleBtn" data-num="0.625" data-factor="1000"><strong>0,625 · 1000</strong><span>3 Sprünge nach rechts</span></button>
+      <button class="exampleBtn" data-num="48" data-factor="0.1"><strong>48 · 0,1</strong><span>1 Sprung nach links</span></button>
+      <button class="exampleBtn" data-num="735" data-factor="0.01"><strong>735 · 0,01</strong><span>2 Sprünge nach links</span></button>
+      <button class="exampleBtn" data-num="42" data-factor="0.001"><strong>42 · 0,001</strong><span>3 Sprünge nach links</span></button>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>3. Jetzt du!</h2>
+    <p class="hint">Rechne im Kopf. Du brauchst keinen Taschenrechner.</p>
+    <div class="practice">
+      <div class="taskbox">
+        <div class="mini">Aufgabe</div>
+        <div class="task" id="task">–</div>
+        <div class="answerrow">
+          <input type="text" id="answer" inputmode="decimal" placeholder="Dein Ergebnis">
+          <button class="purple" id="checkBtn">Prüfen</button>
+          <button class="secondary" id="newBtn">Neue Aufgabe</button>
+        </div>
+        <div class="feedback" id="feedback"></div>
+        <div class="score">
+          <div class="pill">Richtig: <span id="rightCount">0</span></div>
+          <div class="pill">Versuche: <span id="tryCount">0</span></div>
+        </div>
+      </div>
+      <div class="taskbox">
+        <b>Merke:</b>
+        <p>Bei ·10, ·100 und ·1000 wird die Zahl größer. Das Komma geht nach rechts.</p>
+        <p>Bei ·0,1, ·0,01 und ·0,001 wird die Zahl kleiner. Das Komma geht nach links.</p>
+        <p class="mini">Wichtig: Nicht „einfach Nullen anhängen“. Entscheidend ist der <b>Stellenwert</b> der Ziffern.</p>
+      </div>
+    </div>
+  </section>
+
+  <footer>Interaktive Lernseite – Mathematik Klasse 7</footer>
+</div>
+
+<script>
+const numberSelect = document.getElementById('numberSelect');
+const factorSelect = document.getElementById('factorSelect');
+const startBtn = document.getElementById('startBtn');
+const resetBtn = document.getElementById('resetBtn');
+const equation = document.getElementById('equation');
+const digits = document.getElementById('digits');
+const jumper = document.getElementById('jumper');
+const arrowText = document.getElementById('arrowText');
+const jumpDots = document.getElementById('jumpDots');
+const explain = document.getElementById('explain');
+
+let animating = false;
+
+function fmt(n){
+  if (Math.abs(n) < 1e-12) return "0";
+  let s = Number(n.toFixed(8)).toString();
+  return s.replace('.', ',');
+}
+function jumpInfo(f){
+  if(f>=10) return {dir:'rechts', steps:Math.round(Math.log10(f)), sign:1};
+  return {dir:'links', steps:Math.round(-Math.log10(f)), sign:-1};
+}
+function decimalPosString(n){
+  let s = String(n);
+  if(!s.includes('.')) s += '.0';
+  return s;
+}
+function updateEquation(showResult=false){
+  const n = parseFloat(numberSelect.value);
+  const f = parseFloat(factorSelect.value);
+  equation.innerHTML = `<span class="eqpiece">${fmt(n)}</span><span>·</span><span class="eqpiece">${fmt(f)}</span><span>=</span>` +
+    (showResult ? `<span class="eqpiece resultPiece">${fmt(n*f)}</span>` : `<span class="eqpiece">?</span>`);
+}
+function renderNumber(n, commaIndexOverride=null){
+  let s = decimalPosString(n);
+  let parts = s.split('.');
+  let left = parts[0];
+  let right = parts[1] || '';
+  // padding gives room for visible movement
+  left = left.padStart(4,'0');
+  right = right.padEnd(4,'0').slice(0,4);
+  let all = left + right;
+  let commaIndex = commaIndexOverride === null ? 4 : commaIndexOverride;
+
+  digits.innerHTML = '';
+  for(let i=0;i<all.length;i++){
+    const slot=document.createElement('div');
+    slot.className='slot';
+    slot.textContent=all[i];
+    digits.appendChild(slot);
+    if(i===commaIndex-1){
+      const c=document.createElement('div');
+      c.className='slot commaSlot';
+      c.innerHTML='<span class="commaGhost">,</span>';
+      digits.appendChild(c);
+    }
+  }
+}
+function renderPlaceTable(n){
+  let s = decimalPosString(n);
+  let [l,r=''] = s.split('.');
+  l=l.padStart(4,'0').slice(-4);
+  r=r.padEnd(4,'0').slice(0,4);
+  const vals=(l+r).split('');
+  vals.forEach((v,i)=>{
+    document.getElementById('p'+i).textContent=v;
+  });
+}
+function getCommaCenter(n, commaShift=0){
+  renderNumber(n, 4+commaShift);
+  const comma = digits.querySelector('.commaSlot');
+  const parentRect = document.getElementById('numberline').getBoundingClientRect();
+  const rect = comma.getBoundingClientRect();
+  return {x: rect.left-parentRect.left+rect.width/2-10, y: rect.top-parentRect.top-2};
+}
+function sleep(ms){ return new Promise(r=>setTimeout(r,ms)); }
+
+async function animate(){
+  if(animating) return;
+  animating=true;
+  startBtn.disabled=true;
+  const n=parseFloat(numberSelect.value);
+  const f=parseFloat(factorSelect.value);
+  const info=jumpInfo(f);
+  updateEquation(false);
+  renderPlaceTable(n);
+  renderNumber(n,4);
+
+  jumpDots.innerHTML='';
+  for(let i=0;i<info.steps;i++){
+    const d=document.createElement('div'); d.className='dot'; jumpDots.appendChild(d);
+  }
+  explain.innerHTML = `Wir multiplizieren <b>${fmt(n)}</b> mit <b>${fmt(f)}</b>. Das Komma muss <b>${info.steps} ${info.steps===1?'Stelle':'Stellen'} nach ${info.dir}</b> wandern.`;
+  arrowText.textContent = `Das Komma hüpft ${info.steps}× nach ${info.dir}.`;
+
+  let currentShift=0;
+  let pos=getCommaCenter(n,currentShift);
+  jumper.style.transition='none';
+  jumper.style.left=pos.x+'px';
+  jumper.style.top=pos.y+'px';
+  jumper.style.opacity='1';
+  await sleep(500);
+
+  for(let step=1;step<=info.steps;step++){
+    currentShift += info.sign;
+    const newpos=getCommaCenter(n,currentShift);
+    // restore source view but keep target coordinate
+    renderNumber(n,4);
+    jumper.style.transition='left .72s cubic-bezier(.2,.8,.2,1), top .36s ease';
+    jumper.style.left=newpos.x+'px';
+    jumper.style.top=(newpos.y-22)+'px';
+    await sleep(360);
+    jumper.style.top=newpos.y+'px';
+    await sleep(440);
+    jumpDots.children[step-1].classList.add('on');
+    await sleep(240);
+  }
+  jumper.style.opacity='0';
+  updateEquation(true);
+  renderNumber(n*f,4);
+  renderPlaceTable(n*f);
+  explain.innerHTML = `<b>Ergebnis:</b> ${fmt(n)} · ${fmt(f)} = <b>${fmt(n*f)}</b>.<br>` +
+    `Das Komma ist ${info.steps} ${info.steps===1?'Stelle':'Stellen'} nach <b>${info.dir}</b> gewandert.`;
+  animating=false;
+  startBtn.disabled=false;
+}
+function resetView(){
+  if(animating) return;
+  const n=parseFloat(numberSelect.value);
+  updateEquation(false);
+  renderNumber(n,4);
+  renderPlaceTable(n);
+  jumper.style.opacity='0';
+  arrowText.textContent='';
+  jumpDots.innerHTML='';
+  const info=jumpInfo(parseFloat(factorSelect.value));
+  explain.innerHTML=`Bei diesem Faktor wandert das Komma <b>${info.steps} ${info.steps===1?'Stelle':'Stellen'} nach ${info.dir}</b>.`;
+}
+numberSelect.addEventListener('change', resetView);
+factorSelect.addEventListener('change', resetView);
+startBtn.addEventListener('click', animate);
+resetBtn.addEventListener('click', resetView);
+
+document.querySelectorAll('.exampleBtn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    let num=btn.dataset.num, factor=btn.dataset.factor;
+    let found=[...numberSelect.options].some(o=>o.value===num);
+    if(!found){
+      let o=document.createElement('option');
+      o.value=num; o.textContent=fmt(parseFloat(num));
+      numberSelect.appendChild(o);
+    }
+    numberSelect.value=num;
+    factorSelect.value=factor;
+    resetView();
+    window.scrollTo({top:document.querySelector('.card').offsetTop-10,behavior:'smooth'});
+  });
+});
+
+// Practice
+const taskEl=document.getElementById('task');
+const answerEl=document.getElementById('answer');
+const feedback=document.getElementById('feedback');
+const rightCount=document.getElementById('rightCount');
+const tryCount=document.getElementById('tryCount');
+let currentTask=null, right=0, tries=0;
+
+const nums=[1.4,2.7,3.25,4.08,5.6,7.35,8.04,12.5,24.06,63.8,125,480,0.72,0.045,0.308];
+const factors=[10,100,1000,0.1,0.01,0.001];
+
+function newTask(){
+  const n=nums[Math.floor(Math.random()*nums.length)];
+  const f=factors[Math.floor(Math.random()*factors.length)];
+  currentTask={n,f,result:Number((n*f).toFixed(8))};
+  taskEl.textContent=`${fmt(n)} · ${fmt(f)} = ?`;
+  answerEl.value='';
+  feedback.textContent='';
+  feedback.className='feedback';
+  answerEl.focus();
+}
+function parseGerman(s){
+  return parseFloat(s.trim().replace(',','.'));
+}
+function check(){
+  if(!currentTask) return;
+  const a=parseGerman(answerEl.value);
+  if(Number.isNaN(a)){
+    feedback.textContent='Bitte gib eine Zahl ein.';
+    feedback.className='feedback bad';
+    return;
+  }
+  tries++;
+  tryCount.textContent=tries;
+  if(Math.abs(a-currentTask.result)<1e-9){
+    right++;
+    rightCount.textContent=right;
+    feedback.textContent='🏆 Richtig! Sehr gut – das Komma sitzt an der richtigen Stelle.';
+    feedback.className='feedback good';
+  }else{
+    const info=jumpInfo(currentTask.f);
+    feedback.innerHTML=`Noch nicht. Tipp: Das Komma muss <b>${info.steps} ${info.steps===1?'Stelle':'Stellen'} nach ${info.dir}</b> wandern.`;
+    feedback.className='feedback bad';
+  }
+}
+document.getElementById('checkBtn').addEventListener('click',check);
+document.getElementById('newBtn').addEventListener('click',newTask);
+answerEl.addEventListener('keydown',e=>{if(e.key==='Enter')check();});
+
+resetView();
+newTask();
+</script>
+</body>
+</html>
