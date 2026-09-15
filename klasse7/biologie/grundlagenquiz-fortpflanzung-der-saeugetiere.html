@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quiz: Fortpflanzung der Säugetiere</title>
+<style>
+  :root{
+    --bg:#f5f7fb;
+    --card:#ffffff;
+    --text:#1f2937;
+    --muted:#667085;
+    --line:#dfe5ee;
+    --accent:#315f9b;
+    --accent-soft:#eaf2fb;
+    --good:#18794e;
+    --good-bg:#edf8f2;
+    --bad:#b42318;
+    --bad-bg:#fff1f0;
+  }
+
+  *{box-sizing:border-box}
+
+  body{
+    margin:0;
+    font-family: Calibri, "Segoe UI", Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.45;
+  }
+
+  .page{
+    max-width:920px;
+    margin:0 auto;
+    padding:28px 18px 60px;
+  }
+
+  .header{
+    background:linear-gradient(135deg,#315f9b,#527fb8);
+    color:white;
+    border-radius:20px;
+    padding:26px 30px;
+    box-shadow:0 10px 25px rgba(40,67,100,.13);
+    margin-bottom:22px;
+  }
+
+  .header h1{
+    margin:0 0 8px;
+    font-size:2rem;
+    line-height:1.15;
+  }
+
+  .header p{
+    margin:0;
+    font-size:1.05rem;
+    opacity:.96;
+  }
+
+  .info{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:16px;
+    padding:16px 20px;
+    margin-bottom:20px;
+  }
+
+  .info strong{color:var(--accent)}
+
+  .question{
+    background:var(--card);
+    border:1px solid var(--line);
+    border-radius:18px;
+    padding:20px;
+    margin:16px 0;
+    box-shadow:0 3px 10px rgba(35,48,70,.04);
+  }
+
+  .qhead{
+    display:flex;
+    gap:12px;
+    align-items:flex-start;
+    margin-bottom:14px;
+  }
+
+  .qnum{
+    min-width:34px;
+    height:34px;
+    border-radius:10px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:var(--accent-soft);
+    color:var(--accent);
+    font-weight:700;
+  }
+
+  .qtext{
+    font-size:1.12rem;
+    font-weight:700;
+    padding-top:4px;
+  }
+
+  .answers{
+    display:grid;
+    gap:9px;
+  }
+
+  button.answer{
+    width:100%;
+    text-align:left;
+    border:1px solid #ccd5e1;
+    background:#fff;
+    color:var(--text);
+    border-radius:12px;
+    padding:12px 14px;
+    font:inherit;
+    font-size:1rem;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+
+  button.answer:hover:not(:disabled){
+    border-color:#7c9fc8;
+    background:#f7fbff;
+    transform:translateY(-1px);
+  }
+
+  button.answer:disabled{
+    cursor:default;
+  }
+
+  button.answer.correct{
+    background:var(--good-bg);
+    border-color:#79b899;
+    color:#125c3b;
+    font-weight:700;
+  }
+
+  button.answer.wrong{
+    background:var(--bad-bg);
+    border-color:#e3a09b;
+    color:#8e1f17;
+  }
+
+  .feedback{
+    display:none;
+    margin-top:14px;
+    border-radius:12px;
+    padding:12px 14px;
+    font-size:.98rem;
+    font-weight:600;
+  }
+
+  .feedback.good{
+    display:block;
+    background:var(--good-bg);
+    color:#125c3b;
+    border:1px solid #b4dec6;
+  }
+
+  .feedback.bad{
+    display:block;
+    background:var(--bad-bg);
+    color:#8e1f17;
+    border:1px solid #f0c2be;
+  }
+
+  .trophy{
+    font-size:1.1rem;
+    margin-right:4px;
+  }
+
+  .scorebox{
+    margin-top:26px;
+    background:#1f2937;
+    color:white;
+    border-radius:16px;
+    padding:15px 18px;
+    display:flex;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    box-shadow:0 6px 18px rgba(0,0,0,.10);
+  }
+
+  .score{
+    font-weight:700;
+    font-size:1.05rem;
+  }
+
+  .reset{
+    border:0;
+    background:#fff;
+    color:#1f2937;
+    border-radius:10px;
+    padding:9px 14px;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  .result{
+    display:none;
+    background:var(--card);
+    border:2px solid #aec4df;
+    border-radius:18px;
+    padding:20px;
+    margin-top:22px;
+    text-align:center;
+  }
+
+  .result.show{display:block}
+
+  .result .big{
+    font-size:2rem;
+    margin-bottom:5px;
+  }
+
+  @media (max-width:600px){
+    .header h1{font-size:1.65rem}
+    .header{padding:22px}
+    .question{padding:16px}
+  }
+
+  @media print{
+    .scorebox,.reset{display:none!important}
+    body{background:white}
+    .page{max-width:none;padding:0}
+    .header{box-shadow:none}
+    .question{break-inside:avoid;box-shadow:none}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <header class="header">
+    <h1>Fortpflanzung der Säugetiere</h1>
+    <p>Quiz für die 7. Klasse – wähle jeweils die richtige Antwort aus.</p>
+  </header>
+
+  <div class="info">
+    <strong>So funktioniert's:</strong> Klicke auf eine Antwort. Du bekommst sofort eine Rückmeldung.
+    Für jede richtige Antwort gibt es einen kleinen 🏆.
+  </div>
+
+  <div id="quiz"></div>
+
+  <div id="result" class="result"></div>
+
+  <div class="scorebox">
+    <div class="score" id="score">Gesamtergebnis: 0 von 12 richtig</div>
+    <button class="reset" onclick="resetQuiz()">Quiz neu starten</button>
+  </div>
+</div>
+
+<script>
+const questions = [
+  {
+    q: "Wie heißen die männlichen Keimzellen bei Säugetieren?",
+    options: ["Spermien", "Embryonen", "Eizellen", "Blutplättchen"],
+    correct: "Spermien",
+    explain: "Spermien sind die männlichen Keimzellen."
+  },
+  {
+    q: "Wie heißen die weiblichen Keimzellen bei Säugetieren?",
+    options: ["Eizellen", "Spermien", "Embryonen", "Nervenzellen"],
+    correct: "Eizellen",
+    explain: "Eizellen sind die weiblichen Keimzellen."
+  },
+  {
+    q: "Was geschieht bei der Befruchtung?",
+    options: [
+      "Eine Samenzelle verschmilzt mit einer Eizelle.",
+      "Zwei Eizellen verschmelzen miteinander.",
+      "Ein Embryo wird zu einer Samenzelle.",
+      "Das Jungtier beginnt sofort selbstständig zu leben."
+    ],
+    correct: "Eine Samenzelle verschmilzt mit einer Eizelle.",
+    explain: "Bei der Befruchtung verschmilzt eine Samenzelle mit einer Eizelle."
+  },
+  {
+    q: "Wie nennt man das sich entwickelnde Lebewesen in einer frühen Phase nach der Befruchtung?",
+    options: ["Embryo", "Spermium", "Eizelle", "Plazenta"],
+    correct: "Embryo",
+    explain: "In einer frühen Entwicklungsphase spricht man von einem Embryo."
+  },
+  {
+    q: "Wo entwickelt sich der Embryo bei den meisten Säugetieren?",
+    options: ["In der Gebärmutter", "Im Magen", "In der Lunge", "Im Knochenmark"],
+    correct: "In der Gebärmutter",
+    explain: "Bei den meisten Säugetieren entwickelt sich der Embryo in der Gebärmutter."
+  },
+  {
+    q: "Was bedeutet der Begriff „Trächtigkeit“?",
+    options: [
+      "Die Zeit, in der sich das Jungtier im Körper des Muttertiers entwickelt.",
+      "Die Zeit, in der ein Jungtier bereits selbstständig Nahrung sucht.",
+      "Die Zeit zwischen zwei Mahlzeiten eines Säugetiers.",
+      "Die Zeit, in der Säugetiere ihr Fell wechseln."
+    ],
+    correct: "Die Zeit, in der sich das Jungtier im Körper des Muttertiers entwickelt.",
+    explain: "Die Trächtigkeit umfasst die Zeit der Entwicklung des Nachwuchses im Muttertier."
+  },
+  {
+    q: "Wie lange dauert die Trächtigkeit eines Elefanten ungefähr?",
+    options: ["Etwa 22 Monate", "Etwa 2 Monate", "Etwa 6 Monate", "Etwa 12 Monate"],
+    correct: "Etwa 22 Monate",
+    explain: "Elefanten haben eine besonders lange Tragzeit von ungefähr 22 Monaten."
+  },
+  {
+    q: "Wie lange dauert die Trächtigkeit eines Hundes ungefähr?",
+    options: ["Etwa 9 Wochen", "Etwa 9 Monate", "Etwa 18 Monate", "Etwa 2 Wochen"],
+    correct: "Etwa 9 Wochen",
+    explain: "Bei Hunden dauert die Trächtigkeit ungefähr 63 Tage, also rund 9 Wochen."
+  },
+  {
+    q: "Welches Merkmal ist typisch für Säugetiere nach der Geburt ihrer Jungen?",
+    options: [
+      "Die Jungen werden mit Milch gesäugt.",
+      "Alle Jungen können sofort fliegen.",
+      "Die Jungen entwickeln sich in Eiern außerhalb des Körpers.",
+      "Alle Jungen leben sofort ohne Versorgung durch die Eltern."
+    ],
+    correct: "Die Jungen werden mit Milch gesäugt.",
+    explain: "Säugetiere heißen so, weil die Weibchen ihre Jungen mit Milch säugen."
+  },
+  {
+    q: "Welche Reihenfolge ist richtig?",
+    options: [
+      "Befruchtung → Embryonalentwicklung → Geburt",
+      "Geburt → Befruchtung → Embryonalentwicklung",
+      "Embryonalentwicklung → Geburt → Befruchtung",
+      "Geburt → Embryonalentwicklung → Befruchtung"
+    ],
+    correct: "Befruchtung → Embryonalentwicklung → Geburt",
+    explain: "Zuerst findet die Befruchtung statt, danach entwickelt sich der Embryo und später folgt die Geburt."
+  },
+  {
+    q: "Was ist eine wichtige Aufgabe der Gebärmutter bei Säugetieren?",
+    options: [
+      "Sie bietet dem Embryo einen geschützten Ort für seine Entwicklung.",
+      "Sie produziert die männlichen Keimzellen.",
+      "Sie verdaut die Nahrung des Muttertiers.",
+      "Sie pumpt Blut durch den Körper."
+    ],
+    correct: "Sie bietet dem Embryo einen geschützten Ort für seine Entwicklung.",
+    explain: "Die Gebärmutter ist der Ort, an dem sich der Embryo beziehungsweise das Jungtier entwickelt."
+  },
+  {
+    q: "Warum benötigen neugeborene Säugetiere häufig die Fürsorge ihrer Mutter?",
+    options: [
+      "Sie brauchen häufig Nahrung, Wärme und Schutz.",
+      "Sie können grundsätzlich keine Nahrung aufnehmen.",
+      "Sie besitzen bei der Geburt noch keine Organe.",
+      "Sie müssen erst eine Eizelle bilden."
+    ],
+    correct: "Sie brauchen häufig Nahrung, Wärme und Schutz.",
+    explain: "Viele junge Säugetiere sind nach der Geburt noch auf Nahrung, Wärme und Schutz angewiesen."
+  }
+];
+
+let score = 0;
+let answered = 0;
+
+function shuffle(array){
+  const copy = [...array];
+  for(let i = copy.length - 1; i > 0; i--){
+    const j = Math.floor(Math.random() * (i + 1));
+    [copy[i], copy[j]] = [copy[j], copy[i]];
+  }
+  return copy;
+}
+
+function renderQuiz(){
+  const quiz = document.getElementById("quiz");
+  quiz.innerHTML = "";
+  score = 0;
+  answered = 0;
+  updateScore();
+  document.getElementById("result").className = "result";
+  document.getElementById("result").innerHTML = "";
+
+  questions.forEach((item, index) => {
+    const box = document.createElement("section");
+    box.className = "question";
+
+    const head = document.createElement("div");
+    head.className = "qhead";
+    head.innerHTML = `
+      <div class="qnum">${index + 1}</div>
+      <div class="qtext">${item.q}</div>
+    `;
+    box.appendChild(head);
+
+    const answers = document.createElement("div");
+    answers.className = "answers";
+
+    const feedback = document.createElement("div");
+    feedback.className = "feedback";
+
+    shuffle(item.options).forEach(option => {
+      const btn = document.createElement("button");
+      btn.className = "answer";
+      btn.textContent = option;
+
+      btn.addEventListener("click", () => {
+        if(box.dataset.answered === "yes") return;
+
+        const allButtons = answers.querySelectorAll("button");
+        const attempts = Number(box.dataset.attempts || "0");
+
+        if(option === item.correct){
+          box.dataset.answered = "yes";
+          answered++;
+          allButtons.forEach(b => b.disabled = true);
+          btn.classList.add("correct");
+          score++;
+
+          feedback.className = "feedback good";
+          feedback.innerHTML = `<span class="trophy">🏆</span><strong>Richtig!</strong> ${item.explain}`;
+
+          updateScore();
+          if(answered === questions.length) showResult();
+          return;
+        }
+
+        // Falsche Antwort
+        btn.classList.add("wrong");
+        btn.disabled = true;
+
+        if(attempts === 0){
+          // Beim ersten Fehler noch keine Lösung verraten.
+          box.dataset.attempts = "1";
+          feedback.className = "feedback bad";
+          feedback.innerHTML = `<strong>Versuch es noch einmal 😉</strong>`;
+        } else {
+          // Erst beim zweiten Fehler die richtige Lösung zeigen.
+          box.dataset.answered = "yes";
+          answered++;
+          allButtons.forEach(b => {
+            b.disabled = true;
+            if(b.textContent === item.correct) b.classList.add("correct");
+          });
+
+          feedback.className = "feedback bad";
+          feedback.innerHTML = `<strong>Die richtige Antwort ist markiert.</strong> ${item.explain}`;
+
+          updateScore();
+          if(answered === questions.length) showResult();
+        }
+      });
+
+      answers.appendChild(btn);
+    });
+
+    box.appendChild(answers);
+    box.appendChild(feedback);
+    quiz.appendChild(box);
+  });
+}
+
+function updateScore(){
+  document.getElementById("score").textContent = `Gesamtergebnis: ${score} von ${questions.length} richtig`;
+}
+
+function showResult(){
+  const result = document.getElementById("result");
+  let text = "";
+  let icon = "🏆";
+
+  if(score === questions.length){
+    text = "Perfekt – alle Fragen richtig!";
+  } else if(score >= 9){
+    text = "Sehr gut! Du kennst die wichtigsten Grundlagen.";
+  } else if(score >= 6){
+    text = "Schon gut! Schau dir die Erklärungen bei den falschen Antworten noch einmal an.";
+  } else {
+    text = "Übe die Grundbegriffe noch einmal und starte das Quiz danach erneut.";
+    icon = "📘";
+  }
+
+  result.innerHTML = `
+    <div class="big">${icon}</div>
+    <strong>${score} von ${questions.length} Punkten</strong><br>
+    ${text}
+  `;
+  result.className = "result show";
+}
+
+function resetQuiz(){
+  renderQuiz();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+renderQuiz();
+</script>
+</body>
+</html>
