@@ -981,6 +981,8 @@ function enterFocusMode(card){
 
 function exitFocusMode(){
   const focusedCard = document.querySelector('.task-card.focused');
+  const active = document.activeElement;
+  if(active && focusBar && focusBar.contains(active)) active.blur();
 
   document.body.classList.remove('focus-mode');
   document.querySelectorAll('.focus-section').forEach(s => s.classList.remove('focus-section'));
@@ -989,9 +991,9 @@ function exitFocusMode(){
   if(focusBar) focusBar.hidden = true;
 
   if(focusedCard){
-    requestAnimationFrame(() => {
-      focusedCard.scrollIntoView({block:'center', inline:'nearest', behavior:'auto'});
-    });
+    const rect = focusedCard.getBoundingClientRect();
+    const targetTop = rect.top + window.scrollY - Math.max(24, (window.innerHeight - rect.height) / 2);
+    window.scrollTo({top:Math.max(0, targetTop), left:0, behavior:'auto'});
   }
 }
 
