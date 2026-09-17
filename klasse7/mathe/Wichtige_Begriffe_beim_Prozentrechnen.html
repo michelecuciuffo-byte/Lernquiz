@@ -394,7 +394,7 @@
       <span class="eyebrow">MATHEMATIK · 7. KLASSE</span>
       <h1>Prozentrechnen:<br>Wer ist <span style="color:var(--blue)">G</span>, <span style="color:var(--green)">W</span> und <span style="color:var(--orange)">p&nbsp;%</span>?</h1>
       <p>
-        Prozente begegnen dir dauernd: beim Rabatt, beim Handyakku, bei Umfragen, im Sport oder beim Taschengeld.
+        Prozente begegnen dir im Alltag sehr häufig: beim Rabatt, beim Handyakku, bei Umfragen, im Sport oder beim Taschengeld.
         Heute geht es zuerst darum, die drei wichtigsten Begriffe sicher zu erkennen.
       </p>
       <div class="hero-note">
@@ -449,7 +449,7 @@
     </div>
 
     <div class="memory">
-      <strong>Merksatz:</strong> <b>G</b> wie <b>Ganzes</b>, <b>W</b> wie „Wie viel ist der Teil?“, <b>p&nbsp;%</b> sagt den Anteil in Prozent.
+      <strong>Merksatz:</strong> <b>G</b> wie <b>Ganzes</b>, <b>W</b> wie „Wie viel ist der Teil?“, <b>p</b> sagt den Anteil in Prozent.
     </div>
 
     <div class="bar-demo">
@@ -949,6 +949,9 @@ function setupFocusMode(){
   focusBar = bar;
 
   document.querySelectorAll('.task-card[data-task]').forEach(card => {
+    const section = card.closest('.section');
+    const sectionTitle = section && section.querySelector('.section-title h2');
+    if(sectionTitle && /Aufgabentyp D/i.test(sectionTitle.textContent)) return;
     const tools = document.createElement('div');
     tools.className = 'task-tools';
     tools.innerHTML = '<button class="focus-toggle" type="button" aria-pressed="false">🎯 Nur diese Aufgabe</button>';
@@ -977,12 +980,19 @@ function enterFocusMode(card){
 }
 
 function exitFocusMode(){
+  const focusedCard = document.querySelector('.task-card.focused');
+
   document.body.classList.remove('focus-mode');
   document.querySelectorAll('.focus-section').forEach(s => s.classList.remove('focus-section'));
   document.querySelectorAll('.task-card.focused').forEach(c => c.classList.remove('focused'));
   document.querySelectorAll('.focus-toggle').forEach(b => b.setAttribute('aria-pressed','false'));
   if(focusBar) focusBar.hidden = true;
-  window.scrollTo({top:0, behavior:'smooth'});
+
+  if(focusedCard){
+    requestAnimationFrame(() => {
+      focusedCard.scrollIntoView({block:'center', inline:'nearest', behavior:'auto'});
+    });
+  }
 }
 
 function shuffleItems(items){
@@ -1152,9 +1162,4 @@ function resetAll(){
 </script>
 </body>
 </html>
-
-
-
-
-
-
+\n\n\n\n\n\n
