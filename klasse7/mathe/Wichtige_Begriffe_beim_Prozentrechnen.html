@@ -982,6 +982,7 @@ function exitFocusMode(){
   document.querySelectorAll('.task-card.focused').forEach(c => c.classList.remove('focused'));
   document.querySelectorAll('.focus-toggle').forEach(b => b.setAttribute('aria-pressed','false'));
   if(focusBar) focusBar.hidden = true;
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 function shuffleItems(items){
