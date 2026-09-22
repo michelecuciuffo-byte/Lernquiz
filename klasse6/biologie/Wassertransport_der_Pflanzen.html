@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wassertransport durch Pflanzen – Lückentext</title>
+<style>
+  :root{
+    --bg:#f5f7f4;
+    --card:#ffffff;
+    --text:#1f2a24;
+    --muted:#5f6e65;
+    --line:#cfd8d2;
+    --accent:#2f6f4e;
+    --accent-soft:#e8f3ec;
+    --wrong:#a33a3a;
+    --wrong-soft:#fdecec;
+    --shadow:0 8px 24px rgba(31,42,36,.08);
+  }
+
+  *{box-sizing:border-box}
+
+  body{
+    margin:0;
+    font-family:Calibri, "Segoe UI", Arial, sans-serif;
+    background:var(--bg);
+    color:var(--text);
+    line-height:1.6;
+  }
+
+  .page{
+    max-width:1100px;
+    margin:0 auto;
+    padding:32px 22px 48px;
+  }
+
+  h1{
+    margin:0 0 6px;
+    font-size:clamp(28px,4vw,42px);
+    line-height:1.15;
+  }
+
+  .subtitle{
+    color:var(--muted);
+    margin-bottom:24px;
+    font-size:17px;
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid #e2e8e4;
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    padding:24px;
+    margin-bottom:22px;
+  }
+
+  .instructions{
+    background:#eef4f0;
+    border-left:5px solid var(--accent);
+  }
+
+  .instructions strong{color:var(--accent)}
+
+  .wordbox-title{
+    margin:0 0 12px;
+    font-size:20px;
+  }
+
+  .wordbox{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    min-height:56px;
+  }
+
+  .word{
+    border:1.5px solid #9fb5a7;
+    background:#fff;
+    color:#244433;
+    border-radius:11px;
+    padding:8px 13px;
+    font-weight:700;
+    cursor:grab;
+    user-select:none;
+    transition:.16s ease;
+    box-shadow:0 2px 6px rgba(31,42,36,.05);
+  }
+
+  .word:hover,
+  .word.selected{
+    background:var(--accent-soft);
+    border-color:var(--accent);
+    transform:translateY(-1px);
+  }
+
+  .word.used{
+    opacity:.28;
+    pointer-events:none;
+    transform:none;
+  }
+
+  .text{
+    font-size:19px;
+  }
+
+  .text p{
+    margin:0 0 20px;
+  }
+
+  .blank{
+    display:inline-flex;
+    min-width:150px;
+    min-height:39px;
+    margin:2px 5px;
+    padding:5px 10px;
+    vertical-align:middle;
+    align-items:center;
+    justify-content:center;
+    border:2px dashed #9aaba0;
+    border-radius:9px;
+    background:#fbfcfb;
+    color:#526158;
+    font-weight:700;
+    cursor:pointer;
+    transition:.15s ease;
+  }
+
+  .blank.dragover{
+    border-color:var(--accent);
+    background:var(--accent-soft);
+  }
+
+  .blank.correct{
+    border-style:solid;
+    border-color:#43865f;
+    background:#edf8f1;
+    color:#245d3c;
+  }
+
+  .blank.wrong{
+    border-style:solid;
+    border-color:#c46868;
+    background:var(--wrong-soft);
+    color:var(--wrong);
+  }
+
+  .blank .placeholder{
+    font-weight:400;
+    color:#849087;
+  }
+
+  .feedback{
+    min-height:30px;
+    margin-top:18px;
+    font-size:18px;
+    font-weight:700;
+  }
+
+  .feedback.ok{color:#2e744d}
+  .feedback.bad{color:#9d3737}
+
+  .controls{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top:18px;
+  }
+
+  button{
+    border:0;
+    border-radius:10px;
+    padding:10px 16px;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+  }
+
+  .primary{
+    background:var(--accent);
+    color:#fff;
+  }
+
+  .secondary{
+    background:#e8ece9;
+    color:#26342c;
+  }
+
+  .score{
+    margin-left:auto;
+    align-self:center;
+    color:var(--muted);
+    font-weight:700;
+  }
+
+  @media(max-width:700px){
+    .page{padding:18px 12px 32px}
+    .card{padding:18px}
+    .text{font-size:17px}
+    .blank{min-width:125px}
+    .score{width:100%;margin-left:0}
+  }
+
+  .capture-mode .controls,
+  .capture-mode .feedback{
+    display:none !important;
+  }
+
+  .capture-mode{
+    background:#fff !important;
+  }
+
+  @media print{
+    body{background:#fff}
+    .page{max-width:none;padding:0}
+    .card{box-shadow:none;border:1px solid #ccc}
+    .controls,.feedback{display:none}
+  }
+</style>
+  <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+</head>
+<body>
+<div class="page" id="captureArea">
+  <h1>Der Wassertransport durch Pflanzen</h1>
+  <div class="subtitle">Biologie · Klasse 6 · Wassertransport und Leitungsbahnen</div>
+
+  <div class="card instructions">
+    <strong>Aufgabe:</strong> Ziehe die Begriffe aus der Wortbox in die passenden Lücken.
+    Du erhältst <strong>sofort eine Rückmeldung</strong>. Am Computer kannst du ziehen;
+    auf Tablet oder Smartphone kannst du zuerst ein Wort und danach eine Lücke antippen.
+  </div>
+
+  <div class="card">
+    <h2 class="wordbox-title">Wortbox</h2>
+    <div class="wordbox" id="wordbox"></div>
+  </div>
+
+  <div class="card text" id="exercise">
+    <p>
+      Pflanzen nehmen Wasser und darin gelöste
+      <span class="blank" data-answer="Mineralstoffe"><span class="placeholder">Begriff einsetzen</span></span>
+      aus dem Boden auf. Dies geschieht hauptsächlich über die feinen
+      <span class="blank" data-answer="Wurzelhaare"><span class="placeholder">Begriff einsetzen</span></span>
+      der Wurzel. Von dort gelangt das Wasser in die <strong>Leitungsbahnen</strong> der Pflanze.
+    </p>
+
+    <p>
+      In den Leitungsbahnen wird das Wasser von den
+      <span class="blank" data-answer="Wurzeln"><span class="placeholder">Begriff einsetzen</span></span>
+      bis in den
+      <span class="blank" data-answer="Stamm"><span class="placeholder">Begriff einsetzen</span></span>
+      und schließlich in die
+      <span class="blank" data-answer="Blätter"><span class="placeholder">Begriff einsetzen</span></span>
+      transportiert.
+    </p>
+
+    <p>
+      An den Blättern verdunstet ständig Wasser. Diese Wasserabgabe nennt man
+      <span class="blank" data-answer="Transpiration"><span class="placeholder">Begriff einsetzen</span></span>.
+      Das Wasser verlässt das Blatt hauptsächlich durch kleine Öffnungen, die
+      <span class="blank" data-answer="Spaltöffnungen"><span class="placeholder">Begriff einsetzen</span></span>
+      genannt werden.
+    </p>
+
+    <p>
+      Durch die Verdunstung entsteht in den Leitungsbahnen ein
+      <span class="blank" data-answer="Sog"><span class="placeholder">Begriff einsetzen</span></span>.
+      Dieser zieht die Wassersäule in den Leitungsbahnen nach oben und wird deshalb als
+      <span class="blank" data-answer="Transpirationssog"><span class="placeholder">Begriff einsetzen</span></span>
+      bezeichnet.
+    </p>
+
+    <p>
+      Dabei hilft, dass die Wassermoleküle aneinander haften. Diese Anziehung zwischen
+      Wassermolekülen nennt man
+      <span class="blank" data-answer="Kohäsion"><span class="placeholder">Begriff einsetzen</span></span>.
+      Außerdem haften Wassermoleküle an den Wänden der engen Leitungsbahnen.
+      Dies bezeichnet man als
+      <span class="blank" data-answer="Adhäsion"><span class="placeholder">Begriff einsetzen</span></span>.
+    </p>
+
+    <p>
+      Zusätzlich kann die Wurzel Wasser von unten in die Leitungsbahnen drücken.
+      Dieser Vorgang wird
+      <span class="blank" data-answer="Wurzeldruck"><span class="placeholder">Begriff einsetzen</span></span>
+      genannt.
+    </p>
+
+    <div class="feedback" id="feedback" aria-live="polite"></div>
+
+    <div class="controls">
+      <button class="primary" id="checkBtn">Gesamtauswertung</button>
+      <button class="secondary" id="resetBtn">Zurücksetzen</button>
+      <button class="secondary" id="printBtn">Drucken / PDF</button>
+      <button class="secondary" id="imageBtn">Als PNG speichern</button>
+      <div class="score" id="score">0 / 12 richtig</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const words = [
+  "Adhäsion",
+  "Blätter",
+  "Mineralstoffe",
+  "Wurzeldruck",
+  "Stamm",
+  "Kohäsion",
+  "Spaltöffnungen",
+  "Wurzelhaare",
+  "Transpirationssog",
+  "Wurzeln",
+  "Sog",
+  "Transpiration"
+];
+
+const wordbox = document.getElementById("wordbox");
+const blanks = [...document.querySelectorAll(".blank")];
+const feedback = document.getElementById("feedback");
+const score = document.getElementById("score");
+let selectedWord = null;
+
+function shuffle(arr){
+  const a = [...arr];
+  for(let i=a.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i],a[j]] = [a[j],a[i]];
+  }
+  return a;
+}
+
+function buildWordbox(){
+  wordbox.innerHTML = "";
+  shuffle(words).forEach(text => {
+    const el = document.createElement("div");
+    el.className = "word";
+    el.textContent = text;
+    el.draggable = true;
+    el.dataset.word = text;
+
+    el.addEventListener("dragstart", e => {
+      e.dataTransfer.setData("text/plain", text);
+      selectWord(el);
+    });
+
+    el.addEventListener("click", () => {
+      if(el.classList.contains("used")) return;
+      selectWord(el);
+    });
+
+    wordbox.appendChild(el);
+  });
+}
+
+function selectWord(el){
+  document.querySelectorAll(".word").forEach(w => w.classList.remove("selected"));
+  if(selectedWord === el){
+    selectedWord = null;
+    return;
+  }
+  selectedWord = el;
+  el.classList.add("selected");
+}
+
+function setBlank(blank, word){
+  // Falls die Lücke schon belegt war, altes Wort wieder freigeben.
+  const previous = blank.dataset.current;
+  if(previous){
+    const oldWord = [...document.querySelectorAll(".word")]
+      .find(w => w.dataset.word === previous);
+    if(oldWord) oldWord.classList.remove("used");
+  }
+
+  blank.dataset.current = word;
+  blank.textContent = word;
+
+  const wordEl = [...document.querySelectorAll(".word")]
+    .find(w => w.dataset.word === word);
+  if(wordEl){
+    wordEl.classList.add("used");
+    wordEl.classList.remove("selected");
+  }
+
+  blank.classList.remove("correct","wrong");
+
+  if(word === blank.dataset.answer){
+    blank.classList.add("correct");
+    feedback.textContent = "🏆 Richtig!";
+    feedback.className = "feedback ok";
+  }else{
+    blank.classList.add("wrong");
+    feedback.textContent = "Versuch’s noch einmal.";
+    feedback.className = "feedback bad";
+  }
+
+  selectedWord = null;
+  updateScore();
+}
+
+blanks.forEach(blank => {
+  blank.addEventListener("dragover", e => {
+    e.preventDefault();
+    blank.classList.add("dragover");
+  });
+
+  blank.addEventListener("dragleave", () => {
+    blank.classList.remove("dragover");
+  });
+
+  blank.addEventListener("drop", e => {
+    e.preventDefault();
+    blank.classList.remove("dragover");
+    const word = e.dataTransfer.getData("text/plain");
+    if(word) setBlank(blank, word);
+  });
+
+  blank.addEventListener("click", () => {
+    if(selectedWord && !selectedWord.classList.contains("used")){
+      setBlank(blank, selectedWord.dataset.word);
+      return;
+    }
+
+    // Ein bereits eingesetztes Wort kann durch Klick wieder entfernt werden.
+    if(blank.dataset.current){
+      const current = blank.dataset.current;
+      const wordEl = [...document.querySelectorAll(".word")]
+        .find(w => w.dataset.word === current);
+      if(wordEl) wordEl.classList.remove("used");
+
+      delete blank.dataset.current;
+      blank.className = "blank";
+      blank.innerHTML = '<span class="placeholder">Begriff einsetzen</span>';
+      feedback.textContent = "";
+      updateScore();
+    }
+  });
+});
+
+function updateScore(){
+  const correct = blanks.filter(b =>
+    b.dataset.current && b.dataset.current === b.dataset.answer
+  ).length;
+  score.textContent = `${correct} / ${blanks.length} richtig`;
+
+  if(correct === blanks.length){
+    feedback.textContent = "🏆 Sehr gut! Alle Begriffe sind richtig zugeordnet.";
+    feedback.className = "feedback ok";
+  }
+}
+
+document.getElementById("checkBtn").addEventListener("click", () => {
+  let correct = 0;
+  let empty = 0;
+
+  blanks.forEach(blank => {
+    const current = blank.dataset.current;
+    blank.classList.remove("correct","wrong");
+
+    if(!current){
+      empty++;
+      return;
+    }
+
+    if(current === blank.dataset.answer){
+      blank.classList.add("correct");
+      correct++;
+    }else{
+      blank.classList.add("wrong");
+    }
+  });
+
+  updateScore();
+
+  if(correct === blanks.length){
+    feedback.textContent = "🏆 Perfekt! Du hast alle 12 Begriffe richtig eingesetzt.";
+    feedback.className = "feedback ok";
+  } else if(empty > 0){
+    feedback.textContent = `Noch nicht fertig: ${empty} Lücke${empty === 1 ? "" : "n"} ${empty === 1 ? "ist" : "sind"} noch frei.`;
+    feedback.className = "feedback bad";
+  } else {
+    feedback.textContent = `Du hast ${correct} von ${blanks.length} Begriffen richtig. Prüfe die rot markierten Lücken noch einmal.`;
+    feedback.className = "feedback bad";
+  }
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+  blanks.forEach(blank => {
+    delete blank.dataset.current;
+    blank.className = "blank";
+    blank.innerHTML = '<span class="placeholder">Begriff einsetzen</span>';
+  });
+  selectedWord = null;
+  feedback.textContent = "";
+  feedback.className = "feedback";
+  buildWordbox();
+  updateScore();
+});
+
+buildWordbox();
+updateScore();
+
+// Drucken und PNG-Export funktionieren unabhängig davon, ob bereits Lücken ausgefüllt wurden.
+document.getElementById("printBtn").addEventListener("click", () => {
+  window.print();
+});
+
+document.getElementById("imageBtn").addEventListener("click", async () => {
+  const button = document.getElementById("imageBtn");
+  const captureArea = document.getElementById("captureArea");
+  const oldText = button.textContent;
+
+  try {
+    button.disabled = true;
+    button.textContent = "Bild wird erstellt …";
+    document.body.classList.add("capture-mode");
+    await new Promise(resolve => setTimeout(resolve, 120));
+
+    if (typeof html2canvas !== "function") {
+      throw new Error("html2canvas wurde nicht geladen");
+    }
+
+    const canvas = await html2canvas(captureArea, {
+      scale: 4,
+      backgroundColor: "#ffffff",
+      useCORS: true,
+      logging: false,
+      windowWidth: captureArea.scrollWidth,
+      windowHeight: captureArea.scrollHeight
+    });
+
+    const link = document.createElement("a");
+    link.download = "Wassertransport_Pflanzen_Klasse6.png";
+    link.href = canvas.toDataURL("image/png", 1.0);
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  } catch (err) {
+    alert("Das PNG konnte nicht erstellt werden. Prüfe bitte die Internetverbindung und öffne die HTML-Datei erneut.");
+    console.error(err);
+  } finally {
+    document.body.classList.remove("capture-mode");
+    button.disabled = false;
+    button.textContent = oldText;
+  }
+});
+
+</script>
+</body>
+</html>
