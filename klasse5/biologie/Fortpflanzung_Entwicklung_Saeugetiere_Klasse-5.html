@@ -1021,7 +1021,31 @@
       font-size:.95rem;
     }
 
-    #printSolutionSheet{display:none}
+    #printSolutionSheet{display:none; width:273mm; margin:0; background:#fff; color:#172033; font-family:Calibri, "Segoe UI", Arial, sans-serif}
+    #printSolutionSheet .print-sheet{width:273mm; padding:0; margin:0}
+    #printSolutionSheet h1{margin:0; color:#174b8f; font-size:22pt}
+    #printSolutionSheet .print-subtitle{margin:3px 0 14px; color:#475569; font-size:11pt}
+    #printSolutionSheet .print-section,
+    #printSolutionSheet .print-content-section{border:1px solid #b8c7d9; border-radius:6px; padding:9px 11px; margin:0 0 9px; break-inside:avoid; page-break-inside:avoid}
+    #printSolutionSheet .print-section h2,
+    #printSolutionSheet .print-content-section h2{margin:0 0 6px; color:#174b8f; font-size:14pt}
+    #printSolutionSheet .print-content-section .interactive-box,
+    #printSolutionSheet .print-content-section .process-demo,
+    #printSolutionSheet .print-content-section .btn,
+    #printSolutionSheet .print-content-section .feedback{display:none!important}
+    #printSolutionSheet .print-content-section .card,
+    #printSolutionSheet .print-content-section .compare-card{box-shadow:none; break-inside:avoid; page-break-inside:avoid}
+    #printSolutionSheet .print-columns{columns:2; column-gap:20px; margin:0; padding-left:20px}
+    #printSolutionSheet .print-columns li{break-inside:avoid; margin:0 0 5px}
+    #printSolutionSheet .solution-grid{display:grid; grid-template-columns:1fr 1fr; gap:7px 12px}
+    #printSolutionSheet .solution-item{border:1px solid #dbe5ef; border-radius:5px; padding:6px 8px; break-inside:avoid; page-break-inside:avoid}
+    #printSolutionSheet .solution-item b{color:#174b8f}
+    #printSolutionSheet .answer-options{margin:5px 0 0 18px; padding:0}
+    #printSolutionSheet .answer-options li{margin:2px 0; padding:2px 4px; list-style-position:outside}
+    #printSolutionSheet .answer-options .is-correct{background:#e8f5ed; border-left:3px solid #2f6f4e; color:#14532d; font-weight:700; list-style-type:none}
+    #printSolutionSheet .match-solution{display:grid; grid-template-columns:150px 1fr; gap:5px 12px; margin:0}
+    #printSolutionSheet .match-solution dt{font-weight:700; color:#174b8f}
+    #printSolutionSheet .match-solution dd{margin:0 0 5px}
 
     @media print{
       @page{size:A4 landscape; margin:12mm}
@@ -1039,19 +1063,6 @@
       body:not(.print-solutions) .compare-card{box-shadow:none; break-inside:avoid}
       body:not(.print-solutions) header{padding:12px}
 
-      .print-sheet{max-width:none; margin:0}
-      .print-sheet h1{margin:0; color:#174b8f; font-size:22pt}
-      .print-sheet .print-subtitle{margin:3px 0 14px; color:#475569; font-size:11pt}
-      .print-section{border:1px solid #b8c7d9; border-radius:6px; padding:9px 11px; margin:0 0 9px; break-inside:avoid; page-break-inside:avoid}
-      .print-section h2{margin:0 0 6px; color:#174b8f; font-size:14pt}
-      .print-columns{columns:2; column-gap:20px; margin:0; padding-left:20px}
-      .print-columns li{break-inside:avoid; margin:0 0 5px}
-      .solution-grid{display:grid; grid-template-columns:1fr 1fr; gap:7px 12px}
-      .solution-item{border:1px solid #dbe5ef; border-radius:5px; padding:6px 8px; break-inside:avoid}
-      .solution-item b{color:#174b8f}
-      .match-solution{display:grid; grid-template-columns:150px 1fr; gap:5px 12px; margin:0}
-      .match-solution dt{font-weight:700; color:#174b8f}
-      .match-solution dd{margin:0 0 5px}
     }
   
     /* Neue, deutlich sichtbarere Animation: Spermium -> Zygote -> Zellteilungen -> Embryo */
@@ -1455,7 +1466,7 @@
       <button onclick="showSection('vergleich', this)">Vergleich</button>
       <button onclick="showSection('quiz', this)">Quiz</button>
       <button onclick="showSection('zuordnung', this)">Zuordnung</button>
-      <button onclick="printSolutions()">PDF mit Lösungen</button>
+      <button onclick="createStudyNotePdf()">Hefteinintrag als PDF</button>
     </div>
 
     <section id="start" class="section active">
@@ -1855,6 +1866,7 @@
     Biologie Klasse 5 – Fortpflanzung und Entwicklung von Säugetieren
   </footer>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script>
     function showSection(id, btn){
       document.querySelectorAll('.section').forEach(sec => sec.classList.remove('active'));
@@ -1983,6 +1995,12 @@
       "Nesthocker sind anfangs sehr hilflos; Nestflüchter können oft bald stehen oder laufen."
     ];
 
+    const learningChecks = [
+      ["Warum nennt man diese Tiergruppe „Säugetiere“?", "Weil die Jungtiere Milch trinken."],
+      ["Wie nennt man die erste Zelle nach der Befruchtung?", "Zygote."],
+      ["Welches Merkmal passt besonders gut zu Säugetieren?", "Die Jungtiere werden mit Milch ernährt."]
+    ];
+
     function escapePrintHtml(text){
       return String(text)
         .replaceAll("&", "&amp;")
@@ -1992,9 +2010,22 @@
 
     function buildPrintSolutionSheet(){
       const keyFacts = printKeyFacts.map(item => `<li>${escapePrintHtml(item)}</li>`).join("");
+      const learningContent = Array.from(document.querySelectorAll("main .section"))
+        .filter(section => !["quiz", "zuordnung"].includes(section.id))
+        .map(section => {
+          const clone = section.cloneNode(true);
+          clone.removeAttribute("id");
+          clone.className = "print-content-section";
+          return clone.outerHTML;
+        }).join("");
+      const checks = learningChecks.map(([question, answer], index) =>
+        `<div class="solution-item"><b>${index + 1}. ${escapePrintHtml(question)}</b><br>Lösung: ${escapePrintHtml(answer)}</div>`
+      ).join("");
       const quizSolutions = quizQuestions.map((question, index) => {
-        const answer = question.a[question.correct];
-        return `<div class="solution-item"><b>${index + 1}. ${escapePrintHtml(question.q)}</b><br>Lösung: ${escapePrintHtml(answer)}</div>`;
+        const answers = question.a.map((answer, answerIndex) =>
+          `<li class="${answerIndex === question.correct ? "is-correct" : ""}">${answerIndex === question.correct ? "✓ " : ""}${escapePrintHtml(answer)}</li>`
+        ).join("");
+        return `<div class="solution-item"><b>${index + 1}. ${escapePrintHtml(question.q)}</b><ul class="answer-options">${answers}</ul></div>`;
       }).join("");
       const matching = matchingSolutions.map(([term, definition]) =>
         `<dt>${escapePrintHtml(term)}</dt><dd>${escapePrintHtml(definition)}</dd>`
@@ -2003,13 +2034,18 @@
       document.getElementById("printSolutionSheet").innerHTML = `
         <article class="print-sheet">
           <h1>Fortpflanzung und Entwicklung von Säugetieren</h1>
-          <p class="print-subtitle">Biologie Klasse 5 - Lösungsbogen</p>
+          <p class="print-subtitle">Biologie Klasse 5 - Hefteinintrag mit Lösungen</p>
+          ${learningContent}
           <section class="print-section">
             <h2>Merksätze</h2>
             <ul class="print-columns">${keyFacts}</ul>
           </section>
           <section class="print-section">
-            <h2>Quizlösungen</h2>
+            <h2>Kontrollfragen mit Lösungen</h2>
+            <div class="solution-grid">${checks}</div>
+          </section>
+          <section class="print-section">
+            <h2>Quiz mit allen Antwortmöglichkeiten</h2>
             <div class="solution-grid">${quizSolutions}</div>
           </section>
           <section class="print-section">
@@ -2019,12 +2055,26 @@
         </article>`;
     }
 
-    function printSolutions(){
+    async function createStudyNotePdf(){
       buildPrintSolutionSheet();
-      document.body.classList.add("print-solutions");
-      const cleanup = () => document.body.classList.remove("print-solutions");
-      window.addEventListener("afterprint", cleanup, {once:true});
-      window.setTimeout(() => window.print(), 80);
+      const sheet = document.getElementById("printSolutionSheet");
+      sheet.style.display = "block";
+      try{
+        if(!window.html2pdf) throw new Error("PDF-Bibliothek konnte nicht geladen werden.");
+        await window.html2pdf().set({
+          margin: 12,
+          filename: "Hefteinintrag_Fortpflanzung_und_Entwicklung_von_Saeugetieren_Klasse_5.pdf",
+          image: {type:"jpeg", quality:0.98},
+          html2canvas: {scale:2, useCORS:true, backgroundColor:"#ffffff"},
+          jsPDF: {unit:"mm", format:"a4", orientation:"landscape"},
+          pagebreak: {mode:["css", "legacy"]}
+        }).from(sheet).save();
+      } catch(error){
+        console.error(error);
+        alert("Die PDF konnte nicht erzeugt werden. Bitte prüfe deine Internetverbindung und versuche es erneut.");
+      } finally {
+        sheet.style.display = "";
+      }
     }
 
     let score = 0;
