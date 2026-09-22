@@ -222,7 +222,7 @@
 <body>
 <div class="page" id="captureArea">
   <h1>Der Wassertransport durch Pflanzen</h1>
-  <div class="subtitle">Biologie · Klasse 6 · Wassertransport und Leitungsbahnen</div>
+  <div class="subtitle">Biologie · Klasse 6 · Wassertransport durch die Pflanze</div>
 
   <div class="card instructions">
     <strong>Aufgabe:</strong> Ziehe die Begriffe aus der Wortbox in die passenden Lücken.
@@ -241,15 +241,17 @@
       <span class="blank" data-answer="Mineralstoffe"><span class="placeholder">Begriff einsetzen</span></span>
       aus dem Boden auf. Dies geschieht hauptsächlich über die feinen
       <span class="blank" data-answer="Wurzelhaare"><span class="placeholder">Begriff einsetzen</span></span>
-      der Wurzel. Von dort gelangt das Wasser in die <strong>Leitungsbahnen</strong> der Pflanze.
+      der Wurzel.
     </p>
 
     <p>
-      In den Leitungsbahnen wird das Wasser von den
+      Von dort gelangt das Wasser in die
+      <span class="blank" data-answer="Leitungsbahnen"><span class="placeholder">Begriff einsetzen</span></span>
+      der Pflanze. In ihnen wird das Wasser von den
       <span class="blank" data-answer="Wurzeln"><span class="placeholder">Begriff einsetzen</span></span>
-      bis in den
+      durch den
       <span class="blank" data-answer="Stamm"><span class="placeholder">Begriff einsetzen</span></span>
-      und schließlich in die
+      bis in die
       <span class="blank" data-answer="Blätter"><span class="placeholder">Begriff einsetzen</span></span>
       transportiert.
     </p>
@@ -265,18 +267,14 @@
     <p>
       Durch die Verdunstung entsteht in den Leitungsbahnen ein
       <span class="blank" data-answer="Sog"><span class="placeholder">Begriff einsetzen</span></span>.
-      Dieser zieht die Wassersäule in den Leitungsbahnen nach oben und wird deshalb als
-      <span class="blank" data-answer="Transpirationssog"><span class="placeholder">Begriff einsetzen</span></span>
-      bezeichnet.
+      Dieser zieht die Wassersäule nach oben. Man nennt ihn
+      <span class="blank" data-answer="Verdunstungssog"><span class="placeholder">Begriff einsetzen</span></span>.
     </p>
 
     <p>
-      Dabei hilft, dass die Wassermoleküle aneinander haften. Diese Anziehung zwischen
-      Wassermolekülen nennt man
-      <span class="blank" data-answer="Kohäsion"><span class="placeholder">Begriff einsetzen</span></span>.
-      Außerdem haften Wassermoleküle an den Wänden der engen Leitungsbahnen.
-      Dies bezeichnet man als
-      <span class="blank" data-answer="Adhäsion"><span class="placeholder">Begriff einsetzen</span></span>.
+      Die Wassermoleküle halten dabei zusammen. Dadurch bleibt in den Leitungsbahnen
+      eine zusammenhängende Wassersäule bestehen. Außerdem haftet das Wasser an den
+      Wänden der Leitungsbahnen.
     </p>
 
     <p>
@@ -293,25 +291,24 @@
       <button class="secondary" id="resetBtn">Zurücksetzen</button>
       <button class="secondary" id="printBtn">Drucken / PDF</button>
       <button class="secondary" id="imageBtn">Als PNG speichern</button>
-      <div class="score" id="score">0 / 12 richtig</div>
+      <div class="score" id="score">0 / 11 richtig</div>
     </div>
   </div>
 </div>
 
 <script>
 const words = [
-  "Adhäsion",
-  "Blätter",
   "Mineralstoffe",
-  "Wurzeldruck",
-  "Stamm",
-  "Kohäsion",
-  "Spaltöffnungen",
   "Wurzelhaare",
-  "Transpirationssog",
+  "Leitungsbahnen",
   "Wurzeln",
+  "Stamm",
+  "Blätter",
+  "Transpiration",
+  "Spaltöffnungen",
   "Sog",
-  "Transpiration"
+  "Verdunstungssog",
+  "Wurzeldruck"
 ];
 
 const wordbox = document.getElementById("wordbox");
@@ -472,7 +469,7 @@ document.getElementById("checkBtn").addEventListener("click", () => {
   updateScore();
 
   if(correct === blanks.length){
-    feedback.textContent = "🏆 Perfekt! Du hast alle 12 Begriffe richtig eingesetzt.";
+    feedback.textContent = "🏆 Perfekt! Du hast alle 11 Begriffe richtig eingesetzt.";
     feedback.className = "feedback ok";
   } else if(empty > 0){
     feedback.textContent = `Noch nicht fertig: ${empty} Lücke${empty === 1 ? "" : "n"} ${empty === 1 ? "ist" : "sind"} noch frei.`;
