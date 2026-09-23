@@ -1,0 +1,593 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Die Bromwasserprobe – interaktiv</title>
+<style>
+:root{
+  --bg:#f3f5f7; --paper:#fff; --text:#17212b; --muted:#5d6974; --line:#d8e0e6;
+  --blue:#276d8b; --blue2:#eaf5f9; --good:#16704a; --goodbg:#edf8f2;
+  --bad:#a0392f; --badbg:#fff2f0; --warn:#8a6614; --warnbg:#fff8df;
+  --br:#a45018; --cooh:#8d2f52; --bond:#17212b;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--text);font-family:Calibri,"Segoe UI",Arial,sans-serif;line-height:1.52}
+.page{max-width:1100px;margin:0 auto;padding:24px 18px 60px}
+header,section{background:var(--paper);border:1px solid var(--line);border-radius:18px;box-shadow:0 6px 20px rgba(30,55,70,.05)}
+header{padding:30px;margin-bottom:20px;background:linear-gradient(135deg,#fff 0%,#eef8fb 100%)}
+section{padding:25px;margin:18px 0}
+h1{font-size:clamp(2.1rem,4vw,3.2rem);line-height:1.04;margin:0 0 10px;letter-spacing:-.02em}
+h2{font-size:1.65rem;margin:0 0 14px}
+h3{font-size:1.18rem;margin:0 0 10px}
+p{margin:9px 0}
+.lead{font-size:1.13rem;max-width:900px;color:#33424d}
+.tag,.badge{display:inline-block;border-radius:999px;font-weight:700}
+.tag{padding:5px 10px;background:var(--blue2);color:var(--blue);margin-bottom:10px}
+.badge{padding:4px 9px;background:#eef3f6;color:#4a5964;font-size:.91rem;margin-top:7px}
+.info,.important,.modelnote{padding:14px 17px;border-radius:10px;margin:14px 0}
+.info{background:#f8fbfc;border-left:5px solid var(--blue)}
+.important{background:var(--warnbg);border-left:5px solid #d0a11f}
+.modelnote{background:#fdf8fb;border-left:5px solid var(--cooh)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:13px}
+@media(max-width:900px){.grid4,.grid3{grid-template-columns:1fr 1fr}}
+@media(max-width:760px){.grid2,.grid3,.grid4{grid-template-columns:1fr}}
+.card,.chem-card,.reaction-card{border:1px solid #dce4e9;border-radius:14px;padding:16px;background:#fff}
+.chem-name{font-weight:700;font-size:1.06rem;margin-bottom:8px}
+.chem-svg{width:100%;height:auto;display:block}
+.small{font-size:.93rem;color:var(--muted)}
+.center{text-align:center}
+.cooh{color:var(--cooh);font-weight:800}
+.br{color:var(--br);font-weight:800}
+.video-card{overflow:hidden;border:1px solid #d6dee4;border-radius:16px;background:#111;position:relative;margin:16px 0}
+.video-card img{width:100%;display:block;aspect-ratio:16/9;object-fit:cover;opacity:.78}
+.play-overlay{position:absolute;inset:0;display:grid;place-items:center;text-decoration:none;color:#fff;text-align:center;background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.38))}
+.play-button{width:84px;height:60px;border-radius:16px;background:#d92929;display:grid;place-items:center;font-size:33px;box-shadow:0 8px 24px rgba(0,0,0,.3);margin:0 auto 10px;padding-left:5px}
+.play-text{font-weight:800;font-size:1.08rem;text-shadow:0 2px 5px #000}
+.browser-btn,.btn{border:0;border-radius:10px;background:var(--blue);color:#fff;font-weight:700;cursor:pointer;text-decoration:none;display:inline-block}
+.browser-btn{padding:12px 17px;margin-top:7px}
+.btn{padding:10px 15px;margin-top:11px;font-size:.98rem}
+.btn:hover,.browser-btn:hover{filter:brightness(.95)}
+.question{border:1px solid #dbe4ea;border-radius:14px;padding:18px;margin:16px 0;background:#fcfdfe}
+.qtitle{font-size:1.07rem;font-weight:700;margin-bottom:12px}
+.options{display:grid;gap:9px}
+.option{display:flex;gap:10px;align-items:flex-start;padding:11px 12px;border:1px solid #d6dde3;border-radius:10px;background:#fff;cursor:pointer}
+.option:hover{border-color:#96b6c6;background:#f8fbfd}
+.option input{margin-top:4px;accent-color:var(--blue)}
+.feedback{min-height:30px;margin-top:12px;font-weight:700}
+.feedback.good,.feedback.bad,.feedback.neutral{padding:10px 12px;border-radius:10px}
+.feedback.good{color:var(--good);background:var(--goodbg);border:1px solid #b9dfc9}
+.feedback.bad{color:var(--bad);background:var(--badbg);border:1px solid #efc4bf}
+.feedback.neutral{color:#45525d;background:#f1f4f6;border:1px solid #d7dfe5}
+.trophy{font-size:1.3rem;margin-right:5px}
+.step{display:grid;grid-template-columns:42px 1fr;gap:13px;align-items:start;margin:18px 0 11px}
+.step-no{width:36px;height:36px;border-radius:50%;display:grid;place-items:center;background:var(--blue);color:#fff;font-weight:800}
+.reaction-card{margin:13px 0 22px;background:#fdfefe}
+.reaction-title{font-weight:800;margin-bottom:10px}
+.equation{font-family:"Cambria Math","Times New Roman",serif;font-size:clamp(1.15rem,2.5vw,1.55rem);text-align:center;padding:13px 8px;background:#f7fafb;border-radius:10px;margin:10px 0}
+.mech-note{font-size:.95rem;color:#4e5b65;background:#f7f9fa;border-radius:9px;padding:10px 12px;margin-top:10px}
+.compare-arrow{font-size:2rem;display:grid;place-items:center;color:var(--blue);font-weight:700}
+@media(max-width:760px){.compare-arrow{transform:rotate(90deg)}}
+.model-grid{display:grid;grid-template-columns:1fr 60px 1fr;gap:12px;align-items:stretch}
+@media(max-width:760px){.model-grid{grid-template-columns:1fr}.compare-arrow{height:36px}}
+.formula-box{font-family:"Cambria Math","Times New Roman",serif;font-size:clamp(1.25rem,2.6vw,1.65rem);text-align:center;padding:22px 8px;background:#fbfcfd;border-radius:10px;margin:10px 0;overflow-wrap:anywhere}
+.highlight-bond{background:#fff0e6;border-radius:5px;padding:0 3px;color:#9a4c15;font-weight:800}
+.progress{height:11px;background:#e9eef1;border-radius:999px;overflow:hidden;margin:12px 0 5px}
+.bar{height:100%;width:0;background:#4a829c;transition:width .25s ease}
+.scorebox{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-weight:700;color:#46535d}
+.jump{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.jump a{font-weight:700;color:var(--blue);text-decoration:none;background:#eff7fa;border-radius:999px;padding:6px 10px}
+.footer{text-align:center;color:#697680;font-size:.92rem;margin-top:24px}
+hr.soft{border:0;border-top:1px solid #e2e8ec;margin:22px 0}
+</style>
+</head>
+<body>
+<div class="page">
+<header>
+  <div class="tag">Organische Chemie · Nachweisreaktion</div>
+  <h1>Die Bromwasserprobe</h1>
+  <p class="lead">Mit der Bromwasserprobe lässt sich erkennen, ob eine Verbindung eine <strong>C=C-Doppelbindung</strong> enthält. Zuerst beobachtest du ein Experiment. Danach klären wir Schritt für Schritt, warum sich Bromwasser bei einer positiven Probe entfärbt.</p>
+  <div class="jump">
+    <a href="#experiment">Experiment</a><a href="#beobachtung">Beobachtung</a><a href="#modell">Fettsäure-Modell</a><a href="#mechanismus">Reaktion</a><a href="#fette">Fette</a><a href="#abschluss">Abschlussquiz</a>
+  </div>
+</header>
+
+<section>
+  <h2>1. Vorbereitung: Was ist Bromwasser?</h2>
+  <div class="info"><strong>Bromwasser</strong> enthält in Wasser gelöstes Brom, <strong>Br₂</strong>. Brom ist eigentlich rotbraun. In der verdünnten wässrigen Lösung erscheint es jedoch <strong>gelb-orange</strong>. Diese Farbe dient im Versuch als gut sichtbarer Hinweis darauf, ob Brom verbraucht wird.</div>
+  <p>Im Video werden zwei Kohlenwasserstoffe miteinander verglichen:</p>
+  <div class="grid2">
+    <div class="chem-card">
+      <div class="chem-name">n-Octan – gesättigt</div>
+      <svg class="chem-svg" viewBox="0 0 650 150" aria-label="Skelettformel von n-Octan">
+        <polyline points="55,100 130,58 205,100 280,58 355,100 430,58 505,100 580,58" stroke="#17212b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <div class="badge">nur C–C-Einfachbindungen</div>
+    </div>
+    <div class="chem-card">
+      <div class="chem-name">1-Octen – ungesättigt</div>
+      <svg class="chem-svg" viewBox="0 0 650 150" aria-label="Skelettformel von 1-Octen">
+        <g stroke="#17212b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="55" y1="100" x2="130" y2="58"/>
+          <line x1="64" y1="105" x2="127" y2="70"/>
+          <polyline points="130,58 205,100 280,58 355,100 430,58 505,100 580,58"/>
+        </g>
+      </svg>
+      <div class="badge">enthält eine C=C-Doppelbindung</div>
+    </div>
+  </div>
+  <div class="important"><strong>Beobachtungsauftrag:</strong> Achte darauf, in welchem Ansatz die gelb-orange Farbe des Bromwassers erhalten bleibt und in welchem sie verschwindet.</div>
+</section>
+
+<section id="experiment">
+  <h2>2. Experiment ansehen</h2>
+  <p>Öffne das Versuchsvideo direkt im Browser. Die große Vorschau ist anklickbar.</p>
+  <div class="video-card">
+    <img src="https://img.youtube.com/vi/a8eUwQqt6-k/hqdefault.jpg" alt="Vorschau des Versuchsvideos zur Bromwasserprobe">
+    <a class="play-overlay" href="https://www.youtube.com/watch?v=a8eUwQqt6-k" target="_blank" rel="noopener noreferrer">
+      <div><div class="play-button">▶</div><div class="play-text">Versuchsvideo auf YouTube ansehen</div></div>
+    </a>
+  </div>
+  <a class="browser-btn" href="https://www.youtube.com/watch?v=a8eUwQqt6-k" target="_blank" rel="noopener noreferrer">▶ Video auf YouTube öffnen</a>
+  <p class="small"><strong>Hinweis:</strong> Falls sich das Video nicht direkt abspielen lässt, klicke einfach auf den Link. YouTube öffnet sich dann in einem neuen Fenster.</p>
+</section>
+
+<section id="beobachtung">
+  <h2>3. Beobachtung – noch ohne Erklärung</h2>
+  <p>Beantworte die Fragen nur anhand dessen, was du im Experiment gesehen hast.</p>
+  <div id="obsQuestions"></div>
+  <div class="progress"><div class="bar" id="obsBar"></div></div>
+  <div class="scorebox"><span id="obsScore">0 von 3 abgeschlossen</span><span id="obsHint">Nach der dritten Frage folgt die Erklärung.</span></div>
+</section>
+
+<section id="modell">
+  <h2>4. Von Kohlenwasserstoffen zu Fettsäuren</h2>
+  <p><strong>Stellvertretend für die Fettsäureketten eines Fettes verwenden wir hier als vereinfachte Modelle Octansäure und Oct-7-ensäure.</strong> Beide Moleküle besitzen dieselbe funktionelle Gruppe, die <span class="cooh">Carboxygruppe</span>. Der entscheidende Unterschied ist die C=C-Doppelbindung.</p>
+  <div class="modelnote"><strong>Warum Oct-7-ensäure und nicht „Oct-1-ensäure“?</strong> Bei Carbonsäuren ist das C-Atom der Carboxygruppe immer C1. Die endständige Doppelbindung liegt deshalb zwischen C7 und C8. So entspricht die Kohlenstoffkette möglichst anschaulich dem zuvor verwendeten 1-Octen.</div>
+  <div class="model-grid">
+    <div class="chem-card">
+      <div class="chem-name">Octansäure – gesättigte Fettsäure als Modell</div>
+      <svg class="chem-svg" viewBox="0 0 720 205" aria-label="Skelettformel von Octansäure mit hervorgehobener Carboxygruppe">
+        <rect x="525" y="8" width="185" height="135" rx="16" fill="#f8eaf0" stroke="#d9a8bb" stroke-width="2"/>
+        <polyline points="50,105 120,65 190,105 260,65 330,105 400,65 470,105" stroke="#17212b" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <line x1="470" y1="105" x2="545" y2="105" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+        <text x="550" y="116" font-size="31" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">C</text>
+        <line x1="563" y1="87" x2="563" y2="45" stroke="#8d2f52" stroke-width="4"/>
+        <line x1="575" y1="87" x2="575" y2="45" stroke="#8d2f52" stroke-width="4"/>
+        <text x="558" y="35" font-size="29" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">O</text>
+        <line x1="580" y1="104" x2="625" y2="104" stroke="#8d2f52" stroke-width="4" stroke-linecap="round"/>
+        <text x="635" y="115" font-size="29" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">OH</text>
+        <line x1="618" y1="144" x2="618" y2="158" stroke="#8d2f52" stroke-width="3"/>
+        <text x="548" y="184" font-size="23" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">Carboxygruppe</text>
+      </svg>
+      <div class="badge">keine C=C-Doppelbindung</div>
+    </div>
+    <div class="compare-arrow">↔</div>
+    <div class="chem-card">
+      <div class="chem-name">Oct-7-ensäure – ungesättigte Fettsäure als Modell</div>
+      <svg class="chem-svg" viewBox="0 0 720 205" aria-label="Skelettformel von Oct-7-ensäure mit markierter Doppelbindung und hervorgehobener Carboxygruppe">
+        <rect x="525" y="8" width="185" height="135" rx="16" fill="#f8eaf0" stroke="#d9a8bb" stroke-width="2"/>
+        <g stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <line x1="50" y1="105" x2="120" y2="65" stroke="#9a4c15" stroke-width="4"/>
+          <line x1="59" y1="110" x2="117" y2="77" stroke="#9a4c15" stroke-width="4"/>
+          <polyline points="120,65 190,105 260,65 330,105 400,65 470,105" stroke="#17212b" stroke-width="4"/>
+        </g>
+        <line x1="470" y1="105" x2="545" y2="105" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+        <text x="550" y="116" font-size="31" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">C</text>
+        <line x1="563" y1="87" x2="563" y2="45" stroke="#8d2f52" stroke-width="4"/>
+        <line x1="575" y1="87" x2="575" y2="45" stroke="#8d2f52" stroke-width="4"/>
+        <text x="558" y="35" font-size="29" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">O</text>
+        <line x1="580" y1="104" x2="625" y2="104" stroke="#8d2f52" stroke-width="4" stroke-linecap="round"/>
+        <text x="635" y="115" font-size="29" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">OH</text>
+        <text x="50" y="42" font-size="22" font-family="Calibri,Arial" fill="#9a4c15" font-weight="700">C=C-Doppelbindung</text>
+        <line x1="618" y1="144" x2="618" y2="158" stroke="#8d2f52" stroke-width="3"/>
+        <text x="548" y="184" font-size="23" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">Carboxygruppe</text>
+      </svg>
+      <div class="badge">eine C=C-Doppelbindung</div>
+    </div>
+  </div>
+  <div id="modelQuestions"></div>
+</section>
+
+<section id="mechanismus">
+  <h2>5. Warum entfärbt sich Bromwasser?</h2>
+  <p>Beim <strong>1-Octen</strong> ist eine <strong>C=C-Doppelbindung</strong> vorhanden. An diese Doppelbindung kann sich Brom anlagern. Diese Reaktion nennt man <strong>Addition</strong>. Zum Vergleich siehst du hier noch einmal <strong>n-Octan</strong> und <strong>1-Octen</strong> sauber in der Valenzstrichformel.</p>
+
+  <div class="grid2">
+    <div class="chem-card">
+      <div class="chem-name">n-Octan – keine Doppelbindung</div>
+      <svg class="chem-svg" viewBox="0 0 980 140" aria-label="Valenzstrichformel von n-Octan">
+        <text x="20" y="78" font-size="34" font-family="Calibri,Arial">CH₃</text>
+        <line x1="92" y1="66" x2="132" y2="66" stroke="#17212b" stroke-width="4"/>
+        <text x="142" y="78" font-size="34" font-family="Calibri,Arial">CH₂</text>
+        <line x1="214" y1="66" x2="254" y2="66" stroke="#17212b" stroke-width="4"/>
+        <text x="264" y="78" font-size="34" font-family="Calibri,Arial">CH₂</text>
+        <line x1="336" y1="66" x2="376" y2="66" stroke="#17212b" stroke-width="4"/>
+        <text x="386" y="78" font-size="34" font-family="Calibri,Arial">CH₂</text>
+        <line x1="458" y1="66" x2="498" y2="66" stroke="#17212b" stroke-width="4"/>
+        <text x="508" y="78" font-size="34" font-family="Calibri,Arial">CH₂</text>
+        <line x1="580" y1="66" x2="620" y2="66" stroke="#17212b" stroke-width="4"/>
+        <text x="630" y="78" font-size="34" font-family="Calibri,Arial">CH₂</text>
+        <line x1="702" y1="66" x2="742" y2="66" stroke="#17212b" stroke-width="4"/>
+        <text x="752" y="78" font-size="34" font-family="Calibri,Arial">CH₂</text>
+        <line x1="824" y1="66" x2="864" y2="66" stroke="#17212b" stroke-width="4"/>
+        <text x="874" y="78" font-size="34" font-family="Calibri,Arial">CH₃</text>
+      </svg>
+      <div class="badge">nur C–C-Einfachbindungen</div>
+    </div>
+
+    <div class="chem-card">
+      <div class="chem-name">1-Octen – mit Doppelbindung</div>
+      <svg class="chem-svg" viewBox="0 0 980 140" aria-label="Valenzstrichformel von 1-Octen">
+        <text x="20" y="78" font-size="34" font-family="Calibri,Arial">CH₂</text>
+        <line x1="92" y1="59" x2="132" y2="59" stroke="#17212b" stroke-width="4"/>
+        <line x1="92" y1="73" x2="132" y2="73" stroke="#17212b" stroke-width="4"/>
+        <text x="142" y="78" font-size="34" font-family="Calibri,Arial">CH</text>
+        <line x1="195" y1="66" x2="235" y2="66" stroke="#17212b" stroke-width="4"/>
+        <text x="245" y="78" font-size="34" font-family="Calibri,Arial">CH₂</text>
+        <line x1="317" y1="66" x2="357" y2="66" stroke="#17212b" stroke-width="4"/>
+        <text x="367" y="78" font-size="34" font-family="Calibri,Arial">CH₂</text>
+        <line x1="439" y1="66" x2="479" y2="66" stroke="#17212b" stroke-width="4"/>
+        <text x="489" y="78" font-size="34" font-family="Calibri,Arial">CH₂</text>
+        <line x1="561" y1="66" x2="601" y2="66" stroke="#17212b" stroke-width="4"/>
+        <text x="611" y="78" font-size="34" font-family="Calibri,Arial">CH₂</text>
+        <line x1="683" y1="66" x2="723" y2="66" stroke="#17212b" stroke-width="4"/>
+        <text x="733" y="78" font-size="34" font-family="Calibri,Arial">CH₂</text>
+        <line x1="805" y1="66" x2="845" y2="66" stroke="#17212b" stroke-width="4"/>
+        <text x="855" y="78" font-size="34" font-family="Calibri,Arial">CH₃</text>
+        <text x="84" y="112" font-size="22" font-family="Calibri,Arial" fill="#9a4c15" font-weight="700">Doppelbindung</text>
+      </svg>
+      <div class="badge">eine C=C-Doppelbindung</div>
+    </div>
+  </div>
+
+  <div class="step"><div class="step-no">1</div><div><strong>Brom trifft auf die Doppelbindung:</strong> Im Bromwasser ist <strong>Brom (Br₂)</strong> gelöst. Dieses Brom verursacht die gelb-orange bis braune Farbe der Lösung.</div></div>
+
+  <div class="step"><div class="step-no">2</div><div><strong>Die Bromatome lagern sich an:</strong> Beim 1-Octen lagern sich die beiden Bromatome an die Doppelbindung an. Aus der Doppelbindung wird eine Einfachbindung. So entsteht ein neues Molekül.</div></div>
+
+  <div class="reaction-card">
+    <div class="reaction-title">Addition von Brom an 1-Octen</div>
+    <svg class="chem-svg" viewBox="0 0 1100 650" aria-label="Vollständig gezeichnetes Reaktionsschema der Bromaddition an 1-Octen">
+      <!-- Edukt: vollständige Valenzstrichformel von 1-Octen -->
+      <g font-family="Calibri,Arial" fill="#17212b" stroke="#17212b" stroke-width="4" stroke-linecap="round">
+        <g font-size="34" stroke="none">
+          <text x="54" y="162">C</text><text x="154" y="162">C</text><text x="254" y="162">C</text><text x="354" y="162">C</text>
+          <text x="454" y="162">C</text><text x="554" y="162">C</text><text x="654" y="162">C</text><text x="754" y="162">C</text>
+        </g>
+        <line x1="79" y1="139" x2="151" y2="139"/><line x1="79" y1="155" x2="151" y2="155"/>
+        <line x1="179" y1="148" x2="251" y2="148"/><line x1="279" y1="148" x2="351" y2="148"/>
+        <line x1="379" y1="148" x2="451" y2="148"/><line x1="479" y1="148" x2="551" y2="148"/>
+        <line x1="579" y1="148" x2="651" y2="148"/><line x1="679" y1="148" x2="751" y2="148"/>
+
+        <g font-size="29" stroke="none">
+          <text x="54" y="72">H</text><text x="154" y="72">H</text><text x="254" y="72">H</text><text x="354" y="72">H</text>
+          <text x="454" y="72">H</text><text x="554" y="72">H</text><text x="654" y="72">H</text><text x="754" y="72">H</text>
+          <text x="8" y="162">H</text><text x="254" y="238">H</text><text x="354" y="238">H</text><text x="454" y="238">H</text>
+          <text x="554" y="238">H</text><text x="654" y="238">H</text><text x="754" y="238">H</text><text x="812" y="162">H</text>
+        </g>
+        <line x1="65" y1="82" x2="65" y2="126"/><line x1="165" y1="82" x2="165" y2="126"/>
+        <line x1="265" y1="82" x2="265" y2="126"/><line x1="365" y1="82" x2="365" y2="126"/>
+        <line x1="465" y1="82" x2="465" y2="126"/><line x1="565" y1="82" x2="565" y2="126"/>
+        <line x1="665" y1="82" x2="665" y2="126"/><line x1="765" y1="82" x2="765" y2="126"/>
+        <line x1="37" y1="148" x2="51" y2="148"/><line x1="265" y1="170" x2="265" y2="206"/>
+        <line x1="365" y1="170" x2="365" y2="206"/><line x1="465" y1="170" x2="465" y2="206"/>
+        <line x1="565" y1="170" x2="565" y2="206"/><line x1="665" y1="170" x2="665" y2="206"/>
+        <line x1="765" y1="170" x2="765" y2="206"/><line x1="779" y1="148" x2="807" y2="148"/>
+      </g>
+      <text x="350" y="257" font-size="25" font-family="Calibri,Arial" font-weight="700" fill="#17212b">1-Octen</text>
+
+      <!-- Brom -->
+      <text x="844" y="162" font-size="44" font-family="Calibri,Arial" fill="#17212b">+</text>
+      <text x="900" y="162" font-size="34" font-family="Calibri,Arial" font-weight="700" fill="#a45018">Br</text>
+      <line x1="949" y1="148" x2="990" y2="148" stroke="#a45018" stroke-width="4" stroke-linecap="round"/>
+      <text x="1000" y="162" font-size="34" font-family="Calibri,Arial" font-weight="700" fill="#a45018">Br</text>
+      <text x="929" y="205" font-size="24" font-family="Calibri,Arial" font-weight="700" fill="#a45018">Brom</text>
+      <text x="884" y="236" font-size="21" font-family="Calibri,Arial" fill="#a45018">gelb-orange bis braun</text>
+
+      <!-- Reaktionspfeil: eindeutig nach unten -->
+      <line x1="550" y1="270" x2="550" y2="325" stroke="#276d8b" stroke-width="6" stroke-linecap="round"/>
+      <polygon points="536,320 564,320 550,341" fill="#276d8b"/>
+      <text x="570" y="311" font-size="22" font-family="Calibri,Arial" fill="#276d8b" font-weight="700">Addition</text>
+
+      <!-- Produkt: vollständige Valenzstrichformel von 1,2-Dibromooctan -->
+      <g font-family="Calibri,Arial" fill="#17212b" stroke="#17212b" stroke-width="4" stroke-linecap="round">
+        <g font-size="34" stroke="none">
+          <text x="54" y="472">C</text><text x="154" y="472">C</text><text x="254" y="472">C</text><text x="354" y="472">C</text>
+          <text x="454" y="472">C</text><text x="554" y="472">C</text><text x="654" y="472">C</text><text x="754" y="472">C</text>
+        </g>
+        <line x1="79" y1="458" x2="151" y2="458"/><line x1="179" y1="458" x2="251" y2="458"/>
+        <line x1="279" y1="458" x2="351" y2="458"/><line x1="379" y1="458" x2="451" y2="458"/>
+        <line x1="479" y1="458" x2="551" y2="458"/><line x1="579" y1="458" x2="651" y2="458"/>
+        <line x1="679" y1="458" x2="751" y2="458"/>
+
+        <g font-size="29" stroke="none">
+          <text x="54" y="386">H</text><text x="154" y="386">H</text><text x="254" y="386">H</text><text x="354" y="386">H</text>
+          <text x="454" y="386">H</text><text x="554" y="386">H</text><text x="654" y="386">H</text><text x="754" y="386">H</text>
+          <text x="8" y="472">H</text><text x="254" y="560">H</text><text x="354" y="560">H</text><text x="454" y="560">H</text>
+          <text x="554" y="560">H</text><text x="654" y="560">H</text><text x="754" y="560">H</text><text x="812" y="472">H</text>
+        </g>
+        <line x1="65" y1="396" x2="65" y2="436"/><line x1="165" y1="396" x2="165" y2="436"/>
+        <line x1="265" y1="396" x2="265" y2="436"/><line x1="365" y1="396" x2="365" y2="436"/>
+        <line x1="465" y1="396" x2="465" y2="436"/><line x1="565" y1="396" x2="565" y2="436"/>
+        <line x1="665" y1="396" x2="665" y2="436"/><line x1="765" y1="396" x2="765" y2="436"/>
+        <line x1="37" y1="458" x2="51" y2="458"/><line x1="265" y1="480" x2="265" y2="528"/>
+        <line x1="365" y1="480" x2="365" y2="528"/><line x1="465" y1="480" x2="465" y2="528"/>
+        <line x1="565" y1="480" x2="565" y2="528"/><line x1="665" y1="480" x2="665" y2="528"/>
+        <line x1="765" y1="480" x2="765" y2="528"/><line x1="779" y1="458" x2="807" y2="458"/>
+        <line x1="65" y1="480" x2="65" y2="528"/><line x1="165" y1="480" x2="165" y2="528"/>
+      </g>
+      <text x="47" y="568" font-size="32" font-family="Calibri,Arial" font-weight="700" fill="#a45018">Br</text>
+      <text x="147" y="568" font-size="32" font-family="Calibri,Arial" font-weight="700" fill="#a45018">Br</text>
+      <text x="348" y="625" font-size="25" font-family="Calibri,Arial" font-weight="700" fill="#17212b">1,2-Dibromooctan</text>
+      <text x="900" y="472" font-size="31" font-family="Calibri,Arial" font-weight="800" fill="#16704a">farblos</text>
+    </svg>
+  </div>
+
+  <div class="info"><strong>Warum wird Bromwasser farblos?</strong><br>
+    Das gelöste <strong>Brom</strong> sorgt für die <strong>gelb-orange bis braune Farbe</strong> des Bromwassers. Wenn sich Brom an die Doppelbindung des 1-Octens anlagert, wird das freie Brom verbraucht. <strong>Es ist dann kein freies Brom mehr in der Lösung vorhanden.</strong> Deshalb verschwindet die Farbe und die Lösung wird <strong>farblos</strong>.
+  </div>
+
+  <div class="important"><strong>Wichtig:</strong> <strong>n-Octan</strong> besitzt keine C=C-Doppelbindung. Deshalb kann sich Brom hier unter diesen Bedingungen nicht in gleicher Weise anlagern. Die Farbe des Bromwassers bleibt erhalten.</div>
+</section>
+
+<section id="fette">
+  <h2>6. Übertragung auf gesättigte und ungesättigte Fette</h2>
+  <p>Fette enthalten Fettsäurereste. Für die Bromwasserprobe ist entscheidend, ob in diesen Fettsäureresten <strong>C=C-Doppelbindungen</strong> vorkommen. In den folgenden <strong>Skelettformeln</strong> steht jede Ecke und jedes Linienende der Kohlenstoffkette für ein Kohlenstoffatom.</p>
+
+  <div style="display:grid;gap:16px">
+    <div class="chem-card">
+      <div class="chem-name">Stearinsäure – gesättigt</div>
+      <svg class="chem-svg" viewBox="0 0 830 180" aria-label="Skelettformel von Stearinsäure mit hervorgehobener Carboxygruppe">
+        <rect x="680" y="7" width="145" height="132" rx="14" fill="#f8eaf0" stroke="#d9a8bb" stroke-width="2"/>
+        <line x1="35" y1="95" x2="73" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="73" y1="55" x2="111" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="111" y1="95" x2="149" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="149" y1="55" x2="187" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="187" y1="95" x2="225" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="225" y1="55" x2="263" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="263" y1="95" x2="301" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="301" y1="55" x2="339" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="339" y1="95" x2="377" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="377" y1="55" x2="415" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="415" y1="95" x2="453" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="453" y1="55" x2="491" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="491" y1="95" x2="529" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="529" y1="55" x2="567" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="567" y1="95" x2="605" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="605" y1="55" x2="643" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="643" y1="95" x2="692" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+      <text x="697" y="106" font-size="28" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">C</text>
+      <line x1="706" y1="80" x2="706" y2="42" stroke="#8d2f52" stroke-width="4"/>
+      <line x1="718" y1="80" x2="718" y2="42" stroke="#8d2f52" stroke-width="4"/>
+      <text x="700" y="30" font-size="28" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">O</text>
+      <line x1="725" y1="94" x2="758" y2="94" stroke="#8d2f52" stroke-width="4"/>
+      <text x="765" y="105" font-size="28" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">OH</text>
+      <text x="682" y="163" font-size="21" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">Carboxygruppe</text>
+    
+      </svg>
+      <div class="badge">0 C=C-Doppelbindungen · gesättigte Fettsäure</div>
+    </div>
+
+    <div class="chem-card">
+      <div class="chem-name">Ölsäure – einfach ungesättigt</div>
+      <svg class="chem-svg" viewBox="0 0 830 180" aria-label="Skelettformel von Ölsäure mit hervorgehobener Carboxygruppe">
+        <rect x="680" y="7" width="145" height="132" rx="14" fill="#f8eaf0" stroke="#d9a8bb" stroke-width="2"/>
+        <line x1="35" y1="95" x2="73" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="73" y1="55" x2="111" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="111" y1="95" x2="149" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="149" y1="55" x2="187" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="187" y1="95" x2="225" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="225" y1="55" x2="263" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="263" y1="95" x2="301" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="301" y1="55" x2="339" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="339.0" y1="95.0" x2="377.0" y2="55.0" stroke="#9a4c15" stroke-width="4" stroke-linecap="round"/>
+<line x1="347" y1="95" x2="371" y2="70" stroke="#9a4c15" stroke-width="4" stroke-linecap="round"/>
+<line x1="377" y1="55" x2="415" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="415" y1="95" x2="453" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="453" y1="55" x2="491" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="491" y1="95" x2="529" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="529" y1="55" x2="567" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="567" y1="95" x2="605" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="605" y1="55" x2="643" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="643" y1="95" x2="692" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+      <text x="697" y="106" font-size="28" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">C</text>
+      <line x1="706" y1="80" x2="706" y2="42" stroke="#8d2f52" stroke-width="4"/>
+      <line x1="718" y1="80" x2="718" y2="42" stroke="#8d2f52" stroke-width="4"/>
+      <text x="700" y="30" font-size="28" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">O</text>
+      <line x1="725" y1="94" x2="758" y2="94" stroke="#8d2f52" stroke-width="4"/>
+      <text x="765" y="105" font-size="28" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">OH</text>
+      <text x="682" y="163" font-size="21" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">Carboxygruppe</text>
+    
+      </svg>
+      <div class="badge">1 C=C-Doppelbindung · einfach ungesättigte Fettsäure</div>
+    </div>
+
+    <div class="chem-card">
+      <div class="chem-name">Linolsäure – mehrfach ungesättigt</div>
+      <svg class="chem-svg" viewBox="0 0 830 180" aria-label="Skelettformel von Linolsäure mit hervorgehobener Carboxygruppe">
+        <rect x="680" y="7" width="145" height="132" rx="14" fill="#f8eaf0" stroke="#d9a8bb" stroke-width="2"/>
+        <line x1="35" y1="95" x2="73" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="73" y1="55" x2="111" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="111" y1="95" x2="149" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="149" y1="55" x2="187" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="187" y1="95" x2="225" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="225.0" y1="55.0" x2="263.0" y2="95.0" stroke="#9a4c15" stroke-width="4" stroke-linecap="round"/>
+<line x1="232" y1="70" x2="256" y2="95" stroke="#9a4c15" stroke-width="4" stroke-linecap="round"/>
+<line x1="263" y1="95" x2="301" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="301" y1="55" x2="339" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="339.0" y1="95.0" x2="377.0" y2="55.0" stroke="#9a4c15" stroke-width="4" stroke-linecap="round"/>
+<line x1="347" y1="95" x2="371" y2="70" stroke="#9a4c15" stroke-width="4" stroke-linecap="round"/>
+<line x1="377" y1="55" x2="415" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="415" y1="95" x2="453" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="453" y1="55" x2="491" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="491" y1="95" x2="529" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="529" y1="55" x2="567" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="567" y1="95" x2="605" y2="55" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="605" y1="55" x2="643" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+<line x1="643" y1="95" x2="692" y2="95" stroke="#17212b" stroke-width="4" stroke-linecap="round"/>
+      <text x="697" y="106" font-size="28" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">C</text>
+      <line x1="706" y1="80" x2="706" y2="42" stroke="#8d2f52" stroke-width="4"/>
+      <line x1="718" y1="80" x2="718" y2="42" stroke="#8d2f52" stroke-width="4"/>
+      <text x="700" y="30" font-size="28" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">O</text>
+      <line x1="725" y1="94" x2="758" y2="94" stroke="#8d2f52" stroke-width="4"/>
+      <text x="765" y="105" font-size="28" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">OH</text>
+      <text x="682" y="163" font-size="21" font-family="Calibri,Arial" fill="#8d2f52" font-weight="700">Carboxygruppe</text>
+    
+      </svg>
+      <div class="badge">2 C=C-Doppelbindungen · mehrfach ungesättigte Fettsäure</div>
+    </div>
+  </div>
+
+  <div class="info"><strong>Folge für die Bromwasserprobe:</strong> An jede C=C-Doppelbindung kann sich Brom anlagern. Deshalb kann Ölsäure ein Br₂-Molekül und Linolsäure zwei Br₂-Moleküle addieren. Stearinsäure besitzt keine C=C-Doppelbindung und zeigt diese Reaktion nicht.</div>
+  <div id="fatQuestions"></div>
+</section>
+
+<section id="abschluss">
+  <h2>7. Abschlussquiz</h2>
+  <p>Vier Fragen verbinden Beobachtung, Reaktionsmechanismus und Anwendung auf Fettsäuren.</p>
+  <div id="finalQuestions"></div>
+  <div class="progress"><div class="bar" id="finalBar"></div></div>
+  <div class="scorebox"><span id="finalScore">0 von 4 abgeschlossen</span><span id="finalHint">Bei jeder Frage hast du zwei Versuche.</span></div>
+  <div id="finalMessage" class="feedback"></div>
+</section>
+
+<div class="footer">Interaktive Lernseite zur Bromwasserprobe · Sofortauswertung · 1. Fehler: neuer Versuch · 2. Fehler: Lösung mit Erklärung</div>
+</div>
+
+<script>
+const attempts = {};
+const completed = {};
+const groupDone = {obs:0, model:0, when:0, fat:0, final:0};
+
+const groups = {
+  obs: [
+    {id:'o1', q:'Welche Beobachtung passt zum Ansatz mit 1-Octen?', options:[
+      'Die gelb-orange Farbe bleibt nahezu unverändert.',
+      'Die gelb-orange Farbe verschwindet; die Probe wird deutlich heller bzw. farblos.',
+      'Die Lösung wird erst blau und anschließend grün.',
+      'Es entsteht ein dunkler Feststoff am Boden.'
+    ], correct:1, explain:'1-Octen entfärbt Bromwasser. Entscheidend ist die vorhandene C=C-Doppelbindung.'},
+    {id:'o2', q:'Welche Beobachtung passt zum Ansatz mit n-Octan?', options:[
+      'Die gelb-orange Bromfarbe bleibt im Wesentlichen erkennbar.',
+      'Die Bromfarbe verschwindet genauso schnell wie beim 1-Octen.',
+      'Die Lösung wird milchig-weiß und erst dann farblos.',
+      'Es entsteht sofort Gas.'
+    ], correct:0, explain:'n-Octan besitzt keine C=C-Doppelbindung; unter diesen Bedingungen findet die typische Bromaddition nicht statt.'},
+    {id:'o3', q:'Welcher Unterschied zwischen den beiden Stoffen passt am besten zu der unterschiedlichen Beobachtung?', options:[
+      '1-Octen besitzt eine C=C-Doppelbindung, n-Octan nicht.',
+      'n-Octan enthält Sauerstoff, 1-Octen nicht.',
+      'Nur n-Octan besitzt Kohlenstoff-Kohlenstoff-Bindungen.',
+      '1-Octen besitzt eine Carboxygruppe.'
+    ], correct:0, explain:'Der strukturell entscheidende Unterschied ist die C=C-Doppelbindung im 1-Octen.'}
+  ],
+  model: [
+    {id:'m1', q:'Welche der beiden Modell-Fettsäuren würde Bromwasser entfärben?', options:[
+      'Nur Octansäure, weil sie vollständig mit Wasserstoff gesättigt ist.',
+      'Nur Oct-7-ensäure, weil sie eine C=C-Doppelbindung enthält.',
+      'Beide, weil beide eine Carboxygruppe besitzen.',
+      'Keine von beiden, weil Carbonsäuren grundsätzlich nicht mit Brom reagieren.'
+    ], correct:1, explain:'Die Bromwasserprobe reagiert hier an der C=C-Doppelbindung. Die Carboxygruppe ist nicht der Grund für die Entfärbung.'},
+    {id:'m2', q:'Warum ist der Vergleich Octansäure ↔ Oct-7-ensäure als Modell hilfreich?', options:[
+      'Weil beide die gleiche Carboxygruppe besitzen und sich vor allem durch die C=C-Doppelbindung unterscheiden.',
+      'Weil Octansäure gar keine Kohlenstoffatome besitzt.',
+      'Weil die Carboxygruppe beim ungesättigten Molekül verschwindet.',
+      'Weil Doppelbindungen nur in sehr kurzen Fettsäuren vorkommen.'
+    ], correct:0, explain:'So kann man die C=C-Doppelbindung als entscheidendes Strukturmerkmal isoliert betrachten.'}
+  ],
+  when: [
+    {id:'w1', q:'Struktur A: CH₃–CH₂–CH₂–CH₃. Erfolgt eine Entfärbung von Bromwasser unter den betrachteten Bedingungen?', options:['Ja, weil eine C=C-Doppelbindung vorhanden ist.','Nein, weil nur C–C-Einfachbindungen vorhanden sind.'], correct:1, explain:'Butan ist gesättigt und enthält keine C=C-Doppelbindung.'},
+    {id:'w2', q:'Struktur B: CH₃–CH=CH–CH₃. Erfolgt eine Entfärbung?', options:['Ja, die C=C-Doppelbindung kann Br₂ addieren.','Nein, weil das Molekül keine Carboxygruppe besitzt.'], correct:0, explain:'2-Buten enthält eine C=C-Doppelbindung und reagiert daher mit Brom durch Addition.'},
+    {id:'w3', q:'Struktur C: CH₃–(CH₂)₆–COOH. Erfolgt eine Entfärbung aufgrund einer C=C-Doppelbindung?', options:['Ja, denn die Carboxygruppe enthält eine Doppelbindung C=O.','Nein, die Bromwasserprobe bezieht sich hier auf C=C-Doppelbindungen; in der Kohlenstoffkette liegt keine vor.'], correct:1, explain:'Die C=O-Doppelbindung der Carboxygruppe ist nicht die gesuchte C=C-Doppelbindung. Octansäure ist eine gesättigte Fettsäure.'},
+    {id:'w4', q:'Struktur D: CH₂=CH–(CH₂)₅–COOH. Erfolgt eine Entfärbung?', options:['Ja, weil eine C=C-Doppelbindung in der Kohlenstoffkette vorhanden ist.','Nein, weil die Carboxygruppe Brom vollständig abstößt.'], correct:0, explain:'Oct-7-ensäure enthält eine C=C-Doppelbindung und kann deshalb Brom addieren.'}
+  ],
+  fat: [
+    {id:'f1', q:'Welche der drei dargestellten Fettsäuren entfärben Bromwasser?', options:['Nur Stearinsäure','Nur Ölsäure','Ölsäure und Linolsäure','Alle drei gleichermaßen'], correct:2, explain:'Ölsäure und Linolsäure enthalten C=C-Doppelbindungen; Stearinsäure nicht.'},
+    {id:'f2', q:'Welche Fettsäure kann pro Molekül theoretisch die größte Menge Br₂ addieren?', options:['Stearinsäure, weil ihre Kette lang ist','Ölsäure, weil sie eine Doppelbindung besitzt','Linolsäure, weil sie zwei Doppelbindungen besitzt','Alle drei gleich viel'], correct:2, explain:'Jede C=C-Doppelbindung kann ein Br₂-Molekül addieren. Linolsäure besitzt zwei C=C-Doppelbindungen.'},
+    {id:'f3', q:'Wie viele Br₂-Moleküle können an ein Linolsäure-Molekül bei vollständiger Addition an beide C=C-Doppelbindungen theoretisch addiert werden?', options:['0','1','2','4'], correct:2, explain:'Linolsäure besitzt zwei C=C-Doppelbindungen; daher können zwei Br₂-Moleküle addiert werden.'}
+  ],
+  final: [
+    {id:'q1', q:'Was weist die Bromwasserprobe in diesem Versuch nach?', options:['C=C-Doppelbindungen','Carboxygruppen','nur lange Kohlenstoffketten','Wasserstoffatome'], correct:0, explain:'Nachgewiesen werden unter diesen Bedingungen C=C-Doppelbindungen.'},
+    {id:'q2', q:'Was geschieht, wenn Brom mit einer C=C-Doppelbindung reagiert?', options:['Die C=C-Doppelbindung bleibt unverändert.','Die Doppelbindung wird zur Einfachbindung und die beiden Bromatome lagern sich an.','Die C=C-Doppelbindung wird zu einer Dreifachbindung.','Die Kohlenstoffkette zerfällt vollständig.'], correct:1, explain:'Die Doppelbindung wird zur Einfachbindung. An die beiden beteiligten Kohlenstoffatome lagert sich jeweils ein Bromatom an.'},
+    {id:'q3', q:'Warum verschwindet die gelb-orange bis braune Farbe des Bromwassers?', options:['Brom verdampft vollständig aus dem Gefäß.','Das frei gelöste Brom wird bei der Reaktion verbraucht und ist deshalb nicht mehr als farbiges Brom vorhanden.','Die Carboxygruppe färbt die Lösung weiß.','Wasser zerstört Brom immer sofort.'], correct:1, explain:'Das frei gelöste Brom verursacht die Farbe. Wird es an die Doppelbindung angelagert und dadurch verbraucht, verschwindet die Bromfarbe.'},
+    {id:'q4', q:'Welche Aussage zu Fetten ist richtig?', options:['Gesättigte Fettsäurereste besitzen mindestens eine C=C-Doppelbindung.','Ungesättigte Fettsäurereste besitzen eine oder mehrere C=C-Doppelbindungen.','Die Bromwasserprobe reagiert nur mit der Carboxygruppe.','Die Anzahl der C=C-Doppelbindungen ist für die Bromaddition bedeutungslos.'], correct:1, explain:'Ungesättigte Fettsäurereste enthalten mindestens eine C=C-Doppelbindung.'}
+  ]
+};
+
+const titles = {obs:'Beobachtung',model:'Modellvergleich',when:'Entfärbung',fat:'Fette',final:'Abschluss'};
+
+function render(targetId, group){
+  const target=document.getElementById(targetId);
+  target.innerHTML=groups[group].map((item,i)=>`<div class="question" id="wrap-${item.id}">
+    <div class="qtitle">${i+1}. ${item.q}</div>
+    <div class="options">${item.options.map((op,j)=>`<label class="option"><input type="radio" name="${item.id}" value="${j}"><span>${op}</span></label>`).join('')}</div>
+    <button class="btn" onclick="checkQuestion('${group}','${item.id}')">Antwort prüfen</button>
+    <div class="feedback" id="fb-${item.id}"></div>
+  </div>`).join('');
+}
+
+function findItem(group,id){ return groups[group].find(x=>x.id===id); }
+
+function checkQuestion(group,id){
+  if(completed[id]) return;
+  const item=findItem(group,id);
+  const choice=document.querySelector(`input[name="${id}"]:checked`);
+  const fb=document.getElementById('fb-'+id);
+  if(!choice){ fb.className='feedback neutral'; fb.textContent='Bitte wähle zuerst eine Antwort aus.'; return; }
+  attempts[id]=(attempts[id]||0)+1;
+  const selected=Number(choice.value);
+  if(selected===item.correct){
+    completed[id]=true; lockQuestion(id,item.correct);
+    fb.className='feedback good'; fb.innerHTML='<span class="trophy">🏆</span>Richtig! '+item.explain;
+    markDone(group);
+  } else if(attempts[id]===1){
+    fb.className='feedback bad'; fb.textContent='Versuch’s noch einmal. Achte auf das entscheidende Strukturmerkmal.';
+    choice.checked=false;
+  } else {
+    completed[id]=true; lockQuestion(id,item.correct);
+    fb.className='feedback bad'; fb.innerHTML='Die richtige Antwort ist: <strong>'+item.options[item.correct]+'</strong><br>'+item.explain;
+    markDone(group);
+  }
+}
+
+function lockQuestion(id,correctIndex){
+  document.querySelectorAll(`input[name="${id}"]`).forEach((el,i)=>{
+    el.disabled=true; const lab=el.closest('.option');
+    if(i===correctIndex){lab.style.borderColor='#77b992';lab.style.background='#f1faf5';}
+    else if(el.checked){lab.style.borderColor='#e2a39c';lab.style.background='#fff5f3';}
+  });
+  const btn=document.querySelector(`#wrap-${id} .btn`); if(btn){btn.disabled=true;btn.style.opacity='.55';btn.style.cursor='default';}
+}
+
+function markDone(group){
+  groupDone[group]++;
+  if(group==='obs'){
+    const total=groups.obs.length;
+    document.getElementById('obsBar').style.width=(groupDone.obs/total*100)+'%';
+    document.getElementById('obsScore').textContent=`${groupDone.obs} von ${total} abgeschlossen`;
+    if(groupDone.obs===total){
+      document.getElementById('obsHint').textContent='Beobachtung abgeschlossen – jetzt folgt der Strukturvergleich.';
+      setTimeout(()=>document.getElementById('modell').scrollIntoView({behavior:'smooth'}),350);
+    }
+  }
+  if(group==='final'){
+    const total=groups.final.length;
+    document.getElementById('finalBar').style.width=(groupDone.final/total*100)+'%';
+    document.getElementById('finalScore').textContent=`${groupDone.final} von ${total} abgeschlossen`;
+    if(groupDone.final===total){
+      const msg=document.getElementById('finalMessage'); msg.className='feedback good';
+      msg.innerHTML='<span class="trophy">🏆</span>Abschluss erreicht. Entscheidend für die Bromwasserprobe ist die C=C-Doppelbindung.';
+    }
+  }
+}
+
+render('obsQuestions','obs');
+render('modelQuestions','model');
+render('whenQuestions','when');
+render('fatQuestions','fat');
+render('finalQuestions','final');
+</script>
+</body>
+</html>
