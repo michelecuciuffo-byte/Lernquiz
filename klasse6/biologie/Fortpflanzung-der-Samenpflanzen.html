@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Befruchtung bei Blütenpflanzen – Animation & Quiz</title>
+<style>
+  :root{
+    --ink:#1f2937;
+    --muted:#5f6b7a;
+    --paper:#ffffff;
+    --bg:#f5f7fa;
+    --accent:#e6aa00;
+    --accent-soft:#fff4c9;
+    --green:#4f8f5b;
+    --green-soft:#eaf5ec;
+    --blue:#3c7dc4;
+    --blue-soft:#eaf2fb;
+    --pink:#c56b8a;
+    --pink-soft:#faedf2;
+    --red:#b84949;
+    --red-soft:#fdeeee;
+    --shadow:0 12px 34px rgba(31,41,55,.10);
+    --radius:18px;
+  }
+
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0;
+    font-family:Calibri, "Segoe UI", Arial, sans-serif;
+    color:var(--ink);
+    background:linear-gradient(180deg,#f9fafb 0%,#f3f5f8 100%);
+    line-height:1.45;
+  }
+
+  .page{
+    width:min(1180px,94vw);
+    margin:0 auto;
+    padding:28px 0 54px;
+  }
+
+  .hero{
+    background:var(--paper);
+    border-radius:22px;
+    box-shadow:var(--shadow);
+    padding:24px 28px 22px;
+    margin-bottom:22px;
+  }
+
+  .eyebrow{
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+    font-weight:700;
+    color:#735600;
+    background:var(--accent-soft);
+    border-radius:999px;
+    padding:7px 12px;
+    font-size:.92rem;
+    margin-bottom:10px;
+  }
+
+  h1{
+    font-size:clamp(1.8rem,3vw,2.8rem);
+    line-height:1.1;
+    margin:0 0 10px;
+    letter-spacing:-.02em;
+  }
+
+  .subtitle{
+    margin:0;
+    color:var(--muted);
+    font-size:1.08rem;
+    max-width:920px;
+  }
+
+  .merke-top{
+    margin-top:16px;
+    background:#fffdf6;
+    border-left:5px solid var(--accent);
+    padding:12px 14px;
+    border-radius:10px;
+    font-size:1rem;
+  }
+
+  .card{
+    background:var(--paper);
+    border-radius:var(--radius);
+    box-shadow:var(--shadow);
+    padding:24px;
+    margin-top:22px;
+  }
+
+  .section-title{
+    display:flex;
+    align-items:flex-start;
+    justify-content:space-between;
+    gap:14px;
+    margin-bottom:16px;
+  }
+
+  .section-title h2{
+    margin:0;
+    font-size:clamp(1.4rem,2.4vw,2rem);
+  }
+
+  .section-title p{
+    margin:5px 0 0;
+    color:var(--muted);
+  }
+
+  .step-badge{
+    flex:0 0 auto;
+    font-weight:700;
+    background:var(--blue-soft);
+    color:#285b94;
+    border-radius:999px;
+    padding:7px 11px;
+    white-space:nowrap;
+  }
+
+  .stage-wrap{
+    background:linear-gradient(180deg,#fbfcfe,#f7f9fc);
+    border-radius:16px;
+    overflow:hidden;
+    min-height:540px;
+    position:relative;
+  }
+
+  #flowerSvg{
+    width:100%;
+    height:auto;
+    display:block;
+    aspect-ratio:16/9;
+    min-height:500px;
+  }
+
+  .controls{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    margin-top:16px;
+    flex-wrap:wrap;
+  }
+
+  .btn{
+    border:0;
+    border-radius:12px;
+    padding:11px 18px;
+    font:inherit;
+    font-weight:700;
+    cursor:pointer;
+    transition:transform .15s ease, box-shadow .15s ease, opacity .15s ease;
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn:disabled{opacity:.42;cursor:not-allowed;transform:none}
+  .btn.secondary{background:#eef1f5;color:#344054}
+  .btn.primary{background:#244a73;color:#fff;box-shadow:0 6px 16px rgba(36,74,115,.18)}
+  .btn.quizjump{background:var(--accent-soft);color:#664f00}
+
+  .progress{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    flex:1;
+    min-width:220px;
+  }
+  .dot{
+    width:11px;height:11px;border-radius:999px;background:#d6dbe2;
+    transition:.2s ease;
+  }
+  .dot.active{background:#244a73;transform:scale(1.25)}
+  .dot.done{background:#7aa784}
+
+  .info-box{
+    margin-top:22px;
+    border:2px solid #d8e7d4;
+    border-radius:20px;
+    background:linear-gradient(135deg,#fffdf1,#f1f8ee);
+    padding:23px 25px 25px;
+    min-height:210px;
+    box-shadow:0 12px 30px rgba(67,103,72,.1);
+  }
+  .info-heading{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .info-heading .bulb{display:grid;place-items:center;width:48px;height:48px;flex:0 0 auto;border-radius:50%;font-size:1.8rem;background:#fff1b8;box-shadow:0 0 0 7px #fff7d8,0 0 22px #f0c95577}
+  .info-heading .info-label{color:#447348;font-weight:900;letter-spacing:.1em;text-transform:uppercase;font-size:.82rem}
+  .info-box h3{margin:0 0 10px;font-size:1.45rem;color:#294e32}
+  .info-box p{margin:0 0 13px;font-size:1.08rem;line-height:1.62}
+  .info-box .small{color:var(--muted);font-size:1.02rem}
+  .memory{
+    display:inline-block;
+    margin-top:4px;
+    background:var(--accent-soft);
+    border-radius:10px;
+    padding:8px 11px;
+    font-weight:700;
+  }
+
+  .legend{
+    display:flex;flex-wrap:wrap;gap:10px;margin-top:12px;color:var(--muted);font-size:.93rem
+  }
+  .legend span{display:inline-flex;align-items:center;gap:7px}
+  .swatch{width:12px;height:12px;border-radius:999px;display:inline-block}
+
+  .quiz-intro{
+    display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
+    background:#fbfcfe;border-radius:14px;padding:14px 16px;margin-bottom:16px
+  }
+  .quiz-intro p{margin:0;color:var(--muted)}
+  .scorebox{font-weight:700;background:var(--green-soft);color:#2e6a3b;padding:8px 11px;border-radius:999px}
+
+  .question{
+    background:#fbfcfe;
+    border-radius:15px;
+    padding:17px;
+    margin:14px 0;
+  }
+  .qhead{
+    display:flex;gap:10px;align-items:flex-start;margin-bottom:11px
+  }
+  .qnum{
+    flex:0 0 32px;width:32px;height:32px;border-radius:9px;
+    display:grid;place-items:center;font-weight:800;background:#e8edf4;color:#2e4a68
+  }
+  .qtext{font-weight:700;font-size:1.05rem;padding-top:3px}
+  .options{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .option{
+    text-align:left;
+    border:1px solid #dbe1e8;
+    background:#fff;
+    border-radius:12px;
+    padding:11px 12px;
+    font:inherit;
+    cursor:pointer;
+    transition:.15s ease;
+    min-height:48px;
+  }
+  .option:hover:not(:disabled){border-color:#93a6ba;transform:translateY(-1px)}
+  .option:disabled{cursor:default}
+  .option.wrong{background:var(--red-soft);border-color:#e0a3a3;color:#7e2e2e}
+  .option.correct{background:var(--green-soft);border-color:#9fc9a7;color:#2d6338;font-weight:700}
+  .option.dim{opacity:.62}
+
+  .feedback{
+    margin-top:10px;
+    min-height:28px;
+    border-radius:10px;
+    padding:0;
+    font-size:.98rem;
+  }
+  .feedback.show{padding:9px 11px}
+  .feedback.retry{background:var(--accent-soft);color:#6b5200}
+  .feedback.good{background:var(--green-soft);color:#275f34;font-weight:700}
+  .feedback.reveal{background:var(--blue-soft);color:#2a537f}
+
+  .quiz-result{
+    display:none;
+    margin-top:18px;
+    background:#f7faf7;
+    border-radius:16px;
+    padding:18px;
+    text-align:center;
+  }
+  .quiz-result.show{display:block}
+  .quiz-result strong{font-size:1.2rem}
+
+  .footer-note{
+    margin-top:20px;color:var(--muted);font-size:.92rem;text-align:center
+  }
+
+  /* SVG styles */
+  .label{font-size:21px;font-weight:750;fill:#344054}
+  .label.small{font-size:17px;font-weight:650;fill:#5d6876}
+  .guide{stroke:#8d9aaa;stroke-width:2;stroke-dasharray:5 6;fill:none}
+  .hidden-step{opacity:0;pointer-events:none}
+  .fade-step{transition:opacity .45s ease}
+  .organ{transition:opacity .45s ease, filter .45s ease}
+  .pulse{animation:pulse 1s ease-in-out 2}
+  @keyframes pulse{0%,100%{transform:scale(1);transform-origin:center}50%{transform:scale(1.16);transform-origin:center}}
+  @keyframes floatPollen{0%{transform:translate(0,0)}50%{transform:translate(8px,-6px)}100%{transform:translate(0,0)}}
+  @keyframes glow{0%,100%{filter:drop-shadow(0 0 0 rgba(230,170,0,0))}50%{filter:drop-shadow(0 0 10px rgba(230,170,0,.75))}}
+  .pollen-floating{animation:floatPollen 1.8s ease-in-out infinite}
+  .glow{animation:glow 1.4s ease-in-out 2}
+
+  @media (max-width:780px){
+    .page{width:min(96vw,1180px);padding-top:14px}
+    .hero,.card{padding:18px}
+    .stage-wrap{min-height:390px}
+    #flowerSvg{min-height:360px}
+    .info-box{padding:19px 18px 21px;min-height:0}
+    .options{grid-template-columns:1fr}
+    .controls{justify-content:center}
+    .progress{order:3;width:100%}
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{scroll-behavior:auto!important;animation:none!important;transition:none!important}
+  }
+</style>
+</head>
+<body>
+<div class="page">
+  <section class="hero">
+    <div class="eyebrow">Biologie · Blütenpflanzen</div>
+    <h1>Von der Bestäubung zur Befruchtung</h1>
+    <p class="subtitle">Klicke dich Schritt für Schritt durch die Animation. Beobachte, wie ein Pollenkorn auf die Narbe gelangt, ein Pollenschlauch wächst und schließlich die Eizelle in der Samenanlage befruchtet wird.</p>
+    <div class="merke-top"><strong>Wichtig:</strong> Bestäubung und Befruchtung sind nicht dasselbe. Bei der Bestäubung gelangt Pollen auf die Narbe. Erst später findet im Inneren der Samenanlage die Befruchtung statt.</div>
+  </section>
+
+  <section class="card" id="animationSection">
+    <div class="section-title">
+      <div>
+        <h2>Schrittweise Animation</h2>
+        <p>Mit „Weiter“ erscheint jeweils der nächste Vorgang.</p>
+      </div>
+      <div class="step-badge" id="stepBadge">Schritt 1 von 7</div>
+    </div>
+
+    <div class="stage-wrap">
+      <svg id="flowerSvg" viewBox="-66.7 -37.5 1333.4 750" role="img" aria-labelledby="svgTitle svgDesc">
+        <title id="svgTitle">Schematische Darstellung der Befruchtung einer Blütenpflanze</title>
+        <desc id="svgDesc">Eine Blüte im Längsschnitt mit Staubbeutel, Narbe, Griffel, Fruchtknoten, Samenanlage, Pollenkorn und Pollenschlauch.</desc>
+
+        <defs>
+          <linearGradient id="petalGrad" x1="0" x2="1">
+            <stop offset="0%" stop-color="#f8dce7"/>
+            <stop offset="100%" stop-color="#efb8cc"/>
+          </linearGradient>
+          <linearGradient id="ovaryGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#b8dba9"/>
+            <stop offset="100%" stop-color="#7fae73"/>
+          </linearGradient>
+          <linearGradient id="styleGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#9fc58f"/>
+            <stop offset="100%" stop-color="#70a06d"/>
+          </linearGradient>
+          <linearGradient id="antherGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#f9df88"/>
+            <stop offset="100%" stop-color="#e7ad3e"/>
+          </linearGradient>
+          <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+            <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#23364a" flood-opacity=".16"/>
+          </filter>
+          <marker id="arrow" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+            <path d="M0,0 L0,6 L9,3 z" fill="#54718e"/>
+          </marker>
+        </defs>
+
+        <!-- background -->
+        <rect x="0" y="0" width="1200" height="675" fill="#fbfcfe"/>
+        <ellipse cx="630" cy="613" rx="330" ry="25" fill="#e8edf2" opacity=".72"/>
+
+        <!-- petals -->
+        <g opacity=".95">
+          <path d="M510 325 C330 315 230 245 248 170 C268 90 430 165 545 262 Z" fill="url(#petalGrad)" stroke="#cf89a4" stroke-width="3"/>
+          <path d="M685 308 C865 288 979 212 949 139 C918 66 760 161 652 250 Z" fill="url(#petalGrad)" stroke="#cf89a4" stroke-width="3"/>
+          <path d="M552 325 C427 235 396 118 468 83 C548 44 615 183 620 290 Z" fill="#f6c9d9" stroke="#cf89a4" stroke-width="3"/>
+          <path d="M653 317 C743 214 742 104 670 84 C594 64 584 208 607 303 Z" fill="#f7d1df" stroke="#cf89a4" stroke-width="3"/>
+        </g>
+
+        <!-- sepals -->
+        <path d="M495 468 C405 487 342 465 310 418 C388 416 454 400 515 365 Z" fill="#6ea36b" opacity=".85"/>
+        <path d="M705 468 C795 487 858 465 890 418 C812 416 746 400 685 365 Z" fill="#6ea36b" opacity=".85"/>
+
+        <!-- pistil: ovary -->
+        <g id="pistil" filter="url(#softShadow)">
+          <path d="M502 427 C500 510 521 570 600 586 C679 570 700 510 698 427 C674 390 641 376 600 378 C559 376 526 390 502 427 Z" fill="url(#ovaryGrad)" stroke="#477b4d" stroke-width="4"/>
+          <path d="M570 435 C550 483 558 532 600 552 C642 532 650 483 630 435 C615 420 585 420 570 435 Z" fill="#eff6e8" stroke="#6f9e6d" stroke-width="3"/>
+          <!-- ovule -->
+          <g id="ovuleGroup">
+            <ellipse cx="600" cy="510" rx="52" ry="34" fill="#fff6c7" stroke="#d3aa36" stroke-width="3"/>
+            <ellipse cx="600" cy="510" rx="27" ry="19" fill="#fffef7" stroke="#d9c786" stroke-width="2"/>
+            <circle id="eggCell" cx="603" cy="511" r="10" fill="#f3cf56" stroke="#ac8615" stroke-width="2"/>
+            <circle id="synergid1" cx="581" cy="503" r="5" fill="#d9e9f6"/>
+            <circle id="synergid2" cx="581" cy="519" r="5" fill="#d9e9f6"/>
+          </g>
+          <!-- style -->
+          <path d="M572 428 C575 355 579 267 586 186 L614 186 C621 267 625 355 628 428 Z" fill="url(#styleGrad)" stroke="#477b4d" stroke-width="4"/>
+          <!-- stigma -->
+          <path d="M553 187 C547 155 563 134 588 139 C596 119 615 119 622 139 C647 134 663 155 657 187 C624 201 586 201 553 187 Z" fill="#96bd86" stroke="#477b4d" stroke-width="4"/>
+        </g>
+
+        <!-- stamens -->
+        <g id="stamens" filter="url(#softShadow)">
+          <path d="M482 408 C484 334 493 271 505 221" stroke="#5f9167" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <rect x="463" y="184" width="84" height="38" rx="18" fill="url(#antherGrad)" stroke="#b47a1d" stroke-width="3" transform="rotate(-8 505 203)"/>
+          <path d="M718 408 C716 334 707 271 695 221" stroke="#5f9167" stroke-width="9" fill="none" stroke-linecap="round"/>
+          <rect x="653" y="184" width="84" height="38" rx="18" fill="url(#antherGrad)" stroke="#b47a1d" stroke-width="3" transform="rotate(8 695 203)"/>
+          <!-- pollen on anther -->
+          <g fill="#f6d85e" stroke="#9f801b" stroke-width="2">
+            <circle cx="485" cy="193" r="8"/><circle cx="504" cy="188" r="7"/><circle cx="523" cy="195" r="8"/>
+            <circle cx="677" cy="195" r="8"/><circle cx="696" cy="188" r="7"/><circle cx="715" cy="193" r="8"/>
+          </g>
+        </g>
+
+        <!-- labels at overview -->
+        <g id="overviewLabels" class="fade-step">
+          <path class="guide" d="M334 115 L480 188"/>
+          <text x="175" y="105" class="label">Staubbeutel</text>
+          <text x="175" y="128" class="label small">bildet Pollenkörner</text>
+
+          <path class="guide" d="M805 115 L642 156"/>
+          <text x="820" y="103" class="label">Narbe</text>
+          <text x="820" y="126" class="label small">nimmt Pollen auf</text>
+
+          <path class="guide" d="M857 307 L629 307"/>
+          <text x="873" y="300" class="label">Griffel</text>
+          <text x="873" y="323" class="label small">Verbindung zum Fruchtknoten</text>
+
+          <path class="guide" d="M859 488 L695 474"/>
+          <text x="873" y="481" class="label">Fruchtknoten</text>
+          <text x="873" y="504" class="label small">enthält die Samenanlagen</text>
+
+          <path class="guide" d="M352 530 L550 510"/>
+          <text x="135" y="523" class="label">Samenanlage</text>
+          <text x="135" y="546" class="label small">hier liegt die Eizelle</text>
+        </g>
+
+        <!-- step 2 pollination -->
+        <g id="pollinationLayer" class="fade-step hidden-step">
+          <path id="pollinationPath" d="M505 188 C525 130 540 120 568 150" fill="none" stroke="#6f8aa6" stroke-width="4" stroke-dasharray="7 7" marker-end="url(#arrow)"/>
+          <circle id="movingPollen" cx="505" cy="188" r="12" fill="#f6d85e" stroke="#9f801b" stroke-width="3"/>
+          <text x="332" y="92" class="label">1. Bestäubung</text>
+          <text x="332" y="116" class="label small">Ein Pollenkorn gelangt auf die Narbe.</text>
+        </g>
+
+        <!-- step 3 pollen germination -->
+        <g id="germinationLayer" class="fade-step hidden-step">
+          <circle cx="584" cy="153" r="13" fill="#f6d85e" stroke="#9f801b" stroke-width="3" class="pollen-floating"/>
+          <path d="M585 164 C586 177 588 184 591 194" fill="none" stroke="#f2c94c" stroke-width="8" stroke-linecap="round"/>
+          <text x="790" y="155" class="label">2. Pollenkorn keimt</text>
+          <text x="790" y="179" class="label small">Der Pollenschlauch beginnt zu wachsen.</text>
+          <path class="guide" d="M782 185 L602 182"/>
+        </g>
+
+        <!-- step 4 pollen tube -->
+        <g id="tubeLayer" class="fade-step hidden-step">
+          <path id="tubePath" d="M590 164 C594 214 597 266 598 326 C599 388 594 434 586 474 C583 490 584 499 588 505" fill="none" stroke="#f2c94c" stroke-width="10" stroke-linecap="round"/>
+          <path id="tubeOutline" d="M590 164 C594 214 597 266 598 326 C599 388 594 434 586 474 C583 490 584 499 588 505" fill="none" stroke="#9f7c18" stroke-width="2" opacity=".65"/>
+          <text x="760" y="255" class="label">3. Wachstum durch den Griffel</text>
+          <text x="760" y="279" class="label small">Der Pollenschlauch wächst Richtung Samenanlage.</text>
+          <path class="guide" d="M750 288 L610 320"/>
+        </g>
+
+        <!-- step 5 sperm nuclei -->
+        <g id="spermLayer" class="fade-step hidden-step">
+          <circle id="sperm1" cx="593" cy="255" r="8" fill="#4c82c3" stroke="#244f84" stroke-width="2"/>
+          <circle id="sperm2" cx="596" cy="285" r="8" fill="#82a8d7" stroke="#345f94" stroke-width="2"/>
+          <text x="175" y="260" class="label">4. Männliche Geschlechtszellen im Pollenschlauch</text>
+          <text x="175" y="284" class="label small">Sie werden bis zur Samenanlage transportiert.</text>
+          <path class="guide" d="M474 290 L588 278"/>
+        </g>
+
+        <!-- step 6 fertilization -->
+        <g id="fertilizationLayer" class="fade-step hidden-step">
+          <circle id="spermAtEgg" cx="588" cy="510" r="9" fill="#4c82c3" stroke="#244f84" stroke-width="2"/>
+          <path d="M589 510 L596 510" stroke="#244f84" stroke-width="3" marker-end="url(#arrow)"/>
+          <circle id="zygoteGlow" cx="603" cy="511" r="21" fill="none" stroke="#e6aa00" stroke-width="5" opacity=".9"/>
+          <text x="790" y="465" class="label">5. Befruchtung</text>
+          <text x="760" y="489" class="label small">Eine männliche Geschlechtszelle aus dem Pollen</text>
+          <text x="760" y="511" class="label small">verschmilzt mit der Eizelle.</text>
+          <path class="guide" d="M752 522 L626 510"/>
+        </g>
+
+        <!-- step 7 after fertilization -->
+        <g id="afterLayer" class="fade-step hidden-step">
+          <ellipse cx="600" cy="510" rx="52" ry="34" fill="#ead99e" stroke="#b8952d" stroke-width="4" opacity=".92"/>
+          <circle cx="603" cy="511" r="15" fill="#8cc58d" stroke="#4d8250" stroke-width="3"/>
+          <path d="M594 505 C600 496 611 497 615 505 C611 513 601 518 594 505 Z" fill="#5f9b61"/>
+          <text x="145" y="470" class="label">6. Nach der Befruchtung</text>
+          <text x="145" y="494" class="label small">Aus der Samenanlage entsteht ein Samen.</text>
+          <text x="145" y="518" class="label small">Der Fruchtknoten entwickelt sich zur Frucht.</text>
+          <path class="guide" d="M423 500 L548 510"/>
+        </g>
+      </svg>
+    </div>
+
+    <div class="controls">
+      <button class="btn secondary" id="prevBtn" type="button">← Zurück</button>
+      <div class="progress" id="progress" aria-label="Fortschritt der Animation"></div>
+      <button class="btn primary" id="nextBtn" type="button">Weiter →</button>
+    </div>
+
+    <div class="info-box" aria-live="polite" aria-label="Infokasten: Schritt für Schritt erklärt">
+      <div class="info-heading"><span class="bulb" aria-hidden="true">💡</span><span class="info-label">Infokasten · Schritt für Schritt</span></div>
+      <h3 id="infoTitle"></h3>
+      <p id="infoText"></p>
+      <p class="small" id="infoExtra"></p>
+      <div class="memory" id="infoMemory"></div>
+    </div>
+
+    <div class="legend" aria-label="Farblegende">
+      <span><i class="swatch" style="background:#f6d85e"></i> Pollenkorn / Pollenschlauch</span>
+      <span><i class="swatch" style="background:#83b37e"></i> Staubblätter / Staubbeutel</span>
+      <span><i class="swatch" style="background:#4c82c3"></i> männliche Geschlechtszelle</span>
+      <span><i class="swatch" style="background:#f3cf56"></i> Eizelle</span>
+      <span><i class="swatch" style="background:#8cc58d"></i> entstehender Embryo (vereinfacht)</span>
+    </div>
+  </section>
+
+  <section class="card" id="quizSection">
+    <div class="section-title">
+      <div>
+        <h2>Quiz: Bestäubung und Befruchtung</h2>
+        <p>Querbeet durch den Ablauf. Jede Aufgabe wird sofort ausgewertet.</p>
+      </div>
+      <button class="btn quizjump" id="restartQuiz" type="button">Quiz neu starten</button>
+    </div>
+
+    <div class="quiz-intro">
+      <p><strong>So funktioniert es:</strong> Bei einer falschen Antwort bekommst du noch einen zweiten Versuch. Ist auch dieser falsch, wird die Lösung mit kurzer Erklärung angezeigt.</p>
+      <div class="scorebox" id="scoreBox">🏆 0 von 10</div>
+    </div>
+
+    <div id="quizContainer"></div>
+    <div class="quiz-result" id="quizResult"></div>
+  </section>
+
+  <div class="footer-note">Schematische Darstellung für den Biologieunterricht · Vorgänge vereinfacht, aber fachlich korrekt dargestellt.</div>
+</div>
+
+<script>
+(() => {
+  const steps = [
+    {
+      title: 'Schritt 1: Aufbau der Blüte',
+      text: 'Bevor die Befruchtung beginnen kann, müssen wir die wichtigsten Teile kennen: Im Staubbeutel entstehen Pollenkörner. Die Narbe sitzt oben auf dem Griffel. Im Fruchtknoten liegen die Samenanlagen mit den Eizellen.',
+      extra: 'Die Blüte ist hier im Längsschnitt dargestellt. So kann man auch die inneren Teile sehen.',
+      memory: 'Merke: Staubbeutel → Pollen | Samenanlage → Eizelle',
+      visible: ['overviewLabels']
+    },
+    {
+      title: 'Schritt 2: Bestäubung',
+      text: 'Ein Pollenkorn wird vom Staubbeutel auf die Narbe übertragen. Das kann zum Beispiel durch Insekten oder Wind geschehen.',
+      extra: 'Die Bestäubung ist nur der Transport des Pollens zur Narbe. Eine Verschmelzung von Geschlechtszellen findet dabei noch nicht statt.',
+      memory: 'Bestäubung = Pollenkorn gelangt auf die Narbe.',
+      visible: ['pollinationLayer'], action: 'pollinate'
+    },
+    {
+      title: 'Schritt 3: Das Pollenkorn keimt',
+      text: 'Auf einer passenden Narbe nimmt das Pollenkorn Wasser auf und beginnt zu keimen. Aus dem Pollenkorn wächst ein Pollenschlauch.',
+      extra: 'Der Pollenschlauch ist eine röhrenförmige Ausstülpung der Pollenzelle.',
+      memory: 'Aus dem Pollenkorn wächst der Pollenschlauch.',
+      visible: ['germinationLayer']
+    },
+    {
+      title: 'Schritt 4: Der Pollenschlauch wächst',
+      text: 'Der Pollenschlauch wächst durch den Griffel nach unten bis zum Fruchtknoten. Sein Ziel ist eine Samenanlage.',
+      extra: 'Das Wachstum wird durch chemische Signale aus dem Gewebe der Blüte gesteuert.',
+      memory: 'Pollenschlauch: Narbe → Griffel → Samenanlage',
+      visible: ['germinationLayer','tubeLayer'], action: 'growTube'
+    },
+    {
+      title: 'Schritt 5: Männliche Geschlechtszellen wandern zur Samenanlage',
+      text: 'Im Pollenschlauch werden die männlichen Geschlechtszellen bis zur Samenanlage transportiert. Der Pollenschlauch erreicht die Samenanlage durch eine kleine Öffnung.',
+      extra: 'Bei Blütenpflanzen entstehen im Pollenkorn zwei männliche Geschlechtszellen. Für den Grundablauf ist besonders wichtig: Eine davon verschmilzt später mit der Eizelle.',
+      memory: 'Der Pollenschlauch bringt die männlichen Geschlechtszellen zur Eizelle.',
+      visible: ['germinationLayer','tubeLayer','spermLayer'], action: 'moveSperm'
+    },
+    {
+      title: 'Schritt 6: Befruchtung',
+      text: 'Eine männliche Geschlechtszelle aus dem Pollen verschmilzt mit der Eizelle. Dabei vereinigen sich die Zellkerne. Es entsteht die befruchtete Eizelle, die Zygote.',
+      extra: 'Aus der Zygote entwickelt sich später der Embryo der neuen Pflanze. Blütenpflanzen besitzen zusätzlich eine zweite Verschmelzung zur Bildung von Nährgewebe; das ist sogenanntes Zusatzwissen zur doppelten Befruchtung.',
+      memory: 'Befruchtung = Verschmelzung von männlicher Geschlechtszelle und Eizelle.',
+      visible: ['germinationLayer','tubeLayer','fertilizationLayer'], action: 'fertilize'
+    },
+    {
+      title: 'Schritt 7: Samen und Frucht entstehen',
+      text: 'Nach der Befruchtung beginnt die Entwicklung: Aus der Samenanlage entsteht ein Samen. Der Fruchtknoten entwickelt sich zur Frucht.',
+      extra: 'Im Samen liegt der Embryo geschützt. Unter passenden Bedingungen kann aus ihm später eine neue Pflanze keimen.',
+      memory: 'Samenanlage → Samen | Fruchtknoten → Frucht',
+      visible: ['afterLayer']
+    }
+  ];
+
+  const allLayers = ['overviewLabels','pollinationLayer','germinationLayer','tubeLayer','spermLayer','fertilizationLayer','afterLayer'];
+  let stepIndex = 0;
+
+  const infoTitle = document.getElementById('infoTitle');
+  const infoText = document.getElementById('infoText');
+  const infoExtra = document.getElementById('infoExtra');
+  const infoMemory = document.getElementById('infoMemory');
+  const stepBadge = document.getElementById('stepBadge');
+  const prevBtn = document.getElementById('prevBtn');
+  const nextBtn = document.getElementById('nextBtn');
+  const progress = document.getElementById('progress');
+
+  steps.forEach((_,i)=>{
+    const d=document.createElement('span');
+    d.className='dot';
+    d.setAttribute('aria-label',`Schritt ${i+1}`);
+    progress.appendChild(d);
+  });
+
+  function setLayer(id, visible){
+    const el=document.getElementById(id);
+    if(!el) return;
+    el.classList.toggle('hidden-step', !visible);
+  }
+
+  function resetAnimations(){
+    const pollen=document.getElementById('movingPollen');
+ pollen.setAttribute('cx','505'); pollen.setAttribute('cy','188');
+    pollen.style.transition='none';
+
+    const tube=document.getElementById('tubePath');
+    const tubeOutline=document.getElementById('tubeOutline');
+    [tube,tubeOutline].forEach(t=>{
+      t.style.transition='none';
+      t.style.strokeDasharray='520';
+      t.style.strokeDashoffset='520';
+    });
+
+    const s1=document.getElementById('sperm1');
+    const s2=document.getElementById('sperm2');
+    [s1,s2].forEach(s=>{s.style.transition='none';s.setAttribute('transform','translate(0 0)')});
+
+    const glow=document.getElementById('zygoteGlow');
+    glow.classList.remove('pulse','glow');
+    void glow.getBoundingClientRect();
+  }
+
+  function runAction(action){
+    if(!action) return;
+    if(action==='pollinate'){
+      const pollen=document.getElementById('movingPollen');
+      requestAnimationFrame(()=>{
+        pollen.style.transition='cx 1.4s ease-in-out, cy 1.4s ease-in-out';
+        pollen.setAttribute('cx','584'); pollen.setAttribute('cy','153');
+      });
+    }
+    if(action==='growTube'){
+      const tube=document.getElementById('tubePath');
+      const tubeOutline=document.getElementById('tubeOutline');
+      requestAnimationFrame(()=>{
+        [tube,tubeOutline].forEach(t=>{
+          t.style.transition='stroke-dashoffset 1.8s ease-in-out';
+          t.style.strokeDashoffset='0';
+        });
+      });
+    }
+    if(action==='moveSperm'){
+      const s1=document.getElementById('sperm1');
+      const s2=document.getElementById('sperm2');
+      requestAnimationFrame(()=>{
+        s1.style.transition='transform 1.5s ease-in-out';
+        s2.style.transition='transform 1.7s ease-in-out';
+        s1.setAttribute('transform','translate(-5 246)');
+        s2.setAttribute('transform','translate(-2 217)');
+      });
+    }
+    if(action==='fertilize'){
+      const glow=document.getElementById('zygoteGlow');
+      glow.classList.add('pulse','glow');
+    }
+  }
+
+  function renderStep(){
+    resetAnimations();
+    const s=steps[stepIndex];
+    allLayers.forEach(id=>setLayer(id, s.visible.includes(id)));
+    // In later steps the already-grown Pollenschlauch must remain visible.
+    if(stepIndex >= 4 && s.visible.includes('tubeLayer')){
+      ['tubePath','tubeOutline'].forEach(id=>{
+        const t=document.getElementById(id);
+        t.style.transition='none';
+        t.style.strokeDashoffset='0';
+      });
+    }
+    infoTitle.textContent=s.title;
+    infoText.textContent=s.text;
+    infoExtra.textContent=s.extra;
+    infoMemory.textContent=s.memory;
+    stepBadge.textContent=`Schritt ${stepIndex+1} von ${steps.length}`;
+    prevBtn.disabled=stepIndex===0;
+    nextBtn.textContent=stepIndex===steps.length-1 ? 'Zum Quiz ↓' : 'Weiter →';
+    [...progress.children].forEach((d,i)=>{
+      d.className='dot'+(i===stepIndex?' active':i<stepIndex?' done':'');
+    });
+    setTimeout(()=>runAction(s.action),80);
+  }
+
+  prevBtn.addEventListener('click',()=>{
+    if(stepIndex>0){stepIndex--;renderStep();}
+  });
+  nextBtn.addEventListener('click',()=>{
+    if(stepIndex<steps.length-1){stepIndex++;renderStep();}
+    else document.getElementById('quizSection').scrollIntoView({behavior:'smooth'});
+  });
+
+  renderStep();
+
+  const quizData = [
+    {
+      q:'Was geschieht bei der Bestäubung?',
+      options:['Eine männliche Geschlechtszelle aus dem Pollen verschmilzt mit der Eizelle.','Ein Pollenkorn gelangt auf die Narbe.','Aus der Samenanlage entsteht ein Samen.','Der Fruchtknoten wird zur Frucht.'],
+      answer:1,
+      explain:'Bei der Bestäubung wird Pollen auf die Narbe übertragen. Die Befruchtung findet erst später statt.'
+    },
+    {
+      q:'Wo entstehen die Pollenkörner einer Blüte?',
+      options:['In den Staubbeuteln','In der Narbe','In der Samenanlage','Im Fruchtknoten'],
+      answer:0,
+      explain:'Die Staubbeutel gehören zu den Staubblättern und bilden die Pollenkörner.'
+    },
+    {
+      q:'Welche Reihenfolge beschreibt den Weg des Pollenschlauchs am besten?',
+      options:['Narbe → Griffel → Samenanlage','Samenanlage → Narbe → Staubbeutel','Staubbeutel → Fruchtknoten → Narbe','Fruchtknoten → Griffel → Staubbeutel'],
+      answer:0,
+      explain:'Der Pollenschlauch beginnt am Pollenkorn auf der Narbe, wächst durch den Griffel und erreicht eine Samenanlage.'
+    },
+    {
+      q:'Welche Aufgabe hat der Pollenschlauch?',
+      options:['Er transportiert Wasser zu den Blättern.','Er bringt männliche Geschlechtszellen zur Samenanlage.','Er bildet die Blütenblätter.','Er fängt Insekten auf der Narbe ein.'],
+      answer:1,
+      explain:'Der Pollenschlauch dient als Transportweg für die männlichen Geschlechtszellen bis zur Samenanlage.'
+    },
+    {
+      q:'Richtig oder falsch? Bestäubung und Befruchtung sind genau derselbe Vorgang.',
+      options:['Richtig','Falsch'],
+      answer:1,
+      explain:'Falsch. Bestäubung ist die Übertragung von Pollen auf die Narbe; Befruchtung ist die Verschmelzung von Geschlechtszellen.'
+    },
+    {
+      q:'Wo befindet sich die Eizelle, die bei der Befruchtung verschmilzt?',
+      options:['Im Staubbeutel','Im Blütenblatt','In einer Samenanlage','Auf der Narbe'],
+      answer:2,
+      explain:'Die Eizelle liegt in der Samenanlage, die sich im Fruchtknoten befindet.'
+    },
+    {
+      q:'Was entsteht direkt durch die Verschmelzung einer männlichen Geschlechtszelle mit der Eizelle?',
+      options:['Eine Zygote','Ein Pollenkorn','Ein Staubbeutel','Eine Narbe'],
+      answer:0,
+      explain:'Die befruchtete Eizelle heißt Zygote. Aus ihr entwickelt sich der Embryo der neuen Pflanze.'
+    },
+    {
+      q:'Was entwickelt sich nach der Befruchtung aus der Samenanlage?',
+      options:['Ein Samen','Ein Staubblatt','Eine Narbe','Ein Blütenblatt'],
+      answer:0,
+      explain:'Die Samenanlage entwickelt sich zum Samen. Darin liegt später der Embryo geschützt.'
+    },
+    {
+      q:'Was entwickelt sich nach der Befruchtung bei vielen Blütenpflanzen aus dem Fruchtknoten?',
+      options:['Der Pollenschlauch','Die Frucht','Der Staubbeutel','Die Narbe'],
+      answer:1,
+      explain:'Der Fruchtknoten entwickelt sich zur Frucht und umschließt häufig die Samen.'
+    },
+    {
+      q:'Welcher Vorgang muss zeitlich vor der Befruchtung stattfinden?',
+      options:['Bestäubung','Samenkeimung','Fruchtreife','Bildung eines neuen Blattes aus dem Embryo'],
+      answer:0,
+      explain:'Zuerst muss Pollen auf die Narbe gelangen. Danach kann der Pollenschlauch wachsen und die Befruchtung ermöglichen.'
+    }
+  ];
+
+  const quizContainer=document.getElementById('quizContainer');
+  const scoreBox=document.getElementById('scoreBox');
+  const quizResult=document.getElementById('quizResult');
+  const restartQuiz=document.getElementById('restartQuiz');
+  let state=[];
+
+  function renderQuiz(){
+    quizContainer.innerHTML='';
+    quizResult.className='quiz-result';
+    quizResult.innerHTML='';
+    state=quizData.map(()=>({attempts:0,finished:false,earned:false}));
+
+    quizData.forEach((item,qi)=>{
+      const q=document.createElement('article');
+      q.className='question';
+      q.dataset.index=qi;
+      q.innerHTML=`<div class="qhead"><div class="qnum">${qi+1}</div><div class="qtext">${item.q}</div></div>`;
+      const opts=document.createElement('div');
+      opts.className='options';
+      item.options.forEach((label,oi)=>{
+        const b=document.createElement('button');
+        b.className='option';
+        b.type='button';
+        b.textContent=label;
+        b.addEventListener('click',()=>answerQuestion(qi,oi,b));
+        opts.appendChild(b);
+      });
+      const fb=document.createElement('div');
+      fb.className='feedback';
+      fb.id=`fb${qi}`;
+      q.appendChild(opts);q.appendChild(fb);quizContainer.appendChild(q);
+    });
+    updateScore();
+  }
+
+  function answerQuestion(qi,oi,button){
+    const st=state[qi];
+    if(st.finished) return;
+    const item=quizData[qi];
+    const questionEl=quizContainer.querySelector(`.question[data-index="${qi}"]`);
+    const buttons=[...questionEl.querySelectorAll('.option')];
+    const fb=document.getElementById(`fb${qi}`);
+
+    if(oi===item.answer){
+      st.finished=true;st.earned=true;
+      button.classList.add('correct');
+      buttons.forEach((b,i)=>{b.disabled=true;if(i!==oi)b.classList.add('dim')});
+      fb.className='feedback show good';
+      fb.textContent=`🏆 Richtig! ${item.explain}`;
+    }else{
+      st.attempts++;
+      button.classList.add('wrong');
+      button.disabled=true;
+      if(st.attempts===1){
+        fb.className='feedback show retry';
+        fb.textContent='Versuch es noch einmal 😉';
+      }else{
+        st.finished=true;
+        buttons[item.answer].classList.add('correct');
+        buttons.forEach((b,i)=>{b.disabled=true;if(i!==item.answer && !b.classList.contains('wrong')) b.classList.add('dim')});
+        fb.className='feedback show reveal';
+        const solution=item.options[item.answer].replace(/[.!?]+$/,'');
+        fb.textContent=`Lösung: ${solution}. ${item.explain}`;
+      }
+    }
+    updateScore();
+    checkFinished();
+  }
+
+  function updateScore(){
+    const earned=state.filter(s=>s.earned).length;
+    scoreBox.textContent=`🏆 ${earned} von ${quizData.length}`;
+  }
+
+  function checkFinished(){
+    if(state.every(s=>s.finished)){
+      const earned=state.filter(s=>s.earned).length;
+      const firstTry=state.filter(s=>s.earned && s.attempts===0).length;
+      quizResult.className='quiz-result show';
+      quizResult.innerHTML=`<strong>Geschafft! 🏆 ${earned} von ${quizData.length} Aufgaben gelöst.</strong><br><span>${firstTry} davon direkt beim ersten Versuch.</span>`;
+    }
+  }
+
+  restartQuiz.addEventListener('click',()=>{
+    renderQuiz();
+    document.getElementById('quizSection').scrollIntoView({behavior:'smooth',block:'start'});
+  });
+
+  renderQuiz();
+})();
+</script>
+</body>
+</html>
