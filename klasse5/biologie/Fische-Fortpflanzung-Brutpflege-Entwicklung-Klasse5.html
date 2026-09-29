@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Fische – Fortpflanzung, Brutpflege und Entwicklung | Klasse 5</title>
+<style>
+  :root{
+    --bg:#eef7fb;
+    --paper:#ffffff;
+    --ink:#17313a;
+    --muted:#58717b;
+    --accent:#2f7fa2;
+    --accent2:#8cc7d9;
+    --soft:#e8f5f9;
+    --line:#cfe5ec;
+    --ok:#1d7a46;
+    --okbg:#e7f7ee;
+    --bad:#9a3e3e;
+    --badbg:#fdeeee;
+    --gold:#c99213;
+    --shadow:0 16px 40px rgba(37, 92, 112, .14);
+    --radius:24px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;font-family:Calibri,Arial,sans-serif;background:linear-gradient(180deg,#dff1f8 0,#f4fbfd 35%,#eef7fb 100%);color:var(--ink)}
+  body::before{content:"";position:fixed;inset:0;pointer-events:none;background-image:radial-gradient(circle at 10% 20%,rgba(255,255,255,.8),transparent 26%),radial-gradient(circle at 90% 5%,rgba(255,255,255,.55),transparent 24%);z-index:-1}
+  .shell{max-width:1180px;margin:auto;padding:28px 18px 60px}
+  .hero{background:linear-gradient(135deg,#0e5574,#2f7fa2 60%,#58a9c4);color:white;border-radius:32px;padding:34px;box-shadow:var(--shadow);position:relative;overflow:hidden}
+  .hero::after{content:"";position:absolute;width:300px;height:300px;border-radius:50%;background:rgba(255,255,255,.08);right:-80px;top:-90px}
+  .hero h1{font-size:clamp(30px,5vw,54px);margin:0 0 10px;line-height:1.05}
+  .hero p{font-size:19px;max-width:820px;margin:0;line-height:1.5;color:#eaf8fc}
+  .badge{display:inline-block;background:#f6d77b;color:#17313a;padding:7px 11px;border-radius:999px;font-weight:700;margin-bottom:16px}
+  .nav{display:flex;gap:10px;flex-wrap:wrap;margin:20px 0 30px}
+  .nav a{text-decoration:none;color:var(--ink);background:white;border:1px solid var(--line);padding:9px 13px;border-radius:999px;font-weight:700;box-shadow:0 5px 16px rgba(39,89,110,.08)}
+  section{background:var(--paper);border:1px solid var(--line);border-radius:var(--radius);padding:28px;margin:22px 0;box-shadow:0 10px 26px rgba(39,89,110,.08)}
+  h2{margin:0 0 14px;font-size:30px;color:#174b60}
+  h3{margin:18px 0 10px;color:#245f78}
+  p,li{font-size:18px;line-height:1.55}
+  .lead{font-size:20px;color:#345e6d}
+  .grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px}
+  .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}
+  .card{background:var(--soft);border:1px solid var(--line);border-radius:20px;padding:18px}
+  .card strong{color:#155a75}
+  .mini-title{font-size:18px;font-weight:700;color:#245f78;margin-bottom:8px}
+  .fact{border-left:6px solid var(--accent2);background:#f8fcfd;padding:14px 16px;border-radius:14px;margin:14px 0}
+  .warn{border-left-color:#e0a532;background:#fff9e7}
+  .diagram{background:#0e5674;border-radius:22px;padding:18px;overflow:hidden}
+  .diagram svg{width:100%;height:auto;display:block}
+  .timeline{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;align-items:center}
+  .step{background:#f7fcfe;border:1px solid var(--line);border-radius:18px;padding:14px;text-align:center;min-height:138px;display:flex;flex-direction:column;justify-content:center;gap:8px}
+  .arrow{text-align:center;font-size:28px;color:var(--accent)}
+  .wordbox{display:flex;flex-wrap:wrap;gap:8px;padding:12px;background:#fff8dc;border:1px solid #eddc9c;border-radius:16px;margin:12px 0}
+  .word{background:white;border:1px solid #dec771;border-radius:999px;padding:8px 12px;font-weight:700;cursor:pointer}
+  .word:hover{transform:translateY(-1px)}
+  .quiz{margin-top:16px;padding:18px;border:1px solid var(--line);border-radius:18px;background:#fbfeff}
+  .quiz h3{margin-top:0}
+  .options{display:grid;gap:10px;margin:12px 0}
+  .option{display:flex;align-items:flex-start;gap:10px;background:white;border:1px solid var(--line);padding:12px;border-radius:14px;cursor:pointer}
+  .option:hover{border-color:var(--accent2)}
+  .quiz input[type="text"]{width:100%;font-size:18px;padding:11px 12px;border:1px solid #bcd7e1;border-radius:12px;outline:none}
+  .quiz input[type="text"]:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(47,127,162,.12)}
+  button{border:0;border-radius:12px;padding:10px 15px;font-size:16px;font-weight:700;cursor:pointer;background:var(--accent);color:white}
+  button.secondary{background:#e9f2f5;color:#1e596e;border:1px solid var(--line)}
+  .feedback{margin-top:10px;min-height:44px;padding:10px 12px;border-radius:12px;font-weight:700;display:none}
+  .feedback.ok{display:block;background:var(--okbg);color:var(--ok);border:1px solid #bce4cb}
+  .feedback.bad{display:block;background:var(--badbg);color:var(--bad);border:1px solid #efc6c6}
+  .trophy{font-size:24px;margin-right:4px}
+  .progressWrap{position:sticky;top:10px;z-index:10;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:18px;padding:10px 14px;margin:18px 0;box-shadow:0 8px 24px rgba(39,89,110,.11)}
+  .progressRow{display:flex;justify-content:space-between;gap:12px;align-items:center;font-weight:700}
+  .bar{height:10px;background:#deedf2;border-radius:999px;overflow:hidden;margin-top:8px}
+  .bar>div{height:100%;width:0;background:linear-gradient(90deg,#2f7fa2,#78bcd2);transition:.3s}
+  .score{font-size:20px;color:#174b60}
+  .match-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  select{width:100%;font-size:17px;padding:10px;border:1px solid #bdd8e2;border-radius:12px;background:white}
+  .footer-note{text-align:center;color:var(--muted);font-size:15px;margin-top:26px}
+  .print-only{display:none}
+  .small{font-size:15px;color:var(--muted)}
+  .answer-key{display:none;background:#eefaf1;border:1px solid #cde8d2;border-radius:16px;padding:14px;margin-top:12px}
+  .answer-key.show{display:block}
+  .hero{background:radial-gradient(ellipse at 78% 115%,rgba(126,206,218,.38),transparent 42%),linear-gradient(135deg,#073e5a,#126b88 56%,#2c91a5)}
+  .hero::before{content:"";position:absolute;inset:0;pointer-events:none;background-image:radial-gradient(circle,transparent 0 5px,rgba(222,250,255,.5) 6px 7px,transparent 8px),radial-gradient(circle,transparent 0 3px,rgba(222,250,255,.35) 4px 5px,transparent 6px);background-size:77px 115px,119px 163px;background-position:20px 25px,58px 80px;opacity:.55;animation:bubbleRise 18s linear infinite}
+  @keyframes bubbleRise{from{background-position:20px 25px,58px 80px}to{background-position:20px -210px,58px -245px}}
+  .hero-copy{position:relative;z-index:2;max-width:70%}
+  .hero-fish{position:absolute;z-index:1;right:22px;bottom:7px;width:min(27%,320px);height:auto;filter:drop-shadow(0 10px 12px rgba(0,28,40,.25));opacity:.96}
+  .diagram{position:relative;background:linear-gradient(180deg,#0d6882,#07516d 70%,#063f51);box-shadow:inset 0 0 45px rgba(172,236,246,.12)}
+  .diagram svg{position:relative;z-index:1}
+  .development-scene{position:relative;isolation:isolate;overflow:hidden;border-radius:24px;margin:22px 0;padding:24px 18px 28px;background:linear-gradient(180deg,#c9f0f2,#e6f7ee 72%,#dbc99a)}
+  .water-atmosphere{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
+  .life-cycle{display:grid;grid-template-columns:minmax(0,1fr) 28px minmax(0,1fr) 28px minmax(0,1fr) 28px minmax(0,1fr) 28px minmax(0,1fr);align-items:stretch;gap:7px}
+  .life-stage{min-width:0;display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:12px 9px 14px;border:1px solid rgba(159,202,205,.85);border-radius:18px;background:rgba(255,255,255,.88);box-shadow:0 8px 18px rgba(20,91,102,.11)}
+  .life-stage strong{color:#174e60;font-size:16px;line-height:1.25}
+  .life-stage small{color:#58717b;font-size:14px;line-height:1.3}
+  .life-stage svg{width:100%;max-width:148px;height:102px;overflow:visible}
+  .life-arrow{align-self:center;color:#187b88;font-size:27px;font-weight:700;text-shadow:0 1px 0 #fff}
+  .fish-art .fish-body{fill:url(#fishBodyGradient);stroke:#527c77;stroke-width:2}
+  .fish-art .fish-fin{fill:#7ba6a0;stroke:#527c77;stroke-width:2}
+  .fish-art .fish-line{fill:none;stroke:#e1ddd0;stroke-width:2;stroke-linecap:round}
+  .fish-art .scale{fill:none;stroke:#d4cfbd;stroke-width:1.5;opacity:.7}
+  .sequence-board{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin:16px 0}
+  .sequence-card{min-height:132px;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center;background:#f5fbfc;color:var(--ink);border:1px solid #bfdce3;border-radius:16px;padding:12px 10px 12px 42px;box-shadow:0 5px 14px rgba(36,99,115,.08);transition:transform .15s,border-color .15s,background .15s}
+  .sequence-card:hover{transform:translateY(-2px);border-color:#6db1c0;background:#fff}
+  .sequence-card:focus-visible,.word:focus-visible{outline:3px solid rgba(21,126,143,.42);outline-offset:2px}
+  .sequence-card .sequence-rank{position:absolute;left:10px;top:10px;width:28px;height:28px;display:grid;place-items:center;border-radius:50%;background:#e1f0f2;color:#246578;font-size:16px;font-weight:800}
+  .sequence-card .sequence-illustration{display:block;width:100%;max-width:118px;height:66px;overflow:visible;margin:0 auto}
+  .sequence-card .sequence-name{display:block;line-height:1.2}
+  .sequence-card[aria-pressed="true"]{border-color:#1d8991;background:#eaf8f5}
+  .sequence-card[aria-pressed="true"] .sequence-rank{background:#137d86;color:white}
+  .sequence-help{padding:12px 14px;background:#eef8f8;border-radius:14px;color:#315d67}
+  .sequence-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+  .seabed-label{font-size:14px;color:#53716a;text-align:center;margin:4px 0 0}
+  .species-pictures{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}
+  .species-photo{width:112px;min-width:0;margin:0;overflow:hidden;border:1px solid #cfe2e3;border-radius:13px;background:#fff;box-shadow:0 4px 10px rgba(21,74,84,.09)}
+  .species-photo>a:first-child{display:block;height:72px;background:linear-gradient(#d9f1f4,#f6f4e8)}
+  .species-photo img{width:100%;height:100%;object-fit:contain;display:block}
+  .species-photo figcaption{padding:6px 7px;font-size:13px;line-height:1.2;font-weight:700;color:#244f58}
+  .species-photo figcaption small{display:block;margin-top:4px;font-size:11px;font-weight:400;line-height:1.25;color:#526b70}
+  .species-photo figcaption a{color:#416c75}
+  .life-cycle-heading{margin:0 0 12px;font-size:19px;color:#174b60}
+  .life-cycle-note{margin:12px 5px 0;font-size:14px;color:#375f68;text-align:center}
+  .multi p{line-height:1.9}
+  .multi .blank{display:inline-block!important;width:clamp(116px,16vw,160px)!important;max-width:160px;margin:0 .18em;padding:3px 6px!important;font-size:17px!important;line-height:1.3;vertical-align:baseline;border-radius:7px!important}
+  .wordbox{gap:10px}
+  .word{user-select:none;touch-action:none;box-shadow:0 2px 0 #dec771;transition:transform .14s,box-shadow .14s}
+  .word[draggable="true"]{cursor:grab}
+  .word:active{cursor:grabbing}
+  .blank.drop-ready{outline:3px solid rgba(47,127,162,.2);background:#f0fbff}
+  .species-group-title{margin-bottom:4px}
+  @media(max-width:850px){.grid,.grid3,.match-grid{grid-template-columns:1fr}.timeline{grid-template-columns:1fr}.arrow{transform:rotate(90deg)}.hero{padding:25px}.hero-copy{max-width:100%;padding-bottom:100px}.hero-fish{width:min(48%,260px);right:10px;bottom:0}section{padding:20px}.life-cycle{grid-template-columns:1fr;gap:8px}.life-arrow{transform:rotate(90deg);font-size:23px}.life-stage{display:grid;grid-template-columns:100px 1fr;grid-template-rows:auto auto;text-align:left;min-height:104px}.life-stage svg{grid-row:1/3;width:96px;height:82px}.life-stage strong{align-self:end}.life-stage small{align-self:start}.sequence-board{grid-template-columns:repeat(2,minmax(0,1fr))}.sequence-card:last-child{grid-column:1/-1}}
+  @media(max-width:420px){.sequence-board{grid-template-columns:1fr}.sequence-card:last-child{grid-column:auto}.hero-fish{width:58%}.hero-copy{padding-bottom:88px}}
+  @media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+  @media print{body{background:white}.nav,.progressWrap,.no-print{display:none!important}.shell{max-width:none;padding:0}section,.hero{box-shadow:none;break-inside:avoid}.print-only{display:block}.answer-key{display:block}}
+</style>
+</head>
+<body>
+<div class="shell">
+  <header class="hero">
+    <div class="hero-copy">
+      <div class="badge">Biologie · Klasse 5</div>
+      <h1>Fische – Fortpflanzung, Brutpflege und Entwicklung</h1>
+      <p>Lerne Schritt für Schritt, wie Fische laichen, wie die äußere Befruchtung funktioniert, wie sich Fischlarven entwickeln und warum manche Fischarten Brutpflege betreiben.</p>
+    </div>
+    <svg class="hero-fish fish-art" viewBox="0 0 360 150" role="img" aria-label="Illustration eines Fisches im Wasser">
+      <defs><linearGradient id="fishBodyGradient" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#bfd0b5"/><stop offset=".45" stop-color="#849f8c"/><stop offset="1" stop-color="#526e70"/></linearGradient></defs>
+      <path class="fish-fin" d="M86 74 32 34 43 79 31 119Z"/><path class="fish-fin" d="M142 48 166 16 194 47Z"/><path class="fish-fin" d="M148 98 170 127 202 99Z"/><path class="fish-fin" d="M225 57 248 43 258 67Z"/>
+      <path class="fish-body" d="M53 77Q82 41 157 43Q239 39 303 74Q270 104 201 108Q105 115 53 77Z"/>
+      <path class="fish-line" d="M79 81Q171 91 279 78"/><path class="fish-line" d="M233 53Q217 75 234 98"/><path class="fish-line" d="M248 58Q233 76 247 94"/>
+      <path class="scale" d="M111 59q8 7 0 14m23-20q8 7 0 14m23-15q8 7 0 14m23-13q8 7 0 14m23-10q8 7 0 14M107 82q8 7 0 14m24-13q8 7 0 14m24-13q8 7 0 14m24-13q8 7 0 14m24-15q8 7 0 14"/>
+      <g fill="#d67f60" opacity=".95"><circle cx="108" cy="67" r="3"/><circle cx="139" cy="57" r="2.6"/><circle cx="174" cy="63" r="3"/><circle cx="205" cy="55" r="2.5"/><circle cx="123" cy="93" r="2.5"/><circle cx="158" cy="99" r="3"/><circle cx="192" cy="91" r="2.5"/></g>
+      <circle cx="279" cy="66" r="7" fill="#edf5e8"/><circle cx="281" cy="66" r="3.8" fill="#183b45"/>
+    </svg>
+  </header>
+
+  <div class="nav no-print">
+    <a href="#laichen">Laichen</a><a href="#befruchtung">Befruchtung</a><a href="#entwicklung">Entwicklung</a><a href="#brutpflege">Brutpflege</a><a href="#wanderung">Wanderfische</a><a href="#quiz">Quiz</a>
+  </div>
+
+  <div class="progressWrap no-print">
+    <div class="progressRow"><span>Dein Lernfortschritt</span><span class="score"><span id="score">0</span> / <span id="total">0</span> Pokale</span></div>
+    <div class="bar"><div id="bar"></div></div>
+  </div>
+
+  <section>
+    <h2>Lernziele</h2>
+    <div class="grid3">
+      <div class="card"><div class="mini-title">1. Fortpflanzung</div><p>Du kannst erklären, was <strong>Laich</strong> und <strong>Laichen</strong> bedeuten.</p></div>
+      <div class="card"><div class="mini-title">2. Entwicklung</div><p>Du kennst den Weg von der <strong>befruchteten Eizelle</strong> bis zum <strong>Jungfisch</strong>.</p></div>
+      <div class="card"><div class="mini-title">3. Brutpflege</div><p>Du kannst erklären, warum viele Fische viele Eier ablegen und welche Ausnahmen es gibt.</p></div>
+    </div>
+  </section>
+
+  <section id="laichen">
+    <h2>1. Das Laichen</h2>
+    <p class="lead">Im Körper des Weibchens entstehen Eier. Wenn das Weibchen die Eier ins Wasser ablegt, nennt man die Eier <strong>Laich</strong>. Das Ablegen der Eier heißt <strong>Laichen</strong>.</p>
+    <div class="grid">
+      <div class="card"><div class="mini-title species-group-title">Kies- oder Strömungslaicher</div><p>Die Eier werden auf kiesigem Gewässergrund abgelegt. Manche Arten nutzen Laichgruben und bedecken den Laich anschließend mit Kies.</p><p class="small">Beispiele: Nase, Barbe und Strömer.</p>
+        <div class="species-pictures">
+          <figure class="species-photo"><a href="https://commons.wikimedia.org/wiki/File:Chondrostoma_nasus_(aka).jpg" target="_blank" rel="noopener"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/Chondrostoma_nasus_%28aka%29.jpg/500px-Chondrostoma_nasus_%28aka%29.jpg" alt="Nase (Chondrostoma nasus)" loading="lazy"></a><figcaption>Nase <small><a href="https://commons.wikimedia.org/wiki/File:Chondrostoma_nasus_(aka).jpg" target="_blank" rel="noopener">Bild: André Karwath aka Aka</a> · <a href="https://creativecommons.org/licenses/by-sa/2.5/" target="_blank" rel="noopener">CC BY-SA 2.5</a></small></figcaption></figure>
+          <figure class="species-photo"><a href="https://commons.wikimedia.org/wiki/File:Barbus_barbus.png" target="_blank" rel="noopener"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Barbus_barbus.png/500px-Barbus_barbus.png" alt="Barbe (Barbus barbus)" loading="lazy"></a><figcaption>Barbe <small><a href="https://commons.wikimedia.org/wiki/File:Barbus_barbus.png" target="_blank" rel="noopener">Bild: Linie29 / Ellicrum</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></small></figcaption></figure>
+          <figure class="species-photo"><a href="https://commons.wikimedia.org/wiki/File:Leuciscus_souffia_vaskos_csabak.jpg" target="_blank" rel="noopener"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a3/Leuciscus_souffia_vaskos_csabak.jpg" alt="Strömer (Leuciscus souffia, heute Telestes souffia)" loading="lazy"></a><figcaption>Strömer <small><a href="https://commons.wikimedia.org/wiki/File:Leuciscus_souffia_vaskos_csabak.jpg" target="_blank" rel="noopener">Bild: Zsoldos Márton</a> · <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a></small></figcaption></figure>
+        </div>
+      </div>
+      <div class="card"><div class="mini-title species-group-title">Kraut- oder Haftlaicher</div><p>Die Eier werden an Wasserpflanzen, Wurzeln oder Steinen abgelegt.</p><p class="small">Beispiele: Karpfen, Schleie und Hecht.</p>
+        <div class="species-pictures">
+          <figure class="species-photo"><a href="https://commons.wikimedia.org/wiki/File:Cyprinus_carpio_01.jpg" target="_blank" rel="noopener"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/49/Cyprinus_carpio_01.jpg/500px-Cyprinus_carpio_01.jpg" alt="Karpfen (Cyprinus carpio)" loading="lazy"></a><figcaption>Karpfen <small><a href="https://commons.wikimedia.org/wiki/File:Cyprinus_carpio_01.jpg" target="_blank" rel="noopener">Bild: H. Zell</a> · <a href="https://creativecommons.org/licenses/by-sa/3.0/" target="_blank" rel="noopener">CC BY-SA 3.0</a></small></figcaption></figure>
+          <figure class="species-photo"><a href="https://commons.wikimedia.org/wiki/File:Tinca_tinca_Prague_Vltava_2.jpg" target="_blank" rel="noopener"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Tinca_tinca_Prague_Vltava_2.jpg/500px-Tinca_tinca_Prague_Vltava_2.jpg" alt="Schleie (Tinca tinca)" loading="lazy"></a><figcaption>Schleie <small><a href="https://commons.wikimedia.org/wiki/File:Tinca_tinca_Prague_Vltava_2.jpg" target="_blank" rel="noopener">Bild: Karelj</a> · Public domain</small></figcaption></figure>
+          <figure class="species-photo"><a href="https://commons.wikimedia.org/wiki/File:Esox_lucius1.jpg" target="_blank" rel="noopener"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Esox_lucius1.jpg/500px-Esox_lucius1.jpg" alt="Hecht (Esox lucius), naturkundliche Illustration" loading="lazy"></a><figcaption>Hecht <small><a href="https://commons.wikimedia.org/wiki/File:Esox_lucius1.jpg" target="_blank" rel="noopener">Zeichnung: Timothy Knepp</a> · Public domain</small></figcaption></figure>
+        </div>
+      </div>
+      <div class="card"><div class="mini-title species-group-title">Freiwasserlaicher</div><p>Die Eier werden in das freie Wasser abgegeben und sinken nach der Befruchtung langsam auf den Grund.</p><p class="small">Ein Beispiel sind Renken (Coregonus-Arten).</p>
+        <div class="species-pictures"><figure class="species-photo"><a href="https://commons.wikimedia.org/wiki/File:Coregonus_lavaretus_(L.).jpg" target="_blank" rel="noopener"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Coregonus_lavaretus_%28L.%29.jpg/500px-Coregonus_lavaretus_%28L.%29.jpg" alt="Renke, Coregonus lavaretus" loading="lazy"></a><figcaption>Renke <small><a href="https://commons.wikimedia.org/wiki/File:Coregonus_lavaretus_(L.).jpg" target="_blank" rel="noopener">Bild: Melechin AV</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></small></figcaption></figure></div>
+      </div>
+      <div class="card"><strong>Laichzeit</strong><p>Je nach Fischart kann die Laichzeit im Frühjahr, Sommer, Herbst oder Winter liegen.</p></div>
+    </div>
+
+    <div class="quiz q" data-answer="laich" data-type="text">
+      <h3>Mini-Quiz 1</h3>
+      <p>Wie nennt man die Eier, die ein Fischweibchen ablegt?</p>
+      <input type="text" aria-label="Antwort" placeholder="Deine Antwort" />
+      <div style="margin-top:10px"><button onclick="checkText(this)">Prüfen</button></div>
+      <div class="feedback"></div>
+    </div>
+  </section>
+
+  <section id="befruchtung">
+    <h2>2. Die äußere Befruchtung</h2>
+    <p>Bei den meisten Fischarten werden die Eier <strong>außerhalb des Körpers</strong> des Weibchens befruchtet. Nach dem Laichen gibt das Männchen eine milchige Samenflüssigkeit über den Laich ab. Samenzellen dringen in die Eier ein; jeweils eine Samenzelle verschmilzt mit einer Eizelle.</p>
+    <div class="diagram" aria-label="Schema der äußeren Befruchtung">
+      <svg viewBox="0 0 900 390" role="img" aria-label="Weibchen und Männchen geben Eier und Samenzellen ins Wasser ab; die Befruchtung geschieht außen">
+        <defs><linearGradient id="waterfish" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#14758a"/><stop offset="1" stop-color="#063f58"/></linearGradient><linearGradient id="troutbody" x1="0" x2="1" y1="0" y2="1"><stop stop-color="#d1d1b3"/><stop offset=".52" stop-color="#8ea9a0"/><stop offset="1" stop-color="#5e7f83"/></linearGradient><marker id="arr" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#dff5ff"/></marker></defs>
+        <rect x="0" y="0" width="900" height="390" rx="26" fill="url(#waterfish)"/>
+        <g fill="none" stroke="#bde9ed" opacity=".42"><circle cx="115" cy="46" r="9"/><circle cx="137" cy="25" r="4"/><circle cx="524" cy="42" r="7"/><circle cx="548" cy="21" r="3"/><circle cx="801" cy="71" r="10"/><circle cx="825" cy="46" r="4"/></g>
+        <path d="M0 276 Q145 249 288 274T580 269T900 278V390H0Z" fill="#174b50"/><path d="M0 302Q170 280 332 302T643 298T900 308V390H0Z" fill="#a98353" opacity=".82"/>
+        <g fill="#c4a36e" stroke="#e0c790" stroke-width="2"><ellipse cx="70" cy="324" rx="19" ry="11"/><ellipse cx="111" cy="341" rx="24" ry="13"/><ellipse cx="174" cy="320" rx="21" ry="12"/><ellipse cx="238" cy="350" rx="28" ry="14"/><ellipse cx="710" cy="333" rx="24" ry="13"/><ellipse cx="778" cy="347" rx="30" ry="14"/><ellipse cx="850" cy="320" rx="21" ry="12"/></g>
+        <g fill="none" stroke="#54a77c" stroke-width="8" stroke-linecap="round"><path d="M32 327Q18 283 37 251Q48 228 38 201M38 288Q64 267 61 239"/><path d="M861 335Q880 287 859 250Q848 227 862 197M861 286Q829 266 834 233"/><path d="M815 330Q794 299 804 270"/></g><g fill="none" stroke="#91cb89" stroke-width="4"><path d="M37 260q-20-16-20-29m39 30q18-15 15-32M860 263q21-17 22-31m-43 39q-19-14-17-32"/></g>
+        <g aria-label="Forellenweibchen" transform="translate(65 62)">
+          <path d="M62 81 8 42 17 82 8 124Z" fill="#738e89" stroke="#ced9c4" stroke-width="2"/><path d="m131 49 26-29 27 31m-49 48 31 27 29-29" fill="#789994" stroke="#ced9c4" stroke-width="2"/>
+          <path d="M40 82Q78 39 163 46Q237 48 282 80Q249 111 170 115Q85 116 40 82Z" fill="url(#troutbody)" stroke="#d5dfd0" stroke-width="2"/>
+          <path d="M80 88Q161 96 257 80M229 54Q214 80 231 104M238 57Q225 80 240 101" fill="none" stroke="#e7e5d7" stroke-width="2"/>
+          <path d="M100 61q9 7 0 14m24-20q9 7 0 14m25-14q9 7 0 14m25-12q9 7 0 14m24-9q9 7 0 14m-99 18q9 7 0 14m25-12q9 7 0 14m25-11q9 7 0 14m25-13q9 7 0 14" fill="none" stroke="#d4d6c5" stroke-width="1.5" opacity=".8"/>
+          <g fill="#ca775b" stroke="#f4d9c6" stroke-width="2"><circle cx="101" cy="73" r="4"/><circle cx="133" cy="57" r="3"/><circle cx="163" cy="72" r="4"/><circle cx="196" cy="58" r="3"/><circle cx="118" cy="96" r="3"/><circle cx="153" cy="103" r="4"/><circle cx="189" cy="91" r="3"/></g>
+          <circle cx="258" cy="70" r="7" fill="#f1f2df"/><circle cx="260" cy="70" r="3.5" fill="#183a40"/>
+        </g>
+        <g aria-label="Forellenmännchen" transform="translate(515 67) scale(.92)">
+          <path d="M62 81 8 42 17 82 8 124Z" fill="#738e89" stroke="#ced9c4" stroke-width="2"/><path d="m131 49 26-29 27 31m-49 48 31 27 29-29" fill="#789994" stroke="#ced9c4" stroke-width="2"/>
+          <path d="M40 82Q78 39 163 46Q237 48 282 80Q249 111 170 115Q85 116 40 82Z" fill="url(#troutbody)" stroke="#d5dfd0" stroke-width="2"/>
+          <path d="M80 88Q161 96 257 80M229 54Q214 80 231 104M238 57Q225 80 240 101" fill="none" stroke="#e7e5d7" stroke-width="2"/>
+          <path d="M100 61q9 7 0 14m24-20q9 7 0 14m25-14q9 7 0 14m25-12q9 7 0 14m24-9q9 7 0 14m-99 18q9 7 0 14m25-12q9 7 0 14m25-11q9 7 0 14m25-13q9 7 0 14" fill="none" stroke="#d4d6c5" stroke-width="1.5" opacity=".8"/>
+          <g fill="#ca775b" stroke="#f4d9c6" stroke-width="2"><circle cx="101" cy="73" r="4"/><circle cx="133" cy="57" r="3"/><circle cx="163" cy="72" r="4"/><circle cx="196" cy="58" r="3"/><circle cx="118" cy="96" r="3"/><circle cx="153" cy="103" r="4"/><circle cx="189" cy="91" r="3"/></g>
+          <circle cx="258" cy="70" r="7" fill="#f1f2df"/><circle cx="260" cy="70" r="3.5" fill="#183a40"/>
+        </g>
+        <text x="126" y="72" fill="#f5fcfa" font-size="22" font-family="Calibri" font-weight="700">Weibchen</text><text x="575" y="75" fill="#f5fcfa" font-size="22" font-family="Calibri" font-weight="700">Männchen</text>
+        <g fill="#f8bd68" stroke="#ffe0a0" stroke-width="2"><circle cx="359" cy="280" r="12"/><circle cx="388" cy="291" r="11"/><circle cx="417" cy="278" r="12"/><circle cx="445" cy="294" r="11"/><circle cx="472" cy="281" r="12"/><circle cx="502" cy="295" r="11"/><circle cx="531" cy="280" r="12"/></g>
+        <g fill="#d8f7fb"><circle cx="531" cy="219" r="5"/><circle cx="551" cy="203" r="4"/><circle cx="573" cy="220" r="4"/><circle cx="593" cy="203" r="5"/><circle cx="613" cy="216" r="4"/></g>
+        <path d="M565 238Q530 256 502 274" fill="none" stroke="#eafcff" stroke-width="4" marker-end="url(#arr)"/>
+        <text x="325" y="344" fill="white" font-size="22" font-family="Calibri">Eizellen / Laich</text><text x="566" y="185" fill="white" font-size="21" font-family="Calibri">Samenzellen</text>
+      </svg>
+    </div>
+    <div class="fact"><strong>Merke:</strong> Die Befruchtung heißt <strong>äußere Befruchtung</strong>, weil sie außerhalb des Körpers des Weibchens stattfindet.</div>
+
+    <div class="quiz q" data-answer="außerhalb" data-type="mc">
+      <h3>Mini-Quiz 2</h3>
+      <p>Wo findet die äußere Befruchtung statt?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q2" value="im Körper des Weibchens"> Im Körper des Weibchens</label>
+        <label class="option"><input type="radio" name="q2" value="außerhalb"> Außerhalb des Körpers des Weibchens</label>
+        <label class="option"><input type="radio" name="q2" value="im Ei vor dem Laichen"> Im Ei vor dem Laichen</label>
+      </div>
+      <button onclick="checkMC(this)">Prüfen</button><div class="feedback"></div>
+    </div>
+  </section>
+
+  <section id="entwicklung">
+    <h2>3. Die Entwicklung der Fischlarven</h2>
+    <p>Nach der Befruchtung entwickeln sich die Eier weiter. Häufig schlüpfen schon nach wenigen Tagen Fischlarven. Am Bauch tragen sie zunächst einen <strong>Dottersack</strong>. Er versorgt sie in den ersten Tagen mit wichtigen Nährstoffen. Später werden aus den Fischlarven Jungfische.</p>
+    <div class="development-scene">
+      <svg class="water-atmosphere" viewBox="0 0 1100 450" preserveAspectRatio="none" aria-hidden="true">
+        <defs><linearGradient id="developmentWater" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#bdebf0"/><stop offset=".66" stop-color="#dff4e9"/><stop offset="1" stop-color="#cbb17c"/></linearGradient></defs>
+        <rect width="1100" height="450" fill="url(#developmentWater)"/>
+        <g fill="none" stroke="#fff" stroke-width="3" opacity=".65"><circle cx="60" cy="52" r="11"/><circle cx="87" cy="25" r="5"/><circle cx="190" cy="92" r="7"/><circle cx="333" cy="41" r="12"/><circle cx="360" cy="19" r="5"/><circle cx="535" cy="73" r="9"/><circle cx="740" cy="38" r="13"/><circle cx="772" cy="67" r="6"/><circle cx="982" cy="51" r="10"/><circle cx="1010" cy="21" r="4"/></g>
+        <path d="M0 379Q155 354 300 380T600 376T900 383T1100 372V450H0Z" fill="#ad9668" opacity=".75"/>
+        <g fill="#d2ba88" stroke="#a48c60" stroke-width="2"><ellipse cx="82" cy="408" rx="35" ry="13"/><ellipse cx="225" cy="424" rx="44" ry="14"/><ellipse cx="415" cy="405" rx="31" ry="12"/><ellipse cx="688" cy="421" rx="49" ry="15"/><ellipse cx="906" cy="405" rx="37" ry="13"/><ellipse cx="1045" cy="425" rx="33" ry="12"/></g>
+        <g fill="none" stroke="#318764" stroke-width="9" stroke-linecap="round"><path d="M25 423Q8 372 31 330Q44 302 31 267M37 391Q67 360 59 323M177 427Q159 378 181 345Q195 322 186 286M1073 420Q1091 375 1071 337Q1060 315 1075 278M1028 426Q1042 385 1021 357Q1008 340 1018 310M898 420Q881 379 899 352"/></g>
+        <g fill="none" stroke="#72b47a" stroke-width="4"><path d="M31 342q-22-19-17-39m39 79q23-18 20-43m108 37q-22-18-19-39m931 38q23-17 17-40m-42 58q-23-15-18-36m-153 60q-19-17-14-34"/></g>
+      </svg>
+      <h3 class="life-cycle-heading">So entwickelt sich ein Fisch</h3>
+      <div class="life-cycle" aria-label="Entwicklungsstadien vom Ei bis zum erwachsenen Fisch">
+        <div class="life-stage">
+          <svg viewBox="0 0 180 112" role="img" aria-label="Unbefruchtete Eizelle mit schützender Hülle"><circle cx="90" cy="54" r="39" fill="#fffdf4" stroke="#d8c27d" stroke-width="6"/><circle cx="90" cy="54" r="27" fill="#f7e9b9"/><circle cx="90" cy="54" r="15" fill="#f5c95c"/><circle cx="104" cy="39" r="4" fill="#fff" opacity=".9"/></svg>
+          <strong>Eizelle / Laich</strong><small>Die Eizelle liegt geschützt in einer Hülle.</small>
+        </div><div class="life-arrow" aria-hidden="true">➜</div>
+        <div class="life-stage">
+          <svg viewBox="0 0 180 112" role="img" aria-label="Befruchtete Eizelle, in der sich die ersten Zellteilungen zeigen"><circle cx="90" cy="54" r="43" fill="#fffdf4" stroke="#d8c27d" stroke-width="5"/><circle cx="90" cy="54" r="31" fill="#f8edc7" stroke="#ecd995" stroke-width="2"/><g fill="#f3c85d" stroke="#d9a33d" stroke-width="2"><circle cx="80" cy="46" r="9"/><circle cx="99" cy="46" r="9"/><circle cx="80" cy="64" r="9"/><circle cx="99" cy="64" r="9"/></g><circle cx="90" cy="55" r="5" fill="#ffe59a"/></svg>
+          <strong>Befruchtete Eizelle</strong><small>Nach der Befruchtung teilen sich die Zellen.</small>
+        </div><div class="life-arrow" aria-hidden="true">➜</div>
+        <div class="life-stage">
+          <svg viewBox="0 0 180 112" role="img" aria-label="Embryo entwickelt sich innerhalb des Eis neben dem Dotter"><circle cx="83" cy="55" r="42" fill="#fffdf4" stroke="#d8c27d" stroke-width="5"/><ellipse cx="76" cy="65" rx="18" ry="14" fill="#f2c75b" stroke="#dfaa40" stroke-width="2"/><path d="M62 51Q70 37 88 39Q101 41 98 49Q94 55 83 52Q73 49 73 58Q76 66 91 62" fill="none" stroke="#78aeb5" stroke-width="8" stroke-linecap="round"/><path d="M93 42l13-8-3 14Z" fill="#78aeb5"/><circle cx="91" cy="41" r="2.8" fill="#244c59"/><path d="M61 47q-7-8-12-8m8 13q-9-5-14-3" fill="none" stroke="#e9bb55" stroke-width="3"/></svg>
+          <strong>Embryo im Ei</strong><small>Der kleine Fisch entwickelt sich weiter.</small>
+        </div><div class="life-arrow" aria-hidden="true">➜</div>
+        <div class="life-stage">
+          <svg viewBox="0 0 180 112" role="img" aria-label="Frisch geschlüpfte Fischlarve mit großem Dottersack und nach hinten gerichteten Brustflossen">
+            <ellipse cx="70" cy="76" rx="25" ry="18" fill="#f5ca61" stroke="#d99c32" stroke-width="3"/><path d="M44 52Q66 36 100 39Q124 40 139 48Q125 57 101 59Q70 63 44 52Z" fill="#82b8bd" stroke="#548992" stroke-width="2"/><path d="M44 52 24 39 28 53 23 66Z" fill="#93c5c7" stroke="#548992" stroke-width="2"/><path d="M77 42l10-12 11 12m-17 15 10 9 11-9" fill="#8abec0" stroke="#548992" stroke-width="2"/><path d="M92 52Q84 59 77 69Q88 64 99 58Z" fill="#e99d4f" stroke="#bc753b" stroke-width="2"/><path d="M111 42q-7 10 0 16" fill="none" stroke="#e6f1db" stroke-width="2"/><circle cx="124" cy="46" r="4.5" fill="#fff"/><circle cx="125" cy="46" r="2.3" fill="#24434a"/><path d="M69 50q-9-6-15-4m16 8q-8 1-12 7" fill="none" stroke="#b9d7d0" stroke-width="2"/>
+          </svg>
+          <strong>Fischlarve mit Dottersack</strong><small>Der Dottersack liefert Nahrung. Die Brustflossen liegen hinter dem Kopf und zeigen nach hinten.</small>
+        </div><div class="life-arrow" aria-hidden="true">➜</div>
+        <div class="life-stage">
+          <svg viewBox="0 0 180 112" role="img" aria-label="Jungfisch mit deutlich ausgebildeten Flossen und Schuppen"><path d="M52 56 13 37 17 57 12 76 52 56Z" fill="#5da7b2"/><path d="M51 56Q71 28 119 35Q146 38 163 56Q143 76 111 78Q70 81 51 56Z" fill="#4096a3" stroke="#277887" stroke-width="2"/><path d="M75 37l12-15 14 15m-10 39 13 17 14-17" fill="#64aab2" stroke="#277887" stroke-width="2"/><path d="M81 48q7 6 0 12m17-17q7 6 0 12m17-11q7 6 0 12m-31 10q7 6 0 12m17-10q7 6 0 12m17-12q7 6 0 12" fill="none" stroke="#b7d8cd" stroke-width="1.7"/><path d="M118 39q-10 17 0 34" fill="none" stroke="#d4e8d8" stroke-width="2"/><circle cx="144" cy="49" r="5" fill="#fff"/><circle cx="145" cy="49" r="2.5" fill="#183e48"/></svg>
+          <strong>Jungfisch wird erwachsen</strong><small>Mit dem Wachstum wird der Fisch geschlechtsreif.</small>
+        </div>
+      </div>
+      <p class="life-cycle-note">Die Zeichnungen zeigen die Stadien vereinfacht. Bei Fischarten können Aussehen und Entwicklungsdauer unterschiedlich sein.</p>
+    </div>
+
+    <div class="quiz q" data-answer="dottersack" data-type="text">
+      <h3>Mini-Quiz 3</h3>
+      <p>Wie heißt der Nährstoffvorrat am Bauch junger Fischlarven?</p>
+      <input type="text" placeholder="Deine Antwort" />
+      <div style="margin-top:10px"><button onclick="checkText(this)">Prüfen</button></div><div class="feedback"></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Übung: Lückentext mit Wortbox</h2>
+    <p>Ziehe passende Wörter aus der gemischten Wortbox in die Lücken. Auf kleinen Bildschirmen kannst du ein Wort antippen; es wird dann in die nächste freie Lücke eingesetzt.</p>
+    <div class="wordbox" aria-label="Wortbox. Ziehe ein Wort in eine Lücke oder klicke es an, um es einzusetzen."><span class="word" draggable="true" tabindex="0" role="button" onclick="fillNext(this)">Laich</span><span class="word" draggable="true" tabindex="0" role="button" onclick="fillNext(this)">Laichen</span><span class="word" draggable="true" tabindex="0" role="button" onclick="fillNext(this)">äußere Befruchtung</span><span class="word" draggable="true" tabindex="0" role="button" onclick="fillNext(this)">Dottersack</span><span class="word" draggable="true" tabindex="0" role="button" onclick="fillNext(this)">Jungfisch</span></div>
+    <div class="quiz q multi" data-type="blanks" data-answers='["Laich","Laichen","äußere Befruchtung","Dottersack","Jungfisch"]'>
+      <p>Die abgelegten Eier eines Fisches nennt man <input class="blank" type="text" aria-label="Lücke 1" autocomplete="off">. Das Ablegen der Eier heißt <input class="blank" type="text" aria-label="Lücke 2" autocomplete="off">. Wenn Ei- und Samenzelle außerhalb des Körpers verschmelzen, spricht man von <input class="blank" type="text" aria-label="Lücke 3" autocomplete="off">. Eine frisch geschlüpfte Fischlarve trägt oft einen <input class="blank" type="text" aria-label="Lücke 4" autocomplete="off">. Später entwickelt sie sich zum <input class="blank" type="text" aria-label="Lücke 5" autocomplete="off">.</p>
+      <button onclick="checkBlanks(this)">Lückentext prüfen</button><button class="secondary" onclick="clearBlanks(this)">Leeren</button><div class="feedback"></div>
+    </div>
+  </section>
+
+  <section id="brutpflege">
+    <h2>4. Brutpflege – meistens wenig, manchmal erstaunlich viel</h2>
+    <p>Viele Fischarten betreiben keine Brutpflege. Eier und Fischlarven sind dann auf sich allein gestellt. Sie müssen selbst Nahrung finden und sind Fressfeinden ausgesetzt. Deshalb entwickeln sich nur aus einem kleinen Teil der vielen Eier später geschlechtsreife Fische.</p>
+    <div class="grid">
+      <div class="card"><div class="mini-title">Viele Eier</div><p>Manche Fischarten legen sehr viele Eier ab. Ein Zanderweibchen kann etwa eine halbe Million Eier ablegen.</p><div class="species-pictures"><figure class="species-photo"><a href="https://commons.wikimedia.org/wiki/File:Sander_lucioperca_seine_09_10_23.jpg" target="_blank" rel="noopener"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/af/Sander_lucioperca_seine_09_10_23.jpg/500px-Sander_lucioperca_seine_09_10_23.jpg" alt="Zander (Sander lucioperca)" loading="lazy"></a><figcaption>Zander <small><a href="https://commons.wikimedia.org/wiki/File:Sander_lucioperca_seine_09_10_23.jpg" target="_blank" rel="noopener">Bild: Nervurax Fishing</a> · <a href="https://creativecommons.org/publicdomain/zero/1.0/" target="_blank" rel="noopener">CC0</a></small></figcaption></figure></div></div>
+      <div class="card"><div class="mini-title">Ausnahme: Stichling</div><p>Das Stichlingsmännchen baut ein Nest, bewacht Eier und Larven und schützt sie. Dadurch steigt ihre Überlebenschance.</p><div class="species-pictures"><figure class="species-photo"><a href="https://commons.wikimedia.org/wiki/File:Three-spined_stickleback_(Gasterosteus_aculeatus).jpg" target="_blank" rel="noopener"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/04/Three-spined_stickleback_%28Gasterosteus_aculeatus%29.jpg/500px-Three-spined_stickleback_%28Gasterosteus_aculeatus%29.jpg" alt="Dreistachliger Stichling (Gasterosteus aculeatus)" loading="lazy"></a><figcaption>Stichling <small><a href="https://commons.wikimedia.org/wiki/File:Three-spined_stickleback_(Gasterosteus_aculeatus).jpg" target="_blank" rel="noopener">Bild: JSutton93</a> · <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank" rel="noopener">CC BY-SA 4.0</a></small></figcaption></figure></div></div>
+    </div>
+    <div class="fact warn"><strong>Ausnahmen bei der Brutpflege:</strong> Einige Arten bewachen, reinigen oder tragen ihre Eier sogar im Maul.</div>
+
+    <div class="quiz q" data-answer="stichling" data-type="mc">
+      <h3>Mini-Quiz 4</h3>
+      <p>Welcher Fisch baut ein Nest und bewacht darin seine Eier und Larven?</p>
+      <div class="options">
+        <label class="option"><input type="radio" name="q4" value="zander"> Zander</label>
+        <label class="option"><input type="radio" name="q4" value="stichling"> Stichling</label>
+        <label class="option"><input type="radio" name="q4" value="karpfen"> Karpfen</label>
+      </div>
+      <button onclick="checkMC(this)">Prüfen</button><div class="feedback"></div>
+    </div>
+  </section>
+
+  <section id="wanderung">
+    <h2>5. Wanderfische: Lachs und Aal</h2>
+    <div class="grid">
+      <div class="card"><strong>Lachs</strong><p>Lachse kehren zum Laichen an den Ort zurück, an dem sie selbst geboren wurden. Dafür verlassen sie das Meer und schwimmen flussaufwärts in sauerstoffreiche Oberläufe.</p><p>Die Jungfische bleiben ungefähr zwei Jahre dort, bevor sie ins Meer ziehen.</p><div class="species-pictures"><figure class="species-photo"><a href="https://commons.wikimedia.org/wiki/File:Salmo_salar_(RFEIMG-0419).jpg" target="_blank" rel="noopener"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/9/97/Salmo_salar_%28RFEIMG-0419%29.jpg/500px-Salmo_salar_%28RFEIMG-0419%29.jpg" alt="Atlantischer Lachs (Salmo salar)" loading="lazy"></a><figcaption>Lachs <small><a href="https://commons.wikimedia.org/wiki/File:Salmo_salar_(RFEIMG-0419).jpg" target="_blank" rel="noopener">Bild: U.S. Food and Drug Administration</a> · Public domain</small></figcaption></figure></div></div>
+      <div class="card"><strong>Europäischer Aal</strong><p>Der Europäische Aal zieht zur Fortpflanzung zur Sargassosee. Von europäischen Küsten und Flüssen aus sind das etwa 7&nbsp;000 km. Die Aallarven benötigen ungefähr drei Jahre, um mit Unterstützung des Golfstroms nach Europa zu gelangen.</p><div class="species-pictures"><figure class="species-photo"><a href="https://commons.wikimedia.org/wiki/File:Anguilla_anguilla_France_1.jpg" target="_blank" rel="noopener"><img src="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c9/Anguilla_anguilla_France_1.jpg/500px-Anguilla_anguilla_France_1.jpg" alt="Europäischer Aal (Anguilla anguilla)" loading="lazy"></a><figcaption>Europäischer Aal <small><a href="https://commons.wikimedia.org/wiki/File:Anguilla_anguilla_France_1.jpg" target="_blank" rel="noopener">Bild: mr_capgras</a> · <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank" rel="noopener">CC BY 4.0</a></small></figcaption></figure></div></div>
+    </div>
+    <div class="quiz q" data-answer="sargassosee" data-type="text">
+      <h3>Mini-Quiz 5</h3><p>Wie heißt das Gebiet, zu dem der Europäische Aal zur Fortpflanzung wandert?</p>
+      <input type="text" placeholder="Deine Antwort" /><div style="margin-top:10px"><button onclick="checkText(this)">Prüfen</button></div><div class="feedback"></div>
+    </div>
+  </section>
+
+  <section id="quiz">
+    <h2>6. Großes Abschlussquiz</h2>
+    <p class="lead">Jetzt testest du dein Wissen. Für jede richtige Antwort bekommst du einen Pokal.</p>
+
+    <div class="quiz q" data-answer="laichen" data-type="mc"><h3>Frage 1</h3><p>Wie nennt man die Eiablage bei Fischen?</p><div class="options"><label class="option"><input type="radio" name="f1" value="laichen"> Laichen</label><label class="option"><input type="radio" name="f1" value="brüten"> Brüten</label><label class="option"><input type="radio" name="f1" value="schlüpfen"> Schlüpfen</label></div><button onclick="checkMC(this)">Prüfen</button><div class="feedback"></div></div>
+
+    <div class="quiz q" data-answer="außen" data-type="mc"><h3>Frage 2</h3><p>Warum heißt die Befruchtung bei vielen Fischarten „äußere Befruchtung“?</p><div class="options"><label class="option"><input type="radio" name="f2" value="außen"> Weil Ei- und Samenzelle außerhalb des Körpers verschmelzen.</label><label class="option"><input type="radio" name="f2" value="haut"> Weil Fische eine äußere Haut besitzen.</label><label class="option"><input type="radio" name="f2" value="meer"> Weil sie nur im Meer stattfindet.</label></div><button onclick="checkMC(this)">Prüfen</button><div class="feedback"></div></div>
+
+    <div class="quiz q" data-answer="nährstoffe" data-type="mc"><h3>Frage 3</h3><p>Welche Aufgabe hat der Dottersack?</p><div class="options"><label class="option"><input type="radio" name="f3" value="nährstoffe"> Er versorgt die Fischlarve mit Nährstoffen.</label><label class="option"><input type="radio" name="f3" value="schwimmen"> Er hilft dem Fisch beim schnellen Schwimmen.</label><label class="option"><input type="radio" name="f3" value="atmen"> Er ersetzt die Kiemen.</label></div><button onclick="checkMC(this)">Prüfen</button><div class="feedback"></div></div>
+
+    <div class="quiz q" data-answer="wenige" data-type="mc"><h3>Frage 4</h3><p>Warum erreichen trotz sehr vieler Eier nur wenige Nachkommen das Erwachsenenalter?</p><div class="options"><label class="option"><input type="radio" name="f4" value="wenige"> Viele Eier und Larven werden nicht geschützt und können gefressen werden.</label><label class="option"><input type="radio" name="f4" value="zu viele"> Weil nur wenige Eier überhaupt ins Wasser gelangen.</label><label class="option"><input type="radio" name="f4" value="kies"> Weil Eier nur auf Kies überleben.</label></div><button onclick="checkMC(this)">Prüfen</button><div class="feedback"></div></div>
+
+    <div class="quiz q" data-answer="nest" data-type="mc"><h3>Frage 5</h3><p>Was macht das Stichlingsmännchen?</p><div class="options"><label class="option"><input type="radio" name="f5" value="nest"> Es baut ein Nest und bewacht Eier und Larven.</label><label class="option"><input type="radio" name="f5" value="meer"> Es bringt die Eier ins Meer.</label><label class="option"><input type="radio" name="f5" value="frisst"> Es frisst den Laich sofort.</label></div><button onclick="checkMC(this)">Prüfen</button><div class="feedback"></div></div>
+
+    <div class="quiz q" data-answer="lachs" data-type="mc"><h3>Frage 6</h3><p>Welcher Fisch schwimmt zum Laichen flussaufwärts in die Oberläufe?</p><div class="options"><label class="option"><input type="radio" name="f6" value="lachs"> Lachs</label><label class="option"><input type="radio" name="f6" value="hecht"> Hecht</label><label class="option"><input type="radio" name="f6" value="schleie"> Schleie</label></div><button onclick="checkMC(this)">Prüfen</button><div class="feedback"></div></div>
+
+    <div class="quiz q" data-answer="7000" data-type="mc"><h3>Frage 7</h3><p>Wie weit ist die Wanderung Europäischer Aale bis zur Sargassosee ungefähr?</p><div class="options"><label class="option"><input type="radio" name="f7" value="700"> etwa 700 km</label><label class="option"><input type="radio" name="f7" value="7000"> etwa 7 000 km</label><label class="option"><input type="radio" name="f7" value="70000"> etwa 70 000 km</label></div><button onclick="checkMC(this)">Prüfen</button><div class="feedback"></div></div>
+
+    <div class="quiz q" data-type="match" data-answer="ok">
+      <h3>Frage 8: Ordne richtig zu</h3>
+      <div class="match-grid">
+        <div><p><strong>Kraut- oder Haftlaicher</strong></p><select data-correct="pflanzen"><option value="">Bitte wählen</option><option value="pflanzen">Eier an Pflanzen, Wurzeln oder Steinen</option><option value="wasser">Eier ins freie Wasser</option><option value="kies">Eier auf Kiesgrund</option></select></div>
+        <div><p><strong>Freiwasserlaicher</strong></p><select data-correct="wasser"><option value="">Bitte wählen</option><option value="pflanzen">Eier an Pflanzen, Wurzeln oder Steinen</option><option value="wasser">Eier ins freie Wasser</option><option value="kies">Eier auf Kiesgrund</option></select></div>
+        <div><p><strong>Kies- oder Strömungslaicher</strong></p><select data-correct="kies"><option value="">Bitte wählen</option><option value="pflanzen">Eier an Pflanzen, Wurzeln oder Steinen</option><option value="wasser">Eier ins freie Wasser</option><option value="kies">Eier auf Kiesgrund</option></select></div>
+      </div>
+      <div style="margin-top:12px"><button onclick="checkMatch(this)">Zuordnung prüfen</button></div><div class="feedback"></div>
+    </div>
+
+    <div class="quiz q" data-type="sequence" data-answer="ok">
+      <h3>Frage 9: Bringe die Entwicklung in die richtige Reihenfolge</h3>
+      <p class="sequence-help">Klicke die Karten nacheinander in der richtigen Reihenfolge an. Die Zahlen werden automatisch vergeben. Wenn du dich verklickst, klicke die zuletzt richtig sortierte Karte noch einmal an.</p>
+      <div class="sequence-board" role="group" aria-label="Entwicklungsstadien zum Sortieren">
+        <button type="button" class="sequence-card" data-correct="4" onclick="assignSequence(this)" aria-pressed="false"><span class="sequence-rank">·</span><span class="sequence-name">Jungfisch</span></button>
+        <button type="button" class="sequence-card" data-correct="2" onclick="assignSequence(this)" aria-pressed="false"><span class="sequence-rank">·</span><span class="sequence-name">befruchtete Eizelle</span></button>
+        <button type="button" class="sequence-card" data-correct="5" onclick="assignSequence(this)" aria-pressed="false"><span class="sequence-rank">·</span><span class="sequence-name">geschlechtsreifer Fisch</span></button>
+        <button type="button" class="sequence-card" data-correct="1" onclick="assignSequence(this)" aria-pressed="false"><span class="sequence-rank">·</span><span class="sequence-name">Eizelle / Laich</span></button>
+        <button type="button" class="sequence-card" data-correct="3" onclick="assignSequence(this)" aria-pressed="false"><span class="sequence-rank">·</span><span class="sequence-name">Fischlarve mit Dottersack</span></button>
+      </div>
+      <div id="sequenceStatus" class="small" aria-live="polite">Noch keine Karten sortiert.</div>
+      <div class="sequence-actions"><button onclick="checkSequence(this)">Reihenfolge prüfen</button><button class="secondary" onclick="resetSequence(this)">Sortierung zurücksetzen</button></div><div class="feedback"></div>
+    </div>
+
+    <div class="quiz q" data-answer="brutpflege" data-type="text"><h3>Frage 10</h3><p>Wie nennt man es, wenn Elterntiere ihre Eier oder Jungtiere bewachen und schützen?</p><input type="text" placeholder="Deine Antwort"/><div style="margin-top:10px"><button onclick="checkText(this)">Prüfen</button></div><div class="feedback"></div></div>
+
+    <div class="card" style="margin-top:18px;text-align:center">
+      <h3>Dein Ergebnis</h3>
+      <p id="resultText">Bearbeite die Aufgaben und sammle Pokale.</p>
+      <button class="secondary no-print" onclick="resetAll()">Alles zurücksetzen</button>
+      <button class="secondary no-print" onclick="window.print()">Drucken</button>
+    </div>
+  </section>
+
+  <section>
+    <h2>Zusammenfassung</h2>
+    <ul>
+      <li>Die abgelegten Eier heißen <strong>Laich</strong>; das Ablegen heißt <strong>Laichen</strong>.</li>
+      <li>Bei den meisten Fischarten findet eine <strong>äußere Befruchtung</strong> statt.</li>
+      <li>Aus den Eiern schlüpfen Fischlarven. Der <strong>Dottersack</strong> versorgt sie zunächst mit Nährstoffen.</li>
+      <li>Viele Fische betreiben keine Brutpflege; es gibt aber Ausnahmen wie den Stichling.</li>
+      <li>Lachs und Aal sind Beispiele für Fische, die zur Fortpflanzung weite Strecken wandern.</li>
+    </ul>
+  </section>
+
+  <p class="footer-note">Selbstständige Lernseite · Biologie Klasse 5 · Inhalt auf Grundlage der bereitgestellten Unterrichtsunterlage<br>© Michele Cuciuffo</p>
+</div>
+
+<script>
+  const norm = s => (s||'').toString().trim().toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/\s+/g,' ');
+  const questions = [...document.querySelectorAll('.q')];
+  document.getElementById('total').textContent = questions.length;
+
+  const wordbox = document.querySelector('.wordbox');
+  if(wordbox){
+    const words=[...wordbox.querySelectorAll('.word')];
+    const originalOrder=[...words];
+    for(let i=words.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[words[i],words[j]]=[words[j],words[i]];}
+    if(words.every((word,index)=>word===originalOrder[index]))words.reverse();
+    words.forEach(word=>{
+      wordbox.appendChild(word);
+      word.addEventListener('dragstart',e=>{e.dataTransfer.setData('text/plain',word.textContent.trim());e.dataTransfer.effectAllowed='copy';});
+      word.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fillNext(word);}});
+    });
+  }
+  document.querySelectorAll('.multi .blank').forEach(field=>{
+    field.addEventListener('dragover',e=>{e.preventDefault();field.classList.add('drop-ready');e.dataTransfer.dropEffect='copy';});
+    field.addEventListener('dragleave',()=>field.classList.remove('drop-ready'));
+    field.addEventListener('drop',e=>{e.preventDefault();field.classList.remove('drop-ready');field.value=e.dataTransfer.getData('text/plain').trim();field.focus();});
+  });
+  document.querySelectorAll('.sequence-board').forEach(board=>updateSequenceBoard(board.closest('.q')));
+
+  function getQuiz(btn){ return btn.closest('.q'); }
+  function updateSequenceBoard(q){
+    if(!q)return;
+    const cards=[...q.querySelectorAll('.sequence-card')];
+    const stages=[...document.querySelectorAll('.life-stage')];
+    let assigned=0;
+    cards.forEach(card=>{
+      const source=stages[Number(card.dataset.correct)-1]?.querySelector('svg');
+      if(source&&!card.querySelector('.sequence-illustration')){
+        const picture=source.cloneNode(true);
+        picture.classList.add('sequence-illustration');picture.setAttribute('aria-hidden','true');picture.setAttribute('focusable','false');picture.removeAttribute('role');picture.removeAttribute('aria-label');
+        card.insertBefore(picture,card.querySelector('.sequence-name'));
+      }
+      const rank=Number(card.dataset.rank||0);
+      const marker=card.querySelector('.sequence-rank');
+      marker.textContent=rank||'·';
+      card.setAttribute('aria-pressed',rank?'true':'false');
+      card.setAttribute('aria-label',(rank?'Nummer '+rank+': ':'')+card.querySelector('.sequence-name').textContent.trim());
+      if(rank)assigned++;
+    });
+    const status=q.querySelector('#sequenceStatus');
+    if(status)status.textContent=assigned?assigned+' von '+cards.length+' Karten sortiert.':'Noch keine Karten sortiert.';
+  }
+  function assignSequence(card){
+    const q=card.closest('.q'), rank=Number(card.dataset.rank||0);
+    if(rank){q.querySelectorAll('.sequence-card').forEach(item=>{if(Number(item.dataset.rank||0)>=rank)delete item.dataset.rank;});}
+    else{
+      const next=[...q.querySelectorAll('.sequence-card')].filter(item=>Number(item.dataset.rank||0)>0).length+1;
+      if(next<=q.querySelectorAll('.sequence-card').length)card.dataset.rank=String(next);
+    }
+    q.dataset.done='0';updateSequenceBoard(q);updateScore();
+  }
+  function resetSequence(btn){
+    const q=btn.closest('.q');q.querySelectorAll('.sequence-card').forEach(card=>delete card.dataset.rank);
+    const fb=q.querySelector('.feedback');fb.className='feedback';fb.textContent='';q.dataset.done='0';q.dataset.attempts='0';updateSequenceBoard(q);updateScore();
+  }
+  function mark(q, ok, extra=''){
+    const fb = q.querySelector('.feedback');
+    if(ok){
+      fb.className='feedback ok';
+      fb.innerHTML='<span class="trophy">🏆</span> Richtig! '+extra;
+      q.dataset.done='1';
+      q.dataset.attempts='0';
+    } else {
+      fb.className='feedback bad';
+      const attempts=Number(q.dataset.attempts||0)+1;
+      q.dataset.attempts=String(attempts);
+      if(attempts===1){
+        fb.textContent='Das war leider noch nicht richtig. Versuch’s noch einmal 😉';
+      } else {
+        fb.textContent='Das war leider noch nicht richtig. Die richtige Lösung: '+solutionFor(q)+'. '+explanationFor(q);
+      }
+      q.dataset.done='0';
+    }
+    updateScore();
+  }
+  function solutionFor(q){
+    const type=q.dataset.type;
+    if(type==='mc'){
+      const answer=[...q.querySelectorAll('input[type="radio"]')].find(input=>input.value===q.dataset.answer);
+      return answer?.closest('label')?.textContent.trim()||q.dataset.answer;
+    }
+    if(type==='text') return q.dataset.answer==='sargassosee'?'Sargassosee':q.dataset.answer==='laich'?'Laich':q.dataset.answer==='dottersack'?'Dottersack':q.dataset.answer;
+    if(type==='blanks') return JSON.parse(q.dataset.answers).join(' · ');
+    if(type==='match') return [...q.querySelectorAll('select')].map(select=>{
+      const label=select.closest('div')?.querySelector('strong')?.textContent.trim()||'Zuordnung';
+      const option=[...select.options].find(item=>item.value===select.dataset.correct)?.textContent.trim();
+      return label+': '+option;
+    }).join(' · ');
+    if(type==='sequence') return [...q.querySelectorAll('.sequence-card')].sort((a,b)=>Number(a.dataset.correct)-Number(b.dataset.correct)).map(card=>card.querySelector('.sequence-name').textContent.trim()).join(' → ');
+    return 'die Lösung aus dem Merksatz';
+  }
+  function explanationFor(q){
+    const prompt=q.querySelector('p')?.textContent.trim()||'';
+    if(q.dataset.type==='blanks') return 'Laich sind die Eier, Laichen ist die Eiablage; die Befruchtung geschieht außen und der Dottersack versorgt die Larve, bis sie zum Jungfisch heranwächst.';
+    if(q.dataset.type==='match') return 'Krautlaicher heften Eier an Pflanzen oder Steine, Freiwasserlaicher geben sie ins freie Wasser ab und Kieslaicher legen sie auf Kies.';
+    if(q.dataset.type==='sequence') return 'Die Entwicklung führt von der Eizelle über die befruchtete Eizelle und Fischlarve zum Jungfisch und schließlich zum geschlechtsreifen Fisch.';
+    if(prompt.includes('Eiablage')) return 'Das Ablegen der Eier nennt man Laichen.';
+    if(prompt.includes('Wo findet die äußere Befruchtung')) return 'Ei- und Samenzelle verschmelzen außerhalb des Körpers des Weibchens.';
+    if(prompt.includes('Nährstoffvorrat')||prompt.includes('Aufgabe hat der Dottersack')) return 'Der Dottersack enthält Nährstoffe und versorgt damit die junge Fischlarve.';
+    if(prompt.includes('Eier, die ein Fischweibchen ablegt')) return 'Die abgelegten Fischeier heißen Laich.';
+    if(prompt.includes('Kraut- oder Haftlaicher')) return 'Krautlaicher heften ihre Eier an Pflanzen, Wurzeln oder Steine.';
+    if(prompt.includes('Warum heißt die Befruchtung')) return 'Sie heißt äußerlich, weil Ei- und Samenzelle außerhalb des Fischkörpers verschmelzen.';
+    if(prompt.includes('Warum erreichen trotz sehr vieler Eier')) return 'Viele Eier und Larven werden nicht bewacht und können gefressen werden.';
+    if(prompt.includes('Was macht das Stichlingsmännchen')) return 'Das Stichlingsmännchen baut ein Nest und bewacht Eier und Larven.';
+    if(prompt.includes('Welcher Fisch schwimmt')) return 'Lachse wandern zum Laichen flussaufwärts in die Oberläufe.';
+    if(prompt.includes('Wie weit ist die Wanderung')) return 'Europäische Aale wandern ungefähr 7 000 km bis zur Sargassosee.';
+    if(prompt.includes('Elterntiere ihre Eier')) return 'Das Bewachen und Schützen von Eiern oder Jungtieren nennt man Brutpflege.';
+    return 'Vergleiche die Lösung mit dem Merksatz direkt über der Aufgabe.';
+  }
+  function checkText(btn){
+    const q=getQuiz(btn), val=q.querySelector('input[type="text"]').value;
+    const a=norm(q.dataset.answer), v=norm(val);
+    const ok = v===a || (a==='ausserhalb' && v.includes('ausserhalb')) || (a==='sargassosee' && v.includes('sargasso'));
+    mark(q,ok);
+  }
+  function checkMC(btn){
+    const q=getQuiz(btn), checked=q.querySelector('input[type="radio"]:checked');
+    mark(q, !!checked && checked.value===q.dataset.answer);
+  }
+  function checkBlanks(btn){
+    const q=getQuiz(btn), answers=JSON.parse(q.dataset.answers), fields=[...q.querySelectorAll('.blank')];
+    const ok=fields.every((f,i)=>norm(f.value)===norm(answers[i]));
+    mark(q,ok);
+  }
+  function clearBlanks(btn){ const q=getQuiz(btn); q.querySelectorAll('.blank').forEach(i=>i.value=''); const fb=q.querySelector('.feedback'); fb.className='feedback'; fb.textContent=''; q.dataset.done='0'; q.dataset.attempts='0'; updateScore(); }
+  function fillNext(el){ const sec=el.closest('section'); const field=[...sec.querySelectorAll('.blank')].find(i=>!i.value.trim()); if(field) field.value=el.textContent.trim(); }
+  function checkMatch(btn){
+    const q=getQuiz(btn), sels=[...q.querySelectorAll('select')];
+    mark(q, sels.every(s=>s.value===s.dataset.correct));
+  }
+  function checkSequence(btn){
+    const q=getQuiz(btn), cards=[...q.querySelectorAll('.sequence-card')];
+    mark(q, cards.length>0 && cards.every(card=>card.dataset.rank===card.dataset.correct));
+  }
+  function updateScore(){
+    const score=questions.filter(q=>q.dataset.done==='1').length;
+    document.getElementById('score').textContent=score;
+    document.getElementById('bar').style.width=(score/questions.length*100)+'%';
+    const t=document.getElementById('resultText');
+    if(score===questions.length) t.textContent='🏆 Perfekt! Du hast alle Aufgaben richtig gelöst.';
+    else if(score>=Math.ceil(questions.length*.7)) t.textContent='Sehr gut! Es fehlen nur noch wenige Pokale.';
+    else if(score>0) t.textContent='Du bist auf einem guten Weg. Prüfe die noch offenen Aufgaben.';
+    else t.textContent='Bearbeite die Aufgaben und sammle Pokale.';
+  }
+  function resetAll(){
+    document.querySelectorAll('input').forEach(i=>{if(i.type==='radio'||i.type==='checkbox')i.checked=false;else i.value=''});
+    document.querySelectorAll('select').forEach(s=>s.value='');
+    document.querySelectorAll('.sequence-card').forEach(card=>delete card.dataset.rank);
+    document.querySelectorAll('.sequence-board').forEach(board=>updateSequenceBoard(board.closest('.q')));
+    questions.forEach(q=>{delete q.dataset.done;q.dataset.attempts='0'; const fb=q.querySelector('.feedback'); fb.className='feedback'; fb.textContent='';});
+    updateScore(); window.scrollTo({top:0,behavior:'smooth'});
+  }
+</script>
+</body>
+</html>
