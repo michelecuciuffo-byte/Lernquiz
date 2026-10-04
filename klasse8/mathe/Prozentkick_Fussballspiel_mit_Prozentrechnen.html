@@ -1,0 +1,1059 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#06351f">
+  <title>Prozent-Kick – Das Fußballspiel</title>
+  <style>
+    :root {
+      --ink: #10241d;
+      --paper: #f7fbf7;
+      --green: #117b49;
+      --green-dark: #063c26;
+      --lime: #b8ed62;
+      --gold: #ffd25c;
+      --red: #e34d59;
+      --blue: #67c9ff;
+      --shadow: 0 16px 45px rgba(0, 20, 12, .25);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: Calibri, "Segoe UI", Arial, sans-serif;
+      background:
+        radial-gradient(circle at 12% 8%, rgba(184, 237, 98, .18), transparent 22rem),
+        linear-gradient(145deg, #05291b, #0b5735 55%, #073521);
+      overflow-x: hidden;
+    }
+
+    button { font: inherit; }
+    button:focus-visible { outline: 4px solid #fff; outline-offset: 3px; }
+
+    .app {
+      width: min(1180px, calc(100% - 24px));
+      margin: 18px auto;
+      border: 1px solid rgba(255,255,255,.24);
+      border-radius: 28px;
+      background: rgba(247, 251, 247, .97);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .topbar {
+      display: grid;
+      grid-template-columns: 1.3fr repeat(4, minmax(90px, .5fr)) auto;
+      gap: 10px;
+      align-items: center;
+      padding: 14px 18px;
+      color: #fff;
+      background: linear-gradient(100deg, #082b1d, #0d6640);
+    }
+
+    .brand { display: flex; align-items: center; gap: 12px; }
+    .brand-mark {
+      display: grid;
+      place-items: center;
+      width: 43px;
+      height: 43px;
+      border-radius: 50%;
+      color: #10241d;
+      font-size: 25px;
+      background: var(--gold);
+      box-shadow: inset 0 0 0 4px rgba(255,255,255,.5);
+    }
+    .brand strong { display: block; font-size: 21px; line-height: 1; }
+    .brand span { color: #bcebd1; font-size: 12px; letter-spacing: .09em; text-transform: uppercase; }
+
+    .stat {
+      min-height: 48px;
+      padding: 6px 10px;
+      border: 1px solid rgba(255,255,255,.13);
+      border-radius: 13px;
+      background: rgba(255,255,255,.08);
+      text-align: center;
+    }
+    .stat small { display: block; color: #bcebd1; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+    .stat b { font-size: 21px; }
+
+    .icon-btn {
+      width: 44px;
+      height: 44px;
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      color: #fff;
+      background: rgba(255,255,255,.12);
+      cursor: pointer;
+    }
+
+    .main {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(320px, .8fr);
+      min-height: 670px;
+    }
+
+    .stadium {
+      position: relative;
+      min-height: 670px;
+      overflow: hidden;
+      background: linear-gradient(#66c9f2 0 19%, #b7dfef 19% 24%, #355446 24% 33%, #1b9256 33%);
+    }
+
+    .sun {
+      position: absolute;
+      top: 35px;
+      right: 65px;
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: #fff4a8;
+      box-shadow: 0 0 45px #fff5aa;
+    }
+
+    .cloud, .cloud::before, .cloud::after {
+      position: absolute;
+      border-radius: 999px;
+      background: rgba(255,255,255,.76);
+    }
+    .cloud { top: 67px; left: 12%; width: 105px; height: 25px; }
+    .cloud::before { content: ""; width: 44px; height: 44px; left: 17px; bottom: 0; }
+    .cloud::after { content: ""; width: 56px; height: 56px; left: 45px; bottom: 0; }
+
+    .stands {
+      position: absolute;
+      top: 158px;
+      left: 0;
+      right: 0;
+      height: 77px;
+      background:
+        radial-gradient(circle, #ffd25c 0 3px, transparent 3.5px) 0 2px / 23px 18px,
+        radial-gradient(circle, #fff 0 3px, transparent 3.5px) 11px 10px / 27px 20px,
+        radial-gradient(circle, #f06472 0 3px, transparent 3.5px) 2px 4px / 31px 22px,
+        #1c3d31;
+      border-top: 7px solid #d5e1de;
+      border-bottom: 9px solid #102d24;
+    }
+
+    .banner {
+      position: absolute;
+      top: 175px;
+      left: 50%;
+      z-index: 2;
+      transform: translateX(-50%) rotate(-1deg);
+      padding: 8px 25px;
+      border: 3px solid #fff;
+      border-radius: 7px;
+      color: #10241d;
+      background: var(--gold);
+      box-shadow: 0 5px 0 rgba(0,0,0,.25);
+      font-size: 18px;
+      font-weight: 900;
+      letter-spacing: .08em;
+    }
+
+    .pitch {
+      position: absolute;
+      inset: 235px 0 0;
+      background:
+        repeating-linear-gradient(90deg, rgba(255,255,255,.045) 0 80px, rgba(0,0,0,.035) 80px 160px),
+        linear-gradient(#159657, #0e7846);
+    }
+    .pitch::before {
+      content: "";
+      position: absolute;
+      inset: 18px 22px -80px;
+      border: 3px solid rgba(255,255,255,.67);
+    }
+    .penalty-box {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      width: 420px;
+      height: 210px;
+      transform: translateX(-50%);
+      border: 3px solid rgba(255,255,255,.65);
+      border-top: 0;
+    }
+    .arc {
+      position: absolute;
+      top: 150px;
+      left: 50%;
+      width: 180px;
+      height: 100px;
+      transform: translateX(-50%);
+      border: 3px solid rgba(255,255,255,.65);
+      border-radius: 0 0 100px 100px;
+      border-top: 0;
+    }
+
+    .goal-wrap {
+      position: absolute;
+      top: 235px;
+      left: 50%;
+      z-index: 4;
+      width: min(62%, 430px);
+      height: 190px;
+      transform: translateX(-50%);
+      perspective: 500px;
+    }
+    .goal {
+      position: absolute;
+      inset: 0;
+      border: 9px solid #f8fbff;
+      border-bottom-width: 7px;
+      background:
+        repeating-linear-gradient(0deg, transparent 0 19px, rgba(255,255,255,.54) 20px 22px),
+        repeating-linear-gradient(90deg, transparent 0 24px, rgba(255,255,255,.54) 25px 27px),
+        rgba(8,37,30,.21);
+      box-shadow: 0 12px 16px rgba(0,0,0,.3), inset 0 0 24px rgba(0,0,0,.25);
+      transform: rotateX(-2deg);
+      transform-origin: bottom;
+    }
+    .goal.shake { animation: netShake .55s ease; }
+
+    .keeper {
+      position: absolute;
+      left: calc(50% - 23px);
+      bottom: 8px;
+      z-index: 6;
+      width: 46px;
+      height: 105px;
+      transform-origin: 50% 85%;
+      transition: transform .7s cubic-bezier(.2,.8,.3,1);
+    }
+    .keeper .head { position:absolute; left:12px; width:24px; height:25px; border-radius:50%; background:#8f562f; }
+    .keeper .body { position:absolute; top:23px; left:7px; width:34px; height:45px; border-radius:8px 8px 5px 5px; background:#ef4e5c; }
+    .keeper .arm { position:absolute; top:29px; width:10px; height:45px; border-radius:8px; background:#8f562f; }
+    .keeper .arm.left { left:0; transform:rotate(32deg); transform-origin:top; }
+    .keeper .arm.right { right:0; transform:rotate(-32deg); transform-origin:top; }
+    .keeper .leg { position:absolute; top:64px; width:11px; height:40px; border-radius:7px; background:#182d66; }
+    .keeper .leg.left { left:10px; transform:rotate(8deg); }
+    .keeper .leg.right { right:9px; transform:rotate(-8deg); }
+    .keeper.dive-left { transform: translate(-105px,-18px) rotate(-67deg); }
+    .keeper.dive-right { transform: translate(105px,-18px) rotate(67deg); }
+    .keeper.dive-mid { transform: translateY(-28px) scaleY(.92); }
+
+    .ball {
+      position: absolute;
+      left: calc(50% - 24px);
+      top: 545px;
+      z-index: 9;
+      width: 48px;
+      height: 48px;
+      border: 3px solid #111;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle at 50% 46%, #111 0 9px, transparent 10px),
+        radial-gradient(circle at 17% 25%, #111 0 6px, transparent 7px),
+        radial-gradient(circle at 81% 28%, #111 0 6px, transparent 7px),
+        radial-gradient(circle at 25% 82%, #111 0 6px, transparent 7px),
+        radial-gradient(circle at 78% 78%, #111 0 6px, transparent 7px),
+        #fff;
+      box-shadow: 0 10px 7px rgba(0,0,0,.28);
+      transition: none;
+    }
+    .ball.shoot-left { animation: shootLeft .78s cubic-bezier(.23,.75,.32,1) forwards; }
+    .ball.shoot-right { animation: shootRight .78s cubic-bezier(.23,.75,.32,1) forwards; }
+    .ball.shoot-mid { animation: shootMid .78s cubic-bezier(.23,.75,.32,1) forwards; }
+    .ball.saved { animation: saved .82s ease-out forwards; }
+
+    .spot { position:absolute; top:580px; left:calc(50% - 7px); width:14px; height:7px; border-radius:50%; background:rgba(255,255,255,.82); }
+
+    .player {
+      position: absolute;
+      left: calc(50% + 72px);
+      top: 555px;
+      z-index: 8;
+      width: 50px;
+      height: 93px;
+      transition: transform .3s ease;
+    }
+    .player.kick { animation: kick .55s ease; }
+    .player .head { position:absolute; left:13px; width:25px; height:26px; border-radius:50%; background:#c78554; }
+    .player .shirt { position:absolute; top:24px; left:7px; width:36px; height:40px; border-radius:9px 9px 4px 4px; background:#ffd25c; border-bottom:8px solid #112c77; }
+    .player .leg { position:absolute; top:61px; width:11px; height:32px; border-radius:7px; background:#24335e; transform-origin:top; }
+    .player .leg.left { left:11px; }
+    .player .leg.right { right:10px; }
+    .player.kick .leg.right { animation: kickLeg .55s ease; }
+
+    .floating-message {
+      position: absolute;
+      top: 445px;
+      left: 50%;
+      z-index: 15;
+      transform: translate(-50%, 15px) scale(.85);
+      opacity: 0;
+      padding: 10px 22px;
+      border-radius: 999px;
+      color: #10241d;
+      background: #fff;
+      box-shadow: 0 8px 24px rgba(0,0,0,.24);
+      font-size: 27px;
+      font-weight: 900;
+      pointer-events: none;
+    }
+    .floating-message.show { animation: popMessage 1.25s ease; }
+
+    .side {
+      position: relative;
+      z-index: 20;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 24px;
+      background: linear-gradient(160deg, #fff, #edf7ef);
+      box-shadow: -12px 0 40px rgba(0,0,0,.12);
+    }
+
+    .progress-row { display:flex; align-items:center; gap:12px; }
+    .progress-track { flex:1; height:11px; border-radius:20px; overflow:hidden; background:#d7e4dc; }
+    .progress-fill { width:0; height:100%; border-radius:inherit; background:linear-gradient(90deg, var(--green), var(--lime)); transition:width .45s ease; }
+    .progress-text { min-width:70px; font-size:13px; font-weight:700; }
+
+    .tag {
+      align-self: flex-start;
+      padding: 6px 11px;
+      border-radius: 999px;
+      color: #075031;
+      background: #d8f4e3;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: .05em;
+      text-transform: uppercase;
+    }
+
+    .question-card {
+      min-height: 155px;
+      padding: 18px;
+      border: 1px solid #d8e6dc;
+      border-radius: 20px;
+      background:#fff;
+      box-shadow: 0 9px 26px rgba(15,70,42,.08);
+    }
+    .question-card h1 { margin:0 0 8px; font-size:clamp(23px, 3vw, 32px); line-height:1.12; }
+    .question-card p { margin:0; color:#496158; line-height:1.4; }
+    .equation { margin-top:12px; color:#0b6840; font-size:26px; font-weight:900; }
+
+    .answers { display:grid; grid-template-columns:1fr 1fr; gap:11px; }
+    .answer {
+      position:relative;
+      min-height:67px;
+      border:2px solid #c9dbcf;
+      border-radius:16px;
+      color:var(--ink);
+      background:#fff;
+      box-shadow:0 5px 0 #c9dbcf;
+      font-size:22px;
+      font-weight:800;
+      cursor:pointer;
+      transition:transform .12s, border-color .12s, background .12s;
+    }
+    .answer:hover:not(:disabled) { transform:translateY(-2px); border-color:var(--green); background:#f3fff7; }
+    .answer:active:not(:disabled) { transform:translateY(3px); box-shadow:0 2px 0 #c9dbcf; }
+    .answer:disabled { cursor:default; }
+    .answer.correct { color:#fff; border-color:#087844; background:#0e9958; box-shadow:0 5px 0 #05683b; }
+    .answer.wrong { color:#fff; border-color:#c53240; background:var(--red); box-shadow:0 5px 0 #a22834; animation:wrongShake .4s ease; }
+
+    .feedback {
+      min-height: 96px;
+      padding: 13px 15px;
+      border-radius: 16px;
+      color:#334a41;
+      background:#e8f1eb;
+      line-height:1.35;
+    }
+    .feedback strong { display:block; margin-bottom:3px; color:var(--ink); font-size:18px; }
+    .feedback.good { background:#ddf7e7; border-left:6px solid #139456; }
+    .feedback.bad { background:#ffebed; border-left:6px solid var(--red); }
+
+    .next-btn, .start-btn {
+      min-height:52px;
+      border:0;
+      border-radius:15px;
+      color:#fff;
+      background:linear-gradient(100deg, #087544, #11a861);
+      box-shadow:0 6px 0 #05623a;
+      font-size:18px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .next-btn[hidden] { display:none; }
+
+    .start-overlay, .end-overlay {
+      position:absolute;
+      inset:0;
+      z-index:50;
+      display:grid;
+      place-items:center;
+      padding:22px;
+      background:rgba(3,28,18,.87);
+      backdrop-filter:blur(5px);
+    }
+    .overlay-card {
+      width:min(590px, 100%);
+      padding:clamp(23px,4vw,40px);
+      border:1px solid rgba(255,255,255,.45);
+      border-radius:28px;
+      color:#fff;
+      background:linear-gradient(145deg, rgba(11,102,62,.98), rgba(5,49,31,.98));
+      box-shadow:0 25px 70px rgba(0,0,0,.35);
+      text-align:center;
+    }
+    .trophy { font-size:72px; filter:drop-shadow(0 8px 8px rgba(0,0,0,.3)); }
+    .overlay-card h2 { margin:7px 0; font-size:clamp(32px,5vw,48px); }
+    .overlay-card > p { margin:7px auto 22px; max-width:480px; color:#d9f5e5; line-height:1.45; }
+    .level-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:20px 0; }
+    .level {
+      padding:13px 8px;
+      border:2px solid rgba(255,255,255,.35);
+      border-radius:14px;
+      color:#fff;
+      background:rgba(255,255,255,.08);
+      cursor:pointer;
+    }
+    .level b, .level span { display:block; }
+    .level span { margin-top:3px; color:#ccebdd; font-size:12px; }
+    .level.selected { color:#123b29; border-color:var(--gold); background:var(--gold); transform:translateY(-3px); }
+    .level.selected span { color:#5e4c14; }
+    .rules { display:flex; justify-content:center; gap:18px; flex-wrap:wrap; margin:14px 0 22px; color:#d9f5e5; font-size:13px; }
+    .overlay-card .start-btn { width:100%; color:#163323; background:var(--gold); box-shadow:0 6px 0 #bd9428; }
+    .end-overlay[hidden], .start-overlay[hidden] { display:none; }
+
+    .result-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin:18px 0 24px; }
+    .result-box { padding:12px 6px; border-radius:14px; background:rgba(255,255,255,.1); }
+    .result-box small { display:block; color:#ccebdd; }
+    .result-box b { font-size:25px; }
+
+    .confetti { position:fixed; top:-15px; z-index:100; width:10px; height:18px; animation:confettiFall 2.2s linear forwards; pointer-events:none; }
+
+    .scratchpad {
+      position: fixed;
+      left: 50%;
+      bottom: 12px;
+      z-index: 45;
+      width: min(920px, calc(100% - 24px));
+      transform: translateX(-50%);
+      border: 1px solid #b8cec0;
+      border-radius: 19px;
+      overflow: hidden;
+      background: rgba(250, 253, 250, .98);
+      box-shadow: 0 14px 48px rgba(0, 25, 14, .32);
+      backdrop-filter: blur(8px);
+    }
+    .scratch-head {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-height: 52px;
+      padding: 8px 12px;
+      color: #fff;
+      background: linear-gradient(100deg, #073d27, #0d7045);
+    }
+    .scratch-toggle {
+      display: flex;
+      flex: 1;
+      align-items: center;
+      gap: 10px;
+      border: 0;
+      color: #fff;
+      background: transparent;
+      font-weight: 900;
+      text-align: left;
+      cursor: pointer;
+    }
+    .scratch-toggle .chevron { margin-left: auto; font-size: 18px; transition: transform .25s ease; }
+    .scratchpad.open .scratch-toggle .chevron { transform: rotate(180deg); }
+    .scratch-tools { display: none; align-items: center; gap: 7px; }
+    .scratchpad.open .scratch-head { flex-wrap: wrap; }
+    .scratchpad.open .scratch-tools {
+      display: flex;
+      flex: 1 0 100%;
+      flex-wrap: wrap;
+      justify-content: center;
+      padding-top: 7px;
+      border-top: 1px solid rgba(255,255,255,.18);
+    }
+    .tool-btn {
+      min-height: 35px;
+      padding: 6px 11px;
+      border: 1px solid rgba(255,255,255,.42);
+      border-radius: 10px;
+      color: #fff;
+      background: rgba(255,255,255,.12);
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+    .tool-btn:hover { background: rgba(255,255,255,.22); }
+    .tool-btn.active { color: #173422; border-color: var(--gold); background: var(--gold); }
+    .color-group { display: flex; align-items: center; gap: 5px; padding: 0 4px; }
+    .color-btn {
+      width: 27px;
+      height: 27px;
+      padding: 0;
+      border: 3px solid rgba(255,255,255,.52);
+      border-radius: 50%;
+      background: var(--color);
+      box-shadow: inset 0 0 0 1px rgba(0,0,0,.16);
+      cursor: pointer;
+    }
+    .color-btn.active { border-color: var(--gold); box-shadow: 0 0 0 2px #173422, inset 0 0 0 1px rgba(0,0,0,.16); }
+    .width-control {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 5px 8px;
+      border: 1px solid rgba(255,255,255,.3);
+      border-radius: 10px;
+      color: #fff;
+      background: rgba(255,255,255,.08);
+      font-size: 12px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .width-control input { width: 86px; accent-color: var(--gold); cursor: pointer; }
+    .scratch-body { max-height: 0; overflow: hidden; transition: max-height .3s ease; }
+    .scratchpad.open .scratch-body { max-height: 370px; }
+    .paper-wrap {
+      position: relative;
+      height: 290px;
+      background-color: #fff;
+      background-image:
+        linear-gradient(rgba(55,126,185,.16) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(55,126,185,.16) 1px, transparent 1px),
+        linear-gradient(rgba(55,126,185,.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(55,126,185,.08) 1px, transparent 1px);
+      background-size: 40px 40px, 40px 40px, 10px 10px, 10px 10px;
+    }
+    .paper-wrap::before {
+      content: "Nebenrechnungen";
+      position: absolute;
+      top: 12px;
+      left: 16px;
+      color: rgba(16,36,29,.24);
+      font-size: 20px;
+      font-weight: 800;
+      pointer-events: none;
+    }
+    #scratchCanvas {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      cursor: crosshair;
+      touch-action: none;
+    }
+    .scratch-status {
+      position: absolute;
+      right: 11px;
+      bottom: 10px;
+      padding: 5px 9px;
+      border-radius: 999px;
+      color: #42594f;
+      background: rgba(255,255,255,.88);
+      box-shadow: 0 2px 8px rgba(0,0,0,.1);
+      font-size: 12px;
+      pointer-events: none;
+    }
+
+    @keyframes shootLeft { to { transform:translate(-145px,-287px) scale(.58) rotate(720deg); box-shadow:0 2px 3px rgba(0,0,0,.2); } }
+    @keyframes shootRight { to { transform:translate(145px,-287px) scale(.58) rotate(720deg); box-shadow:0 2px 3px rgba(0,0,0,.2); } }
+    @keyframes shootMid { to { transform:translate(0,-313px) scale(.58) rotate(720deg); box-shadow:0 2px 3px rgba(0,0,0,.2); } }
+    @keyframes saved { 55% { transform:translate(0,-230px) scale(.64) rotate(420deg); } 100% { transform:translate(15px,-112px) scale(.8) rotate(620deg); } }
+    @keyframes netShake { 25% { transform:rotateX(-2deg) scale(1.025); } 55% { transform:rotateX(-2deg) scale(.985); } }
+    @keyframes kick { 45% { transform:translateX(-38px) rotate(-6deg); } }
+    @keyframes kickLeg { 35% { transform:rotate(48deg); } 70% { transform:rotate(-67deg); } }
+    @keyframes popMessage { 15%,72% { opacity:1; transform:translate(-50%,0) scale(1); } 100% { opacity:0; transform:translate(-50%,-20px) scale(1.07); } }
+    @keyframes wrongShake { 25% { transform:translateX(-5px); } 75% { transform:translateX(5px); } }
+    @keyframes confettiFall { to { transform:translate(var(--drift),110vh) rotate(850deg); } }
+
+    @media (max-width: 850px) {
+      .topbar { grid-template-columns:1fr repeat(3,72px) auto; }
+      .topbar .stat:nth-of-type(4) { display:none; }
+      .main { grid-template-columns:1fr; }
+      .stadium { min-height:500px; }
+      .pitch { inset:200px 0 0; }
+      .stands { top:132px; }
+      .banner { top:150px; }
+      .goal-wrap { top:204px; height:150px; }
+      .ball { top:410px; }
+      .spot { top:447px; }
+      .player { top:421px; }
+      .floating-message { top:367px; }
+      .side { min-height:590px; }
+      @keyframes shootLeft { to { transform:translate(-120px,-190px) scale(.55) rotate(720deg); } }
+      @keyframes shootRight { to { transform:translate(120px,-190px) scale(.55) rotate(720deg); } }
+      @keyframes shootMid { to { transform:translate(0,-214px) scale(.55) rotate(720deg); } }
+      @keyframes saved { 55% { transform:translate(0,-155px) scale(.64) rotate(420deg); } 100% { transform:translate(15px,-75px) scale(.8) rotate(620deg); } }
+    }
+
+    @media (max-width: 570px) {
+      .app { width:100%; margin:0; border-radius:0; }
+      .brand span { display:none; }
+      .topbar { padding:9px; gap:6px; grid-template-columns:1fr repeat(3,58px) 40px; }
+      .brand strong { font-size:17px; }
+      .brand-mark { width:36px; height:36px; font-size:20px; }
+      .stat { min-height:42px; padding:4px; }
+      .stat b { font-size:17px; }
+      .stat small { font-size:9px; }
+      .side { padding:18px 14px; }
+      .answers { grid-template-columns:1fr 1fr; }
+      .answer { min-height:60px; font-size:19px; }
+      .level-grid { grid-template-columns:1fr; }
+      .level { padding:9px; }
+      .scratchpad { bottom: 0; width: 100%; border-radius: 17px 17px 0 0; }
+      .scratch-head { flex-wrap: wrap; }
+      .scratch-tools { width: 100%; justify-content: center; }
+      .tool-btn { padding: 6px 8px; font-size: 12px; }
+      .width-control { flex: 1 1 43%; justify-content: center; }
+      .width-control input { width: min(95px, 42vw); }
+      .paper-wrap { height: 245px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; scroll-behavior:auto !important; transition-duration:.01ms !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">⚽</div>
+        <div><strong>Prozent-Kick</strong><span>Kopfrechnen im Stadion</span></div>
+      </div>
+      <div class="stat"><small>Aufgabe</small><b id="taskStat">0/10</b></div>
+      <div class="stat"><small>Tore</small><b id="goalStat">0</b></div>
+      <div class="stat"><small>Serie</small><b id="streakStat">0</b></div>
+      <div class="stat"><small>Punkte</small><b id="scoreStat">0</b></div>
+      <button class="icon-btn" id="soundBtn" aria-label="Ton ausschalten" title="Ton an/aus">🔊</button>
+    </header>
+
+    <main class="main">
+      <section class="stadium" aria-label="Fußballstadion mit Tor">
+        <div class="sun"></div><div class="cloud"></div><div class="stands"></div>
+        <div class="banner">KOPF AN · BALL REIN!</div>
+        <div class="pitch"><div class="penalty-box"></div><div class="arc"></div></div>
+        <div class="goal-wrap">
+          <div class="goal" id="goal"></div>
+          <div class="keeper" id="keeper" aria-hidden="true">
+            <span class="head"></span><span class="body"></span><span class="arm left"></span><span class="arm right"></span><span class="leg left"></span><span class="leg right"></span>
+          </div>
+        </div>
+        <div class="spot"></div><div class="ball" id="ball" aria-hidden="true"></div>
+        <div class="player" id="player" aria-hidden="true"><span class="head"></span><span class="shirt"></span><span class="leg left"></span><span class="leg right"></span></div>
+        <div class="floating-message" id="floatMessage" aria-live="polite">TOOOR!</div>
+      </section>
+
+      <section class="side">
+        <div class="progress-row"><div class="progress-track"><div class="progress-fill" id="progressFill"></div></div><div class="progress-text" id="progressText">Anpfiff</div></div>
+        <div class="tag" id="typeTag">Prozentrechnung</div>
+        <article class="question-card">
+          <h1 id="question">Bereit für das Spiel?</h1>
+          <p id="hint">Wähle die richtige Antwort. Alle Aufgaben sind ohne Taschenrechner lösbar.</p>
+          <div class="equation" id="equation"></div>
+        </article>
+        <div class="answers" id="answers"></div>
+        <div class="feedback" id="feedback" aria-live="polite"><strong>Spielhinweis</strong>Bei einer falschen Antwort bekommst du einen zweiten Versuch.</div>
+        <button class="next-btn" id="nextBtn" hidden>Nächster Elfmeter →</button>
+      </section>
+
+      <section class="start-overlay" id="startOverlay">
+        <div class="overlay-card">
+          <div class="trophy">⚽</div>
+          <h2>Prozent-Kick</h2>
+          <p>Verwandle zehn Elfmeter. Jede richtige Kopfrechnung bringt den Ball ins Tor – eine perfekte Serie bringt den Pokal.</p>
+          <div class="level-grid" role="group" aria-label="Schwierigkeitsgrad wählen">
+            <button class="level" data-level="training"><b>Training</b><span>10 %, 25 %, 50 %</span></button>
+            <button class="level selected" data-level="league"><b>Liga</b><span>gemischte Aufgaben</span></button>
+            <button class="level" data-level="cup"><b>Pokal</b><span>knifflige Kopfrechnung</span></button>
+          </div>
+          <div class="rules"><span>✓ ohne Taschenrechner</span><span>✓ zweiter Versuch</span><span>✓ kurze Lösungswege</span></div>
+          <button class="start-btn" id="startBtn">Spiel starten</button>
+        </div>
+      </section>
+
+      <section class="end-overlay" id="endOverlay" hidden>
+        <div class="overlay-card">
+          <div class="trophy" id="endTrophy">🏆</div>
+          <h2 id="endTitle">Abpfiff!</h2>
+          <p id="endMessage"></p>
+          <div class="result-grid">
+            <div class="result-box"><small>Tore</small><b id="endGoals">0/10</b></div>
+            <div class="result-box"><small>Punkte</small><b id="endScore">0</b></div>
+            <div class="result-box"><small>Bestwert</small><b id="highScore">0</b></div>
+          </div>
+          <button class="start-btn" id="restartBtn">Revanche spielen</button>
+        </div>
+      </section>
+    </main>
+
+    <aside class="scratchpad" id="scratchpad" aria-label="Ausklappbare Fläche für Nebenrechnungen">
+      <div class="scratch-head">
+        <button class="scratch-toggle" id="scratchToggle" aria-expanded="false" aria-controls="scratchBody">
+          <span aria-hidden="true">✎</span><span>Nebenrechnungen aufklappen</span><span class="chevron" aria-hidden="true">⌃</span>
+        </button>
+        <div class="scratch-tools" aria-label="Werkzeuge für die Schreibfläche">
+          <button class="tool-btn active" id="penBtn" title="Schreiben">✎ Stift</button>
+          <button class="tool-btn" id="eraserBtn" title="Radieren">▱ Radierer</button>
+          <div class="color-group" aria-label="Stiftfarbe wählen">
+            <button class="color-btn active" data-color="#142820" style="--color:#142820" aria-label="Schwarz"></button>
+            <button class="color-btn" data-color="#155bd7" style="--color:#155bd7" aria-label="Blau"></button>
+            <button class="color-btn" data-color="#d52c3a" style="--color:#d52c3a" aria-label="Rot"></button>
+            <button class="color-btn" data-color="#0a7a44" style="--color:#0a7a44" aria-label="Grün"></button>
+            <button class="color-btn" data-color="#7b3fb1" style="--color:#7b3fb1" aria-label="Violett"></button>
+          </div>
+          <label class="width-control">Stiftstärke <input id="penWidth" type="range" min="0.7" max="5" step="0.1" value="1.4"></label>
+          <label class="width-control">Radierer <input id="eraserWidth" type="range" min="4" max="40" step="2" value="12"></label>
+          <button class="tool-btn" id="undoBtn" title="Letzten Strich entfernen">↶ Rückgängig</button>
+          <button class="tool-btn" id="clearBtn" title="Schreibfläche leeren">× Löschen</button>
+        </div>
+      </div>
+      <div class="scratch-body" id="scratchBody">
+        <div class="paper-wrap">
+          <canvas id="scratchCanvas" aria-label="Schreibfläche für Nebenrechnungen"></canvas>
+          <span class="scratch-status" id="scratchStatus">Stift aktiv</span>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <script>
+    (() => {
+      'use strict';
+      const $ = id => document.getElementById(id);
+      const els = {
+        taskStat:$('taskStat'), goalStat:$('goalStat'), streakStat:$('streakStat'), scoreStat:$('scoreStat'),
+        soundBtn:$('soundBtn'), goal:$('goal'), keeper:$('keeper'), ball:$('ball'), player:$('player'),
+        floatMessage:$('floatMessage'), progressFill:$('progressFill'), progressText:$('progressText'),
+        typeTag:$('typeTag'), question:$('question'), hint:$('hint'), equation:$('equation'), answers:$('answers'),
+        feedback:$('feedback'), nextBtn:$('nextBtn'), startOverlay:$('startOverlay'), endOverlay:$('endOverlay'),
+        startBtn:$('startBtn'), restartBtn:$('restartBtn'), endTrophy:$('endTrophy'), endTitle:$('endTitle'),
+        endMessage:$('endMessage'), endGoals:$('endGoals'), endScore:$('endScore'), highScore:$('highScore'),
+        scratchpad:$('scratchpad'), scratchToggle:$('scratchToggle'), scratchCanvas:$('scratchCanvas'),
+        penBtn:$('penBtn'), eraserBtn:$('eraserBtn'), penWidth:$('penWidth'), eraserWidth:$('eraserWidth'),
+        undoBtn:$('undoBtn'), clearBtn:$('clearBtn'), scratchStatus:$('scratchStatus')
+      };
+
+      let state = { level:'league', index:0, score:0, goals:0, streak:0, firstTry:true, locked:false, sound:true, current:null };
+      let audioCtx = null;
+      const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+      const shuffle = arr => [...arr].sort(() => Math.random() - .5);
+      const fmt = n => Number.isInteger(n) ? String(n) : String(n).replace('.', ',');
+
+      function tone(freq, duration=.12, type='sine', volume=.05, delay=0) {
+        if (!state.sound) return;
+        try {
+          audioCtx ||= new (window.AudioContext || window.webkitAudioContext)();
+          const osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+          osc.type = type; osc.frequency.value = freq;
+          gain.gain.setValueAtTime(volume, audioCtx.currentTime + delay);
+          gain.gain.exponentialRampToValueAtTime(.001, audioCtx.currentTime + delay + duration);
+          osc.connect(gain); gain.connect(audioCtx.destination);
+          osc.start(audioCtx.currentTime + delay); osc.stop(audioCtx.currentTime + delay + duration);
+        } catch (_) {}
+      }
+
+      function goalSound() { [392,523,659,784].forEach((f,i)=>tone(f,.28,'triangle',.07,i*.08)); }
+      function missSound() { tone(180,.28,'sawtooth',.045); tone(135,.32,'sawtooth',.035,.12); }
+
+      const configs = {
+        training: { percents:[10,20,25,50], bases:[20,40,60,80,100,120,160,200,240,300,400] },
+        league: { percents:[5,10,15,20,25,30,40,50,60,75], bases:[20,40,60,80,100,120,140,160,180,200,240,300,320,400,500] },
+        cup: { percents:[5,10,12.5,15,20,25,30,40,60,75], bases:[40,60,80,120,160,200,240,280,320,360,400,480,600,800] }
+      };
+
+      function validPair(level) {
+        const c = configs[level];
+        for (let i=0;i<50;i++) {
+          const G=pick(c.bases), p=pick(c.percents), W=G*p/100;
+          if (Number.isInteger(W) || W*2===Math.round(W*2)) return {G,p,W};
+        }
+        return {G:200,p:25,W:50};
+      }
+
+      function uniqueOptions(correct, unit, kind) {
+        const values = new Set([correct]);
+        const candidates = kind==='rate'
+          ? [correct+5, correct-5, correct+10, correct-10, correct*2, correct/2, 100-correct]
+          : [correct+5, correct-5, correct+10, correct-10, correct*2, correct/2, correct+20, correct-20];
+        shuffle(candidates).forEach(v => { if (v>0 && v<=1000 && (Number.isInteger(v) || v*2===Math.round(v*2))) values.add(v); });
+        let step = kind==='rate' ? 5 : 10;
+        while(values.size<4) values.add(correct + step++ * (values.size%2 ? 1 : -1));
+        return shuffle([...values].slice(0,4)).map(value => ({value, label:`${fmt(value)}${unit}`}));
+      }
+
+      function mentalPath(G,p,W) {
+        if (p===50) return `50 % sind die Hälfte von ${G}: ${G} : 2 = ${fmt(W)}.`;
+        if (p===25) return `25 % sind ein Viertel von ${G}: ${G} : 4 = ${fmt(W)}.`;
+        if (p===75) return `75 % sind drei Viertel: ${G} : 4 · 3 = ${fmt(W)}.`;
+        if (p===20) return `20 % sind ein Fünftel von ${G}: ${G} : 5 = ${fmt(W)}.`;
+        if (p===10) return `10 % sind ein Zehntel von ${G}: ${G} : 10 = ${fmt(W)}.`;
+        if (p===5) return `10 % von ${G} sind ${fmt(G/10)}; die Hälfte davon sind ${fmt(W)}.`;
+        if (p===12.5) return `12,5 % sind ein Achtel von ${G}: ${G} : 8 = ${fmt(W)}.`;
+        if (p===15) return `10 % + 5 % von ${G}: ${fmt(G/10)} + ${fmt(G/20)} = ${fmt(W)}.`;
+        if (p===30) return `Dreimal 10 % von ${G}: 3 · ${fmt(G/10)} = ${fmt(W)}.`;
+        if (p===40) return `Viermal 10 % von ${G}: 4 · ${fmt(G/10)} = ${fmt(W)}.`;
+        if (p===60) return `Sechsmal 10 % von ${G}: 6 · ${fmt(G/10)} = ${fmt(W)}.`;
+        return `${fmt(p)} % von ${G} ergeben ${fmt(W)}.`;
+      }
+
+      function makeQuestion() {
+        const {G,p,W}=validPair(state.level);
+        let kinds = state.level==='training' ? ['value','value','rate','base'] : ['value','rate','base'];
+        const kind=pick(kinds);
+        const themes = {
+          value:[
+            `${G} Fans stehen im Heimblock. ${fmt(p)} % tragen einen Vereinsschal. Wie viele Fans sind das?`,
+            `Ein Fußballshop hat ${G} Bälle. ${fmt(p)} % davon sind Trainingsbälle. Wie viele Trainingsbälle sind das?`,
+            `Im Stadion sind ${G} Plätze besetzt. ${fmt(p)} % liegen hinter den Toren. Wie viele Plätze sind das?`
+          ],
+          rate:[
+            `Eine Mannschaft hat ${G} Pässe gespielt. ${fmt(W)} davon waren lange Pässe. Wie viel Prozent sind das?`,
+            `Im Fanblock sind ${G} Personen. ${fmt(W)} tragen ein gelbes Trikot. Wie viel Prozent sind das?`,
+            `Beim Training gelingen ${fmt(W)} von ${G} Pässen direkt. Welcher Prozentsatz ist das?`
+          ],
+          base:[
+            `${fmt(W)} Fans entsprechen ${fmt(p)} % eines Fanblocks. Wie viele Plätze hat der Block insgesamt?`,
+            `${fmt(W)} Jugendspieler sind ${fmt(p)} % aller Vereinsmitglieder. Wie viele Mitglieder sind es insgesamt?`,
+            `${fmt(W)} verkaufte Karten entsprechen ${fmt(p)} % des Kontingents. Wie groß ist das gesamte Kontingent?`
+          ]
+        };
+        if (kind==='value') return {
+          kind, tag:'Prozentwert gesucht', text:pick(themes.value), hint:'Berechne den Anteil.', equation:`${fmt(p)} % von ${G} = ?`, correct:W,
+          options:uniqueOptions(W,'','value'), explain:mentalPath(G,p,W)
+        };
+        if (kind==='rate') return {
+          kind, tag:'Prozentsatz gesucht', text:pick(themes.rate), hint:'Vergleiche den Anteil mit dem Ganzen.', equation:`${fmt(W)} von ${G} = ? %`, correct:p,
+          options:uniqueOptions(p,' %','rate'), explain:`${fmt(W)} : ${G} = ${fmt(p)} : 100. Also sind es ${fmt(p)} %.`
+        };
+        return {
+          kind, tag:'Grundwert gesucht', text:pick(themes.base), hint:'Gesucht ist das Ganze, also 100 %.', equation:`${fmt(p)} % ≙ ${fmt(W)}  |  100 % ≙ ?`, correct:G,
+          options:uniqueOptions(G,'','base'), explain:`${fmt(p)} % entsprechen ${fmt(W)}. Hochgerechnet auf 100 % erhältst du ${G}.`
+        };
+      }
+
+      function renderQuestion() {
+        resetActors();
+        state.current=makeQuestion(); state.firstTry=true; state.locked=false;
+        els.taskStat.textContent=`${state.index+1}/10`;
+        els.progressFill.style.width=`${state.index*10}%`;
+        els.progressText.textContent=`Elfmeter ${state.index+1}`;
+        els.typeTag.textContent=state.current.tag;
+        els.question.textContent=state.current.text;
+        els.hint.textContent=state.current.hint;
+        els.equation.textContent=state.current.equation;
+        els.feedback.className='feedback';
+        els.feedback.innerHTML='<strong>Dein Schuss</strong>Wähle das richtige Ergebnis.';
+        els.nextBtn.hidden=true;
+        els.answers.innerHTML='';
+        state.current.options.forEach((opt,i)=>{
+          const btn=document.createElement('button');
+          btn.className='answer'; btn.textContent=opt.label; btn.dataset.value=opt.value;
+          btn.setAttribute('aria-label',`Antwort ${i+1}: ${opt.label}`);
+          btn.addEventListener('click',()=>answer(btn,opt.value));
+          els.answers.appendChild(btn);
+        });
+      }
+
+      function answer(btn,value) {
+        if(state.locked) return;
+        if(Number(value)===Number(state.current.correct)) {
+          state.locked=true; btn.classList.add('correct');
+          [...els.answers.children].forEach(b=>b.disabled=true);
+          const earned=state.firstTry ? 100 + state.streak*15 : 50;
+          state.score+=earned; state.goals++; state.streak++;
+          els.feedback.className='feedback good';
+          els.feedback.innerHTML=`<strong>Richtig – Tor! +${earned} Punkte</strong>${state.current.explain}`;
+          updateStats(); animateGoal();
+          els.nextBtn.textContent=state.index===9 ? 'Zum Endergebnis →' : 'Nächster Elfmeter →';
+          els.nextBtn.hidden=false;
+        } else {
+          btn.classList.add('wrong'); btn.disabled=true; missSound();
+          if(state.firstTry) {
+            state.firstTry=false; state.streak=0; updateStats(); animateSave();
+            els.feedback.className='feedback bad';
+            els.feedback.innerHTML='<strong>Gehalten – noch ein Versuch!</strong>Überlege mit 10 %, 25 % oder 50 % als einfachem Zwischenschritt.';
+          } else {
+            state.locked=true; state.streak=0;
+            [...els.answers.children].forEach(b=>{ b.disabled=true; if(Number(b.dataset.value)===Number(state.current.correct)) b.classList.add('correct'); });
+            els.feedback.className='feedback bad';
+            els.feedback.innerHTML=`<strong>Daneben – die Lösung ist ${fmt(state.current.correct)}${state.current.kind==='rate'?' %':''}.</strong>${state.current.explain}`;
+            updateStats(); animateSave();
+            els.nextBtn.textContent=state.index===9 ? 'Zum Endergebnis →' : 'Nächster Elfmeter →';
+            els.nextBtn.hidden=false;
+          }
+        }
+      }
+
+      function updateStats() {
+        els.goalStat.textContent=state.goals; els.streakStat.textContent=state.streak; els.scoreStat.textContent=state.score;
+      }
+
+      function resetActors() {
+        els.ball.className='ball'; els.keeper.className='keeper'; els.player.className='player'; els.goal.className='goal';
+        void els.ball.offsetWidth;
+      }
+
+      function animateGoal() {
+        const dir=pick(['left','right','mid']);
+        els.player.classList.add('kick'); els.keeper.classList.add(dir==='left'?'dive-right':'dive-left');
+        setTimeout(()=>{ els.ball.classList.add(`shoot-${dir}`); },110);
+        setTimeout(()=>{ els.goal.classList.add('shake'); showFloat(pick(['TOOOR!','EINGENETZT!','UNHALTBAR!'])); goalSound(); },650);
+      }
+
+      function animateSave() {
+        els.player.classList.add('kick'); els.keeper.classList.add('dive-mid');
+        setTimeout(()=>els.ball.classList.add('saved'),110); setTimeout(()=>showFloat('GEHALTEN!'),520);
+      }
+
+      function showFloat(text) {
+        els.floatMessage.textContent=text; els.floatMessage.classList.remove('show'); void els.floatMessage.offsetWidth; els.floatMessage.classList.add('show');
+      }
+
+      function next() {
+        state.index++;
+        if(state.index>=10) finish(); else renderQuestion();
+      }
+
+      function finish() {
+        els.progressFill.style.width='100%'; els.progressText.textContent='Abpfiff';
+        const key='prozentkick-highscore';
+        let high=0; try { high=Number(localStorage.getItem(key)||0); if(state.score>high){high=state.score;localStorage.setItem(key,String(high));} } catch(_) { high=state.score; }
+        els.endGoals.textContent=`${state.goals}/10`; els.endScore.textContent=state.score; els.highScore.textContent=high;
+        if(state.goals===10) { els.endTrophy.textContent='🏆'; els.endTitle.textContent='Perfektes Spiel!'; els.endMessage.textContent='Zehn Aufgaben, zehn Tore – du bist Prozent-Meister!'; confetti(70); }
+        else if(state.goals>=8) { els.endTrophy.textContent='🥇'; els.endTitle.textContent='Starker Sieg!'; els.endMessage.textContent='Sehr sicher gerechnet. Die Fans feiern deine Trefferquote!'; confetti(45); }
+        else if(state.goals>=6) { els.endTrophy.textContent='🥈'; els.endTitle.textContent='Spiel gewonnen!'; els.endMessage.textContent='Gute Leistung – bei der Revanche ist sogar der Pokal möglich.'; confetti(25); }
+        else { els.endTrophy.textContent='⚽'; els.endTitle.textContent='Weitertrainieren!'; els.endMessage.textContent='Die Grundlagen sind da. Nutze einfache Zwischenwerte wie 10 %, 25 % und 50 %.'; }
+        els.endOverlay.hidden=false;
+      }
+
+      function confetti(amount) {
+        const colors=['#ffd25c','#67c9ff','#ef4e5c','#b8ed62','#fff'];
+        for(let i=0;i<amount;i++) {
+          const c=document.createElement('i'); c.className='confetti'; c.style.left=Math.random()*100+'vw'; c.style.background=pick(colors);
+          c.style.setProperty('--drift',(Math.random()*220-110)+'px'); c.style.animationDelay=(Math.random()*.8)+'s'; c.style.transform=`rotate(${Math.random()*180}deg)`;
+          document.body.appendChild(c); setTimeout(()=>c.remove(),3200);
+        }
+      }
+
+      function startGame() {
+        state.index=0; state.score=0; state.goals=0; state.streak=0; state.firstTry=true; state.locked=false;
+        updateStats(); els.startOverlay.hidden=true; els.endOverlay.hidden=true; tone(440,.12,'square',.04); tone(660,.18,'square',.04,.13); renderQuestion();
+      }
+
+      document.querySelectorAll('.level').forEach(btn=>btn.addEventListener('click',()=>{
+        document.querySelectorAll('.level').forEach(b=>b.classList.remove('selected')); btn.classList.add('selected'); state.level=btn.dataset.level; tone(520,.08,'sine',.035);
+      }));
+      els.startBtn.addEventListener('click',startGame);
+      els.restartBtn.addEventListener('click',startGame);
+      els.nextBtn.addEventListener('click',next);
+      els.soundBtn.addEventListener('click',()=>{
+        state.sound=!state.sound; els.soundBtn.textContent=state.sound?'🔊':'🔇'; els.soundBtn.setAttribute('aria-label',state.sound?'Ton ausschalten':'Ton einschalten');
+        if(state.sound) tone(620,.1,'sine',.04);
+      });
+
+      const drawing = {
+        strokes:[], current:null, tool:'pen', color:'#142820', penWidth:1.4, eraserWidth:12,
+        ctx:els.scratchCanvas.getContext('2d')
+      };
+
+      function resizeScratchpad() {
+        const canvas=els.scratchCanvas, rect=canvas.getBoundingClientRect();
+        if (!rect.width || !rect.height) return;
+        const dpr=Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width=Math.round(rect.width*dpr); canvas.height=Math.round(rect.height*dpr);
+        drawing.ctx.setTransform(dpr,0,0,dpr,0,0); redrawScratchpad();
+      }
+
+      function drawStroke(stroke) {
+        const ctx=drawing.ctx, canvas=els.scratchCanvas, w=canvas.clientWidth, h=canvas.clientHeight;
+        if (!stroke.points.length || !w || !h) return;
+        ctx.save();
+        ctx.globalCompositeOperation=stroke.tool==='eraser' ? 'destination-out' : 'source-over';
+        ctx.strokeStyle=stroke.color || '#142820';
+        ctx.lineWidth=stroke.width || (stroke.tool==='eraser' ? drawing.eraserWidth : drawing.penWidth);
+        ctx.lineCap='round'; ctx.lineJoin='round'; ctx.beginPath();
+        const first=stroke.points[0]; ctx.moveTo(first.x*w,first.y*h);
+        if(stroke.points.length===1) ctx.lineTo(first.x*w+.2,first.y*h+.2);
+        else stroke.points.slice(1).forEach(p=>ctx.lineTo(p.x*w,p.y*h));
+        ctx.stroke(); ctx.restore();
+      }
+
+      function redrawScratchpad() {
+        const ctx=drawing.ctx, canvas=els.scratchCanvas;
+        ctx.clearRect(0,0,canvas.clientWidth,canvas.clientHeight);
+        drawing.strokes.forEach(drawStroke);
+        if(drawing.current) drawStroke(drawing.current);
+      }
+
+      function pointFromEvent(e) {
+        const r=els.scratchCanvas.getBoundingClientRect();
+        return {x:Math.max(0,Math.min(1,(e.clientX-r.left)/r.width)), y:Math.max(0,Math.min(1,(e.clientY-r.top)/r.height))};
+      }
+
+      els.scratchCanvas.addEventListener('pointerdown',e=>{
+        if(e.button!==0 && e.pointerType==='mouse') return;
+        e.preventDefault(); els.scratchCanvas.setPointerCapture(e.pointerId);
+        drawing.current={
+          tool:drawing.tool,
+          color:drawing.color,
+          width:drawing.tool==='eraser' ? drawing.eraserWidth : drawing.penWidth,
+          points:[pointFromEvent(e)]
+        };
+        redrawScratchpad();
+      });
+      els.scratchCanvas.addEventListener('pointermove',e=>{
+        if(!drawing.current) return;
+        e.preventDefault(); drawing.current.points.push(pointFromEvent(e)); redrawScratchpad();
+      });
+      function finishStroke(e) {
+        if(!drawing.current) return;
+        if(e) drawing.current.points.push(pointFromEvent(e));
+        drawing.strokes.push(drawing.current); drawing.current=null; redrawScratchpad();
+      }
+      els.scratchCanvas.addEventListener('pointerup',finishStroke);
+      els.scratchCanvas.addEventListener('pointercancel',finishStroke);
+
+      function selectTool(tool) {
+        drawing.tool=tool;
+        els.penBtn.classList.toggle('active',tool==='pen'); els.eraserBtn.classList.toggle('active',tool==='eraser');
+        els.scratchStatus.textContent=tool==='pen' ? `Stift · ${drawing.penWidth.toFixed(1)}` : `Radierer · ${drawing.eraserWidth}`;
+        els.scratchCanvas.style.cursor=tool==='pen' ? 'crosshair' : 'cell';
+      }
+      els.penBtn.addEventListener('click',()=>selectTool('pen'));
+      els.eraserBtn.addEventListener('click',()=>selectTool('eraser'));
+      document.querySelectorAll('.color-btn').forEach(btn=>btn.addEventListener('click',()=>{
+        drawing.color=btn.dataset.color;
+        document.querySelectorAll('.color-btn').forEach(b=>b.classList.toggle('active',b===btn));
+        selectTool('pen');
+      }));
+      els.penWidth.addEventListener('input',()=>{ drawing.penWidth=Number(els.penWidth.value); if(drawing.tool==='pen') selectTool('pen'); });
+      els.eraserWidth.addEventListener('input',()=>{ drawing.eraserWidth=Number(els.eraserWidth.value); if(drawing.tool==='eraser') selectTool('eraser'); });
+      els.undoBtn.addEventListener('click',()=>{ drawing.strokes.pop(); redrawScratchpad(); });
+      els.clearBtn.addEventListener('click',()=>{ drawing.strokes=[]; drawing.current=null; redrawScratchpad(); });
+      els.scratchToggle.addEventListener('click',()=>{
+        const open=els.scratchpad.classList.toggle('open');
+        els.scratchToggle.setAttribute('aria-expanded',String(open));
+        els.scratchToggle.querySelector('span:nth-child(2)').textContent=open?'Nebenrechnungen einklappen':'Nebenrechnungen aufklappen';
+        if(open) { requestAnimationFrame(resizeScratchpad); setTimeout(resizeScratchpad,320); }
+      });
+      window.addEventListener('resize',()=>{ if(els.scratchpad.classList.contains('open')) resizeScratchpad(); });
+
+      document.addEventListener('keydown',e=>{
+        if((e.ctrlKey||e.metaKey) && e.key.toLowerCase()==='z') {
+          e.preventDefault(); drawing.current=null; drawing.strokes.pop(); redrawScratchpad(); return;
+        }
+        if(!els.startOverlay.hidden && e.key==='Enter') startGame();
+        if(!els.endOverlay.hidden && e.key==='Enter') startGame();
+        if(els.startOverlay.hidden && els.endOverlay.hidden && !state.locked && ['1','2','3','4'].includes(e.key)) els.answers.children[Number(e.key)-1]?.click();
+        if(!els.nextBtn.hidden && (e.key==='Enter'||e.key===' ')) { e.preventDefault(); next(); }
+      });
+    })();
+  </script>
+</body>
+</html>
