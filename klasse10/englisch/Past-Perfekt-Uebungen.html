@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Past Perfect – Gemischte Übungen</title>
+  <style>
+    :root{--ink:#17283b;--muted:#647180;--blue:#174f86;--blue2:#246ba9;--paper:#f2f6fa;--card:#fff;--line:#d6e0e9;--ok:#167552;--okbg:#eaf8f2;--bad:#b63d3d;--badbg:#fff0ef;--gold:#f1b83f}
+    *{box-sizing:border-box}
+    html{font-size:16px}
+    body{margin:0;min-height:100vh;background:linear-gradient(135deg,#edf4fb,#f8fafc 52%,#eef4f1);color:var(--ink);font-family:Calibri,"Segoe UI",Arial,sans-serif}
+    button,input{font:inherit}
+    button{cursor:pointer}
+    .page{max-width:980px;min-height:100vh;margin:auto;padding:24px;display:flex;flex-direction:column}
+    header{display:flex;align-items:center;justify-content:space-between;gap:18px;margin-bottom:18px}
+    .brand{display:flex;align-items:center;gap:14px}
+    .icon{width:50px;height:50px;border-radius:14px;background:var(--blue);color:#fff;display:grid;place-items:center;font-weight:800;font-size:1.28rem;box-shadow:0 8px 22px rgba(23,79,134,.22)}
+    h1{margin:0;font-size:clamp(1.45rem,3.7vw,2.15rem);letter-spacing:-.025em}
+    .subtitle{margin:3px 0 0;color:var(--muted);font-size:.94rem}
+    .score{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;color:var(--blue);font-weight:800;white-space:nowrap}
+    .rule{background:#fff;border:1px solid var(--line);border-radius:16px;padding:15px 18px;margin-bottom:18px;box-shadow:0 10px 28px rgba(30,60,90,.07)}
+    .rule summary{cursor:pointer;font-weight:800;color:var(--blue)}
+    .rule-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-top:13px}
+    .rule-item{background:#f4f7fa;border-radius:11px;padding:11px 12px;line-height:1.42}
+    .rule-item b{display:block;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:3px}
+    .card{background:rgba(255,255,255,.97);border:1px solid var(--line);border-radius:22px;box-shadow:0 18px 55px rgba(25,53,82,.12);overflow:hidden}
+    .top{display:flex;align-items:center;gap:14px;padding:17px 22px;border-bottom:1px solid var(--line)}
+    .bar{height:8px;flex:1;background:#e8eef3;border-radius:10px;overflow:hidden}
+    .bar span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--blue2),#65a9d6);transition:width .25s}
+    .count{font-size:.88rem;font-weight:800;color:var(--muted)}
+    .task{padding:34px 34px 30px;min-height:420px}
+    .label{display:inline-block;background:#eaf1f8;color:var(--blue);font-size:.78rem;font-weight:800;border-radius:999px;padding:7px 11px;margin-bottom:22px}
+    .instruction{font-size:.92rem;color:var(--muted);margin-bottom:14px}
+    .sentence{font-family:Georgia,"Times New Roman",serif;font-size:clamp(1.35rem,3vw,2rem);line-height:1.75;margin:0 0 8px}
+    .verb{display:inline-block;font-family:Calibri,"Segoe UI",Arial,sans-serif;font-size:.95rem;color:var(--muted);font-style:italic;margin-left:7px;white-space:nowrap}
+    .gap{display:inline-block;width:min(230px,42vw);min-width:115px;border:0;border-bottom:2px solid #8ea2b5;background:#f7f9fb;padding:7px 9px;margin:0 5px;color:var(--ink);outline:none;border-radius:7px 7px 2px 2px}
+    .gap.short{width:105px;min-width:88px}
+    .gap:focus{border-bottom-color:var(--blue2);box-shadow:0 3px 0 rgba(36,107,169,.13)}
+    .gap.correct{border-bottom-color:var(--ok);background:var(--okbg)}
+    .gap.wrong{border-bottom-color:var(--bad);background:var(--badbg)}
+    .actions{display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+    .primary,.secondary{border-radius:11px;padding:11px 17px;font-weight:800}
+    .primary{border:0;background:var(--blue);color:#fff}
+    .primary:hover{background:var(--blue2)}
+    .secondary{border:1px solid #b7c5d2;background:#fff;color:var(--ink)}
+    .feedback{display:none;margin-top:22px;padding:15px 17px;border-radius:14px;line-height:1.48}
+    .feedback.show{display:block}
+    .feedback.ok{background:var(--okbg);border:1px solid #aadbc8}
+    .feedback.bad{background:var(--badbg);border:1px solid #efc1bd}
+    .feedback h3{margin:0 0 6px;font-size:1rem}
+    .trophy,.repeat{display:inline-grid;place-items:center;width:29px;height:29px;margin-right:8px;border-radius:50%;background:#fff4cc;vertical-align:middle;animation:pop .34s ease-out}
+    .repeat{background:#fff;color:var(--bad);font-size:1.15rem}
+    .solution{font-weight:800;color:var(--blue)}
+    @keyframes pop{0%{transform:scale(.3) rotate(-15deg);opacity:0}75%{transform:scale(1.15) rotate(4deg)}100%{transform:scale(1);opacity:1}}
+    .welcome,.result{text-align:center;padding:44px 30px 42px}
+    .visual{width:122px;height:122px;border-radius:50%;margin:0 auto 20px;background:linear-gradient(145deg,#dbeaf7,#eef5fb);display:grid;place-items:center;color:var(--blue);font-family:Georgia,serif;font-size:2.15rem;font-weight:800;border:1px solid #c9dbea}
+    .welcome h2,.result h2{margin:0 0 10px;font-size:clamp(1.45rem,3vw,2rem)}
+    .welcome p,.result p{max-width:650px;margin:0 auto;color:var(--muted);line-height:1.55}
+    .start{margin-top:22px}
+    .cups{font-size:1.55rem;letter-spacing:5px;margin:13px 0}
+    .copyright{text-align:center;margin-top:auto;padding:24px 8px 2px;color:#687685;font-size:.78rem}
+    .hidden{display:none!important}
+    @media(max-width:680px){.page{padding:13px}.task{padding:25px 18px}.rule-grid{grid-template-columns:1fr}.score{display:none}.sentence{line-height:2}.gap{width:55vw}.gap.short{width:92px}.actions{flex-direction:column}.actions button{width:100%}}
+  </style>
+</head>
+<body>
+<main class="page">
+  <header>
+    <div class="brand"><div class="icon">had</div><div><h1>Past Perfect</h1><p class="subtitle">Aussagen · Verneinungen · Fragen · MSA Bayern</p></div></div>
+    <div class="score" id="score">0 richtig</div>
+  </header>
+
+  <details class="rule">
+    <summary>Merksatz zum Aufklappen</summary>
+    <div class="rule-grid">
+      <div class="rule-item"><b>Aussage</b>subject + had + past participle</div>
+      <div class="rule-item"><b>Verneinung</b>subject + had not + past participle</div>
+      <div class="rule-item"><b>Frage</b>(question word) + had + subject + past participle</div>
+      <div class="rule-item"><b>Kurzformen</b>I had → I’d · had not → hadn’t · did not → didn’t</div>
+      <div class="rule-item"><b>Frühere Handlung</b>Past Perfect: had + past participle</div>
+      <div class="rule-item"><b>Spätere Handlung</b>Simple Past: zweite Handlung oder späterer Zustand</div>
+    </div>
+  </details>
+
+  <section class="card">
+    <div class="top hidden" id="top"><div class="bar"><span id="bar"></span></div><div class="count" id="count">1 / 18</div></div>
+    <div class="welcome" id="welcome">
+      <div class="visual">had</div>
+      <h2>Gemischte Abfrage</h2>
+      <p>Entscheide selbst zwischen Simple Past und Past Perfect. In jeder Runde musst du sowohl einzelne Past-Perfect-Formen als auch beide Satzteile vollständig ergänzen. Bei Verneinungen steht „not“ zusammen mit dem Infinitiv in Klammern.</p>
+      <button class="primary start" id="start" type="button">Abfrage starten</button>
+    </div>
+    <div class="task hidden" id="task">
+      <div class="label" id="kind">Gemischte Übung</div>
+      <div class="instruction" id="instruction">Ergänze alle Lücken. Schreibe die vollständige Form.</div>
+      <div class="sentence" id="sentence"></div>
+      <div class="actions" id="actions">
+        <button class="primary" id="check" type="button">Prüfen</button>
+        <button class="secondary" id="reveal" type="button">Lösung zeigen</button>
+      </div>
+      <div class="feedback" id="feedback"></div>
+    </div>
+    <div class="result hidden" id="result"></div>
+  </section>
+  <footer class="copyright">© Michele Cuciuffo</footer>
+</main>
+
+<script>
+const exercises=[
+ {k:"Aussagesatz",p:["By the time we arrived, the film ","."],a:["had started"],v:"start",e:"Der Film hatte bereits begonnen, bevor wir ankamen."},
+ {k:"Aussagesatz",p:["The lesson "," when Mia entered the room."],a:["had begun"],v:"begin",e:"Die Unterrichtsstunde hatte schon begonnen."},
+ {k:"Aussagesatz",p:["Before the deadline, the applicant "," the online form."],a:["had completed"],v:"complete",e:"Die Bewerbung war vor der Frist vollständig."},
+ {k:"Aussagesatz",p:["He "," in a restaurant before he started his apprenticeship."],a:["had worked"],v:"work",e:"Die frühere Handlung steht im Past Perfect."},
+ {k:"Verneinung",p:["Until that holiday, she "," before."],a:["had not flown"],v:"fly",e:"Verneinung: had not flown oder hadn’t flown."},
+ {k:"Aussagesatz",p:["The train "," when we reached the platform."],a:["had already left"],v:"leave",e:"„leave“ ist unregelmäßig: leave – left – left."},
+ {k:"Aussagesatz",p:["Tom could not pay because he "," his wallet at home."],a:["had forgotten"],v:"forget",e:"forget – forgot – forgotten"},
+ {k:"Aussagesatz",p:["By the age of eighteen, she "," enough money for a laptop."],a:["had saved"],v:"save",e:"Die Ersparnis war vor dem späteren Zeitpunkt vorhanden."},
+ {k:"Aussagesatz",p:["The class "," all the bottles before the project ended."],a:["had recycled"],v:"recycle",e:"Bei regelmäßigen Verben endet das Past Participle auf -ed."},
+ {k:"Aussagesatz",p:["The team "," the presentation before the guests arrived."],a:["had prepared"],v:"prepare",e:"Vorvergangenheit: had + prepared."},
+ {k:"Aussagesatz",p:["After the journalist "," the article, the editor checked it."],a:["had written"],v:"write",e:"write – wrote – written"},
+ {k:"Aussagesatz",p:["The tourists were tired because they "," all day."],a:["had travelled"],v:"travel",e:"Die Reise fand vor dem beschriebenen Zustand statt.",alt:[["had traveled"]]},
+
+ {k:"Verneinung",p:["She could not show the ticket because she "," it."],a:["had not printed"],v:"print",e:"Verneinung: had not + Past Participle."},
+ {k:"Verneinung",p:["His phone switched off because he "," it."],a:["had not charged"],v:"charge",e:"had not charged = hadn't charged"},
+ {k:"Verneinung",p:["Before the documentary, we "," the effects of child labour."],a:["had not seen"],v:"see",e:"see – saw – seen"},
+ {k:"Verneinung",p:["She was nervous because she "," for a job before."],a:["had not applied"],v:"apply",e:"„before“ zeigt den Bezug zu einem späteren Zeitpunkt."},
+ {k:"Verneinung",p:["The customer complained because he "," the delivery details."],a:["had not checked"],v:"check",e:"had not checked = hadn't checked"},
+ {k:"Verneinung",p:["They had to sleep at the station because they "," accommodation."],a:["had not booked"],v:"book",e:"Die fehlende Buchung geschah vor der Übernachtung."},
+ {k:"Verneinung",p:["By lunchtime, Alex "," anything."],a:["had not eaten"],v:"eat",e:"eat – ate – eaten"},
+ {k:"Verneinung",p:["He misunderstood the contract because he "," it carefully."],a:["had not read"],v:"read",e:"„read“ wird hier /red/ gesprochen, aber gleich geschrieben."},
+ {k:"Verneinung",p:["The teacher was surprised because the students "," her about the change."],a:["had not told"],v:"tell",e:"Verneinung: had not told oder hadn’t told."},
+ {k:"Verneinung",p:["When the bell rang, the students "," the test."],a:["had not finished"],v:"finish",e:"Die Handlung war beim späteren Klingeln noch nicht abgeschlossen."},
+ {k:"Verneinung",p:["The shop refused the return because the customer "," the receipt."],a:["had not kept"],v:"keep",e:"keep – kept – kept"},
+ {k:"Verneinung",p:["Before that day, I "," such a misleading advertisement."],a:["had not noticed"],v:"notice",e:"Verneinung: had not noticed oder hadn’t noticed."},
+
+ {k:"Entscheidungsfrage",p:[""," you "," the report before the meeting?"],a:["Had","finished"],v:"finish",e:"Frage: Had + subject + Past Participle?"},
+ {k:"Entscheidungsfrage",p:[""," she "," the application before the deadline?"],a:["Had","sent"],v:"send",e:"send – sent – sent"},
+ {k:"Entscheidungsfrage",p:[""," they ever "," Australia before that trip?"],a:["Had","visited"],v:"visit",e:"„ever“ steht nach dem Subjekt."},
+ {k:"Entscheidungsfrage",p:[""," he "," the door before he left?"],a:["Had","locked"],v:"lock",e:"Had he locked ...?"},
+ {k:"Entscheidungsfrage",p:[""," the train already "," when you arrived?"],a:["Had","departed"],v:"depart",e:"Das Subjekt steht zwischen „had“ und dem Past Participle."},
+ {k:"Entscheidungsfrage",p:[""," the students "," the task before they started writing?"],a:["Had","understood"],v:"understand",e:"understand – understood – understood"},
+ {k:"Entscheidungsfrage",p:[""," the company "," your complaint before it replied?"],a:["Had","received"],v:"receive",e:"Had the company received ...?"},
+ {k:"Entscheidungsfrage",p:[""," your phone "," working before the journey?"],a:["Had","stopped"],v:"stop",e:"Bei „stop“ wird der Endkonsonant verdoppelt: stopped."},
+
+ {k:"W-Frage",p:["Why "," he "," before the meeting?"],a:["had","left"],v:"leave",e:"Why had he left ...?"},
+ {k:"W-Frage",p:["Where "," they "," before they moved to London?"],a:["had","lived"],v:"live",e:"Where had they lived ...?"},
+ {k:"W-Frage",p:["What "," she "," in the email before she deleted it?"],a:["had","written"],v:"write",e:"What had she written ...?"},
+ {k:"W-Frage",p:["How much money "," you "," before the holiday?"],a:["had","spent"],v:"spend",e:"spend – spent – spent"},
+ {k:"W-Frage",p:["Why "," the shop "," before the customers arrived?"],a:["had","closed"],v:"close",e:"Why had the shop closed ...?"},
+ {k:"W-Frage",p:["Which document "," he "," at home?"],a:["had","forgotten"],v:"forget",e:"Which document had he forgotten ...?"},
+ {k:"W-Frage",p:["How long "," she "," there before she changed jobs?"],a:["had","worked"],v:"work",e:"How long had she worked ...?"},
+ {k:"W-Frage",p:["Why "," the team "," its plan before the presentation?"],a:["had","changed"],v:"change",e:"Why had the team changed ...?"}
+];
+
+const tenseExercises=[
+ {m:true,k:"Zeitformen unterscheiden",p:["When we "," at the cinema, the film ","."],a:["arrived","had already started"],v:["arrive","start"],e:"Der Film begann zuerst (Past Perfect); danach kamen wir an (Simple Past)."},
+ {m:true,k:"Zeitformen unterscheiden",p:["After she "," the application, she "," it to the company."],a:["had completed","sent"],v:["complete","send"],e:"Zuerst stellte sie die Bewerbung fertig; danach schickte sie sie ab."},
+ {m:true,k:"Zeitformen unterscheiden",p:["He "," the train because he "," home too late."],a:["missed","had left"],v:["miss","leave"],e:"Das späte Verlassen des Hauses geschah vor dem Verpassen des Zuges."},
+ {m:true,k:"Zeitformen unterscheiden",p:["Before they "," to Munich, they "," in London."],a:["moved","had lived"],v:["move","live"],e:"Das Leben in London lag vor dem Umzug nach München."},
+ {m:true,k:"Zeitformen unterscheiden",p:["After the shop ",", the last customer ","."],a:["had closed","arrived"],v:["close","arrive"],e:"Zuerst schloss das Geschäft; danach kam der Kunde."},
+ {m:true,k:"Zeitformen unterscheiden",p:["She "," relieved because she "," the exam."],a:["felt","had passed"],v:["feel","pass"],e:"Das Bestehen geschah vor dem späteren Gefühl der Erleichterung."},
+ {m:true,k:"Zeitformen unterscheiden",p:["The phone "," working after I "," it."],a:["stopped","had dropped"],v:["stop","drop"],e:"Zuerst fiel das Handy herunter; danach funktionierte es nicht mehr."},
+ {m:true,k:"Zeitformen unterscheiden",p:["Once they "," the accommodation, they "," the train tickets."],a:["had booked","bought"],v:["book","buy"],e:"Die Unterkunft wurde vor den Fahrkarten gebucht."},
+ {m:true,k:"Zeitformen unterscheiden",p:["By the time the teacher ",", the students "," their books."],a:["arrived","had opened"],v:["arrive","open"],e:"Die Bücher waren bereits geöffnet, als die Lehrkraft ankam."},
+ {m:true,k:"Zeitformen unterscheiden",p:["We "," about the new deadline because the company "," us."],a:["did not know","had not informed"],v:["know","inform"],e:"Die unterlassene Information lag vor unserem späteren Nichtwissen."},
+ {m:true,k:"Zeitformen unterscheiden",p:["She "," the building because she "," her identity card."],a:["did not enter","had forgotten"],v:["enter","forget"],e:"Das Vergessen geschah zuerst; deshalb betrat sie das Gebäude nicht."},
+ {m:true,k:"Zeitformen unterscheiden",p:["The applicant "," confident because he "," well for the interview."],a:["felt","had prepared"],v:["feel","prepare"],e:"Die Vorbereitung fand vor dem Vorstellungsgespräch statt."},
+ {m:true,k:"Zeitformen unterscheiden",p:["After the storm ",", the volunteers "," the park."],a:["had ended","cleaned"],v:["end","clean"],e:"Zuerst endete der Sturm; anschließend wurde der Park gereinigt."},
+ {m:true,k:"Zeitformen unterscheiden",p:["They "," the materials after they "," the project."],a:["recycled","had completed"],v:["recycle","complete"],e:"Das Projekt war abgeschlossen, bevor die Materialien recycelt wurden."},
+ {m:true,k:"Zeitformen unterscheiden",p:["The flight "," before we "," the airport."],a:["had departed","reached"],v:["depart","reach"],e:"Der Abflug fand vor unserer Ankunft am Flughafen statt."},
+ {m:true,k:"Zeitformen unterscheiden",p:["When she "," the reply, she "," another job."],a:["received","had already accepted"],v:["receive","accept"],e:"Die andere Stelle war schon angenommen, bevor die Antwort kam."},
+ {m:true,k:"Zeitformen unterscheiden",p:["He "," the device because it "," working."],a:["returned","had stopped"],v:["return","stop"],e:"Der Defekt trat vor der Rückgabe ein."},
+ {m:true,k:"Zeitformen unterscheiden",p:["After the journalist "," the source, she "," the article."],a:["had checked","published"],v:["check","publish"],e:"Zuerst wurde die Quelle geprüft; danach erschien der Artikel."},
+ {m:true,k:"Zeitformen unterscheiden",p:["The students "," the answer because they "," the topic."],a:["knew","had studied"],v:["know","study"],e:"Das Lernen fand vor dem späteren Wissen statt."},
+ {m:true,k:"Zeitformen unterscheiden",p:["By the time the museum ",", a long queue "," outside."],a:["opened","had formed"],v:["open","form"],e:"Die Schlange hatte sich bereits vor der Öffnung gebildet."},
+ {m:true,k:"Zeitformen unterscheiden",p:["She "," the advertisement before her friend "," it to her."],a:["had not seen","showed"],v:["see","show"],e:"Das Nichtsehen lag vor dem späteren Zeigen der Werbung."},
+ {m:true,k:"Zeitformen unterscheiden",p:["After the class "," the text, the teacher "," the answers."],a:["had read","discussed"],v:["read","discuss"],e:"Zuerst wurde der Text gelesen; danach wurden die Antworten besprochen."},
+ {m:true,k:"Zeitformen unterscheiden",p:["The customer "," a complaint after the product "," twice."],a:["wrote","had failed"],v:["write","fail"],e:"Das Produkt versagte zuerst; danach wurde die Beschwerde geschrieben."},
+ {m:true,k:"Zeitformen unterscheiden",p:["Before Max "," his apprenticeship, he "," work experience in a garage."],a:["started","had gained"],v:["start","gain"],e:"Die Berufserfahrung wurde vor dem Beginn der Ausbildung gesammelt."}
+];
+
+const $=id=>document.getElementById(id);
+const state={round:[],index:0,score:0,attempt:0,current:null,done:false};
+function shuffle(a){return [...a].sort(()=>Math.random()-.5)}
+function norm(s){return s.toLowerCase().trim().replace(/[’']/g,"'").replace(/\bhad(?:'n|n')t\b/g,"had not").replace(/\bdid(?:'n|n')t\b/g,"did not").replace(/^'d\b/g,"had").replace(/\b(i|you|he|she|it|we|they)'d\b/g,"$1 had").replace(/[.,!?;]/g,"").replace(/\s+/g," ")}
+function start(){
+  state.round=shuffle([...shuffle(exercises).slice(0,9),...shuffle(tenseExercises).slice(0,9)]);state.index=0;state.score=0;
+  $("welcome").classList.add("hidden");$("result").classList.add("hidden");$("task").classList.remove("hidden");$("top").classList.remove("hidden");
+  show();
+}
+function show(){
+  state.current=state.round[state.index];state.attempt=0;state.done=false;
+  $("kind").textContent=state.current.k;$("feedback").className="feedback";$("feedback").innerHTML="";$("actions").classList.remove("hidden");
+  $("instruction").textContent=state.current.m?"Entscheide bei jedem Satzteil: Simple Past oder Past Perfect.":"Ergänze alle Lücken. Schreibe die vollständige Past-Perfect-Form.";
+  const box=$("sentence");box.innerHTML="";
+  state.current.p.forEach((part,i)=>{
+    box.append(document.createTextNode(part));
+    if(i<state.current.a.length){
+      const input=document.createElement("input");input.className="gap"+(!state.current.m&&state.current.a.length>1?" short":"");input.dataset.index=i;input.autocomplete="off";input.spellcheck=false;input.setAttribute("aria-label","Lücke "+(i+1));box.append(input);
+      if(state.current.m){
+        const negative=/\b(?:had|did) not\b/i.test(state.current.a[i]);
+        const verb=document.createElement("span");verb.className="verb";verb.textContent="("+(negative?"not ":"")+state.current.v[i]+")";box.append(verb)
+      }
+    }
+  });
+  if(!state.current.m){
+    const negative=state.current.a.some(answer=>/\b(?:had|did) not\b/i.test(answer));
+    const verb=document.createElement("span");verb.className="verb";verb.textContent="("+(negative?"not ":"")+state.current.v+")";box.append(verb)
+  }
+  $("bar").style.width=(state.index/state.round.length*100)+"%";$("count").textContent=(state.index+1)+" / "+state.round.length;$("score").textContent=state.score+" richtig";
+  const inputs=[...document.querySelectorAll(".gap")];inputs[0].focus();inputs.forEach((inp,i)=>inp.addEventListener("keydown",e=>{if(e.key==="Enter"){if(i<inputs.length-1)inputs[i+1].focus();else $("check").click()}}));
+}
+function validAnswers(ex){
+  const sets=[ex.a];(ex.alt||[]).forEach(x=>sets.push(x));return sets;
+}
+function check(){
+  if(state.done)return;
+  const inputs=[...document.querySelectorAll(".gap")];if(inputs.some(x=>!x.value.trim()))return;
+  const values=inputs.map(x=>norm(x.value));const ok=validAnswers(state.current).some(set=>set.every((a,i)=>norm(a)===values[i]));
+  inputs.forEach((x,i)=>{const fieldOk=validAnswers(state.current).some(set=>norm(set[i])===values[i]);x.classList.toggle("correct",fieldOk);x.classList.toggle("wrong",!fieldOk)});
+  if(ok){state.score++;state.done=true;inputs.forEach(x=>x.disabled=true);$("score").textContent=state.score+" richtig";feedback(true,false);return}
+  state.attempt++;
+  if(state.attempt<2){
+    const hint=state.current.m?"Welche Handlung geschah zuerst? Sie steht im Past Perfect; die spätere Handlung steht im Simple Past.":"Überprüfe „had“, die Satzstellung und das Past Participle.";
+    const f=$("feedback");f.className="feedback show bad";f.innerHTML="<h3><span class='repeat'>↻</span>Noch einmal</h3>"+hint+" Du erhältst einen zweiten Versuch.";
+    return;
+  }
+  state.done=true;inputs.forEach(x=>x.disabled=true);feedback(false,true);
+}
+function feedback(ok,solution){
+  const f=$("feedback");f.className="feedback show "+(ok?"ok":"bad");
+  const answer=state.current.a.join(" · ");
+  f.innerHTML="<h3>"+(ok?"<span class='trophy'>🏆</span>Richtig!":"<span class='repeat'>↻</span>Wiederholen")+"</h3>"+(solution?"<div class='solution'>Lösung: "+answer+"</div>":"")+"<div>"+state.current.e+"</div><div class='actions'><button class='primary' id='next' type='button'>"+(state.index===state.round.length-1?"Ergebnis":"Weiter")+"</button></div>";
+  $("next").onclick=next;
+}
+function reveal(){
+  if(state.done)return;state.done=true;
+  const inputs=[...document.querySelectorAll(".gap")];inputs.forEach((x,i)=>{x.value=state.current.a[i];x.disabled=true;x.classList.add("wrong")});feedback(false,true);
+}
+function next(){
+  if(state.index<state.round.length-1){state.index++;show();return}
+  $("task").classList.add("hidden");$("top").classList.add("hidden");$("result").classList.remove("hidden");
+  const pct=Math.round(state.score/state.round.length*100),cups=pct>=85?3:pct>=60?2:1;
+  $("result").innerHTML="<div class='visual'>"+state.score+"</div><h2>"+state.score+" von "+state.round.length+" richtig</h2><div class='cups' aria-label='"+cups+" Pokale'>"+Array(cups).fill("🏆").join("")+"</div><p>"+(pct>=85?"Sehr sicher – du erkennst die frühere und die spätere Handlung zuverlässig.":pct>=60?"Gute Grundlage. Achte weiter darauf, welcher Satzteil zuerst geschah.":"Wiederhole die Unterscheidung: frühere Handlung im Past Perfect, spätere Handlung im Simple Past.")+"</p><button class='primary start' id='restart' type='button'>Neue Runde</button>";
+  $("restart").onclick=start;
+}
+$("start").onclick=start;$("check").onclick=check;$("reveal").onclick=reveal;
+</script>
+</body>
+</html>
