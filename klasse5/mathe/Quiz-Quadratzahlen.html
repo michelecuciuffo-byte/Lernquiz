@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="color-scheme" content="light" />
+  <title>Quadratzahlen-Quiz · 1 bis 20 und 25</title>
+  <style>
+    :root{font-family:Calibri,Arial,sans-serif;color:#17243a;background:#f3f6fc;--navy:#162d51;--blue:#3062d4;--blue-pale:#eaf1ff;--line:#dce5f1;--green:#16734c;--red:#bf364b;--ink:#17243a}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 12% 0%,#e8eeff 0%,transparent 43%),radial-gradient(ellipse at 95% 100%,#e0f5ee 0%,transparent 41%),#f4f7fb;display:flex;align-items:center;justify-content:center;padding:28px 16px}
+    main{width:100%;max-width:780px}
+    .header{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:20px}
+    .brand{display:flex;align-items:center;gap:12px;font-size:16px;color:#4d6180;font-weight:700;letter-spacing:.02em}
+    .brand-symbol{width:44px;height:44px;border-radius:14px;background:var(--navy);color:#fff;display:grid;place-items:center;font-size:20px;box-shadow:0 6px 12px #172d5420}
+    .reset{font:inherit;font-size:14px;font-weight:700;color:#415b83;background:#fff;border:1px solid #dce5f1;border-radius:12px;padding:11px 15px;cursor:pointer}
+    .reset:hover{background:#edf3ff}
+    .card{background:#fff;border:1px solid #e2eaf4;border-radius:28px;box-shadow:0 15px 48px #25416a13;overflow:hidden}
+    .card-inner{padding:32px 42px 38px}
+    .eyebrow{color:#53729e;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.13em}
+    h1{font-size:clamp(29px,5vw,40px);letter-spacing:-.035em;line-height:1.12;margin:9px 0 9px;color:#152d51}
+    .sub{color:#63748e;font-size:17px;line-height:1.5;margin:0 0 28px}
+    .mode-panel{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;padding:5px;margin:-4px 0 22px;background:#f0f4fb;border-radius:16px}
+    .mode-button{border:2px solid transparent;border-radius:12px;background:transparent;color:#526985;font:inherit;font-weight:800;font-size:15px;padding:13px 9px;cursor:pointer;transition:background .15s,border-color .15s}
+    .mode-button[aria-pressed="true"]{border-color:#9cbaef;background:#fff;color:#194d9f;box-shadow:0 2px 8px #1b396010}
+    .mode-button:hover{background:#fff}
+    .mode-hint{margin:-10px 0 16px;color:#687b96;font-size:14px;text-align:center}
+    .answer-entry{max-width:530px;margin:0 auto;display:flex;gap:12px;align-items:stretch}
+    .answer-input{min-width:0;flex:1;width:50%;min-height:80px;border:2px solid #dfe7f3;border-radius:16px;padding:8px 17px;text-align:center;font:inherit;font-weight:800;font-size:32px;color:#244168;background:#fff}
+    .answer-input:focus{border-color:#628de9;outline:3px solid #d9e6ff;outline-offset:2px}
+    .answer-input.correct{background:#e6f6ee;border-color:#30a26e;color:#176541}
+    .answer-submit{border:0;border-radius:16px;padding:12px 20px;background:var(--blue);color:white;font:inherit;font-weight:800;font-size:17px;cursor:pointer;box-shadow:0 4px 0 #234ca6}
+    .answer-submit:hover:not(:disabled){background:#2453bf}
+    .answer-submit:disabled{opacity:.65;cursor:default}
+    .stats{display:flex;justify-content:space-between;align-items:flex-end;gap:15px;margin-bottom:11px;font-size:15px;font-weight:700;color:#59708e}
+    .stats strong{color:#1e3b67;font-size:17px}
+    .track{height:10px;border-radius:100px;background:#e9edf6;overflow:hidden}
+    .bar{height:100%;background:linear-gradient(90deg,#527eed,#309bc6);border-radius:100px;transition:width .35s ease;width:0}
+    .question-area{text-align:center;padding:34px 10px 27px}
+    .prompt{font-size:16px;color:#667b99;font-weight:700;margin-bottom:14px}
+    .question{font-weight:800;font-size:clamp(53px,10vw,88px);color:#18335d;letter-spacing:-.04em;line-height:1.15}
+    .question sup{font-size:.42em;vertical-align:super;margin-left:2px}
+    .options{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+    .option{border:2px solid #dfe7f3;background:#fff;border-radius:18px;min-height:96px;position:relative;cursor:pointer;font:inherit;font-size:clamp(26px,4.5vw,36px);font-weight:800;color:#244168;transition:background .12s,border-color .12s,transform .12s;box-shadow:0 4px 0 #e8edf5}
+    .option:hover:not(:disabled){border-color:#7098ef;background:#f3f7ff;transform:translateY(-2px)}
+    .option:focus-visible,.next:focus-visible,.reset:focus-visible,.mode-button:focus-visible,.answer-submit:focus-visible{outline:3px solid #e2a239;outline-offset:4px}
+    .option .key{position:absolute;left:15px;top:12px;color:#8b9cb4;border:1px solid #dce5f0;border-radius:7px;padding:1px 7px;font-size:13px;font-weight:700}
+    .option.correct{background:#e6f6ee;border-color:#30a26e;color:#176541;box-shadow:0 4px 0 #c4ead5}
+    .option.wrong{background:#fff0f1;border-color:#dc6978;color:#9a2940;box-shadow:0 4px 0 #f5d0d5}
+    .option:disabled{cursor:default}
+    .option.correct::after{content:'✓';position:absolute;right:15px;top:12px;font-size:22px}
+    .option.wrong::after{content:'×';position:absolute;right:15px;top:12px;font-size:22px}
+    .feedback-wrap{min-height:111px;padding-top:19px;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;gap:12px}
+    .feedback{font-size:19px;font-weight:800;text-align:center;line-height:1.35;min-height:27px}
+    .feedback.success{color:#146e49}.feedback.error{color:#b73550}
+    .next{background:var(--blue);border:0;color:white;border-radius:12px;padding:13px 24px;font:inherit;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 4px 0 #234ca6}
+    .next:hover{background:#2453bf}
+    .footer{border-top:1px solid #edf0f6;padding:15px 42px;display:flex;justify-content:space-between;gap:10px;color:#71829b;font-size:13px;background:#fbfcff}
+    .finish{text-align:center;display:none;padding:18px 0 8px}
+    .trophy{font-size:80px;display:block;animation:pop .6s cubic-bezier(.25,1.4,.5,1) both}
+    @keyframes pop{from{transform:scale(.55) rotate(-12deg);opacity:.3}to{transform:scale(1) rotate(0deg);opacity:1}}
+    .finish h2{font-size:37px;letter-spacing:-.03em;margin:12px 0;color:#173456}
+    .finish p{color:#63748e;font-size:18px;line-height:1.5}
+    .result{font-size:64px;font-weight:800;color:#245bcb;margin:20px 0 3px}
+    .result-caption{font-size:15px;color:#71819a;margin-bottom:25px}
+    .replay{margin:8px 0 15px}
+    .sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0}
+    @media(max-width:580px){.mode-button{font-size:13px;padding:13px 6px}.answer-entry{flex-direction:column}.answer-input{width:100%;min-height:76px}.answer-submit{min-height:59px}body{padding:14px}.card-inner{padding:25px 20px 20px}.header{margin-bottom:14px}.brand{font-size:13px}.brand-symbol{width:38px;height:38px;border-radius:12px}.reset{font-size:12px;padding:10px}.sub{font-size:15px;margin-bottom:24px}.option{min-height:80px;border-radius:15px}.option .key{left:10px;top:9px;font-size:11px}.question-area{padding:29px 5px 23px}.footer{padding:14px 20px;font-size:11px}}
+    @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+<main>
+  <div class="header">
+    <div class="brand"><div class="brand-symbol" aria-hidden="true">x²</div> MATHE · LERNQUIZ</div>
+    <button class="reset" id="reset" type="button">↻ Neu starten</button>
+  </div>
+  <section class="card" aria-label="Quadratzahlen-Quiz">
+    <div class="card-inner">
+      <div class="eyebrow">Kopfrechentraining</div>
+      <h1>Quadratzahlen-Quiz</h1>
+      <p class="sub">Von 1² bis 20² und zusätzlich 25². Entscheide, wie du üben möchtest!</p>
+      <div class="mode-panel" role="group" aria-label="Quizmodus auswählen">
+        <button class="mode-button" id="mode-choice" type="button" aria-pressed="true">Antwort auswählen</button>
+        <button class="mode-button" id="mode-input" type="button" aria-pressed="false">Antwort eintippen</button>
+      </div>
+      <div class="mode-hint" id="mode-hint">Wähle aus vier Antworten die richtige aus.</div>
+      <div id="quiz">
+        <div class="stats"><span>Aufgabe <strong id="position">1 / 21</strong></span><span>Direkt richtig: <strong id="score">0</strong></span></div>
+        <div class="track" role="progressbar" aria-label="Bearbeitete Aufgaben" aria-valuemin="0" aria-valuemax="21" aria-valuenow="0" id="progress"><div class="bar" id="bar"></div></div>
+        <div class="question-area"><div class="prompt">Wie viel ist …?</div><div id="question" class="question"></div></div>
+        <div class="options" id="options" aria-label="Antwortmöglichkeiten"></div>
+        <form id="answer-form" class="answer-entry" style="display:none" novalidate>
+          <label for="answer-input" class="sr-only">Ergebnis der Quadratzahl</label>
+          <input id="answer-input" class="answer-input" type="number" inputmode="numeric" min="0" step="1" autocomplete="off" placeholder="Dein Ergebnis" aria-describedby="feedback" />
+          <button class="answer-submit" type="submit" id="answer-submit">Prüfen ✓</button>
+        </form>
+        <div class="feedback-wrap"><div class="feedback" id="feedback" role="status" aria-live="polite"></div><button type="button" class="next" id="next" style="display:none">Nächste Aufgabe →</button></div>
+      </div>
+      <div id="finish" class="finish" aria-live="polite"><span class="trophy" aria-hidden="true">🏆</span><h2>Geschafft!</h2><p>Du hast alle 21 Quadratzahlen geübt.</p><div class="result" id="result"></div><div class="result-caption">Aufgaben beim ersten Versuch richtig</div><p id="finish-text"></p><button type="button" class="next replay" id="replay">Noch einmal spielen ↻</button></div>
+    </div>
+    <div class="footer"><span>21 Aufgaben · Reihenfolge gemischt</span><span id="footer-tip">Tipp: Tasten 1–4 zum Antworten</span></div>
+  </section>
+</main>
+<script>
+(()=>{
+  'use strict';
+  const numbers=[...Array.from({length:20},(_,i)=>i+1),25];
+  const els={question:document.getElementById('question'),options:document.getElementById('options'),feedback:document.getElementById('feedback'),next:document.getElementById('next'),position:document.getElementById('position'),score:document.getElementById('score'),bar:document.getElementById('bar'),progress:document.getElementById('progress'),quiz:document.getElementById('quiz'),finish:document.getElementById('finish'),result:document.getElementById('result'),finishText:document.getElementById('finish-text'),answerForm:document.getElementById('answer-form'),answerInput:document.getElementById('answer-input'),answerSubmit:document.getElementById('answer-submit'),modeChoice:document.getElementById('mode-choice'),modeInput:document.getElementById('mode-input'),modeHint:document.getElementById('mode-hint'),footerTip:document.getElementById('footer-tip')};
+  let order=[], index=0, firstTry=0, hadMistake=false, solved=false, currentOptions=[], mode='choice';
+  function shuffle(a){for(let i=a.length-1;i>0;i--){let j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+  function createOptions(n){
+    const answer=n*n;
+    // Nearby squares are especially useful distractors: they test real knowledge.
+    const pool=[n-2,n-1,n+1,n+2,n-3,n+3,n-4,n+4]
+      .filter(v=>v>=1&&v<=25&&v!==n).map(v=>v*v);
+    // Also plausible near misses to make the choice less predictable.
+    [answer+n,answer-n,answer+2*n,answer-2*n,answer+10,answer-10,answer+1,answer-1].forEach(v=>{if(v>0&&v!==answer)pool.push(v);});
+    const distinct=shuffle([...new Set(pool.filter(v=>v>0&&v!==answer))]);
+    // Typically use two other square numbers and a plausible arithmetic slip.
+    const neighbor=[n-1,n+1,n-2,n+2].filter(v=>v>=1&&v<=25&&v!==n).map(v=>v*v);
+    const near=shuffle([...new Set(neighbor)]).slice(0,2);
+    const miss=distinct.find(v=>!near.includes(v)&&!numbers.some(k=>k*k===v));
+    const chosen=[answer,...near];
+    if(miss!==undefined)chosen.push(miss);
+    for(const v of distinct){if(chosen.length===4)break;if(!chosen.includes(v))chosen.push(v);}
+    return shuffle(chosen.slice(0,4));
+  }
+  function render(){
+    const n=order[index];solved=false;hadMistake=false;
+    els.position.textContent=`${index+1} / ${order.length}`;
+    els.score.textContent=firstTry;
+    els.bar.style.width=`${100*index/order.length}%`;
+    els.progress.setAttribute('aria-valuenow',String(index));
+    els.question.innerHTML=`${n}<sup>2</sup> = ?`;
+    els.feedback.textContent='';els.feedback.className='feedback';
+    els.next.style.display='none';
+    els.options.style.display=mode==='choice'?'grid':'none';
+    els.answerForm.style.display=mode==='input'?'flex':'none';
+    els.answerInput.value='';els.answerInput.disabled=false;els.answerInput.classList.remove('correct');
+    els.answerSubmit.disabled=false;
+    if(mode==='input'){
+      els.answerInput.focus({preventScroll:true});
+      return;
+    }
+    currentOptions=createOptions(n);els.options.replaceChildren();
+    currentOptions.forEach((value,i)=>{
+      const button=document.createElement('button');button.type='button';button.className='option';
+      button.innerHTML=`<span class="key" aria-hidden="true">${i+1}</span>${value}`;
+      button.setAttribute('aria-label',`Antwort ${i+1}: ${value}`);
+      button.addEventListener('click',()=>check(button,value));els.options.appendChild(button);
+    });
+  }
+  function check(button,value){
+    if(solved||button.disabled)return;
+    const n=order[index], answer=n*n;
+    if(value===answer){
+      solved=true;if(!hadMistake)firstTry++;
+      els.score.textContent=firstTry;
+      button.classList.add('correct');
+      for(const b of els.options.children)b.disabled=true;
+      els.feedback.className='feedback success';
+      els.feedback.textContent=`🏆 Richtig! ${n} · ${n} = ${answer}`;
+      els.next.textContent=index===order.length-1?'Ergebnis ansehen →':'Nächste Aufgabe →';
+      els.next.style.display='inline-block';
+      els.next.focus({preventScroll:true});
+    }else{
+      hadMistake=true;button.classList.add('wrong');button.disabled=true;
+      els.feedback.className='feedback error';els.feedback.textContent='Versuch es noch einmal 😉';
+    }
+  }
+  function checkTypedAnswer(){
+    if(solved || mode!=='input')return;
+    const raw=els.answerInput.value.trim();
+    if(raw===''){
+      els.feedback.className='feedback error';
+      els.feedback.textContent='Bitte gib zuerst ein Ergebnis ein.';
+      els.answerInput.focus();return;
+    }
+    const value=Number(raw);
+    if(!Number.isSafeInteger(value)||value<0){
+      els.feedback.className='feedback error';
+      els.feedback.textContent='Bitte gib eine ganze, positive Zahl ein.';
+      els.answerInput.select();return;
+    }
+    const n=order[index],answer=n*n;
+    if(value!==answer){
+      hadMistake=true;
+      els.feedback.className='feedback error';
+      els.feedback.textContent='Versuch es noch einmal 😉';
+      els.answerInput.value='';els.answerInput.focus();return;
+    }
+    solved=true;
+    if(!hadMistake)firstTry++;
+    els.score.textContent=firstTry;
+    els.answerInput.classList.add('correct');
+    els.answerInput.disabled=true;els.answerSubmit.disabled=true;
+    els.feedback.className='feedback success';
+    els.feedback.textContent=`🏆 Richtig! ${n} · ${n} = ${answer}`;
+    els.next.textContent=index===order.length-1?'Ergebnis ansehen →':'Nächste Aufgabe →';
+    els.next.style.display='inline-block';
+    els.next.focus({preventScroll:true});
+  }
+  function chooseMode(newMode){
+    if(newMode===mode)return;
+    mode=newMode;
+    els.modeChoice.setAttribute('aria-pressed',String(mode==='choice'));
+    els.modeInput.setAttribute('aria-pressed',String(mode==='input'));
+    els.modeHint.textContent=mode==='choice'?'Wähle aus vier Antworten die richtige aus.':'Schreibe die Quadratzahl selbst auf und bestätige mit Enter.';
+    els.footerTip.textContent=mode==='choice'?'Tipp: Tasten 1–4 zum Antworten':'Tipp: Mit Enter die Antwort prüfen';
+    start();
+  }
+  function finish(){
+    els.quiz.style.display='none';els.finish.style.display='block';
+    els.result.textContent=`${firstTry} / ${order.length}`;
+    els.finishText.textContent=firstTry===order.length?'Perfekt! Du hast jede Aufgabe sofort richtig beantwortet.':firstTry>=17?'Sehr gut! Du kennst schon fast alle Quadratzahlen sicher.':'Prima geübt! Mit jeder Runde wirst du sicherer und schneller.';
+  }
+  function next(){if(!solved)return;index++;if(index>=order.length)finish();else render();}
+  function start(){order=shuffle([...numbers]);index=0;firstTry=0;els.quiz.style.display='block';els.finish.style.display='none';render();}
+  document.getElementById('reset').addEventListener('click',start);
+  els.modeChoice.addEventListener('click',()=>chooseMode('choice'));
+  els.modeInput.addEventListener('click',()=>chooseMode('input'));
+  els.answerForm.addEventListener('submit',e=>{e.preventDefault();checkTypedAnswer();});
+  document.getElementById('replay').addEventListener('click',start);
+  els.next.addEventListener('click',next);
+  document.addEventListener('keydown',e=>{
+    if(e.altKey||e.ctrlKey||e.metaKey||e.repeat)return;
+    if(els.quiz.style.display==='none')return;
+    if((e.key==='Enter'||e.key===' ')&&solved){if(document.activeElement.tagName!=='BUTTON'||document.activeElement===els.next){e.preventDefault();next();}return;}
+    if(mode==='input')return;
+    if(!solved&&/^[1-4]$/.test(e.key)){e.preventDefault();const b=els.options.children[Number(e.key)-1];if(b)check(b,currentOptions[Number(e.key)-1]);}
+  });
+  start();
+})();
+</script>
+</body>
+</html>
