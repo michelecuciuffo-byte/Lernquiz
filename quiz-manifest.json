@@ -3,7 +3,7 @@ layout: null
 permalink: /quiz-manifest.json
 ---
 [
-{% assign subjects = "mathe|biologie|chemie|physik|englisch|franzoesisch" | split: "|" %}
+{% assign subjects = "mathe|biologie|chemie|physik|informatik|englisch|franzoesisch" | split: "|" %}
 {% assign first = true %}
 {% for file in site.static_files %}
   {% assign parts = file.path | split: "/" %}

@@ -952,7 +952,7 @@
   </main>
 
   <script>
-    const grades = Array.from({ length: 8 }, (_, index) => `klasse${index + 5}`);
+    const grades = Array.from({ length: 9 }, (_, index) => `klasse${index + 5}`);
 
     function makeClassSticker(number) {
       const fontSize = String(number).length > 1 ? 7.2 : 10.2;
@@ -1012,6 +1012,7 @@
       class10: makeClassSticker("10"),
       class11: makeClassSticker("11"),
       class12: makeClassSticker("12"),
+      class13: makeClassSticker("13"),
 
       quiz: `
         <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -1071,6 +1072,12 @@
         <circle cx="8.55" cy="6.65" r="0.66" class="sticker-outline-thin"></circle>
       `, "#ead9cb", 1),
 
+      informatik: makeSubjectSticker(`
+        <rect x="5.2" y="5.3" width="13.6" height="9.8" rx="1.25" class="sticker-outline"></rect>
+        <path d="m9.1 8.1-1.5 1.3 1.5 1.3m5.8-2.6 1.5 1.3-1.5 1.3m-2.1-2.9-1.1 3.2" class="sticker-line"></path>
+        <path d="M3.8 17.5h16.4l-1.5-2.4H5.3z" class="sticker-outline"></path>
+      `, "#d8e7ff", -2),
+
       share: `
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <g transform="rotate(-8 12 12)">
@@ -1092,7 +1099,8 @@
       klasse9: iconMarkup.class9,
       klasse10: iconMarkup.class10,
       klasse11: iconMarkup.class11,
-      klasse12: iconMarkup.class12
+      klasse12: iconMarkup.class12,
+      klasse13: iconMarkup.class13
     };
 
     const gradeAccents = {
@@ -1103,7 +1111,8 @@
       klasse9: "#b3a2f0",
       klasse10: "#f1c15e",
       klasse11: "#9bb9f0",
-      klasse12: "#ddb39a"
+      klasse12: "#ddb39a",
+      klasse13: "#86b9a0"
     };
 
     const subjects = [
@@ -1111,6 +1120,7 @@
       { id: "biologie", label: "Biologie", title: "BIOLOGIE", icon: iconMarkup.biologie, accent: "#62af72" },
       { id: "chemie", label: "Chemie", title: "CHEMIE", icon: iconMarkup.chemie, accent: "#48a9ad" },
       { id: "physik", label: "Physik", title: "PHYSIK", icon: iconMarkup.physik, accent: "#7b97ee" },
+      { id: "informatik", label: "Informatik", title: "INFORMATIK", icon: iconMarkup.informatik, accent: "#6d9bd5" },
       { id: "englisch", label: "Englisch", title: "ENGLISCH", icon: iconMarkup.englisch, accent: "#d68ac2" },
       { id: "franzoesisch", label: "Französisch", title: "FRANZÖSISCH", icon: iconMarkup.franzoesisch, accent: "#c9a18d" }
     ];
