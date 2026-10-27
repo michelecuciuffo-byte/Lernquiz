@@ -446,7 +446,7 @@
     #printDocument .key-print-step li{margin:2mm 0}
     #printDocument .key-task .print-solution{margin-left:0}
     #laserPointer{position:fixed;z-index:100000;width:16px;height:16px;border:2px solid #fff;border-radius:50%;background:#ff3030;box-shadow:0 0 0 2px rgba(150,0,0,.55),0 0 12px 7px rgba(255,35,35,.62);pointer-events:none;opacity:0;transform:translate(-50%,-50%);transition:opacity .08s ease;will-change:left,top}
-    body.laser-active,body.laser-active *{cursor:none!important}
+    body.laser-active,body.laser-active *{cursor:none!important;user-select:none!important;-webkit-user-select:none!important;-moz-user-select:none!important}
     body.laser-active #laserPointer{opacity:1}
     @media print{#laserPointer{display:none!important}}
   </style>
@@ -1037,6 +1037,7 @@
   function stopLaserPointer(event){if(laserPointerId===null||(event&&event.pointerId!==undefined&&event.pointerId!==laserPointerId))return;laserPointerId=null;document.body.classList.remove('laser-active')}
   document.addEventListener('pointerdown',event=>{if(event.pointerType!=='mouse'||event.button!==0)return;laserPointerId=event.pointerId;moveLaserPointer(event);document.body.classList.add('laser-active')},true);
   document.addEventListener('pointermove',event=>{if(laserPointerId===event.pointerId)moveLaserPointer(event)},true);
+  document.addEventListener('selectstart',event=>{if(laserPointerId!==null)event.preventDefault()},true);
   document.addEventListener('pointerup',stopLaserPointer,true);
   document.addEventListener('pointercancel',stopLaserPointer,true);
   window.addEventListener('blur',()=>stopLaserPointer());
