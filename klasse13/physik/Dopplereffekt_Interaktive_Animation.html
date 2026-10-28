@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dopplereffekt – Interaktive Animation</title>
+<style>
+:root{color-scheme:light;--ink:#172b42;--muted:#5e7185;--line:#dbe5eb;--bg:#f5f8fa;--blue:#2169ad;--teal:#008a80;--orange:#d97727;--radius:17px}
+*{box-sizing:border-box}
+body{font-family:ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif;color:var(--ink);background:var(--bg);line-height:1.5;margin:0}
+main{max-width:1210px;margin:0 auto;padding:28px 24px 45px}
+header{display:flex;align-items:flex-start;justify-content:space-between;gap:15px;flex-wrap:wrap;margin-bottom:22px}
+h1{font-size:clamp(27px,3vw,39px);letter-spacing:-.04em;line-height:1.14;margin:0 0 10px}
+.intro{max-width:770px;color:var(--muted);font-size:16px;margin:0}
+.tag{background:#e6f1f5;color:#346077;border:1px solid #cde1e8;font-size:12px;font-weight:750;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:7px 11px;white-space:nowrap}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
+.stat{padding:18px 19px;background:#fff;border:1px solid var(--line);border-radius:var(--radius);min-height:112px}
+.stat .cap{font-size:13px;color:var(--muted);font-weight:650;margin-bottom:8px}
+.stat .num{font-size:clamp(27px,3vw,35px);font-weight:770;letter-spacing:-.04em;line-height:1.1;font-variant-numeric:tabular-nums}
+.stat .unit{font-size:17px;font-weight:600}
+.stat.highlight{background:#eefaf6;border-color:#bce8d9}.stat.highlight .num{color:#007a65}
+.visual{border:1px solid var(--line);border-radius:20px;overflow:hidden;background:white}
+.visual-heading{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:15px 20px;border-bottom:1px solid #e8eff2;flex-wrap:wrap}
+.visual-heading h2{margin:0;font-size:18px;letter-spacing:-.02em}
+.smallnote{font-size:13px;color:var(--muted)}
+.plot-outer{position:relative;overflow-x:auto;background:linear-gradient(180deg,#ffffff 0%,#f8fcfd 100%)}
+canvas{display:block;min-width:760px;width:100%;height:auto;aspect-ratio:1200/415}
+.legend{display:flex;justify-content:center;gap:23px;flex-wrap:wrap;padding:13px 20px 16px;border-top:1px solid #ecf1f4;color:#4c6174;font-size:13px}
+.key{display:inline-flex;align-items:center;gap:8px}.swatch{width:11px;height:11px;display:inline-block;border-radius:50%;background:var(--blue)}.swatch.orange{background:var(--orange)}.swatch.ring{background:transparent;border:2px solid var(--teal)}
+.controls{background:#fff;border:1px solid var(--line);border-radius:var(--radius);margin-top:14px;padding:20px 23px}
+.controls-header{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:10px;margin-bottom:14px}
+.controls h2{margin:0;font-size:18px}.value{font-weight:750;font-size:19px;color:#173e5a;font-variant-numeric:tabular-nums}
+input[type=range]{width:100%;accent-color:var(--teal);cursor:pointer;height:24px}
+.scale-row{display:flex;justify-content:space-between;color:var(--muted);font-size:13px;margin:0 0 17px}
+.preset-row{display:flex;gap:9px;flex-wrap:wrap;margin:4px 0 18px}
+button{font:inherit;font-weight:650;border:1px solid #cddbe5;border-radius:10px;padding:10px 15px;background:#fff;color:var(--ink);cursor:pointer;transition:background .12s,border-color .12s}
+button:hover{background:#ecf4f7;border-color:#b8d3dd}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #83cace;outline-offset:3px}
+button.primary{background:var(--blue);border-color:var(--blue);color:#fff}button.primary:hover{background:#17568f}
+button.active{background:#e6f6f0;border-color:#82cbb4;color:#07634d}
+.transport{display:flex;align-items:center;gap:10px;flex-wrap:wrap;border-top:1px solid #edf1f4;padding-top:17px}
+#time{margin-left:auto;font-variant-numeric:tabular-nums;color:var(--muted);font-size:14px}
+select{font:inherit;border:1px solid #cddbe5;border-radius:9px;background:#fff;padding:9px;color:var(--ink)}
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:16px}
+.explain{background:#fff;border:1px solid var(--line);border-radius:var(--radius);padding:21px 24px}
+.explain h2{font-size:18px;margin:0 0 10px;letter-spacing:-.02em}
+.explain p{margin:8px 0;color:#354c61}
+.formula{display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-family:Cambria,"Times New Roman",serif;font-size:25px;margin:18px 0 10px;color:#143856}
+.frac{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;line-height:1.15;text-align:center;font-size:.94em}
+.frac .top{border-bottom:1.7px solid currentColor;display:block;padding:0 10px 5px}
+.frac .bottom{padding:5px 10px 0}
+.calculation{font-size:17px;font-weight:700;color:#087864;padding-top:7px}
+.mini{font-size:13px!important;color:var(--muted)!important}
+.status-text{border-left:3px solid #18a494;padding-left:14px;font-weight:600;color:#245468!important}
+@media(max-width:720px){main{padding:18px 12px 30px}.stats{gap:8px}.stat{min-height:96px;padding:12px}.stat .cap{font-size:11px}.stat .num{font-size:23px}.stat .unit{font-size:13px}.visual-heading{padding:14px}.legend{gap:11px;font-size:12px}.controls{padding:17px 14px}.info-grid{grid-template-columns:1fr}.explain{padding:18px}.scale-row{font-size:11px}}
+@media(prefers-reduced-motion:reduce){button{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<header><div><h1>Der Dopplereffekt</h1><p class="intro">Ein bewegter Sender verändert den <strong>Abstand der Wellenberge</strong>. Deshalb nimmt ein ruhender Empfänger eine andere Frequenz wahr. Beobachte, wie sich die kreisförmigen Wellen ausbreiten.</p></div><span class="tag">Interaktive Physik-Animation</span></header>
+<section class="stats" aria-label="Physikalische Größen">
+<div class="stat"><div class="cap">Sendefrequenz f<sub>S</sub></div><div class="num">1 <span class="unit">Hz</span></div></div>
+<div class="stat highlight"><div class="cap">Wahrgenommene Frequenz f<sub>E</sub></div><div class="num" id="fObserved">2,00 <span class="unit">Hz</span></div></div>
+<div class="stat"><div class="cap">Wellenlänge zum Empfänger λ</div><div class="num" id="wavelength">1,00 <span class="unit">cm</span></div></div>
+</section>
+<section class="visual" aria-label="Visualisierung der Wellenfronten">
+<div class="visual-heading"><h2>Ausbreitung der Wellen</h2><span class="smallnote">Modell: c = 2 cm/s · f<sub>S</sub> = 1 Hz</span></div>
+<div class="plot-outer"><canvas id="scene" width="1200" height="415" role="img" aria-label="Links ruhender Empfänger, rechts bewegter Sender; von der bewegten Quelle gehen konzentrische, sich ausbreitende Wellenkreise aus."></canvas></div>
+<div class="legend"><span class="key"><span class="swatch"></span> Ruhender Empfänger</span><span class="key"><span class="swatch orange"></span> Bewegter Sender</span><span class="key"><span class="swatch ring"></span> Wellenberge</span></div>
+</section>
+<section class="controls">
+<div class="controls-header"><h2>Geschwindigkeit des Senders verändern</h2><div class="value" id="vValue">+1,0 cm/s</div></div>
+<label for="speed" class="smallnote">Positive Werte: auf den Empfänger zu · Negative Werte: vom Empfänger weg</label>
+<input type="range" id="speed" min="-1.2" max="1.2" step="0.1" value="1" aria-label="Geschwindigkeit des Senders, positiv zum Empfänger hin">
+<div class="scale-row"><span>−1,2 cm/s (entfernt sich)</span><span>0 (ruht)</span><span>+1,2 cm/s (nähert sich)</span></div>
+<div class="preset-row" aria-label="Beispielsituationen"><button class="active" data-v="1">Annäherung (+1 cm/s)</button><button data-v="0">Sender ruht</button><button data-v="-1">Entfernung (−1 cm/s)</button></div>
+<div class="transport"><button class="primary" id="play" type="button">⏸ Pause</button><button id="step" type="button">+0,5 s weiter</button><button id="restart" type="button">↺ Neustart</button><label for="rate" class="smallnote">Tempo:</label><select id="rate" aria-label="Abspielgeschwindigkeit"><option value="0.5">0,5×</option><option value="1" selected>1×</option><option value="2">2×</option></select><output id="time" aria-live="off">Zeit: 0,0 s / 8,0 s</output></div>
+</section>
+<div class="info-grid">
+<section class="explain"><h2>Was beobachtest du?</h2><p class="status-text" id="explanation">Der Sender nähert sich: Vor ihm rücken die Wellenberge zusammen. Die wahrgenommene Frequenz steigt.</p><p>Der Sender erzeugt <strong>jede Sekunde einen Wellenberg</strong>. Jeder Wellenberg breitet sich mit <strong>2 cm/s</strong> aus – unabhängig davon, ob sich der Sender bewegt.</p><p id="arrivalInfo" class="mini">Beim Empfänger angekommen: 0 Wellenberge.</p></section>
+<section class="explain"><h2>Formel für den bewegten Sender</h2><div class="formula"><span><i>f</i><sub>E</sub> = <i>f</i><sub>S</sub> · </span><span class="frac"><span class="top"><i>c</i></span><span class="bottom"><i>c</i> − <i>v</i></span></span></div><p class="mini"><i>c</i>: Wellengeschwindigkeit · <i>v</i>: Sendergeschwindigkeit (positiv zum Empfänger)</p><p id="calculation" class="calculation">1 Hz · 2 / (2 − 1) = 2,00 Hz</p><p class="mini">Die Formel gilt für einen <strong>ruhenden Empfänger</strong> und einen <strong>bewegten Sender</strong>; dabei ist |v| &lt; c.</p></section>
+</div>
+</main>
+<script>
+'use strict';
+(() => {
+const canvas=document.getElementById('scene');
+const ctx=canvas.getContext('2d');
+const speedEl=document.getElementById('speed');
+const vValue=document.getElementById('vValue');
+const obsEl=document.getElementById('fObserved');
+const wavelengthEl=document.getElementById('wavelength');
+const explanationEl=document.getElementById('explanation');
+const arrivalEl=document.getElementById('arrivalInfo');
+const calculationEl=document.getElementById('calculation');
+const playBtn=document.getElementById('play');
+const stepBtn=document.getElementById('step');
+const restartBtn=document.getElementById('restart');
+const rateEl=document.getElementById('rate');
+const timeEl=document.getElementById('time');
+const presets=[...document.querySelectorAll('[data-v]')];
+const WIDTH=1200, HEIGHT=415, SOURCE_X=645, RECEIVER_X=180, Y=219, SCALE=45;
+const C=2,F=1,DURATION=8;
+let v=1,elapsed=0,playing=true,lastTime=null;
+const de=(n,digits=2)=>n.toLocaleString('de-DE',{minimumFractionDigits:digits,maximumFractionDigits:digits});
+function sourceAt(time){return SOURCE_X-v*SCALE*time;}
+function arrivalTime(emission){return emission + (sourceAt(emission)-RECEIVER_X)/(C*SCALE);}
+function updateData(){
+ const freq=F*C/(C-v),lambda=(C-v)/F;
+ vValue.textContent=(v>0?'+':'')+de(v,1)+' cm/s';
+ obsEl.innerHTML=de(freq)+' <span class="unit">Hz</span>';
+ wavelengthEl.innerHTML=de(lambda)+' <span class="unit">cm</span>';
+ if(v>0.00001){explanationEl.textContent='Der Sender nähert sich: Vor ihm liegen die Wellenberge dichter zusammen. Die wahrgenommene Frequenz ist höher.';}
+ else if(v<-.00001){explanationEl.textContent='Der Sender entfernt sich: Zum Empfänger hin liegen die Wellenberge weiter auseinander. Die wahrgenommene Frequenz ist niedriger.';}
+ else {explanationEl.textContent='Der Sender ruht: Die Wellenberge sind in beide Richtungen gleich weit voneinander entfernt. Sende- und Empfangsfrequenz stimmen überein.';}
+ calculationEl.textContent='1 Hz · 2 / (2 − ('+de(v,1)+')) = '+de(freq)+' Hz';
+ presets.forEach(b=>b.classList.toggle('active',Number(b.dataset.v)===v));
+}
+function reset(){elapsed=0;lastTime=null;draw();}
+function setSpeed(next){v=Math.round(Number(next)*10)/10;speedEl.value=String(v);reset();updateData();}
+function setPlaying(next){playing=next;playBtn.textContent=next?'⏸ Pause':'▶ Abspielen';playBtn.classList.toggle('primary',next);lastTime=null;}
+speedEl.addEventListener('input',()=>setSpeed(speedEl.value));
+presets.forEach(b=>b.addEventListener('click',()=>setSpeed(b.dataset.v)));
+playBtn.addEventListener('click',()=>setPlaying(!playing));
+restartBtn.addEventListener('click',()=>reset());
+stepBtn.addEventListener('click',()=>{setPlaying(false);elapsed=Math.min(DURATION,elapsed+.5);draw();});
+rateEl.addEventListener('change',()=>{lastTime=null;});
+function roundedRect(x,y,w,h,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill();}
+function label(text,x,y,{color='#486177',size=16,bold=false,align='center'}={}){
+ ctx.fillStyle=color;ctx.textAlign=align;ctx.textBaseline='middle';ctx.font=(bold?'700 ':'500 ')+size+'px system-ui, sans-serif';ctx.fillText(text,x,y);
+}
+function drawArrow(x,y,sign,color){if(sign===0)return;const dx=-sign*58;ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineWidth=3;ctx.lineCap='round';ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x+dx,y);ctx.stroke();ctx.beginPath();ctx.moveTo(x+dx,y);ctx.lineTo(x+dx-sign*-0+ (dx<0?10:-10),y-7);ctx.lineTo(x+dx,y);ctx.lineTo(x+dx+(dx<0?10:-10),y+7);ctx.closePath();ctx.fill();}
+function draw(){
+ ctx.clearRect(0,0,WIDTH,HEIGHT);
+ // Soft horizontal construction line.
+ ctx.strokeStyle='#d2e1e8';ctx.lineWidth=1.5;ctx.setLineDash([8,9]);ctx.beginPath();ctx.moveTo(62,Y);ctx.lineTo(1130,Y);ctx.stroke();ctx.setLineDash([]);
+ roundedRect(28,21,420,51,9,'#f1f7fa');
+ label('Wellenfronten breiten sich mit c = 2 cm/s aus',44,46,{size:16,align:'left',color:'#48697c'});
+ const frontPositions=[];
+ for(let i=0;i<=Math.floor(elapsed*F+1e-8);i++){
+  const emit=i/F;const age=elapsed-emit;if(age<-1e-6)continue;
+  const x=sourceAt(emit),rad=C*SCALE*age;
+  if(rad>1){ctx.beginPath();ctx.arc(x,Y,rad,0,Math.PI*2);ctx.strokeStyle='rgba(0,138,128,0.53)';ctx.lineWidth=2.3;ctx.stroke();}
+  const leftx=x-rad;frontPositions.push(leftx);
+ }
+ // Wave-crest positions along the horizontal line heading to listener.
+ frontPositions.forEach(x=>{if(x>=65&&x<=1135){ctx.beginPath();ctx.arc(x,Y,5.5,0,Math.PI*2);ctx.fillStyle='#008a80';ctx.fill();}});
+ // Receiver: flash only near a real crest arrival.
+ let flash=false;let count=0;
+ for(let i=0;i<=Math.floor(elapsed+1e-8);i++){
+  const a=arrivalTime(i);if(a<=elapsed+0.0001)count++;
+  if(Math.abs(a-elapsed)<.10)flash=true;
+ }
+ if(flash){ctx.beginPath();ctx.arc(RECEIVER_X,Y,29,0,Math.PI*2);ctx.fillStyle='rgba(33,105,173,.13)';ctx.fill();}
+ ctx.beginPath();ctx.arc(RECEIVER_X,Y,17,0,Math.PI*2);ctx.fillStyle='#fff';ctx.fill();ctx.lineWidth=4;ctx.strokeStyle='#2169ad';ctx.stroke();
+ ctx.beginPath();ctx.arc(RECEIVER_X,Y,6.5,0,Math.PI*2);ctx.fillStyle='#2169ad';ctx.fill();
+ label('Empfänger (ruht)',RECEIVER_X,Y+40,{bold:true,color:'#2169ad',size:17});
+ // Emitter
+ const sx=sourceAt(elapsed);
+ ctx.beginPath();ctx.arc(sx,Y,18,0,Math.PI*2);ctx.fillStyle='#fff9f0';ctx.fill();ctx.lineWidth=4;ctx.strokeStyle='#d97727';ctx.stroke();
+ ctx.beginPath();ctx.arc(sx,Y,7.8,0,Math.PI*2);ctx.fillStyle='#d97727';ctx.fill();
+ label('Sender',sx,Y+40,{bold:true,color:'#ae541b',size:17});
+ label(v>0?'bewegt sich zum Empfänger':v<0?'bewegt sich vom Empfänger weg':'steht still',sx,Y+64,{color:'#926644',size:14});
+ drawArrow(sx,Y-50,Math.sign(v),'#d97727');
+ if(v!==0)label('v = '+de(Math.abs(v),1)+' cm/s',sx,Y-81,{color:'#a65d27',size:16,bold:true});
+ // bottom panels as two concise visuals with actual arrival and emissions
+ roundedRect(30,339,345,55,12,'#eaf3fa');
+ label('Ausgesendet',50,358,{color:'#4b6a83',size:13,align:'left'});
+ label((Math.floor(elapsed*F+1e-8)+1)+' Wellenberg'+(Math.floor(elapsed*F+1e-8)===0?'':'e'),50,377,{color:'#2169ad',size:17,bold:true,align:'left'});
+ roundedRect(396,339,353,55,12,'#e8f6f1');
+ label('Am Empfänger angekommen',414,358,{color:'#4e7970',size:13,align:'left'});
+ label(count+' Wellenberg'+(count===1?'':'e'),414,377,{color:'#007a65',size:17,bold:true,align:'left'});
+ timeEl.textContent='Zeit: '+de(elapsed,1)+' s / '+de(DURATION,1)+' s';
+ arrivalEl.textContent='Bis jetzt beim Empfänger angekommen: '+count+' Wellenberg'+(count===1?'':'e')+'.';
+}
+function tick(now){
+ if(playing){
+  if(lastTime!==null){const delta=Math.min((now-lastTime)/1000,.10);elapsed+=delta*Number(rateEl.value);if(elapsed>=DURATION)elapsed=elapsed%DURATION;}
+  lastTime=now;
+ }else{lastTime=null;}
+ draw();requestAnimationFrame(tick);
+}
+updateData();draw();requestAnimationFrame(tick);
+})();
+</script>
+</body>
+</html>
