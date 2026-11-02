@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Mitternachtsformel – Lückentrainer</title>
+  <style>
+    :root {
+      --bg:#f5f7fb; --paper:#fff; --text:#17243c; --muted:#61718b;
+      --line:#dce4f0; --blue:#2563eb; --blue-soft:#eaf1ff;
+      --green:#13734c; --green-soft:#eaf8f1; --red:#b4233b; --red-soft:#fff0f1;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Arial, sans-serif;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--text); }
+    .wrap { max-width:930px; margin:0 auto; padding:48px 22px 70px; }
+    .kicker { color:var(--blue); font-size:13px; font-weight:800; letter-spacing:.09em; text-transform:uppercase; }
+    h1 { font-size:clamp(28px,4vw,43px); letter-spacing:-.035em; margin:9px 0 10px; line-height:1.15; }
+    .subtitle { color:var(--muted); margin:0 0 30px; line-height:1.6; max-width:660px; }
+    .panel { background:var(--paper); border:1px solid var(--line); border-radius:22px; padding:28px; box-shadow:0 12px 32px rgba(36,56,94,.045); }
+    .top { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; }
+    .small-title { font-size:13px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.055em; }
+    .difficulty { display:flex; gap:5px; background:#f1f4f9; border-radius:12px; padding:5px; }
+    .difficulty button { border:0; color:#556781; background:transparent; padding:10px 13px; border-radius:9px; font-weight:700; cursor:pointer; font-size:13px; }
+    .difficulty button[aria-pressed="true"] { background:white; color:var(--blue); box-shadow:0 1px 5px rgba(28,51,87,.13); }
+    .rule { height:3px; width:56px; margin:24px 0; border-radius:5px; background:var(--blue); }
+    .instructions { font-size:17px; font-weight:650; margin:0 0 6px; }
+    .detail { color:var(--muted); font-size:14px; margin:0; }
+    .formula-scroll { margin:22px 0 18px; padding:30px 8px 25px; overflow-x:auto; overflow-y:hidden; border:1px solid #e8edf5; border-radius:16px; background:linear-gradient(135deg,#fbfdff,#f7faff); }
+    .equation { display:flex; gap:14px; align-items:center; justify-content:center; width:max-content; min-width:100%; font-family:Cambria, 'Cambria Math', 'Times New Roman', serif; font-size:39px; line-height:1; white-space:nowrap; }
+    .lhs { flex:none; }
+    .lhs sub { font-size:.46em; vertical-align:-.26em; }
+    .fraction { display:inline-flex; flex-direction:column; align-items:stretch; min-width:105px; }
+    .numerator,.denominator { display:flex; justify-content:center; align-items:center; min-height:66px; }
+    .numerator { border-bottom:2px solid #1c2b44; padding:0 11px 11px; }
+    .denominator { padding-top:9px; min-height:54px; }
+    .math-symbol { display:inline-flex; align-items:center; justify-content:center; min-height:43px; min-width:18px; }
+    .math-symbol.sup { align-self:flex-start; min-width:10px; min-height:20px; margin-top:0; font-size:21px; }
+    .space { width:12px; flex:none; }
+    .sqrt { display:inline-flex; align-items:center; min-height:54px; }
+    .radical { font-size:60px; transform:scaleX(.88); margin-right:-1px; line-height:1; align-self:center; }
+    .radicand { display:inline-flex; align-items:center; padding:7px 2px 0 6px; border-top:2px solid #1c2b44; }
+    .gap { font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Arial,sans-serif; font-size:22px; line-height:1; text-align:center; font-weight:750; width:40px; height:46px; border:2px solid #8cabed; background:#fff; color:var(--text); border-radius:9px; outline:none; padding:0 2px; box-shadow:0 3px 0 rgba(37,99,235,.08); }
+    .sup .gap { width:32px; height:34px; font-size:18px; }
+    .gap:focus { border-color:var(--blue); box-shadow:0 0 0 4px rgba(37,99,235,.15); }
+    .gap.correct { background:var(--green-soft); border-color:#3ca77a; }
+    .gap.incorrect { background:var(--red-soft); border-color:#dc6175; }
+    .keypad { display:flex; flex-wrap:wrap; gap:8px; justify-content:center; margin:0 0 22px; }
+    .keypad button { min-width:48px; min-height:43px; background:#fff; color:var(--text); border:1px solid #cdd9eb; border-radius:10px; font-size:20px; font-weight:700; cursor:pointer; }
+    .keypad button:hover,.keypad button:focus-visible { border-color:var(--blue); background:var(--blue-soft); }
+    .actions { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    .btn { border:1px solid var(--line); border-radius:11px; min-height:45px; padding:11px 17px; background:#fff; color:#26364e; cursor:pointer; font-size:14px; font-weight:800; }
+    .btn.primary { border-color:var(--blue); background:var(--blue); color:#fff; }
+    .btn.primary:hover { background:#1c50c6; }
+    .btn:hover { border-color:#aac1e9; }
+    .btn:focus-visible,.difficulty button:focus-visible { outline:3px solid #93b4ff; outline-offset:3px; }
+    .feedback { margin-top:17px; min-height:24px; color:var(--muted); font-size:15px; line-height:1.45; }
+    .feedback.good { color:var(--green); font-weight:700; }
+    .feedback.bad { color:var(--red); font-weight:700; }
+    .stats { display:flex; gap:24px; margin:26px 0 0; flex-wrap:wrap; }
+    .stat { display:flex; gap:8px; align-items:baseline; font-size:14px; color:var(--muted); }
+    .stat strong { color:var(--text); font-size:23px; }
+    .memory { margin-top:20px; border:1px solid var(--line); border-radius:16px; padding:19px 22px; background:#fff; }
+    .memory summary { font-weight:800; cursor:pointer; color:var(--blue); }
+    .memory p { margin:14px 0 3px; line-height:1.6; }
+    .full-formula { font-family:Cambria, 'Cambria Math', 'Times New Roman',serif; font-size:24px; text-align:center; padding:6px 0; }
+    .fine { font-size:13px; color:var(--muted); margin:17px 0 0; line-height:1.6; }
+    @media (max-width:620px) {
+      .wrap { padding:25px 12px 50px; }
+      .panel { padding:17px; border-radius:16px; }
+      .difficulty { width:100%; justify-content:space-between; }
+      .difficulty button { flex:1; padding:10px 5px; }
+      .equation { font-size:31px; gap:9px; }
+      .formula-scroll { padding:24px 5px; }
+      .gap { width:33px; height:42px; font-size:19px; }
+      .sup .gap { width:29px; height:31px; font-size:16px; }
+      .space { width:6px; }
+      .radical { font-size:50px; }
+      .numerator { padding:0 6px 9px; }
+      .btn { flex:1; }
+    }
+    @media (prefers-reduced-motion: no-preference) { .btn,.gap,.keypad button { transition:background .12s,border-color .12s,box-shadow .12s; } }
+  </style>
+</head>
+<body>
+<main class="wrap">
+  <div class="kicker">Mathematik · Quadratische Gleichungen</div>
+  <h1>Die Mitternachtsformel üben</h1>
+  <p class="subtitle">Lerne die Formel durch Wiederholung: In jeder Runde fehlen andere Zeichen. Fülle sie aus, prüfe deine Eingabe und starte die nächste Runde.</p>
+  <section class="panel" aria-label="Interaktiver Lückentrainer">
+    <div class="top">
+      <span class="small-title">Schwierigkeitsgrad</span>
+      <div class="difficulty" role="group" aria-label="Schwierigkeitsgrad wählen">
+        <button type="button" data-level="easy" aria-pressed="false">Leicht · 3</button>
+        <button type="button" data-level="medium" aria-pressed="true">Mittel · 6</button>
+        <button type="button" data-level="hard" aria-pressed="false">Schwer · alle</button>
+      </div>
+    </div>
+    <div class="rule"></div>
+    <p class="instructions">Welche Zeichen fehlen in der Formel?</p>
+    <p class="detail">Schreibe die Zeichen direkt in die Lücken oder benutze die Tasten darunter.</p>
+    <div class="formula-scroll" aria-label="Mitternachtsformel mit auszufüllenden Lücken">
+      <div class="equation">
+        <span class="lhs"><i>x</i><sub>1,2</sub> =</span>
+        <span class="fraction">
+          <span class="numerator" id="numerator"></span>
+          <span class="denominator" id="denominator"></span>
+        </span>
+      </div>
+    </div>
+    <div class="keypad" aria-label="Zeichen zum Einfügen">
+      <button type="button" data-key="−" aria-label="Minus einsetzen">−</button>
+      <button type="button" data-key="±" aria-label="Plus minus einsetzen">±</button>
+      <button type="button" data-key="a">a</button>
+      <button type="button" data-key="b">b</button>
+      <button type="button" data-key="c">c</button>
+      <button type="button" data-key="2">2</button>
+      <button type="button" data-key="4">4</button>
+    </div>
+    <div class="actions">
+      <button id="check" type="button" class="btn primary">Antwort prüfen</button>
+      <button id="next" type="button" class="btn">Neue Lücken</button>
+      <button id="reveal" type="button" class="btn">Lösung zeigen</button>
+    </div>
+    <div id="feedback" class="feedback" role="status" aria-live="polite">Viel Erfolg! Du kannst beliebig viele Runden üben.</div>
+    <div class="stats" aria-label="Übungsfortschritt">
+      <span class="stat"><strong id="completed">0</strong> richtig gelöste Runden</span>
+      <span class="stat"><strong id="attempts">0</strong> begonnene Runden</span>
+    </div>
+  </section>
+  <details class="memory" id="memory">
+    <summary>Merkkarte: vollständige Mitternachtsformel anzeigen</summary>
+    <p>Für eine quadratische Gleichung <strong>ax² + bx + c = 0</strong> mit <strong>a ≠ 0</strong> gilt:</p>
+    <div class="full-formula">x₁,₂ = (−b ± √(b² − 4ac)) / (2a)</div>
+    <p><strong>Merksatz:</strong> Minus b, plus/minus Wurzel aus b² minus 4ac – alles durch 2a.</p>
+  </details>
+  <p class="fine">Funktioniert offline direkt im Browser. Hinweis: Das ±-Zeichen kannst du auch als <strong>+-</strong> eintippen. Nach einer richtigen Lösung kannst du mit der Eingabetaste eine neue Runde starten.</p>
+</main>
+<script>
+(() => {
+  'use strict';
+  const answers = ['−','b','±','b','2','−','4','a','c','2','a'];
+  const counts = { easy:3, medium:6, hard:11 };
+  const numerator = document.querySelector('#numerator');
+  const denominator = document.querySelector('#denominator');
+  const feedback = document.querySelector('#feedback');
+  const check = document.querySelector('#check');
+  const next = document.querySelector('#next');
+  const reveal = document.querySelector('#reveal');
+  let level = 'medium';
+  let blanks = [];
+  let solved = false;
+  let completed = 0;
+  let attempts = 0;
+  let focusedInput = null;
+
+  function makeToken(index, isExponent=false) {
+    const wrap = document.createElement('span');
+    wrap.className = 'math-symbol' + (isExponent ? ' sup' : '');
+    if (blanks.includes(index)) {
+      const input = document.createElement('input');
+      input.className = 'gap';
+      input.type = 'text';
+      input.maxLength = 3;
+      input.autocomplete = 'off';
+      input.spellcheck = false;
+      input.setAttribute('aria-label', `Lücke ${blanks.indexOf(index) + 1} von ${blanks.length}`);
+      input.dataset.answer = answers[index];
+      input.addEventListener('focus', () => { focusedInput = input; });
+      input.addEventListener('input', () => {
+        input.classList.remove('correct','incorrect');
+        if (input.value.length === 1 && input.value !== '+' && input.value !== '-') focusNext(input);
+      });
+      input.addEventListener('keydown', event => {
+        if (event.key === 'Enter') { event.preventDefault(); solved ? newRound() : checkAnswers(); }
+      });
+      wrap.append(input);
+    } else {
+      wrap.textContent = answers[index];
+    }
+    return wrap;
+  }
+  function makeSpace() {
+    const el = document.createElement('span');
+    el.className = 'space';
+    el.setAttribute('aria-hidden','true');
+    return el;
+  }
+  function buildFormula() {
+    numerator.replaceChildren();
+    denominator.replaceChildren();
+    numerator.append(makeToken(0), makeToken(1), makeSpace(), makeToken(2), makeSpace());
+    const sqrt = document.createElement('span');
+    sqrt.className = 'sqrt';
+    const radical = document.createElement('span');
+    radical.className = 'radical';
+    radical.textContent = '√';
+    const radicand = document.createElement('span');
+    radicand.className = 'radicand';
+    radicand.append(makeToken(3),makeToken(4,true),makeSpace(),makeToken(5),makeSpace(),makeToken(6),makeToken(7),makeToken(8));
+    sqrt.append(radical,radicand);
+    numerator.append(sqrt);
+    denominator.append(makeToken(9),makeToken(10));
+  }
+  function inputs() { return [...document.querySelectorAll('.gap')]; }
+  function focusNext(current) {
+    const list = inputs();
+    const index = list.indexOf(current);
+    const target = list.slice(index+1).find(el => !el.value.trim());
+    if (target) target.focus();
+  }
+  function normalise(value) {
+    return value.toLowerCase().trim().replace(/\s+/g,'').replace(/[−–—]/g,'-').replace('±','+-');
+  }
+  function matches(value, expected) {
+    const actual = normalise(value);
+    const want = normalise(expected);
+    return actual === want || (want === '+-' && actual === '-+');
+  }
+  function setFeedback(message, type='') {
+    feedback.textContent = message;
+    feedback.className = 'feedback' + (type ? ' ' + type : '');
+  }
+  function newRound() {
+    const positions = answers.map((_, i) => i);
+    for (let i=positions.length-1; i>0; i--) {
+      const j=Math.floor(Math.random()*(i+1));
+      [positions[i],positions[j]]=[positions[j],positions[i]];
+    }
+    blanks = positions.slice(0, counts[level]).sort((a,b) => a-b);
+    solved = false;
+    focusedInput = null;
+    attempts++;
+    document.querySelector('#attempts').textContent = attempts;
+    buildFormula();
+    check.disabled = false;
+    reveal.disabled = false;
+    check.textContent = 'Antwort prüfen';
+    setFeedback(`${blanks.length} Lücken: Ergänze die Mitternachtsformel.`);
+    inputs()[0]?.focus({preventScroll:true});
+  }
+  function checkAnswers() {
+    if (solved) return;
+    let correct = 0;
+    const fields = inputs();
+    for (const input of fields) {
+      const good = matches(input.value,input.dataset.answer);
+      input.classList.toggle('correct',good);
+      input.classList.toggle('incorrect',!good);
+      if (good) correct++;
+    }
+    if (correct === fields.length) {
+      solved = true;
+      completed++;
+      document.querySelector('#completed').textContent = completed;
+      check.disabled = true;
+      reveal.disabled = true;
+      setFeedback('Alles richtig! Sehr gut. Klicke auf „Neue Lücken“ oder drücke Enter.','good');
+    } else {
+      setFeedback(`${correct} von ${fields.length} Lücken richtig. Prüfe die rot markierten Felder und versuche es erneut.`, 'bad');
+      fields.find(el => el.classList.contains('incorrect'))?.focus();
+    }
+  }
+  function showAnswers() {
+    if (solved) return;
+    for (const input of inputs()) {
+      input.value = input.dataset.answer;
+      input.classList.remove('incorrect');
+      input.classList.add('correct');
+    }
+    solved = true;
+    check.disabled = true;
+    reveal.disabled = true;
+    setFeedback('Hier ist die vollständige Lösung. Diese Runde zählt nicht als richtig gelöst. Übe mit neuen Lücken weiter.');
+  }
+  check.addEventListener('click',checkAnswers);
+  next.addEventListener('click',newRound);
+  reveal.addEventListener('click',showAnswers);
+  document.querySelectorAll('[data-level]').forEach(button => {
+    button.addEventListener('click', () => {
+      level = button.dataset.level;
+      document.querySelectorAll('[data-level]').forEach(el => el.setAttribute('aria-pressed',String(el === button)));
+      newRound();
+    });
+  });
+  document.querySelectorAll('[data-key]').forEach(button => {
+    button.addEventListener('click', () => {
+      if (solved) return;
+      const target = focusedInput && focusedInput.isConnected ? focusedInput : inputs().find(el => !el.value.trim());
+      if (!target) return;
+      target.value = button.dataset.key;
+      target.classList.remove('correct','incorrect');
+      const list = inputs();
+      const index = list.indexOf(target);
+      const following = list.slice(index+1).find(el => !el.value.trim());
+      (following || target).focus();
+    });
+  });
+  document.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && solved && !(event.target instanceof HTMLButtonElement)) {
+      event.preventDefault(); newRound();
+    }
+  });
+  newRound();
+})();
+</script>
+</body>
+</html>
