@@ -212,8 +212,9 @@
     .sample-btn:hover,.sample-btn.active{background:var(--green);border-color:var(--green);color:white}
     .test-window{min-height:145px;border-radius:14px;background:#faf8f0;display:grid;place-items:center;text-align:center;padding:18px;border:2px dashed #c9c1b4;transition:.35s}
     .test-window.starch-positive{background:radial-gradient(circle,#171433 0 26%,#282052 27% 49%,#e7e1d6 51%)}
+    .test-window.starch-negative{background:radial-gradient(circle,#a74737 0 28%,#7f3028 29% 48%,#e7e1d6 50%)}
     .test-window.fat-positive{background:radial-gradient(ellipse,rgba(203,184,112,.22) 0 42%,transparent 44%),#fbfaf4;box-shadow:inset 0 0 0 999px rgba(255,255,255,.18)}
-    .test-window.starch-positive span{color:white;background:rgba(0,0,0,.68);padding:7px 10px;border-radius:8px}
+    .test-window.starch-positive span,.test-window.starch-negative span{color:white;background:rgba(0,0,0,.68);padding:7px 10px;border-radius:8px}
     .plant-link{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:22px 0}
     .plant-link>div{border-radius:16px;padding:18px;border:1px solid var(--line)}
     .plant-link .starch{background:#e8eef5}.plant-link .fat{background:#f7edcf}
@@ -850,7 +851,7 @@
     row.querySelectorAll('.sample-btn').forEach(x=>x.classList.toggle('active',x===btn));
     const test=row.dataset.test, positive=btn.dataset.positive==='true', sample=btn.dataset.sample;
     const win=document.getElementById(test+'Window');
-    win.className='test-window'+(positive?' '+(test==='starch'?'starch-positive':'fat-positive'):'');
+    win.className='test-window'+(test==='starch'?(positive?' starch-positive':' starch-negative'):(positive?' fat-positive':''));
     if(test==='starch') win.innerHTML=positive?`<span><strong>${sample}:</strong> dunkelblau bis schwarz → Stärke nachgewiesen</span>`:`<span><strong>${sample}:</strong> rötlich-braun → keine Stärke nachgewiesen</span>`;
     else win.innerHTML=positive?`<span><strong>${sample}:</strong> dauerhafter, durchscheinender Fleck → Fett nachgewiesen</span>`:`<span><strong>${sample}:</strong> nach dem Trocknen kein durchscheinender Fettfleck</span>`;
   })));
