@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Muskeln – interaktives Wissensquiz</title>
+  <style>
+    :root {
+      --ink:#263044;
+      --muted:#687387;
+      --border:#e1e5ec;
+      --violet:#6654b2;
+      --violet-dark:#4c3c91;
+      --violet-soft:#f4f0ff;
+      --correct:#187750;
+      --correct-bg:#ecfaf3;
+      --wrong:#b13e44;
+      --wrong-bg:#fff2f2;
+      --bg:#fafbfe;
+    }
+    * { box-sizing:border-box; }
+    body { margin:0; background:var(--bg); color:var(--ink); font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif; line-height:1.55; }
+    .page-workspace {display:grid;grid-template-columns:minmax(130px,1fr) minmax(0,845px) minmax(130px,1fr);width:100%;max-width:1850px;margin:0 auto;align-items:stretch;position:relative;}
+    main { width:100%;max-width:none;min-width:0; margin:0; padding:38px 18px 72px; }
+    .margin-space {position:relative;min-height:730px;pointer-events:none;background:transparent;}
+    .margin-space::before {content:"";position:absolute;top:130px;bottom:35px;width:1px;border-left:1px dashed rgba(105,111,138,.23);}
+    .margin-space.margin-left::before {right:9px;}
+    .margin-space.margin-right::before {left:9px;}
+    .margin-hint {display:block;position:sticky;top:20px;margin-top:150px;padding:0 12px;color:#a5aab6;font-size:11px;font-weight:650;letter-spacing:.025em;text-align:center;}
+    .margin-space.margin-left .margin-hint {padding-left:10px;padding-right:18px;}
+    .margin-space.margin-right .margin-hint {padding-left:18px;padding-right:10px;}
+    @media(max-width:1000px){.page-workspace{grid-template-columns:minmax(0,1fr)} .margin-space{display:none}main{max-width:845px;margin:0 auto;}}
+
+    header { margin-bottom:26px; }
+    .eyebrow { font-size:12px; font-weight:800; letter-spacing:.11em; text-transform:uppercase; color:var(--violet); }
+    h1 { margin:8px 0 5px; font-size:clamp(29px,5vw,42px); letter-spacing:-.035em; line-height:1.12; }
+    .subtitle { margin:0 0 17px; color:var(--muted); font-size:15px; }
+    .video-intro { display:flex; align-items:center; gap:12px; margin:0 0 16px; padding:12px 14px; border:1px solid #ded8f4; border-radius:14px; background:#f6f3ff; color:var(--violet-dark); text-decoration:none; transition:transform .15s,border-color .15s,box-shadow .15s; }
+    .video-intro:hover { transform:translateY(-1px); border-color:#b9a8e7; box-shadow:0 5px 14px rgba(76,60,145,.08); }
+    .video-intro:focus-visible { outline:3px solid #aa99ee; outline-offset:3px; }
+    .video-intro-icon { display:grid; place-items:center; flex:0 0 40px; width:40px; height:40px; border-radius:12px; background:white; color:#b13e44; font-size:18px; }
+    .video-intro-copy { display:grid; gap:2px; }
+    .video-intro-copy small { color:var(--muted); font-size:12px; }
+    .meta { display:flex; flex-wrap:wrap; gap:8px; }
+    .pill { border:1px solid var(--border); background:white; border-radius:999px; padding:5px 11px; color:#586275; font-size:12px; font-weight:650; }
+    .topline { display:flex; justify-content:space-between; align-items:center; gap:20px; margin:25px 0 12px; }
+    .topline strong { font-size:14px; }
+    .trophies { display:flex; align-items:center; flex-wrap:wrap; gap:4px; }
+    .trophy { display:grid; place-items:center; width:26px; height:26px; font-size:17px; border:1px solid #e9e5d9; background:#f5f5f5; border-radius:8px; filter:grayscale(1); opacity:.38; transition:transform .3s, filter .3s, opacity .3s, background .3s; }
+    .trophy.earned { background:#fff8e3; filter:none; opacity:1; animation:pop .34s ease both; }
+    .trophy.missed { opacity:.20; }
+    @keyframes pop { 0%{transform:scale(.7) rotate(-10deg)} 65%{transform:scale(1.22) rotate(5deg)} 100%{transform:scale(1)} }
+    .progress { height:7px; background:#e8e9f3; border-radius:999px; overflow:hidden; }
+    #progressFill { height:100%; width:0; background:linear-gradient(90deg,#7864cc,#a58cf1); border-radius:999px; transition:width .35s ease; }
+    .card { border:1px solid var(--border); border-radius:19px; background:#fff; margin-top:24px; padding:clamp(20px,4.5vw,36px); box-shadow:0 9px 35px rgba(41,45,71,.045); }
+    .card-head { display:flex; justify-content:space-between; align-items:center; gap:12px; margin:0 0 12px; }
+    .question-count { color:var(--violet); font-weight:800; font-size:12px; letter-spacing:.07em; text-transform:uppercase; }
+    .small-label { color:var(--muted); font-size:12px; }
+    h2 { font-size:clamp(20px,3vw,25px); margin:4px 0 24px; letter-spacing:-.018em; font-weight:750; line-height:1.34; }
+    #options { display:grid; gap:11px; }
+    .answer { display:flex; width:100%; gap:14px; align-items:flex-start; padding:16px; border:1.5px solid var(--border); border-radius:12px; background:white; color:var(--ink); text-align:left; font:inherit; cursor:pointer; transition:background .15s,border-color .15s,transform .15s; }
+    .answer:hover:not(:disabled) { border-color:#9d90df; background:#fbf9ff; transform:translateY(-1px); }
+    .answer:focus-visible,.primary:focus-visible,.secondary:focus-visible,.laser-switch:focus-visible { outline:3px solid #aa99ee; outline-offset:3px; }
+    .letter { display:grid; place-items:center; flex:0 0 28px; height:28px; border:1px solid #e3e5ee; background:#f5f6fa; color:#556075; border-radius:8px; font-size:13px; font-weight:750; }
+    .answer-text { flex:1; padding-top:2px; }
+    .answer-mark { font-size:19px; line-height:1.2; margin-left:auto; }
+    .answer:disabled { cursor:default; }
+    .answer.attempt-wrong { background:var(--wrong-bg); border-color:#e59b9b; opacity:.65; }
+    .answer.attempt-wrong .letter { background:#ffe7e7; border-color:#f3b9b9; color:var(--wrong); }
+    .feedback.retry { border-left-color:#9b73dc; background:#f8f4ff; }
+    .answer.selected-correct,.answer.reveal-correct { background:var(--correct-bg); border-color:#70c69a; }
+    .answer.selected-wrong { background:var(--wrong-bg); border-color:#e59b9b; }
+    .answer.unselected { opacity:.65; }
+    .answer.selected-correct .letter,.answer.reveal-correct .letter { background:#d5f1e4; border-color:#b2ddc5; color:var(--correct); }
+    .answer.selected-wrong .letter { background:#ffe0e0; border-color:#f3b9b9; color:var(--wrong); }
+    .feedback { margin:18px 0 0; padding:14px 16px; border-left:3px solid var(--correct); border-radius:0 10px 10px 0; background:#f4fbf7; }
+    .feedback.wrong { border-left-color:var(--wrong); background:#fff6f6; }
+    .feedback strong { display:block; margin-bottom:4px; font-size:15px; }
+    .feedback p { margin:0; color:#47546a; font-size:14px; }
+    .feedback .mini-trophy { display:inline-block; font-size:19px; margin-right:4px; vertical-align:middle; animation:pop .34s ease both; }
+    .actions { margin-top:22px; display:flex; flex-wrap:wrap; justify-content:space-between; align-items:center; gap:10px; }
+    .primary,.secondary,.laser-switch { font:inherit; font-size:14px; font-weight:750; cursor:pointer; border-radius:10px; padding:11px 17px; transition:background .18s; }
+    .primary { color:white; background:var(--violet); border:1px solid var(--violet); }
+    .primary:hover:not(:disabled) { background:var(--violet-dark); }
+    .primary:disabled { opacity:.45; cursor:not-allowed; }
+    .secondary { color:var(--violet-dark); background:white; border:1px solid #cfc5ef; }
+    .secondary:hover { background:var(--violet-soft); }
+    .score { font-size:13px; color:var(--muted); }
+    #results { display:none; text-align:center; }
+    .result-icon { font-size:50px; line-height:1.2; }
+    .result-big { font-size:44px; font-weight:850; line-height:1.18; letter-spacing:-.055em; margin:8px 0; color:var(--violet-dark); }
+    .result-message { color:#586277; max-width:525px; margin:10px auto 20px; }
+    .result-buttons { display:flex; justify-content:center; flex-wrap:wrap; gap:10px; }
+    #bonusNote { padding:10px 13px; border:1px solid #eadbb0; background:#fffaf0; border-radius:10px; color:#735716; font-size:14px; margin:0 auto 20px; max-width:490px; }
+    .controls { position:relative; z-index:2147483645; display:flex; flex-direction:column; align-items:stretch; gap:11px; border-top:1px solid #e6e8ef; margin-top:28px; padding-top:17px; }
+    .tool-row,.tool-extras { display:flex; align-items:center; flex-wrap:wrap; gap:7px; }
+    .tool-extras { gap:9px; }
+    .tool-label { display:inline-flex; align-items:center; gap:5px; color:#667085; font-size:12px; font-weight:650; }
+    .tool-color { width:33px; height:31px; border:1px solid #d7dbe5; border-radius:8px; padding:3px; background:white; cursor:pointer; }
+    .tool-width { border:1px solid #d7dbe5; border-radius:8px; background:white; color:#47526b; font:inherit; font-size:12px; padding:6px; }
+    .print-button {border-color:#96a5c2;color:#314d83;}
+    .print-button:hover {background:#eff4ff;}
+    #printRoot {display:none;}
+    .print-overlay {position:absolute;inset:0;pointer-events:none;z-index:20;}
+    .print-overlay svg {width:100%;height:100%;display:block;overflow:visible;}
+    .print-note {position:absolute;box-sizing:border-box;white-space:pre-wrap;overflow-wrap:anywhere;border:1px dashed #9c9aa9;border-radius:8px;padding:8px;background:rgba(255,255,233,.92);font:16px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;color:#283349;min-height:40px;}
+    .print-stage {position:relative;transform-origin:top left;}
+    .print-sheet {position:relative;page-break-after:always;break-after:page;}
+    .print-sheet:last-child {page-break-after:auto;break-after:auto;}
+    @media print {
+      @page {size:A4 landscape;margin:8mm;}
+      html,body {padding:0!important;margin:0!important;background:white!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+      body > :not(#printRoot) {display:none!important;}
+      #printRoot {display:block!important;}
+      #printRoot .page-workspace {max-width:none!important;margin:0!important;display:grid!important;grid-template-columns:minmax(130px,1fr) minmax(0,845px) minmax(130px,1fr)!important;}
+      #printRoot main {max-width:none!important;margin:0!important;}
+      #printRoot .margin-space {display:block!important;}
+      #printRoot .margin-hint {position:static;margin-top:150px;}
+      #printRoot .card {box-shadow:none!important;}
+      #printRoot .answer {break-inside:avoid;}
+      #printRoot .print-sheet {overflow:hidden!important;}
+    }
+
+    .tool-extras button { padding:7px 10px; }
+    .tool-extras button:disabled { opacity:.4; cursor:default; }
+    .annotation-canvas { position:fixed; inset:0; width:100vw; height:100vh; display:block; pointer-events:none; z-index:2147483641; }
+    .anno-note { position:absolute; z-index:2147483642; display:flex; align-items:flex-start; width:clamp(170px,32vw,255px); min-height:82px; border:1px dashed #ada8be; border-radius:9px; background:rgba(255,255,232,.94); padding:5px 4px 5px 7px; box-shadow:0 4px 12px rgba(40,40,60,.12); }
+    .anno-note textarea { flex:1; width:100%; min-height:70px; resize:both; border:0; outline:0; background:transparent; color:#283349; font:16px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif; }
+    .note-remove { border:0; background:transparent; cursor:pointer; color:#667085; font-size:16px; line-height:20px; padding:0 3px; }
+    .note-remove:hover { color:#ba3141; }
+    body.tool-laser .page-workspace,body.tool-pen .page-workspace,body.tool-eraser .page-workspace,body.tool-text .page-workspace { user-select:none; -webkit-user-select:none; }
+    body.tool-pen .margin-space,body.tool-eraser .margin-space {cursor:crosshair;}
+
+    body.tool-pen #quizCard, body.tool-pen .answer,body.tool-eraser #quizCard,body.tool-eraser .answer { cursor:crosshair; }
+    body.tool-pen main,body.tool-eraser main { touch-action:none; }
+    .laser-switch[aria-pressed="true"] { border-color:#b9a8e7; background:#f4f0ff; color:#4c3c91; }
+    #laserSwitch[aria-pressed="true"] { border-color:#e8b7bf; background:#fff7f8; color:#a2384d; }
+    .laser-switch { background:white; border:1px solid #d7dbe5; font-size:12px; color:#47526b; padding:8px 12px; }
+    .hint { font-size:12px; color:#737c8d; }
+    .laser-dot { position:fixed; z-index:2147483647; top:0; left:0; width:12px; height:12px; border-radius:50%; background:#ff172c; box-shadow:0 0 0 4px rgba(255,32,51,.14),0 0 10px 4px rgba(255,19,49,.7),0 0 25px 8px rgba(255,20,42,.28); pointer-events:none; opacity:0; transform:translate(-50%,-50%); will-change:left,top; }
+    .laser-dot.is-active { opacity:1; }
+    #laserCanvas { position:fixed; inset:0; width:100vw; height:100vh; display:block; pointer-events:none; z-index:2147483646; opacity:0; }
+    #laserCanvas.is-active { opacity:1; }
+    footer { text-align:center; margin-top:18px; color:#8b91a2; font-size:11px; }
+    [hidden] { display:none !important; }
+    @media(max-width:590px) { main { padding-top:25px; } .card { border-radius:14px; } .answer{padding:13px;} .topline{align-items:flex-start; flex-direction:column; gap:9px;} }
+    @media(prefers-reduced-motion:reduce) { *,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important;} }
+  </style>
+</head>
+<body>
+  <canvas id="annotationCanvas" class="annotation-canvas" aria-hidden="true"></canvas>
+  <canvas id="laserCanvas" aria-hidden="true"></canvas>
+  <div id="laserDot" class="laser-dot" aria-hidden="true"></div>
+  <div id="pageWorkspace" class="page-workspace">
+  <aside class="margin-space margin-left" aria-label="Transparenter linker Notizrand"><span class="margin-hint">Linker Notizrand · mit Stift oder Textfeld beschreibbar</span></aside>
+  <main>
+    <header>
+      <div class="eyebrow">Biologie · Lernquiz</div>
+      <h1>Muskeln</h1>
+      <p class="subtitle">Muskelaufbau, Bewegungssteuerung, Kraftarten und Training – nach „Checkerin Marina“.</p>
+      <a class="video-intro" href="https://www.youtube.com/watch?v=dHAz-1ECHLc&amp;t=52s" target="_blank" rel="noopener noreferrer"><span class="video-intro-icon" aria-hidden="true">▶</span><span class="video-intro-copy"><strong>Vor dem Quiz: Checker Welt – Muskeln mit Checkerin Marina</strong><small>Video ab 0:52 ansehen. Danach kannst du dein Wissen im Quiz testen.</small></span></a>
+      <div class="meta"><span class="pill">12 Kernfragen</span><span class="pill">1 freiwillige Zusatzfrage</span><span class="pill">2 Versuche pro Frage</span><span class="pill">Sofortige Auswertung</span></div>
+    </header>
+
+    <div class="topline" aria-live="polite">
+      <strong id="progressText">Deine Pokale: 0 von 12</strong>
+      <div class="trophies" id="trophies" aria-label="Zwölf Pokalplätze"></div>
+    </div>
+    <div class="progress" aria-label="Bearbeitungsfortschritt"><div id="progressFill"></div></div>
+
+    <section class="card" id="quizCard" aria-labelledby="questionTitle">
+      <div class="card-head">
+        <span class="question-count" id="questionNumber">Frage 1 von 12</span>
+        <span class="small-label" id="questionType">Eine Antwort auswählen</span>
+      </div>
+      <h2 id="questionTitle"></h2>
+      <div id="options" role="group" aria-label="Antwortmöglichkeiten"></div>
+      <div class="feedback" id="feedback" role="status" aria-live="polite" hidden></div>
+      <div class="actions">
+        <span class="score" id="questionScore">Richtig in maximal zwei Versuchen = ein Pokal.</span>
+        <button class="primary" id="nextButton" type="button" disabled>Nächste Frage →</button>
+      </div>
+    </section>
+
+    <section class="card" id="results" aria-live="polite" aria-labelledby="resultTitle">
+      <div class="result-icon" aria-hidden="true" id="resultIcon">🏆</div>
+      <h2 id="resultTitle" style="margin:12px 0 0">Auswertung</h2>
+      <div class="result-big" id="resultScore"></div>
+      <p class="result-message" id="resultMessage"></p>
+      <div id="bonusNote" hidden></div>
+      <div class="result-buttons">
+        <button class="primary" id="bonusButton" type="button">Zusatzfrage lösen ★</button>
+        <button class="secondary" id="restartButton" type="button">Quiz wiederholen</button>
+      </div>
+    </section>
+
+    <div class="controls" id="toolControls" aria-label="Werkzeuge für den Unterricht">
+      <div class="tool-row" role="group" aria-label="Werkzeug wählen">
+        <button type="button" id="mouseSwitch" class="laser-switch" aria-pressed="true">↖ Maus / Antworten</button>
+        <button type="button" id="laserSwitch" class="laser-switch" aria-pressed="false">🔴 Laserpointer</button>
+        <button type="button" id="penSwitch" class="laser-switch" aria-pressed="false">✏️ Stift</button>
+        <button type="button" id="eraserSwitch" class="laser-switch" aria-pressed="false">⌫ Radierer</button>
+        <button type="button" id="textSwitch" class="laser-switch" aria-pressed="false">T Textfeld</button>
+      </div>
+      <div class="tool-extras">
+        <label class="tool-label" for="penColor">Stiftfarbe <input id="penColor" class="tool-color" type="color" value="#e53935" title="Stiftfarbe wählen"></label>
+        <label class="tool-label" for="penWidth">Strichstärke <select id="penWidth" class="tool-width"><option value="0.5">0,5 · Ultrafein</option><option value="0.8">0,8 · Sehr fein</option><option value="1.2" selected>1,2 · Fein</option><option value="1.8">1,8 · Dünn</option><option value="2.5">2,5 · Mittel</option><option value="4">4 · Dick</option><option value="6">6 · Sehr dick</option></select></label>
+        <button type="button" id="undoAnnotations" class="laser-switch" disabled>↶ Rückgängig</button>
+        <button type="button" id="clearAnnotations" class="laser-switch" disabled>Notizen / Zeichnungen löschen</button>
+        <button type="button" id="savePdf" class="laser-switch print-button" title="Alle Fragen und alle Notizen als PDF drucken oder speichern">PDF speichern · alle Fragen</button>
+      </div>
+      <span class="hint" id="toolHint">Laserpointer: linke Maustaste gedrückt halten. Dabei wird kein Text markiert.</span>
+      <span class="hint">Die transparenten Flächen links und rechts sind ebenfalls beschreibbar. Über „PDF speichern“ öffnet sich der Browserdruck: Ziel „Als PDF speichern“ wählen. Alle Fragen und zugehörigen Notizen werden übernommen.</span>
+    </div>
+    <footer>Alle Quizfragen beruhen auf dem bereitgestellten Transkript zu „Checkerin Marina – Muskeln“. Das Quiz funktioniert ohne Internet.</footer>
+  </main>
+  <aside class="margin-space margin-right" aria-label="Transparenter rechter Notizrand"><span class="margin-hint">Rechter Notizrand · mit Stift oder Textfeld beschreibbar</span></aside>
+  </div>
+  <div id="printRoot" aria-hidden="true"></div>
+
+  <script>
+  (() => {
+    'use strict';
+    const questions = [
+  {
+    "question": "Warum braucht der Körper auch beim scheinbar bewegungslosen Stehen Muskeln?",
+    "answers": [
+      "Weil die Muskulatur die Haltung durch eine gewisse Spannung stabilisiert.",
+      "Weil die Sehnen unabhängig von den Muskeln die gesamte Haltearbeit übernehmen.",
+      "Weil die Gelenkbänder allein den Oberkörper und den Kopf aufrecht halten.",
+      "Weil das Gleichgewicht ausschließlich durch die Stellung der Füße entsteht."
+    ],
+    "correct": 0,
+    "explain": "Auch beim aufrechten Stehen und Sitzen arbeiten Muskeln. Im Beitrag werden etwa die Gesäßmuskulatur und die Nackenmuskeln genannt, die Becken und Kopf stabilisieren.",
+    "hint": "Denke daran, was mit Kopf und Oberkörper passieren würde, wenn die beteiligten Muskeln völlig locker ließen."
+  },
+  {
+    "question": "Wie sind die Bausteine eines Skelettmuskels im gezeigten Modell angeordnet?",
+    "answers": [
+      "Mehrere Muskelbündel bilden eine Muskelfaser; viele Muskelfasern bilden den Muskel.",
+      "Viele Muskelfasern bilden Muskelbündel; mehrere Bündel bilden einen Muskel.",
+      "Mehrere Muskeln bilden Muskelfasern; daraus entstehen die Muskelbündel.",
+      "Viele Muskelfasern bilden einen Muskel; mehrere Muskeln bilden ein Muskelbündel."
+    ],
+    "correct": 1,
+    "explain": "Die kleinen Kabel stellen Muskelfasern dar. Mehrere davon bilden ein Muskelfaserbündel; aus mehreren solchen Bündeln entsteht der gesamte Muskel.",
+    "hint": "Vergleiche die kleinen Kabel, die Kabelgruppen und das gesamte Modell miteinander."
+  },
+  {
+    "question": "Welche Funktion haben die Sehnen am Beispiel des Bizeps?",
+    "answers": [
+      "Sie fassen mehrere Muskelfasern zu einem Muskelbündel zusammen.",
+      "Sie leiten elektrische Befehle vom Gehirn in die Muskelfasern.",
+      "Sie verbinden den Muskel mit dem Knochen und übertragen seine Zugkraft.",
+      "Sie bilden die äußere Muskelhaut und verhindern jede Verkürzung."
+    ],
+    "correct": 2,
+    "explain": "Im Modell ist der Bizeps mithilfe von Klebeband am Unterarm befestigt. Dieses Klebeband steht für die Sehnen, durch die der Muskel am Knochen zieht.",
+    "hint": "Überlege, welche Aufgabe im Modell die Befestigung am Unterarm übernimmt."
+  },
+  {
+    "question": "Wie erreicht der Befehl „Arm beugen“ laut Modell den Bizeps?",
+    "answers": [
+      "Er wird vom Knochen an die Sehne und dann an die Muskelfasern weitergegeben.",
+      "Er gelangt als Botenstoff mit dem Blut direkt vom Gehirn in den Muskel.",
+      "Er entsteht erst im Bizeps und wird anschließend vom Gehirn bestätigt.",
+      "Er entsteht im Gehirn und wird über Nerven an den Muskel weitergeleitet."
+    ],
+    "correct": 3,
+    "explain": "Die Lichterkette stellt Nerven dar. Über sie gelangt das Signal aus dem Gehirn zu den Muskelfasern, sodass sich der Muskel anspannen kann.",
+    "hint": "Denke an die Lichterkette: Welche Struktur sollte sie in Sandros Modell darstellen?"
+  },
+  {
+    "question": "Warum werden beim Anheben eines schweren Wassereimers mehr Muskelfasern aktiviert als bei einem Bleistift?",
+    "answers": [
+      "Weil die Sehnen das Gewicht mit der Zahl ihrer Ansätze ausgleichen.",
+      "Weil das Gehirn die benötigte Kraft durch die Anzahl aktiver Muskelfasern anpasst.",
+      "Weil sich die Muskelfasern bei schwereren Gegenständen grundsätzlich verlängern.",
+      "Weil bei schweren Gegenständen die Nerven ihre Signale nicht mehr weiterleiten."
+    ],
+    "correct": 1,
+    "explain": "Für ein leichtes Objekt genügt die Aktivierung vergleichsweise weniger Muskelfasern. Bei einer größeren Last lässt das Gehirn mehr Muskelfasern mitarbeiten.",
+    "hint": "In der Sendung werden die Aufgaben bei leichter und schwerer Last durch die Nervensignale unterschiedlich gesteuert."
+  },
+  {
+    "question": "Weshalb ist Sandros Fußballschuss besser koordiniert als der von Marina?",
+    "answers": [
+      "Weil beim Schuss hauptsächlich ein besonders großer Beinmuskel arbeitet.",
+      "Weil das Standbein die Muskelspannung möglichst vollständig abbaut.",
+      "Weil er die zeitliche Zusammenarbeit vieler Muskeln häufig geübt hat.",
+      "Weil er Rumpf und Arme möglichst wenig in die Bewegung einbezieht."
+    ],
+    "correct": 2,
+    "explain": "Durch häufiges Training hat Sandros Gehirn passende Bewegungsmuster gespeichert. Dadurch arbeiten unter anderem Standbein, Rumpf und Schussbein besser im richtigen Moment zusammen.",
+    "hint": "Vergleiche Sandros häufiges Fußballtraining mit Marinas früherem Turntraining."
+  },
+  {
+    "question": "Was bewirkt das regelmäßige Zusammenziehen und Entspannen des Herzmuskels?",
+    "answers": [
+      "Der Herzmuskel pumpt Blut und damit transportierten Sauerstoff durch den Körper.",
+      "Der Herzmuskel erzeugt Sauerstoff, den das Blut anschließend aufnimmt.",
+      "Der Herzmuskel steuert über die Blutgefäße die Bewegungen der Skelettmuskeln.",
+      "Der Herzmuskel hält das Blut bei jeder Anspannung für längere Zeit fest."
+    ],
+    "correct": 0,
+    "explain": "Der Herzmuskel arbeitet als Pumpe. Durch das rhythmische Anspannen und Entspannen wird Blut durch die Gefäße befördert; dieses transportiert unter anderem Sauerstoff zu den Organen.",
+    "hint": "Marina vergleicht das Herz mit einer Pumpe. Überlege, was diese Pumpe bewegt."
+  },
+  {
+    "question": "Welche Kraftart steht beim möglichst langen Tragen schwerer Koffer im Vordergrund?",
+    "answers": [
+      "Maximalkraft, weil die größte mögliche Einzelleistung geprüft wird.",
+      "Schnellkraft, weil die Koffer besonders rasch beschleunigt werden.",
+      "Kraftausdauer, weil die Belastung möglichst lange durchgehalten werden soll.",
+      "Beweglichkeit, weil die Arme einen möglichst großen Weg zurücklegen."
+    ],
+    "correct": 2,
+    "explain": "Beim Kofferlauf wird eine Last möglichst lange getragen. Dieses lange Durchhalten unter Belastung nennt die Sendung Kraftausdauer.",
+    "hint": "Entscheidend ist, woran der Versuch endet: an einer einmaligen Höchstleistung, an der Geschwindigkeit oder an der Dauer."
+  },
+  {
+    "question": "Welche Übung verlangt nach der Einteilung im Film besonders viel Schnellkraft?",
+    "answers": [
+      "Einen möglichst schweren Atlasstein ein einziges Mal hochheben.",
+      "Zwei schwere Koffer über eine möglichst lange Strecke tragen.",
+      "Eine schwere Hantel möglichst lange in derselben Position halten.",
+      "Einen Sandsack in sehr kurzer Zeit explosionsartig nach oben werfen."
+    ],
+    "correct": 3,
+    "explain": "Bei der Schnellkraft geht es darum, in sehr kurzer Zeit viel Kraft zu entwickeln und einen Gegenstand rasch zu beschleunigen. Das demonstriert der Sandsackwurf.",
+    "hint": "Beim Versuch mit dem Sandsack beschreibt Sandra besonders, wie schnell die Kraft wirken soll."
+  },
+  {
+    "question": "Welche Leistung wird beim Heben der besonders schweren Atlassteine untersucht?",
+    "answers": [
+      "Die Kraftausdauer bei einer möglichst langen gleichmäßigen Belastung.",
+      "Die Maximalkraft bei einer möglichst schweren einzelnen Hebeleistung.",
+      "Die Schnellkraft bei möglichst vielen leichten, raschen Wiederholungen.",
+      "Die Bewegungskoordination bei einem möglichst präzisen Wurf."
+    ],
+    "correct": 1,
+    "explain": "Beim Heben der schweren Betonkugeln geht es darum, wie viel Kraft eine Person maximal aufbringen kann. Das ist die Maximalkraft.",
+    "hint": "Achte darauf, ob die schwerste einzelne Last oder eine möglichst lange bzw. schnelle Leistung geprüft wird."
+  },
+  {
+    "question": "Was ist laut Sendung für einen dauerhaften Zuwachs an Muskelkraft besonders wichtig?",
+    "answers": [
+      "Regelmäßige, zunehmende Belastung sowie Proteine und ausreichende Erholungszeiten.",
+      "Möglichst viele Trainingseinheiten ohne Pausen und bei unveränderter Belastung.",
+      "Vor allem proteinreiche Ernährung, auch wenn die Muskulatur kaum belastet wird.",
+      "Einmalige sehr hohe Belastung mit anschließender möglichst langer Trainingspause."
+    ],
+    "correct": 0,
+    "explain": "Im Beitrag werden drei Bausteine genannt: regelmäßiges, zunehmend forderndes Training, Proteine als Baumaterial und Regeneration in Pausen und während des Schlafs.",
+    "hint": "Denk an die drei Teile der Erklärung: Was setzt den Trainingsreiz, was liefert Baumaterial und wann erholt sich der Körper?"
+  },
+  {
+    "question": "Welchen gesundheitlichen Nutzen regelmäßigen Krafttrainings beschreibt die Sendung?",
+    "answers": [
+      "Es verbessert vor allem die Kraft; auf Gelenke und Knochen wirkt es sich nicht aus.",
+      "Es unterstützt die Knochen, indem die Muskulatur nach dem Training weniger arbeitet.",
+      "Es kann Gelenke entlasten, Knochen stabilisieren und die Beweglichkeit unterstützen.",
+      "Es fördert die Beweglichkeit nur, wenn dabei möglichst wenig Muskelkraft aufgebaut wird."
+    ],
+    "correct": 2,
+    "explain": "Im Film wird erklärt, dass kräftige Muskeln die Gelenke entlasten, die Knochen stabiler machen und helfen, beweglich zu bleiben.",
+    "hint": "Die Sendung betrachtet nicht nur die Kraft, sondern auch das Zusammenwirken von Muskeln, Knochen und Gelenken."
+  }
+];
+    const bonus = {
+  "question": "Welcher Muskel wird in der Sendung als der vom Volumen her größte Muskel genannt?",
+  "answers": [
+    "Der große Gesäßmuskel",
+    "Der breite Rückenmuskel",
+    "Der Kaumuskel",
+    "Der Oberschenkelstrecker"
+  ],
+  "correct": 0,
+  "explain": "Sandro zeigt am Muskelmodell den großen Gesäßmuskel als den vom Volumen her größten Muskel. Der Kaumuskel wird dagegen im Beitrag als besonders kräftig beschrieben.",
+  "hint": "Denke an die Stelle am Modell „Herbert“, an der Sandro den besonders großen Muskel zeigt."
+};
+
+    const TOTAL = questions.length;
+    const byId = id => document.getElementById(id);
+    const trophyBar = byId('trophies');
+    const optionBox = byId('options');
+    const feedbackBox = byId('feedback');
+    const nextButton = byId('nextButton');
+    const scoreText = byId('progressText');
+    const progressFill = byId('progressFill');
+    const quizCard = byId('quizCard');
+    const results = byId('results');
+    let index=0, answered=false, earned=Array(TOTAL).fill(null);
+    let bonusResult=null, showingBonus=false;
+    let selections=Array.from({length:TOTAL},()=>[]), bonusSelection=[];
+    let attempts=0;
+
+    function updateTrophies() {
+      trophyBar.replaceChildren();
+      earned.forEach((didWin,i) => {
+        const e=document.createElement('span');
+        e.className='trophy'+(didWin===true?' earned':didWin===false?' missed':'');
+        e.textContent='🏆';
+        e.title='Frage '+(i+1)+(didWin===true?': spätestens beim zweiten Versuch richtig':didWin===false?': zweimal falsch':': noch offen');
+        trophyBar.append(e);
+      });
+      const wins=earned.filter(v=>v===true).length;
+      scoreText.textContent='Deine Pokale: '+wins+' von '+TOTAL;
+      progressFill.style.width=(earned.filter(v=>v!==null).length/TOTAL*100)+'%';
+    }
+
+    function showQuestion() {
+      const q=showingBonus?bonus:questions[index];
+      answered=false;attempts=0;
+      quizCard.hidden=false;
+      results.style.display='none';
+      feedbackBox.hidden=true;
+      feedbackBox.className='feedback';
+      feedbackBox.textContent='';
+      byId('questionNumber').textContent=showingBonus?'Freiwillige Zusatzfrage':'Frage '+(index+1)+' von '+TOTAL;
+      byId('questionType').textContent='Eine Antwort auswählen';
+      byId('questionTitle').textContent=q.question;
+      optionBox.replaceChildren();
+      q.answers.forEach((label,i)=>{
+        const button=document.createElement('button');
+        button.className='answer';button.type='button';
+        const letter=document.createElement('span');letter.className='letter';letter.textContent=String.fromCharCode(65+i);
+        const txt=document.createElement('span');txt.className='answer-text';txt.textContent=label;
+        button.append(letter,txt);
+        button.addEventListener('click',()=>answer(i));
+        optionBox.append(button);
+      });
+      nextButton.disabled=true;
+      nextButton.textContent=showingBonus?'Ergebnis anzeigen →':index===TOTAL-1?'Auswertung anzeigen →':'Nächste Frage →';
+      byId('questionScore').textContent=showingBonus?'Zusatzfrage: Auch hier gibt es zwei Versuche.':'Zwei Versuche: Spätestens beim zweiten Mal richtig = 🏆';
+    }
+
+    function setFeedback(title,body,kind){
+      feedbackBox.hidden=false;
+      feedbackBox.className='feedback'+(kind?' '+kind:'');
+      const strong=document.createElement('strong');strong.textContent=title;
+      const para=document.createElement('p');para.textContent=body;
+      feedbackBox.replaceChildren(strong,para);
+    }
+
+    function answer(selected) {
+      if(answered || optionBox.children[selected].disabled)return;
+      const q=showingBonus?bonus:questions[index];
+      const selectedHistory=showingBonus?bonusSelection:selections[index];
+      selectedHistory.push(selected);
+      attempts++;
+      const right=selected===q.correct;
+      const b=optionBox.children[selected];
+
+      if(!right && attempts===1){
+        // Absichtlich KEINE Kennzeichnung der richtigen Antwort, KEINE Lösung und
+        // KEINE Erklärung beim ersten Fehlversuch. Nur die gewählte Option sperren.
+        b.disabled=true;
+        b.classList.add('attempt-wrong');
+        const mark=document.createElement('span');mark.className='answer-mark';
+        mark.textContent='×';mark.setAttribute('aria-hidden','true');b.append(mark);
+        setFeedback('Noch nicht richtig – versuch es noch einmal!',q.hint,'retry');
+        byId('questionType').textContent='Zweiter Versuch';
+        byId('questionScore').textContent='Du hast noch einen Versuch. Die Lösung ist weiterhin verborgen.';
+        return;
+      }
+
+      answered=true;
+      if(showingBonus)bonusResult=right;
+      else earned[index]=right;
+
+      [...optionBox.children].forEach((button,i)=>{
+        button.disabled=true;
+        if(i===q.correct)button.classList.add(i===selected?'selected-correct':'reveal-correct');
+        else if(selectedHistory.includes(i))button.classList.add('selected-wrong');
+        else button.classList.add('unselected');
+        if(i===q.correct && i!==selected){
+          const mark=document.createElement('span');mark.className='answer-mark';
+          mark.textContent='✓';mark.setAttribute('aria-hidden','true');button.append(mark);
+        }else if(i===selected){
+          const mark=document.createElement('span');mark.className='answer-mark';
+          mark.textContent=right?'✓':'×';mark.setAttribute('aria-hidden','true');button.append(mark);
+        }
+      });
+
+      if(right){
+        setFeedback('🏆 Richtig! '+(attempts===2?'Auch beim zweiten Versuch geschafft.':'Ein Pokal für dich.'),q.explain,'');
+      }else{
+        setFeedback('Zweiter Versuch: noch nicht richtig.',q.explain,'wrong');
+      }
+      byId('questionType').textContent=attempts===1?'Im ersten Versuch gelöst':'Beide Versuche abgeschlossen';
+      nextButton.disabled=false;
+      byId('questionScore').textContent=right?'Pokal gewonnen. Weiter geht’s!':'Hier siehst du jetzt die Lösung und Erklärung.';
+      if(!showingBonus)updateTrophies();
+    }
+
+    function showResults(){
+      quizCard.hidden=true;
+      results.style.display='block';
+      const wins=earned.filter(v=>v===true).length;
+      const first=selections.filter((s,i)=>earned[i]===true&&s.length===1).length;
+      const second=wins-first;
+      byId('resultScore').textContent=wins+' / '+TOTAL+' Pokale';
+      byId('resultIcon').textContent=wins===TOTAL?'🏆':wins>=Math.ceil(TOTAL*0.6)?'🎖️':'📘';
+      byId('resultTitle').textContent='Dein Quiz-Ergebnis';
+      byId('resultMessage').textContent='Im ersten Versuch richtig: '+first+'. Im zweiten Versuch richtig: '+second+'. '+(wins===TOTAL?'Du hast alle Fragen spätestens beim zweiten Anlauf gelöst!':wins>=Math.ceil(TOTAL*.6)?'Viele Zusammenhänge hast du bereits verstanden.':'Nutze die Erklärungen und versuche die schwierigen Fragen noch einmal.');
+      const note=byId('bonusNote'),btn=byId('bonusButton');
+      note.hidden=bonusResult===null;
+      if(bonusResult!==null)note.textContent=bonusResult?'🏆 Zusatzfrage richtig – Bonus-Pokal erhalten!':'Zusatzfrage: Die zwei Versuche wurden genutzt.';
+      btn.hidden=bonusResult!==null;
+      updateTrophies();
+      results.scrollIntoView({behavior:'smooth',block:'nearest'});
+    }
+    nextButton.addEventListener('click',()=>{
+      if(!answered)return;
+      if(showingBonus){showingBonus=false;showResults();return;}
+      if(index===TOTAL-1){showResults();return;}
+      index++;showQuestion();quizCard.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+    byId('bonusButton').addEventListener('click',()=>{
+      showingBonus=true;bonusSelection=[];
+      showQuestion();quizCard.scrollIntoView({behavior:'smooth',block:'start'});
+    });
+    byId('restartButton').addEventListener('click',()=>{
+      index=0;answered=false;earned=Array(TOTAL).fill(null);
+      bonusResult=null;showingBonus=false;bonusSelection=[];
+      selections=Array.from({length:TOTAL},()=>[]);
+      updateTrophies();showQuestion();window.scrollTo({top:0,behavior:'smooth'});
+    });
+    updateTrophies();showQuestion();
+
+    // Unterrichtswerkzeuge: Laser ohne Textauswahl; freies Zeichnen und Unterstreichen.
+    const laserSwitch=byId('laserSwitch'), dot=byId('laserDot'), canvas=byId('laserCanvas');
+    const ctx=canvas.getContext('2d');
+    const inkCanvas=byId('annotationCanvas'), inkCtx=inkCanvas.getContext('2d');
+    const tools={mouse:byId('mouseSwitch'),laser:laserSwitch,pen:byId('penSwitch'),
+                 eraser:byId('eraserSwitch'),text:byId('textSwitch')};
+    const toolHints={
+      mouse:'Mausmodus: Quizantworten auswählen, Text markieren und auf der Seite scrollen.',
+      laser:'Laserpointer: linke Maustaste gedrückt halten und bewegen. Text wird dabei nicht markiert.',
+      pen:'Stift: auch links und rechts vom Quizfeld frei schreiben, zeichnen und unterstreichen. Feine Strichstärken ab 0,5 Pixel verfügbar.',
+      eraser:'Radierer: eine gezeichnete Linie berühren oder überfahren, um sie zu entfernen.',
+      text:'Textfeld: im Quizfeld oder auf dem transparenten Seitenrand klicken und direkt schreiben. Mit „PDF speichern“ werden die Notizen exportiert.'
+    };
+    let tool='mouse', laserDown=false, points=[], rafId=null, pixelRatio=1;
+    let drawingId=null, activeStroke=null, eraseId=null, suppressInkClick=false;
+    const annotations=new Map();
+    const keyForPage=()=>results.style.display==='block'?'results':showingBonus?'bonus':'q'+index;
+    function getPage(){
+      const key=keyForPage();
+      if(!annotations.has(key)) annotations.set(key,{strokes:[],notes:[],history:[]});
+      return annotations.get(key);
+    }
+    function updateAnnotationButtons(){
+      const page=getPage();
+      byId('undoAnnotations').disabled=page.history.length===0;
+      byId('clearAnnotations').disabled=page.strokes.length===0 && page.notes.length===0;
+    }
+    function changeTool(next){
+      stopDrawing(); deactivate();
+      tool=next;
+      Object.entries(tools).forEach(([name,button])=>button.setAttribute('aria-pressed',String(name===tool)));
+      document.body.classList.remove('tool-mouse','tool-laser','tool-pen','tool-eraser','tool-text');
+      document.body.classList.add('tool-'+next);
+      byId('toolHint').textContent=toolHints[next];
+      if(window.getSelection() && next!=='mouse')window.getSelection().removeAllRanges();
+    }
+    Object.entries(tools).forEach(([name,button])=>button.addEventListener('click',()=>changeTool(name)));
+    function resizeCanvas(){
+      pixelRatio=Math.min(window.devicePixelRatio||1,2);
+      // Die Zeichenfläche hat unabhängig von Windows-Skalierung/Browserzoom
+      // immer genau die sichtbare Größe. Die höhere interne Auflösung dient
+      // ausschließlich der Schärfe, nicht der Positionierung des Stifts.
+      for(const c of [canvas,inkCanvas]){
+        c.style.width=window.innerWidth+'px';
+        c.style.height=window.innerHeight+'px';
+        c.width=Math.round(window.innerWidth*pixelRatio);
+        c.height=Math.round(window.innerHeight*pixelRatio);
+      }
+      ctx.setTransform(pixelRatio,0,0,pixelRatio,0,0);
+      inkCtx.setTransform(pixelRatio,0,0,pixelRatio,0,0);
+      redrawInk();
+    }
+    function deactivate(){
+      laserDown=false; points=[]; dot.classList.remove('is-active');canvas.classList.remove('is-active');
+      if(rafId!==null){cancelAnimationFrame(rafId);rafId=null;}
+      ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+    }
+    function drawTrail(){
+      if(!laserDown){rafId=null;return;}
+      ctx.clearRect(0,0,window.innerWidth,window.innerHeight);
+      const now=performance.now();
+      points=points.filter(p=>now-p.t<240);
+      for(const p of points){
+        const age=(now-p.t)/240;
+        ctx.beginPath();ctx.arc(p.x,p.y,Math.max(.7,3*(1-age)),0,Math.PI*2);
+        ctx.fillStyle='rgba(255,35,45,'+(0.55*(1-age))+')';ctx.fill();
+      }
+      rafId=requestAnimationFrame(drawTrail);
+    }
+    const docPoint=e=>({x:e.pageX,y:e.pageY});
+    function redrawInk(){
+      inkCtx.clearRect(0,0,window.innerWidth,window.innerHeight);
+      const strokes=getPage().strokes;
+      for(const s of strokes){
+        if(!s.points.length)continue;
+        inkCtx.strokeStyle=s.color;inkCtx.fillStyle=s.color;inkCtx.lineWidth=s.width;
+        inkCtx.lineCap='round';inkCtx.lineJoin='round';inkCtx.beginPath();
+        inkCtx.moveTo(s.points[0].x-window.scrollX,s.points[0].y-window.scrollY);
+        for(let i=1;i<s.points.length;i++){
+          inkCtx.lineTo(s.points[i].x-window.scrollX,s.points[i].y-window.scrollY);
+        }
+        if(s.points.length===1){
+          inkCtx.arc(s.points[0].x-window.scrollX,s.points[0].y-window.scrollY,s.width/2,0,2*Math.PI);
+          inkCtx.fill();
+        }else inkCtx.stroke();
+      }
+    }
+    function refreshPageAnnotations(){
+      const current=keyForPage();
+      document.querySelectorAll('.anno-note').forEach(el=>{el.hidden=el.dataset.page!==current;});
+      redrawInk();updateAnnotationButtons();
+    }
+    function stopDrawing(){
+      if(activeStroke){
+        const page=getPage();
+        page.history.push({type:'stroke',stroke:activeStroke});
+        activeStroke=null;
+      }
+      drawingId=null;eraseId=null;updateAnnotationButtons();
+    }
+    function addTextNote(e){
+      const page=getPage(), pageKey=keyForPage();
+      const note=document.createElement('div');
+      note.className='anno-note';note.dataset.page=pageKey;
+      // Keep the editable field fully within the visible worksheet, including
+      // at the far right margin, so the PDF won't clip its text.
+      const wr=byId('pageWorkspace').getBoundingClientRect();
+      const left=wr.left+window.scrollX+8, right=wr.right+window.scrollX-8;
+      const width=Math.min(255,Math.max(155,right-left-10));
+      note.style.left=Math.max(left,Math.min(e.pageX,right-width))+'px';
+      note.style.top=Math.max(8,e.pageY)+'px';
+      note.style.width=width+'px';
+      note.dataset.boxWidth=String(width);
+      note.dataset.boxHeight='82';
+      const area=document.createElement('textarea');
+      area.setAttribute('aria-label','Eigene Notiz zum Quiz');
+      area.placeholder='Hier schreiben …';
+      area.addEventListener('input',()=>{
+        area.style.height='auto';
+        area.style.height=Math.max(70,area.scrollHeight)+'px';
+        note.dataset.boxHeight=String(Math.ceil(note.getBoundingClientRect().height||82));
+      });
+      // Remember dimensions while notes are visible: inactive quiz sheets
+      // hide their text boxes, so their boundingClientRect would be zero.
+      if('ResizeObserver' in window){
+        const observer=new ResizeObserver(()=>{
+          if(!note.hidden)note.dataset.boxHeight=String(Math.ceil(note.getBoundingClientRect().height||82));
+        });
+        observer.observe(note);
+      }
+      const remove=document.createElement('button');
+      remove.type='button';remove.className='note-remove';remove.textContent='×';
+      remove.title='Textfeld entfernen';remove.setAttribute('aria-label','Textfeld entfernen');
+      remove.addEventListener('click',()=>{
+        const idx=page.notes.indexOf(note);
+        if(idx>=0)page.notes.splice(idx,1);
+        note.remove(); updateAnnotationButtons();
+      });
+      note.append(area,remove);document.body.append(note);
+      page.notes.push(note);page.history.push({type:'note',note});
+      updateAnnotationButtons();area.focus();
+    }
+    function distToSegmentSq(px,py,a,b){
+      const dx=b.x-a.x,dy=b.y-a.y;
+      const t=dx*dx+dy*dy===0?0:Math.max(0,Math.min(1,((px-a.x)*dx+(py-a.y)*dy)/(dx*dx+dy*dy)));
+      const x=a.x+t*dx,y=a.y+t*dy;
+      return (px-x)*(px-x)+(py-y)*(py-y);
+    }
+    function eraseAt(e){
+      const page=getPage(),pos=docPoint(e);
+      for(let i=page.strokes.length-1;i>=0;i--){
+        const stroke=page.strokes[i],pts=stroke.points;
+        const radius=13+stroke.width/2;
+        const hit=pts.length===1?distToSegmentSq(pos.x,pos.y,pts[0],pts[0])<=radius*radius:
+          pts.some((pt,j)=>j>0 && distToSegmentSq(pos.x,pos.y,pts[j-1],pt)<=radius*radius);
+        if(hit){
+          page.strokes.splice(i,1);
+          page.history.push({type:'erase',stroke,index:i});
+          redrawInk();updateAnnotationButtons();
+          break;
+        }
+      }
+    }
+    function isToolbarTarget(e){return !!e.target.closest('#toolControls');}
+    function isNavigationTarget(e){return !!e.target.closest('#nextButton,#bonusButton,#restartButton');}
+    document.addEventListener('selectstart',e=>{
+      if(tool!=='mouse' && !e.target.closest('.anno-note textarea'))e.preventDefault();
+    });
+    document.addEventListener('pointerdown',e=>{
+      if(e.button!==0||isToolbarTarget(e)||isNavigationTarget(e))return;
+      if(e.target.closest('.anno-note'))return;
+      if(tool==='laser'){
+        // Non-interactive copy cannot be selected while the pointer is shining.
+        if(!e.target.closest('button,input,textarea,select,a'))e.preventDefault();
+        if(e.pointerType!=='mouse'&&e.pointerType!=='pen')return;
+        laserDown=true;points=[];dot.classList.add('is-active');canvas.classList.add('is-active');
+        dot.style.left=e.clientX+'px';dot.style.top=e.clientY+'px';
+        points.push({x:e.clientX,y:e.clientY,t:performance.now()});
+        if(rafId===null)rafId=requestAnimationFrame(drawTrail);
+        return;
+      }
+      if(tool==='pen'||tool==='eraser'||tool==='text'){
+        e.preventDefault();suppressInkClick=true;
+        if(tool==='text'){
+          // Text is inserted on pointerdown; the editor receives focus immediately.
+          addTextNote(e);
+        }else if(tool==='pen'){
+          drawingId=e.pointerId;
+          activeStroke={points:[docPoint(e)],color:byId('penColor').value,width:Number(byId('penWidth').value)};
+          getPage().strokes.push(activeStroke);redrawInk();
+        }else{
+          eraseId=e.pointerId;eraseAt(e);
+        }
+      }
+    },{capture:true,passive:false});
+    document.addEventListener('pointermove',e=>{
+      if(laserDown){
+        if(!(e.buttons&1)){deactivate();return;}
+        dot.style.left=e.clientX+'px';dot.style.top=e.clientY+'px';
+        points.push({x:e.clientX,y:e.clientY,t:performance.now()});
+        if(points.length>40)points.shift();
+      }
+      if(drawingId===e.pointerId&&activeStroke){
+        e.preventDefault();
+        const p=docPoint(e),pts=activeStroke.points,last=pts[pts.length-1];
+        if((p.x-last.x)**2+(p.y-last.y)**2>1){pts.push(p);redrawInk();}
+      }
+      if(eraseId===e.pointerId){e.preventDefault();eraseAt(e);}
+    },{passive:false});
+    // While drawing, synthetic click events must not select multiple-choice answers.
+    document.addEventListener('click',e=>{
+      if(!suppressInkClick)return;
+      if(e.target.closest('.anno-note')||isToolbarTarget(e)||isNavigationTarget(e))return;
+      e.preventDefault();e.stopImmediatePropagation();suppressInkClick=false;
+    },true);
+    document.addEventListener('pointerup',e=>{
+      if(drawingId===e.pointerId||eraseId===e.pointerId)stopDrawing();
+      deactivate();
+      // Ignore only the click that follows a pen action, not later normal clicks.
+      setTimeout(()=>{suppressInkClick=false;},0);
+    });
+    document.addEventListener('pointercancel',()=>{stopDrawing();deactivate();suppressInkClick=false;});
+    window.addEventListener('blur',()=>{stopDrawing();deactivate();});
+    window.addEventListener('scroll',redrawInk,{passive:true});
+    window.addEventListener('resize',resizeCanvas);
+    byId('undoAnnotations').addEventListener('click',()=>{
+      const page=getPage(), action=page.history.pop();
+      if(!action)return;
+      if(action.type==='stroke'){
+        const index=page.strokes.indexOf(action.stroke);
+        if(index>=0)page.strokes.splice(index,1);
+      }else if(action.type==='erase'){
+        page.strokes.splice(action.index,0,action.stroke);
+      }else if(action.type==='note'){
+        const index=page.notes.indexOf(action.note);
+        if(index>=0)page.notes.splice(index,1);
+        action.note.remove();
+      }
+      redrawInk();updateAnnotationButtons();
+    });
+    byId('clearAnnotations').addEventListener('click',()=>{
+      const page=getPage();
+      page.notes.forEach(n=>n.remove());
+      page.notes=[];page.strokes=[];page.history=[];
+      redrawInk();updateAnnotationButtons();
+    });
+    // Existing quiz page changes also switch the visible annotation sheet.
+    const originalShowQuestion=showQuestion;
+    showQuestion=function(){originalShowQuestion();refreshPageAnnotations();};
+    const originalShowResults=showResults;
+    showResults=function(){originalShowResults();refreshPageAnnotations();};
+
+    // Druckansicht: jede Frage auf einem eigenen A4-Querformat-Blatt.
+    // Die Anmerkungen stammen aus dem passenden Fragenblatt und werden
+    // als skalierbare SVG-Striche und druckbarer Text darübergelegt.
+    // Das ist unabhängig von externen JS-Bibliotheken auch offline möglich.
+    const printableWorkspace=byId('pageWorkspace');
+    const pdfRoot=byId('printRoot');
+    let printCleanupTimer=0;
+    const svgNS='http://www.w3.org/2000/svg';
+
+    function appendStaticAnswer(box,label,i,question,history,finished){
+      const item=document.createElement('div');
+      item.className='answer';
+      if(history.includes(i)){
+        item.classList.add(i===question.correct?'selected-correct':finished?'selected-wrong':'attempt-wrong');
+      }else if(finished && history.length && i===question.correct){
+        item.classList.add('reveal-correct');
+      }else if(finished)item.classList.add('unselected');
+      const letter=document.createElement('span');letter.className='letter';letter.textContent=String.fromCharCode(65+i);
+      const t=document.createElement('span');t.className='answer-text';t.textContent=label;
+      item.append(letter,t);
+      if(history.includes(i) || (finished && history.length && i===question.correct)){
+        const mark=document.createElement('span');mark.className='answer-mark';
+        mark.textContent=i===question.correct?'✓':'×';item.append(mark);
+      }
+      box.append(item);
+    }
+    function printQuestionMarkup(clone,q,key,history,ordinal,finished){
+      const card=clone.querySelector('#quizCard');card.hidden=false;
+      clone.querySelector('#results')?.remove();
+      clone.querySelector('#questionNumber').textContent=key==='bonus'?'Freiwillige Zusatzfrage':'Frage '+ordinal+' von '+TOTAL;
+      clone.querySelector('#questionTitle').textContent=q.question;
+      clone.querySelector('#questionType').textContent='Eine Antwort auswählen';
+      const opts=clone.querySelector('#options');opts.replaceChildren();
+      q.answers.forEach((a,i)=>appendStaticAnswer(opts,a,i,q,history,finished));
+      const f=clone.querySelector('#feedback');f.replaceChildren();
+      if(history.length){
+        f.hidden=false;
+        const right=history.includes(q.correct);
+        f.className='feedback'+(!finished?' retry':right?'':' wrong');
+        const title=document.createElement('strong');
+        title.textContent=!finished?'Noch ein Versuch möglich – keine Lösung angezeigt':right?'🏆 Richtig – Pokal gewonnen!':'Lösung und Erklärung';
+        const explain=document.createElement('p');
+        explain.textContent=finished?q.explain:'Erster Versuch nicht richtig. Wähle eine andere Antwort.';
+        f.append(title,explain);
+      }else f.hidden=true;
+      clone.querySelector('.actions')?.remove();
+    }
+    function printResultMarkup(clone){
+      clone.querySelector('#quizCard')?.remove();
+      const section=clone.querySelector('#results');section.hidden=false;section.style.display='block';
+      const wins=earned.filter(v=>v===true).length;
+      clone.querySelector('#resultScore').textContent=wins+' / '+TOTAL+' Pokale';
+      clone.querySelector('#resultTitle').textContent='Auswertung';
+      clone.querySelector('#resultMessage').textContent='Richtige Antworten nach höchstens zwei Versuchen: '+wins+' von '+TOTAL+'.';
+      const bn=clone.querySelector('#bonusNote');
+      bn.hidden=bonusResult===null;
+      if(bonusResult!==null)bn.textContent=bonusResult?'🏆 Zusatzfrage richtig – Bonus-Pokal!':'Zusatzfrage beantwortet.';
+      clone.querySelector('.result-buttons')?.remove();
+    }
+    function addPrintableOverlay(stage,key,originX,originY,w,h){
+      const page=annotations.get(key);
+      if(!page)return;
+      const layer=document.createElement('div');layer.className='print-overlay';
+      const svg=document.createElementNS(svgNS,'svg');
+      svg.setAttribute('viewBox',`0 0 ${w} ${h}`);
+      svg.setAttribute('width',String(w));svg.setAttribute('height',String(h));
+      for(const s of page.strokes){
+        if(s.points.length===0)continue;
+        const path=document.createElementNS(svgNS,'path');
+        const xy=p=>`${(p.x-originX).toFixed(2)} ${(p.y-originY).toFixed(2)}`;
+        const d=s.points.length===1?`M ${xy(s.points[0])} l 0.01 0`:
+          'M '+xy(s.points[0])+' '+s.points.slice(1).map(p=>'L '+xy(p)).join(' ');
+        path.setAttribute('d',d);path.setAttribute('fill','none');
+        path.setAttribute('stroke',s.color);path.setAttribute('stroke-width',String(s.width));
+        path.setAttribute('stroke-linejoin','round');path.setAttribute('stroke-linecap','round');
+        svg.append(path);
+      }
+      layer.append(svg);
+      for(const note of page.notes){
+        const editable=note.querySelector('textarea');
+        const text=editable?.value||'';
+        if(!text.trim())continue;
+        const block=document.createElement('div');block.className='print-note';
+        block.style.left=((parseFloat(note.style.left)||0)-originX)+'px';
+        block.style.top=((parseFloat(note.style.top)||0)-originY)+'px';
+        block.style.width=(Number(note.dataset.boxWidth)||255)+'px';
+        block.style.minHeight=(Number(note.dataset.boxHeight)||82)+'px';
+        block.textContent=text;
+        layer.append(block);
+      }
+      stage.append(layer);
+    }
+    function printableItems(){
+      const items=questions.map((q,i)=>({key:'q'+i,q,history:selections[i],ordinal:i+1,finished:earned[i]!==null}));
+      if(bonusSelection.length||annotations.has('bonus'))items.push({key:'bonus',q:bonus,history:bonusSelection,ordinal:TOTAL+1,finished:bonusResult!==null});
+      if(earned.some(v=>v!==null)||annotations.has('results'))items.push({key:'results',ordinal:TOTAL+2});
+      return items;
+    }
+    function preparePrint(){
+      stopDrawing();deactivate();
+      // Textfelder behalten ihre aktuellen Werte, auch wenn sie noch fokussiert sind.
+      pdfRoot.replaceChildren();
+      const origin=printableWorkspace.getBoundingClientRect();
+      const originX=origin.left+scrollX, originY=origin.top+scrollY;
+      const w=printableWorkspace.getBoundingClientRect().width;
+      const baseTop=quizCard.getBoundingClientRect().top+scrollY-originY;
+      const maxWidth=1050, maxHeight=725; // A4 quer, abzüglich der Druckränder.
+      for(const item of printableItems()){
+        const page=annotations.get(item.key);
+        const pclone=printableWorkspace.cloneNode(true);
+        pclone.removeAttribute('id');pclone.classList.add('export-workspace');
+        pclone.querySelector('#toolControls')?.remove();
+        pclone.querySelector('footer')?.remove();
+        if(item.key==='results')printResultMarkup(pclone);
+        else printQuestionMarkup(pclone,item.q,item.key,item.history,item.ordinal,item.finished);
+        pclone.querySelectorAll('[id]').forEach(el=>el.removeAttribute('id'));
+        const stage=document.createElement('div');stage.className='print-stage';
+        stage.append(pclone);
+        let maxY=baseTop+680;
+        if(page){
+          for(const s of page.strokes)for(const p of s.points)maxY=Math.max(maxY,p.y-originY+25);
+          for(const n of page.notes){
+            const y=(parseFloat(n.style.top)||0)-originY;
+            maxY=Math.max(maxY,y+(Number(n.dataset.boxHeight)||82)+35);
+          }
+        }
+        // Höhe ausreichend für Fragenkopf, Erklärung und Randnotizen.
+        const h=Math.max(805,Math.min(1700,maxY));
+        stage.style.width=w+'px';stage.style.height=h+'px';
+        // Für die Druckdarstellung eine skalierbare SVG-Ebene mit allen
+        // Strichen und die Textnotizen an ihren Originalkoordinaten.
+        addPrintableOverlay(stage,item.key,originX,originY,w,h);
+        const scale=Math.min(1,maxWidth/w,maxHeight/h);
+        stage.style.transform='scale('+scale+')';
+        const sheet=document.createElement('div');sheet.className='print-sheet';
+        sheet.style.width=(w*scale)+'px';sheet.style.height=(h*scale)+'px';
+        sheet.append(stage);pdfRoot.append(sheet);
+      }
+      document.body.classList.add('printing');
+    }
+    function cleanupPrint(){
+      document.body.classList.remove('printing');
+      pdfRoot.replaceChildren();
+      if(printCleanupTimer){clearTimeout(printCleanupTimer);printCleanupTimer=0;}
+    }
+    byId('savePdf').addEventListener('click',()=>{
+      preparePrint();
+      // Native PDF-Druckfunktion: in Edge/Chrome „Als PDF speichern“ auswählen.
+      // Der Browser nutzt das Betriebssystem für den Speicherort.
+      requestAnimationFrame(()=>{window.print();});
+    });
+    window.addEventListener('afterprint',cleanupPrint);
+
+    changeTool('mouse');resizeCanvas();refreshPageAnnotations();
+  })();
+  </script>
+</body>
+</html>
