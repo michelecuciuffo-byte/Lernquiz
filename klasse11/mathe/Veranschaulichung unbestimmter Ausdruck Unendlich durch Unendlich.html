@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Animierter Bruch – Grenzwerte</title>
+<style>
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;background:#fff;color:#182234;font-family:Arial,sans-serif}main{text-align:center;padding:24px;width:min(100%,1000px)}.fraction{display:inline-grid;gap:17px;max-width:100%;font-size:clamp(28px,7vw,64px);font-variant-numeric:tabular-nums}.number{display:flex;justify-content:center;gap:.045em;padding:0 .13em}.digit{display:block;width:.68em;height:1.08em;overflow:hidden;border-radius:.10em;background:#f1f4f7;border:1px solid #d9e0e7;position:relative;line-height:1.08em}.digit span{display:block;height:100%;text-align:center}.digit .strip{height:100%;transition:transform .25s cubic-bezier(.2,.65,.3,1)}.bar{height:4px;background:#182234;border-radius:4px}.controls{margin-top:36px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap}button{font:inherit;cursor:pointer;padding:10px 20px;border:1px solid #ccd4de;background:#fff;border-radius:8px;color:inherit}button:hover{background:#eef2f6}button:focus-visible,input:focus-visible{outline:2px solid #2865b6;outline-offset:3px}.speed{display:flex;justify-content:center;align-items:center;gap:10px;margin-top:23px;font-size:14px;color:#536173}.settings{margin-top:17px;display:flex;justify-content:center;gap:12px;flex-wrap:wrap;font-size:14px;color:#536173}.settings input{width:65px;padding:6px;border:1px solid #ccd4de;border-radius:5px;font:inherit;color:#182234}@media(prefers-reduced-motion:reduce){.digit .strip{transition:none}}
+.calculation{display:flex;justify-content:center;align-items:center;gap:clamp(12px,3vw,27px);flex-wrap:wrap}.quotient{display:flex;align-items:center;gap:.4em;font-size:clamp(23px,5vw,44px);font-variant-numeric:tabular-nums;color:#2865b6;white-space:nowrap}.quotient-label{display:block;font-size:13px;color:#536173;margin-bottom:5px}.quotient-value{display:inline-block;min-width:8ch;text-align:left}.precision-note{font-size:12px;color:#536173;margin-top:12px}@media(max-width:480px){.calculation{gap:16px}.quotient{justify-content:center;width:100%}.quotient-value{min-width:0}}
+
+.memo{margin:36px auto 0;max-width:780px;text-align:left;padding:22px 25px 20px;background:#fffaf0;border:1px solid #ead6a5;border-left:5px solid #e5ac36;border-radius:12px;display:grid;grid-template-columns:54px 1fr;gap:12px 17px;color:#283346}.bulb{width:54px;height:66px;align-self:start}.memo h2{font-size:17px;letter-spacing:.09em;color:#87601d;margin:2px 0 9px}.memo p{font-size:16px;line-height:1.55;margin:0 0 9px}.memo p:last-child{margin-bottom:0}.examples{grid-column:1/-1;display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:1px}.example{background:#fff;border:1px solid #eddfbd;border-radius:8px;padding:12px 8px;text-align:center}.example .equation{display:flex;align-items:center;justify-content:center;gap:.4em;white-space:nowrap;font-size:24px;color:#182234;font-family:Cambria,Georgia,serif}.mini-frac{display:inline-grid;grid-template-rows:auto auto;text-align:center;line-height:1.15;vertical-align:middle;font-family:Cambria,Georgia,serif;font-style:italic}.mini-frac>span:first-child{border-bottom:1.5px solid currentColor;padding:0 .18em .1em}.mini-frac>span:last-child{padding:.1em .18em 0}.example .caption{font-size:12px;color:#536173;margin-top:8px;line-height:1.35}.memo .intro{display:inline-flex;align-items:center;gap:6px;vertical-align:middle}.laser-hint{margin:16px 0 0;color:#64748b;font-size:12px}.laser{position:fixed;top:0;left:0;width:15px;height:15px;border-radius:50%;background:#ff2525;box-shadow:0 0 0 3px #ff38383d,0 0 10px 4px #ff2020a0,0 0 24px 5px #ff20205e;transform:translate(-50%,-50%);pointer-events:none;z-index:99999;display:none}.laser.active{display:block}body.laser-on,body.laser-on *{cursor:none!important;user-select:none!important}body.laser-on input,body.laser-on button{cursor:auto!important}@media(max-width:540px){main{padding:20px 12px}.memo{padding:16px 13px;grid-template-columns:40px 1fr;gap:10px}.bulb{width:40px;height:52px}.memo p{font-size:15px}.examples{gap:5px}.example{padding:9px 3px}.example .equation{font-size:19px}.example .caption{font-size:11px}} 
+</style>
+</head>
+<body><main>
+<div class="calculation"><div class="fraction" role="group" aria-label="Bruch mit wachsendem Zähler und Nenner">
+<div class="number" id="num" aria-label="Zähler"></div><div class="bar"></div><div class="number" id="den" aria-label="Nenner"></div>
+</div>
+<div class="quotient" role="group" aria-label="Ergebnis des Quotienten"><span id="relation">=</span><div><span class="quotient-label">Quotient</span><output id="result" class="quotient-value"></output></div></div></div>
+<div class="precision-note">Dezimalwert mit bis zu 10 Nachkommastellen</div>
+<div class="controls"><button id="toggle">Pause</button><button id="reset">Zurücksetzen</button></div>
+<label class="speed">Langsam <input id="speed" type="range" min="1" max="10" value="5" aria-label="Geschwindigkeit"> Schnell</label>
+<div class="settings"><label>Zähler + <input id="ns" type="number" min="1" max="999999" value="1"></label><label>Nenner + <input id="ds" type="number" min="1" max="999999" value="1"></label></div>
+<section class="memo" aria-labelledby="memo-heading">
+<svg class="bulb" viewBox="0 0 64 76" aria-hidden="true">
+<defs><radialGradient id="bulbGlow"><stop offset="0" stop-color="#ffd559" stop-opacity=".55"/><stop offset="1" stop-color="#ffd559" stop-opacity="0"/></radialGradient><linearGradient id="glass" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff5be"/><stop offset="1" stop-color="#ffc34a"/></linearGradient></defs>
+<circle cx="32" cy="29" r="30" fill="url(#bulbGlow)"/>
+<g stroke="#d89b2c" stroke-width="2.5" stroke-linecap="round" fill="none"><path d="M32 2v6M10 9l5 6M2 28h7M54 9l-5 6M62 28h-7M6 46l6-4M58 46l-6-4"/></g>
+<path d="M32 13c-12 0-20 9-20 19 0 8 5 13 9 18 2 3 3 5 3 8h16c0-3 1-5 3-8 4-5 9-10 9-18 0-10-8-19-20-19Z" fill="url(#glass)" stroke="#c58b25" stroke-width="2"/>
+<path d="M29 57V44l-6-9 9 5 9-5-6 9v13" fill="none" stroke="#ac761e" stroke-width="2" stroke-linejoin="round"/>
+<path d="M24 58h16v10H24z" fill="#a8b1bd" stroke="#687585" stroke-width="1.6"/><path d="M25 61h14M25 65h14" stroke="#697583" stroke-width="1.5"/><path d="M28 69h8l-2 4h-4z" fill="#687585"/>
+<path d="M18 30c0-5 4-10 8-12" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" opacity=".85"/>
+</svg>
+<div><h2 id="memo-heading">MERKE</h2>
+<p>Wenn sowohl der Zähler als auch der Nenner gegen <strong>+∞</strong> streben, entsteht der unbestimmte Ausdruck <span class="intro"><span class="mini-frac" aria-label="unendlich durch unendlich"><span>∞</span><span>∞</span></span>.</span> Daraus allein lässt sich der Grenzwert des Quotienten nicht bestimmen.</p>
+<p><strong>Entscheidend ist, wie schnell Zähler und Nenner im Verhältnis zueinander wachsen.</strong> Der Quotient kann beispielsweise gegen 0, gegen eine positive Zahl oder gegen +∞ streben. Er muss aber nicht einmal einen Grenzwert besitzen.</p></div>
+<div class="examples" aria-label="Drei Beispiele für x gegen plus unendlich">
+<div class="example"><div class="equation"><span class="mini-frac"><span>x</span><span>x²</span></span><span>→ 0</span></div><div class="caption">Nenner wächst schneller</div></div>
+<div class="example"><div class="equation"><span class="mini-frac"><span>2x</span><span>x</span></span><span>→ 2</span></div><div class="caption">Proportionales Wachstum</div></div>
+<div class="example"><div class="equation"><span class="mini-frac"><span>x²</span><span>x</span></span><span>→ +∞</span></div><div class="caption">Zähler wächst schneller</div></div>
+</div>
+<div style="grid-column:1/-1;text-align:center;font-size:13px;color:#536173">In allen drei Beispielen gilt: <i>x</i> → +∞.</div>
+</section>
+<p class="laser-hint">Laserpointer: Linke Maustaste gedrückt halten und die Maus bewegen.</p>
+</main><div id="laser" class="laser" aria-hidden="true"></div>
+<script>
+const $=id=>document.getElementById(id);let n=1n,d=2n,timer,running=true;
+function renderNumber(el,value){
+ const digits=String(value);const old=el.dataset.value||'';
+ if(el.children.length!==digits.length){el.replaceChildren();for(let i=0;i<digits.length;i++){const cell=document.createElement('span');cell.className='digit';const strip=document.createElement('span');strip.className='strip';const digit=document.createElement('span');digit.textContent=digits[i];strip.append(digit);cell.append(strip);el.append(cell);}}
+ else for(let i=0;i<digits.length;i++){
+  if(old[i]===digits[i])continue;
+  const strip=el.children[i].firstElementChild;strip.style.transition='none';strip.style.transform='translateY(0)';strip.replaceChildren();
+  for(const text of [old[i]||'0',digits[i]]){const s=document.createElement('span');s.textContent=text;strip.append(s);}
+  void strip.offsetHeight;strip.style.transition='';strip.style.transform='translateY(-100%)';
+ }
+ el.dataset.value=digits;
+}
+function showQuotient(){
+ const scale=10000000000n;
+ const scaled=n*scale;
+ const rounded=(scaled+d/2n)/d;
+ const exact=scaled%d===0n;
+ const integer=rounded/scale;
+ let decimals=String(rounded%scale).padStart(10,'0');
+ if(exact)decimals=decimals.replace(/0+$/,'');
+ $('relation').textContent=exact?'=':'≈';
+ $('result').textContent=integer.toLocaleString('de-DE')+(decimals?','+decimals:'');
+}
+function show(){renderNumber($('num'),n);renderNumber($('den'),d);showQuotient()}
+function step(id){return BigInt(Math.max(1,Math.min(999999,Math.floor(Number($(id).value)||1))))}
+function tick(){n+=step('ns');d+=step('ds');show()}
+function schedule(){clearInterval(timer);if(running)timer=setInterval(tick,1250-Number($('speed').value)*95)}
+$('toggle').onclick=()=>{running=!running;$('toggle').textContent=running?'Pause':'Weiter';schedule()};
+$('reset').onclick=()=>{n=1n;d=2n;$('num').replaceChildren();$('den').replaceChildren();show();schedule()};$('speed').oninput=schedule;show();schedule();
+
+const laser=$('laser');let laserActive=false;
+function moveLaser(e){laser.style.left=e.clientX+'px';laser.style.top=e.clientY+'px';}
+function stopLaser(){laserActive=false;laser.classList.remove('active');document.body.classList.remove('laser-on');}
+window.addEventListener('pointerdown',e=>{
+ if(e.button!==0||e.pointerType!=='mouse'||e.target.closest('button,input,label,select,textarea,a'))return;
+ laserActive=true;moveLaser(e);laser.classList.add('active');document.body.classList.add('laser-on');e.preventDefault();
+});
+window.addEventListener('pointermove',e=>{if(!laserActive)return;if(!(e.buttons&1)){stopLaser();return;}moveLaser(e);});
+window.addEventListener('pointerup',stopLaser);window.addEventListener('pointercancel',stopLaser);window.addEventListener('blur',stopLaser);document.addEventListener('visibilitychange',()=>{if(document.hidden)stopLaser();});document.documentElement.addEventListener('pointerleave',stopLaser);
+</script></body></html>
